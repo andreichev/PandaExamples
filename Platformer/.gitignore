@@ -1,0 +1,7 @@
+.DS_Store
+.ShaderCache
+.idea
+bin
+cmake-build-debug
+.Panda/Shaders
+.Panda/Textures

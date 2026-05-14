@@ -1,0 +1,257 @@
+{
+    "lightingSettings": {
+        "ambientColor": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0,
+            "w": 1.0
+        },
+        "ambientIntensity": 0.5
+    },
+    "entities": [
+        {
+            "id": 387589424,
+            "tagComponent": {
+                "tag": "Suzanne.gltf"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": [
+                    3511483999
+                ]
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 103.0,
+                    "y": -23.0,
+                    "z": 106.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 15.0,
+                    "y": 15.0,
+                    "z": 15.0
+                }
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 1857420722,
+            "tagComponent": {
+                "tag": "Base"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "scriptListComponent": {
+                "scripts": [
+                    {
+                        "name": "BaseScript",
+                        "scriptFields": [
+                            {
+                                "name": "material",
+                                "fieldId": 2756650074,
+                                "type": 4,
+                                "value": 2589579519
+                            },
+                            {
+                                "name": "var",
+                                "fieldId": 1845874024,
+                                "type": 0,
+                                "value": 0
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "id": 1294002369,
+            "tagComponent": {
+                "tag": "Camera"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 4.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "cameraComponent": {
+                "isPrimary": true,
+                "camera": {
+                    "projectionType": 0,
+                    "fieldOfView": 70.0,
+                    "orthoSize": 1.0,
+                    "zNear": 0.10000000149011612,
+                    "zFar": 1000.0
+                }
+            },
+            "scriptListComponent": {
+                "scripts": [
+                    {
+                        "name": "CameraMove",
+                        "scriptFields": []
+                    },
+                    {
+                        "name": "BlocksCreation",
+                        "scriptFields": []
+                    }
+                ]
+            }
+        },
+        {
+            "id": 2867455434,
+            "tagComponent": {
+                "tag": "Sky"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "cubeMapComponent": {
+                "material": 0
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 1548755841,
+            "tagComponent": {
+                "tag": "Sun"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 2.1094456315040588e-7,
+                    "y": 1.1215732097625732,
+                    "z": 0.0000010887160897254944
+                },
+                "rotation": {
+                    "x": -0.03186526522040367,
+                    "y": 0.2500545084476471,
+                    "z": 0.12232883274555206,
+                    "w": 0.9599442481994629
+                },
+                "scale": {
+                    "x": 0.9999980330467224,
+                    "y": 1.0000027418136597,
+                    "z": 1.0000030994415283
+                }
+            },
+            "directionalLightComponent": {
+                "color": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0,
+                    "w": 1.0
+                },
+                "intensity": 0.5,
+                "isEnabled": true
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3511483999,
+            "tagComponent": {
+                "tag": "primitive 0"
+            },
+            "relationshipComponent": {
+                "parent": 387589424,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 4.344006538391113,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 3651530327,
+                "material": 460212091,
+                "submeshIndex": 0,
+                "primitiveIndex": 0
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        }
+    ]
+}

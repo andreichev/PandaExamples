@@ -1,0 +1,210 @@
+{
+    "assets": [
+        {
+            "id": 78489094,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/Rest.png",
+                "cookedPath": ".Panda/Textures/Assets/Rest.ptex"
+            }
+        },
+        {
+            "id": 144060677,
+            "type": 4,
+            "meta": {
+                "materialPath": "Assets/Jump.mat",
+                "shader": 0
+            }
+        },
+        {
+            "id": 318139221,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/Parallax/8.png",
+                "cookedPath": ".Panda/Textures/Assets/Parallax/8.ptex"
+            }
+        },
+        {
+            "id": 940174903,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/ground.png",
+                "cookedPath": ".Panda/Textures/Assets/ground.ptex"
+            }
+        },
+        {
+            "id": 1000000001,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/Run.png",
+                "cookedPath": ".Panda/Textures/Assets/Run.ptex"
+            }
+        },
+        {
+            "id": 1000000002,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/Jump.png",
+                "cookedPath": ".Panda/Textures/Assets/Jump.ptex"
+            }
+        },
+        {
+            "id": 1000000003,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/Fire.png",
+                "cookedPath": ".Panda/Textures/Assets/Fire.ptex"
+            }
+        },
+        {
+            "id": 1100597896,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/Enemy1.png",
+                "cookedPath": ".Panda/Textures/Assets/Enemy1.ptex"
+            }
+        },
+        {
+            "id": 1105917943,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/Parallax/2.png",
+                "cookedPath": ".Panda/Textures/Assets/Parallax/2.ptex"
+            }
+        },
+        {
+            "id": 1303820891,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/Coin.png",
+                "cookedPath": ".Panda/Textures/Assets/Coin.ptex"
+            }
+        },
+        {
+            "id": 2189796142,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/Parallax/6.png",
+                "cookedPath": ".Panda/Textures/Assets/Parallax/6.ptex"
+            }
+        },
+        {
+            "id": 2291613865,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/Parallax/4.png",
+                "cookedPath": ".Panda/Textures/Assets/Parallax/4.ptex"
+            }
+        },
+        {
+            "id": 2986125734,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/Parallax/7.png",
+                "cookedPath": ".Panda/Textures/Assets/Parallax/7.ptex"
+            }
+        },
+        {
+            "id": 3187942518,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/Parallax/5.png",
+                "cookedPath": ".Panda/Textures/Assets/Parallax/5.ptex"
+            }
+        },
+        {
+            "id": 3212275408,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/Parallax/3.png",
+                "cookedPath": ".Panda/Textures/Assets/Parallax/3.ptex"
+            }
+        },
+        {
+            "id": 3331746283,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/Back.jpg",
+                "cookedPath": ".Panda/Textures/Assets/Back.ptex"
+            }
+        },
+        {
+            "id": 3412077637,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/cloud.png",
+                "cookedPath": ".Panda/Textures/Assets/cloud.ptex"
+            }
+        },
+        {
+            "id": 3819697153,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/Enemy2.png",
+                "cookedPath": ".Panda/Textures/Assets/Enemy2.ptex"
+            }
+        },
+        {
+            "id": 4118786032,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/Parallax/1.png",
+                "cookedPath": ".Panda/Textures/Assets/Parallax/1.ptex"
+            }
+        }
+    ]
+}
