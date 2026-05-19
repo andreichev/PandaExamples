@@ -44,7 +44,7 @@ private:
 
     Direction direction;
     State state;
-    bool onGround;
+    int groundContacts;
 
     Animation runAnim;
     Animation jumpAnim;

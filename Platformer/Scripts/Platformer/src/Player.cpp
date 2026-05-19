@@ -11,19 +11,21 @@ void Player::start() {
     jumpAnim.start(getEntity(), jump, 3, 1);
     runAnim.start(getEntity(), run, 10, 1, 0.1);
     setState(State::REST);
-    onGround = false;
+    groundContacts = 0;
     currentAnimation = &restAnim;
 }
 
 void Player::beginCollisionTouch(EntityHandle other) {
     if (strCmp("Ground", EntityAPI::getName(other), 6) == 0) {
-        onGround = true;
+        groundContacts++;
     }
 }
 
 void Player::endCollisionTouch(EntityHandle other) {
     if (strCmp("Ground", EntityAPI::getName(other), 6) == 0) {
-        onGround = false;
+        if (groundContacts > 0) {
+            groundContacts--;
+        }
     }
 }
 
@@ -36,8 +38,9 @@ void Player::beginSensorOverlap(EntityHandle sensor) {
 void Player::update(float dt) {
     auto velocity = Rigidbody2DComponentAPI::getLinearVelocity(getEntity());
 
-    if (onGround && Input::isKeyJustPressed(Key::SPACE)) {
-        velocity.y += jumpForce * dt;
+    if (groundContacts > 0 && Input::isKeyJustPressed(Key::SPACE)) {
+        velocity.y = jumpForce;
+        groundContacts = 0;
     }
 
     if (Input::isKeyPressed(Key::A)) {

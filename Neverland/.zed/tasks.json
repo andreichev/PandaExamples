@@ -1,12 +1,11 @@
 [
   {
     "label": "Configure Neverland Debug",
-    "command": "cmake",
+    "command": "./Scripts/Neverland/scripts/configure_scripts.sh",
     "args": [
-      "--preset",
       "debug"
     ],
-    "cwd": "$ZED_WORKTREE_ROOT/Scripts/Neverland",
+    "cwd": "$ZED_WORKTREE_ROOT",
     "use_new_terminal": false,
     "allow_concurrent_runs": false,
     "reveal": "always",
@@ -14,13 +13,11 @@
   },
   {
     "label": "Build Neverland Debug",
-    "command": "cmake",
+    "command": "./Scripts/Neverland/scripts/build_scripts.sh",
     "args": [
-      "--build",
-      "--preset",
       "build-debug"
     ],
-    "cwd": "$ZED_WORKTREE_ROOT/Scripts/Neverland",
+    "cwd": "$ZED_WORKTREE_ROOT",
     "use_new_terminal": false,
     "allow_concurrent_runs": false,
     "reveal": "always",
@@ -28,12 +25,11 @@
   },
   {
     "label": "Configure Neverland Release",
-    "command": "cmake",
+    "command": "./Scripts/Neverland/scripts/configure_scripts.sh",
     "args": [
-      "--preset",
       "release"
     ],
-    "cwd": "$ZED_WORKTREE_ROOT/Scripts/Neverland",
+    "cwd": "$ZED_WORKTREE_ROOT",
     "use_new_terminal": false,
     "allow_concurrent_runs": false,
     "reveal": "always",
@@ -41,13 +37,11 @@
   },
   {
     "label": "Build Neverland Release",
-    "command": "cmake",
+    "command": "./Scripts/Neverland/scripts/build_scripts.sh",
     "args": [
-      "--build",
-      "--preset",
       "build-release"
     ],
-    "cwd": "$ZED_WORKTREE_ROOT/Scripts/Neverland",
+    "cwd": "$ZED_WORKTREE_ROOT",
     "use_new_terminal": false,
     "allow_concurrent_runs": false,
     "reveal": "always",
@@ -55,8 +49,8 @@
   },
   {
     "label": "Format Code",
-    "command": "./format.sh",
-    "cwd": "$ZED_WORKTREE_ROOT/Scripts/Neverland",
+    "command": "./Scripts/Neverland/scripts/format_code.sh",
+    "cwd": "$ZED_WORKTREE_ROOT",
     "use_new_terminal": false,
     "allow_concurrent_runs": false,
     "reveal": "always",
