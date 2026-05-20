@@ -7,7 +7,9 @@
 #include <Bamboo/Math.hpp>
 #include "Camera.hpp"
 
-void Camera::start() {}
+void Camera::start() {
+    velocity = {};
+}
 
 void Camera::update(float dt) {
     if (!target.isValid()) {
@@ -16,7 +18,6 @@ void Camera::update(float dt) {
     }
     Vec3 targetPosition = TransformComponentAPI::getPosition(target);
     Vec3 position = TransformComponentAPI::getPosition(getEntity());
-    static Vec3 velocity;
     Vec3 result = Math::smoothDamp(position, targetPosition, velocity, 0.15, dt);
     TransformComponentAPI::setPosition(getEntity(), {result.x, result.y, position.z});
 }

@@ -37,14 +37,22 @@ private:
     enum State { REST, RUN, JUMP };
     enum Direction { LEFT, RIGHT };
 
+    struct MobileInput {
+        bool moveLeft = false;
+        bool moveRight = false;
+        bool jumpPressed = false;
+    };
+
     void setState(State newState);
     void setDirection(Direction newDirection);
+    MobileInput readMobileInput();
 
     Vec3 defaultPos;
 
     Direction direction;
     State state;
     int groundContacts;
+    bool mobileJumpWasDown;
 
     Animation runAnim;
     Animation jumpAnim;

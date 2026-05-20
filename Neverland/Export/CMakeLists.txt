@@ -1,9 +1,10 @@
 cmake_minimum_required(VERSION 3.20)
-project(Platformer CXX)
+project(Neverland CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(BUILD_SHARED_LIBS OFF)
+set(VENDOR_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../Scripts/Neverland/Vendor)
 
 # Platform detection
 if(APPLE)
@@ -36,7 +37,7 @@ set(APP_SOURCES
 )
 
 get_filename_component(GAME_PROJECT_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/.." ABSOLUTE)
-set(GAME_SCRIPT_DIR "${GAME_PROJECT_ROOT}/Scripts/Platformer/src")
+set(GAME_SCRIPT_DIR "${GAME_PROJECT_ROOT}/Scripts/Neverland/src")
 
 if(EXISTS "${GAME_SCRIPT_DIR}")
     file(GLOB_RECURSE GAME_SCRIPT_SOURCES CONFIGURE_DEPENDS
@@ -65,14 +66,14 @@ endif()
 # Engine/runtime implementation is pre-compiled in PandaSDK.
 if(PLATFORM_MACOS)
     set(APPLE_RESOURCES native/OSX/AssetsOSX.xcassets)
-    add_executable(Platformer MACOSX_BUNDLE ${APP_SOURCES} ${APPLE_RESOURCES})
-    set_target_properties(Platformer PROPERTIES
+    add_executable(Neverland MACOSX_BUNDLE ${APP_SOURCES} ${APPLE_RESOURCES})
+    set_target_properties(Neverland PROPERTIES
         MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/native/OSX/Info.plist"
-        XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "com.md.Platformer"
+        XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "com.md.Neverland"
         XCODE_ATTRIBUTE_ASSETCATALOG_COMPILER_APPICON_NAME "AppIcon"
         RESOURCE "${APPLE_RESOURCES}"
     )
-    target_compile_definitions(Platformer PUBLIC GL_SILENCE_DEPRECATION)
+    target_compile_definitions(Neverland PUBLIC GL_SILENCE_DEPRECATION)
 elseif(PLATFORM_IOS)
     set(APPLE_RESOURCES)
     if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/native/IOS/LaunchScreen.storyboard")
@@ -81,30 +82,30 @@ elseif(PLATFORM_IOS)
     if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/native/IOS/Assets.xcassets")
         list(APPEND APPLE_RESOURCES native/IOS/Assets.xcassets)
     endif()
-    add_executable(Platformer MACOSX_BUNDLE ${APP_SOURCES} ${APPLE_RESOURCES})
-    set_target_properties(Platformer PROPERTIES
+    add_executable(Neverland MACOSX_BUNDLE ${APP_SOURCES} ${APPLE_RESOURCES})
+    set_target_properties(Neverland PROPERTIES
         MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/native/IOS/Info.plist"
-        XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "com.md.Platformer"
+        XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "com.md.Neverland"
         RESOURCE "${APPLE_RESOURCES}"
         XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY "iPhone Developer"
         BUILD_RPATH "@executable_path"
     )
     if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/native/IOS/Assets.xcassets")
-        set_target_properties(Platformer PROPERTIES XCODE_ATTRIBUTE_ASSETCATALOG_COMPILER_APPICON_NAME "AppIcon")
+        set_target_properties(Neverland PROPERTIES XCODE_ATTRIBUTE_ASSETCATALOG_COMPILER_APPICON_NAME "AppIcon")
     endif()
-    target_compile_definitions(Platformer PUBLIC GL_SILENCE_DEPRECATION GLES_SILENCE_DEPRECATION)
+    target_compile_definitions(Neverland PUBLIC GL_SILENCE_DEPRECATION GLES_SILENCE_DEPRECATION)
 elseif(PLATFORM_LINUX)
-    add_executable(Platformer ${APP_SOURCES})
+    add_executable(Neverland ${APP_SOURCES})
 elseif(PLATFORM_WIN32)
-    add_executable(Platformer WIN32 ${APP_SOURCES})
+    add_executable(Neverland WIN32 ${APP_SOURCES})
 elseif(PLATFORM_ANDROID)
-    add_library(Platformer SHARED ${APP_SOURCES})
+    add_library(Neverland SHARED ${APP_SOURCES})
 endif()
 
 # Link against pre-compiled runtime. Entry point remains in generated app sources.
-target_link_libraries(Platformer PandaSDK::PandaRuntime)
+target_link_libraries(Neverland PandaSDK::PandaRuntime)
 if(EXISTS "${GAME_SCRIPT_DIR}")
-    target_include_directories(Platformer PRIVATE "${GAME_SCRIPT_DIR}")
+    target_include_directories(Neverland PRIVATE "${GAME_SCRIPT_DIR}")
 endif()
 
 set(PANDA_GAME_RUNTIME_DATA_DIR "${GAME_PROJECT_ROOT}/.Panda/Cooked/Runtime")
@@ -121,20 +122,20 @@ add_custom_target(PandaCheckRuntimeData
     COMMAND ${CMAKE_COMMAND} -P "${PANDA_CHECK_RUNTIME_DATA_SCRIPT}"
     COMMENT "Checking cooked runtime data"
 )
-add_dependencies(Platformer PandaCheckRuntimeData)
+add_dependencies(Neverland PandaCheckRuntimeData)
 
 # Copy engine resources and cooked game runtime data into fixed runtime locations
 if(PLATFORM_MACOS)
-    set(APP_RESOURCES_OUTPUT_DIR "$<TARGET_FILE_DIR:Platformer>/../Resources")
+    set(APP_RESOURCES_OUTPUT_DIR "$<TARGET_FILE_DIR:Neverland>/../Resources")
 elseif(PLATFORM_IOS)
-    set(APP_RESOURCES_OUTPUT_DIR "$<TARGET_FILE_DIR:Platformer>")
+    set(APP_RESOURCES_OUTPUT_DIR "$<TARGET_FILE_DIR:Neverland>")
 elseif(PLATFORM_LINUX OR PLATFORM_WIN32)
-    set(APP_RESOURCES_OUTPUT_DIR "$<TARGET_FILE_DIR:Platformer>")
+    set(APP_RESOURCES_OUTPUT_DIR "$<TARGET_FILE_DIR:Neverland>")
 endif()
 
 if(PLATFORM_MACOS OR PLATFORM_IOS OR PLATFORM_LINUX OR PLATFORM_WIN32)
     set(RUNTIME_DATA_OUTPUT_DIR "${APP_RESOURCES_OUTPUT_DIR}/.Panda")
-    add_custom_command(TARGET Platformer POST_BUILD
+    add_custom_command(TARGET Neverland POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E remove_directory
             "${APP_RESOURCES_OUTPUT_DIR}/Content"
         COMMAND ${CMAKE_COMMAND} -E remove_directory
@@ -152,3 +153,8 @@ if(PLATFORM_MACOS OR PLATFORM_IOS OR PLATFORM_LINUX OR PLATFORM_WIN32)
         COMMENT "Copying cooked runtime data to app bundle"
     )
 endif()
+
+# Dependencies - GLM
+add_subdirectory(${VENDOR_DIRECTORY}/glm build/glm_build)
+target_link_libraries(Neverland glm)
+target_include_directories(Neverland SYSTEM PUBLIC ${VENDOR_DIRECTORY}/glm)

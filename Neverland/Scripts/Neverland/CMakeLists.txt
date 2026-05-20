@@ -3,6 +3,7 @@ project(Neverland)
 
 set(CMAKE_CXX_STANDARD 20)
 set(BIN_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin)
+set(VENDOR_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Vendor)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${BIN_DIRECTORY})
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${BIN_DIRECTORY})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${BIN_DIRECTORY})
@@ -33,6 +34,6 @@ find_package(PandaSDK CONFIG REQUIRED)
 target_link_libraries(Neverland PandaSDK::PandaSDK)
 
 # Dependencies - GLM
-add_subdirectory(Vendor/glm)
+add_subdirectory(${VENDOR_DIRECTORY}/glm)
 target_link_libraries(Neverland glm)
-target_include_directories(Neverland PUBLIC Vendor/glm)
+target_include_directories(Neverland SYSTEM PUBLIC ${VENDOR_DIRECTORY}/glm)

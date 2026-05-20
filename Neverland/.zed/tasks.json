@@ -48,6 +48,54 @@
     "hide": "never"
   },
   {
+    "label": "Open Export Xcode macOS",
+    "command": "./Scripts/Neverland/scripts/open_export_xcode.sh",
+    "args": [
+      "macos-debug"
+    ],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "use_new_terminal": true,
+    "allow_concurrent_runs": false,
+    "reveal": "always",
+    "hide": "never"
+  },
+  {
+    "label": "Open Export Xcode iOS Simulator",
+    "command": "./Scripts/Neverland/scripts/open_export_xcode.sh",
+    "args": [
+      "ios-debug"
+    ],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "use_new_terminal": true,
+    "allow_concurrent_runs": false,
+    "reveal": "always",
+    "hide": "never"
+  },
+  {
+    "label": "Open Export Xcode iOS Device",
+    "command": "./Scripts/Neverland/scripts/open_export_xcode.sh",
+    "args": [
+      "ios-device-debug"
+    ],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "use_new_terminal": true,
+    "allow_concurrent_runs": false,
+    "reveal": "always",
+    "hide": "never"
+  },
+  {
+    "label": "Open Export Visual Studio Windows",
+    "command": "./Scripts/Neverland/scripts/open_export_visual_studio.sh",
+    "args": [
+      "windows-debug"
+    ],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "use_new_terminal": true,
+    "allow_concurrent_runs": false,
+    "reveal": "always",
+    "hide": "never"
+  },
+  {
     "label": "Format Code",
     "command": "./Scripts/Neverland/scripts/format_code.sh",
     "cwd": "$ZED_WORKTREE_ROOT",

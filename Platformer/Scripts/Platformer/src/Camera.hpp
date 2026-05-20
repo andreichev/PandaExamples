@@ -19,6 +19,9 @@ public:
     PANDA_FIELDS_BEGIN(Camera)
     PANDA_FIELD(target)
     PANDA_FIELDS_END
+
+private:
+    Vec3 velocity;
 };
 
 REGISTER_SCRIPT(Camera)

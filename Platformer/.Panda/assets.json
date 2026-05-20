@@ -1,6 +1,13 @@
 {
     "assets": [
         {
+            "id": 52896095,
+            "type": 7,
+            "meta": {
+                "worldPath": "Assets/world.world"
+            }
+        },
+        {
             "id": 78489094,
             "type": 1,
             "meta": {
@@ -17,6 +24,13 @@
             "meta": {
                 "materialPath": "Assets/Jump.mat",
                 "shader": 0
+            }
+        },
+        {
+            "id": 153662021,
+            "type": 7,
+            "meta": {
+                "worldPath": "Assets/world2.world"
             }
         },
         {

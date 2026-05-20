@@ -5,5 +5,5 @@ bin
 cmake-build-*
 .Panda/Shaders
 .Panda/Textures
+.Panda/Cooked
 Export/build
-Export/Content
