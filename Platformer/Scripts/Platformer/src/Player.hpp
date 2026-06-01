@@ -20,6 +20,7 @@ public:
     void endCollisionTouch(EntityHandle other) override;
     void beginSensorOverlap(EntityHandle sensor) override;
 
+    WorldHandle nextLevel;
     float jumpForce;
     float speed;
     TextureHandle run;
@@ -27,6 +28,7 @@ public:
     TextureHandle jump;
 
     PANDA_FIELDS_BEGIN(Player)
+    PANDA_FIELD(nextLevel)
     PANDA_FIELD(jumpForce)
     PANDA_FIELD(speed)
     PANDA_FIELD(run)
@@ -46,6 +48,7 @@ private:
     void setState(State newState);
     void setDirection(Direction newDirection);
     MobileInput readMobileInput();
+    void resetToStart();
 
     Vec3 defaultPos;
 
@@ -53,6 +56,7 @@ private:
     State state;
     int groundContacts;
     bool mobileJumpWasDown;
+    float resetCooldown;
 
     Animation runAnim;
     Animation jumpAnim;

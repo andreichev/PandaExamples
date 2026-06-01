@@ -74,8 +74,8 @@
             },
             "transformComponent": {
                 "position": {
-                    "x": -4.234856128692627,
-                    "y": 4.095288276672363,
+                    "x": -20.0,
+                    "y": 4.099999904632568,
                     "z": 10.0
                 },
                 "rotation": {
@@ -188,12 +188,13 @@
             "relationshipComponent": {
                 "parent": 0,
                 "children": [
-                    2323574553,
-                    1505694444,
-                    4083642051,
-                    2538412476,
-                    2177954213,
-                    4002608326
+                    4200001000,
+                    4200001001,
+                    4200001002,
+                    4200001003,
+                    4200001004,
+                    4200001005,
+                    4200001006
                 ]
             },
             "transformComponent": {
@@ -1149,7 +1150,7 @@
             }
         },
         {
-            "id": 4060733659,
+            "id": 2366163006,
             "tagComponent": {
                 "tag": "Background7"
             },
@@ -1159,7 +1160,7 @@
             },
             "transformComponent": {
                 "position": {
-                    "x": -43.932342529296875,
+                    "x": -4.234856128692627,
                     "y": 3.0,
                     "z": -40.0
                 },
@@ -1273,7 +1274,7 @@
             }
         },
         {
-            "id": 2366163006,
+            "id": 4060733659,
             "tagComponent": {
                 "tag": "Background7"
             },
@@ -1283,7 +1284,7 @@
             },
             "transformComponent": {
                 "position": {
-                    "x": -4.234856128692627,
+                    "x": -43.932342529296875,
                     "y": 3.0,
                     "z": -40.0
                 },
@@ -1423,50 +1424,6 @@
             }
         },
         {
-            "id": 538483128,
-            "tagComponent": {
-                "tag": "Coin"
-            },
-            "relationshipComponent": {
-                "parent": 0,
-                "children": []
-            },
-            "transformComponent": {
-                "position": {
-                    "x": -9.455171585083008,
-                    "y": 3.6837971210479736,
-                    "z": 0.0
-                },
-                "rotation": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0,
-                    "w": 1.0
-                },
-                "scale": {
-                    "x": 1.5,
-                    "y": 1.5,
-                    "z": 1.0
-                }
-            },
-            "spriteRendererComponent": {
-                "color": {
-                    "x": 1.0,
-                    "y": 1.0,
-                    "z": 1.0,
-                    "w": 1.0
-                },
-                "cols": 1,
-                "rows": 1,
-                "index": 0,
-                "material": 0,
-                "texture": 1303820891
-            },
-            "scriptListComponent": {
-                "scripts": []
-            }
-        },
-        {
             "id": 1154675119,
             "tagComponent": {
                 "tag": "DiedZone"
@@ -1477,8 +1434,8 @@
             },
             "transformComponent": {
                 "position": {
-                    "x": 0.0,
-                    "y": -5.306270122528076,
+                    "x": 4.0,
+                    "y": -6.0,
                     "z": 0.0
                 },
                 "rotation": {
@@ -1488,7 +1445,7 @@
                     "w": 1.0
                 },
                 "scale": {
-                    "x": 50.0,
+                    "x": 90.0,
                     "y": 1.0,
                     "z": 1.0
                 }
@@ -1516,7 +1473,7 @@
             }
         },
         {
-            "id": 2021811162,
+            "id": 4200001500,
             "tagComponent": {
                 "tag": "Enemy1"
             },
@@ -1526,8 +1483,8 @@
             },
             "transformComponent": {
                 "position": {
-                    "x": -13.68539810180664,
-                    "y": 1.9258819818496704,
+                    "x": -11.800000190734863,
+                    "y": 2.496350049972534,
                     "z": 0.0
                 },
                 "rotation": {
@@ -1537,8 +1494,8 @@
                     "w": 1.0
                 },
                 "scale": {
-                    "x": 3.0,
-                    "y": 3.0,
+                    "x": 2.4000000953674316,
+                    "y": 2.4000000953674316,
                     "z": 1.0
                 }
             },
@@ -1556,7 +1513,31 @@
                 "texture": 1100597896
             },
             "scriptListComponent": {
-                "scripts": []
+                "scripts": [
+                    {
+                        "name": "Enemy",
+                        "scriptFields": [
+                            {
+                                "name": "target",
+                                "fieldId": 3760132070,
+                                "type": 2,
+                                "value": 3538450477
+                            },
+                            {
+                                "name": "speed",
+                                "fieldId": 587380990,
+                                "type": 1,
+                                "value": 1.7999999523162842
+                            },
+                            {
+                                "name": "activationDistance",
+                                "fieldId": 311170788,
+                                "type": 1,
+                                "value": 9.0
+                            }
+                        ]
+                    }
+                ]
             },
             "rigidbody2dComponent": {
                 "type": 1,
@@ -1578,7 +1559,7 @@
             }
         },
         {
-            "id": 2990555690,
+            "id": 4200001501,
             "tagComponent": {
                 "tag": "Enemy2"
             },
@@ -1588,8 +1569,8 @@
             },
             "transformComponent": {
                 "position": {
-                    "x": 2.1378047466278076,
-                    "y": 3.376681327819824,
+                    "x": 8.199999809265137,
+                    "y": 2.549999952316284,
                     "z": 0.0
                 },
                 "rotation": {
@@ -1599,8 +1580,8 @@
                     "w": 1.0
                 },
                 "scale": {
-                    "x": 1.0,
-                    "y": 2.0,
+                    "x": 1.600000023841858,
+                    "y": 2.200000047683716,
                     "z": 1.0
                 }
             },
@@ -1618,7 +1599,31 @@
                 "texture": 3819697153
             },
             "scriptListComponent": {
-                "scripts": []
+                "scripts": [
+                    {
+                        "name": "Enemy",
+                        "scriptFields": [
+                            {
+                                "name": "target",
+                                "fieldId": 3760132070,
+                                "type": 2,
+                                "value": 3538450477
+                            },
+                            {
+                                "name": "speed",
+                                "fieldId": 587380990,
+                                "type": 1,
+                                "value": 2.4000000953674316
+                            },
+                            {
+                                "name": "activationDistance",
+                                "fieldId": 311170788,
+                                "type": 1,
+                                "value": 10.0
+                            }
+                        ]
+                    }
+                ]
             },
             "rigidbody2dComponent": {
                 "type": 1,
@@ -1640,7 +1645,7 @@
             }
         },
         {
-            "id": 3080568512,
+            "id": 4200001800,
             "tagComponent": {
                 "tag": "Fire"
             },
@@ -1650,9 +1655,9 @@
             },
             "transformComponent": {
                 "position": {
-                    "x": 0.8606956601142883,
-                    "y": 2.9053432941436768,
-                    "z": 0.4884450435638428
+                    "x": -1.5,
+                    "y": 2.4000000953674316,
+                    "z": 0.49000000953674316
                 },
                 "rotation": {
                     "x": 0.0,
@@ -1675,7 +1680,63 @@
                 },
                 "cols": 6,
                 "rows": 1,
-                "index": 3,
+                "index": 0,
+                "material": 0,
+                "texture": 1000000003
+            },
+            "scriptListComponent": {
+                "scripts": [
+                    {
+                        "name": "Fire",
+                        "scriptFields": [
+                            {
+                                "name": "fire",
+                                "fieldId": 2560869837,
+                                "type": 3,
+                                "value": 1000000003
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "id": 4200001801,
+            "tagComponent": {
+                "tag": "Fire"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 17.0,
+                    "y": 3.0,
+                    "z": 0.49000000953674316
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 2.0,
+                    "z": 1.0
+                }
+            },
+            "spriteRendererComponent": {
+                "color": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0,
+                    "w": 1.0
+                },
+                "cols": 6,
+                "rows": 1,
+                "index": 0,
                 "material": 0,
                 "texture": 1000000003
             },
@@ -1820,7 +1881,7 @@
             }
         },
         {
-            "id": 2323574553,
+            "id": 4200001000,
             "tagComponent": {
                 "tag": "Ground"
             },
@@ -1830,8 +1891,70 @@
             },
             "transformComponent": {
                 "position": {
-                    "x": 6.499776363372803,
-                    "y": 0.32166576385498047,
+                    "x": -20.0,
+                    "y": 0.4000000059604645,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 7.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "spriteRendererComponent": {
+                "color": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0,
+                    "w": 1.0
+                },
+                "cols": 1,
+                "rows": 1,
+                "index": 0,
+                "material": 0,
+                "texture": 940174903
+            },
+            "scriptListComponent": {
+                "scripts": []
+            },
+            "rigidbody2dComponent": {
+                "type": 0,
+                "fixedRotation": false
+            },
+            "boxCollider2dComponent": {
+                "isSensor": false,
+                "offset": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "size": {
+                    "x": 0.5,
+                    "y": 0.5
+                },
+                "density": 1.0,
+                "friction": 0.5,
+                "restitution": 0.0
+            }
+        },
+        {
+            "id": 4200001001,
+            "tagComponent": {
+                "tag": "Ground"
+            },
+            "relationshipComponent": {
+                "parent": 494555213,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": -12.0,
+                    "y": 0.7963483333587646,
                     "z": 0.0
                 },
                 "rotation": {
@@ -1882,7 +2005,7 @@
             }
         },
         {
-            "id": 1505694444,
+            "id": 4200001002,
             "tagComponent": {
                 "tag": "Ground"
             },
@@ -1892,8 +2015,70 @@
             },
             "transformComponent": {
                 "position": {
-                    "x": -14.7551851272583,
-                    "y": -0.07408303022384644,
+                    "x": -5.5,
+                    "y": 0.4000000059604645,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 5.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "spriteRendererComponent": {
+                "color": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0,
+                    "w": 1.0
+                },
+                "cols": 1,
+                "rows": 1,
+                "index": 0,
+                "material": 0,
+                "texture": 940174903
+            },
+            "scriptListComponent": {
+                "scripts": []
+            },
+            "rigidbody2dComponent": {
+                "type": 0,
+                "fixedRotation": false
+            },
+            "boxCollider2dComponent": {
+                "isSensor": false,
+                "offset": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "size": {
+                    "x": 0.5,
+                    "y": 0.5
+                },
+                "density": 1.0,
+                "friction": 0.5,
+                "restitution": 0.0
+            }
+        },
+        {
+            "id": 4200001003,
+            "tagComponent": {
+                "tag": "Ground"
+            },
+            "relationshipComponent": {
+                "parent": 494555213,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 1.5,
+                    "y": 1.7999999523162842,
                     "z": 0.0
                 },
                 "rotation": {
@@ -1944,7 +2129,7 @@
             }
         },
         {
-            "id": 4083642051,
+            "id": 4200001004,
             "tagComponent": {
                 "tag": "Ground"
             },
@@ -1954,8 +2139,70 @@
             },
             "transformComponent": {
                 "position": {
-                    "x": -4.714721202850342,
-                    "y": 0.5544782280921936,
+                    "x": 8.0,
+                    "y": 0.800000011920929,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 5.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "spriteRendererComponent": {
+                "color": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0,
+                    "w": 1.0
+                },
+                "cols": 1,
+                "rows": 1,
+                "index": 0,
+                "material": 0,
+                "texture": 940174903
+            },
+            "scriptListComponent": {
+                "scripts": []
+            },
+            "rigidbody2dComponent": {
+                "type": 0,
+                "fixedRotation": false
+            },
+            "boxCollider2dComponent": {
+                "isSensor": false,
+                "offset": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "size": {
+                    "x": 0.5,
+                    "y": 0.5
+                },
+                "density": 1.0,
+                "friction": 0.5,
+                "restitution": 0.0
+            }
+        },
+        {
+            "id": 4200001005,
+            "tagComponent": {
+                "tag": "Ground"
+            },
+            "relationshipComponent": {
+                "parent": 494555213,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 15.0,
+                    "y": 2.0999999046325684,
                     "z": 0.0
                 },
                 "rotation": {
@@ -2006,7 +2253,7 @@
             }
         },
         {
-            "id": 2538412476,
+            "id": 4200001006,
             "tagComponent": {
                 "tag": "Ground"
             },
@@ -2016,8 +2263,8 @@
             },
             "transformComponent": {
                 "position": {
-                    "x": -9.357549667358398,
-                    "y": 1.923287034034729,
+                    "x": 22.5,
+                    "y": 0.6000000238418579,
                     "z": 0.0
                 },
                 "rotation": {
@@ -2027,7 +2274,7 @@
                     "w": 1.0
                 },
                 "scale": {
-                    "x": 4.0,
+                    "x": 7.0,
                     "y": 1.0,
                     "z": 1.0
                 }
@@ -2068,19 +2315,19 @@
             }
         },
         {
-            "id": 2177954213,
+            "id": 4200001901,
             "tagComponent": {
-                "tag": "Ground"
+                "tag": "LevelExit"
             },
             "relationshipComponent": {
-                "parent": 494555213,
+                "parent": 0,
                 "children": []
             },
             "transformComponent": {
                 "position": {
-                    "x": 1.0305043458938599,
-                    "y": 1.8767173290252686,
-                    "z": 0.0
+                    "x": 25.399999618530273,
+                    "y": 2.5999999046325684,
+                    "z": 0.30000001192092896
                 },
                 "rotation": {
                     "x": 0.0,
@@ -2089,23 +2336,23 @@
                     "w": 1.0
                 },
                 "scale": {
-                    "x": 4.0,
-                    "y": 1.0,
+                    "x": 2.0,
+                    "y": 3.0,
                     "z": 1.0
                 }
             },
             "spriteRendererComponent": {
                 "color": {
-                    "x": 1.0,
+                    "x": 0.25,
                     "y": 1.0,
-                    "z": 1.0,
+                    "z": 0.3499999940395355,
                     "w": 1.0
                 },
                 "cols": 1,
                 "rows": 1,
                 "index": 0,
                 "material": 0,
-                "texture": 940174903
+                "texture": 1303820891
             },
             "scriptListComponent": {
                 "scripts": []
@@ -2115,7 +2362,7 @@
                 "fixedRotation": false
             },
             "boxCollider2dComponent": {
-                "isSensor": false,
+                "isSensor": true,
                 "offset": {
                     "x": 0.0,
                     "y": 0.0
@@ -2130,19 +2377,19 @@
             }
         },
         {
-            "id": 4002608326,
+            "id": 4200001900,
             "tagComponent": {
-                "tag": "Ground"
+                "tag": "LevelStart"
             },
             "relationshipComponent": {
-                "parent": 494555213,
+                "parent": 0,
                 "children": []
             },
             "transformComponent": {
                 "position": {
-                    "x": -19.082569122314453,
-                    "y": 1.4025664329528809,
-                    "z": 0.0
+                    "x": -21.799999237060547,
+                    "y": 4.400000095367432,
+                    "z": 0.25
                 },
                 "rotation": {
                     "x": 0.0,
@@ -2151,15 +2398,15 @@
                     "w": 1.0
                 },
                 "scale": {
-                    "x": 4.0,
-                    "y": 1.0,
+                    "x": 1.600000023841858,
+                    "y": 1.600000023841858,
                     "z": 1.0
                 }
             },
             "spriteRendererComponent": {
                 "color": {
-                    "x": 1.0,
-                    "y": 1.0,
+                    "x": 0.25,
+                    "y": 0.6499999761581421,
                     "z": 1.0,
                     "w": 1.0
                 },
@@ -2167,28 +2414,10 @@
                 "rows": 1,
                 "index": 0,
                 "material": 0,
-                "texture": 940174903
+                "texture": 1303820891
             },
             "scriptListComponent": {
                 "scripts": []
-            },
-            "rigidbody2dComponent": {
-                "type": 0,
-                "fixedRotation": false
-            },
-            "boxCollider2dComponent": {
-                "isSensor": false,
-                "offset": {
-                    "x": 0.0,
-                    "y": 0.0
-                },
-                "size": {
-                    "x": 0.5,
-                    "y": 0.5
-                },
-                "density": 1.0,
-                "friction": 0.5,
-                "restitution": 0.0
             }
         },
         {
@@ -2202,15 +2431,15 @@
             },
             "transformComponent": {
                 "position": {
-                    "x": -4.747066020965576,
-                    "y": 3.5835494995117188,
+                    "x": -20.0,
+                    "y": 2.5999999046325684,
                     "z": 0.0000601834908593446
                 },
                 "rotation": {
-                    "x": 9.099629778575036e-7,
-                    "y": 1.0,
-                    "z": 9.099629778575036e-7,
-                    "w": -4.371055695173709e-8
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
                 },
                 "scale": {
                     "x": 7.0,
@@ -2237,10 +2466,16 @@
                         "name": "Player",
                         "scriptFields": [
                             {
+                                "name": "nextLevel",
+                                "fieldId": 2386036755,
+                                "type": 5,
+                                "value": 153662021
+                            },
+                            {
                                 "name": "speed",
                                 "fieldId": 813245873,
                                 "type": 1,
-                                "value": 5.0
+                                "value": 7.0
                             },
                             {
                                 "name": "rest",
@@ -2264,7 +2499,7 @@
                                 "name": "jumpForce",
                                 "fieldId": 2621739197,
                                 "type": 1,
-                                "value": 8.0
+                                "value": 10.0
                             }
                         ]
                     }

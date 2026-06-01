@@ -1,0 +1,4117 @@
+{
+    "lightingSettings": {
+        "ambientColor": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0,
+            "w": 1.0
+        },
+        "ambientIntensity": 0.11999999731779099
+    },
+    "entities": [
+        {
+            "id": 2961715692,
+            "tagComponent": {
+                "tag": "Sponza.gltf"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": [
+                    2560508331,
+                    3366051592,
+                    1584791479,
+                    3829221856,
+                    2423425105,
+                    1326154398,
+                    1659274086,
+                    48814936,
+                    2396703955,
+                    3826899095,
+                    3276478695,
+                    1340004202,
+                    3487325538,
+                    1246417287,
+                    13779945,
+                    3928966739,
+                    2013574024,
+                    3024984497,
+                    2482523721,
+                    742657720,
+                    3130297933,
+                    1830952779,
+                    3028489204,
+                    2316604614,
+                    1895322270,
+                    1126342546,
+                    4137104517,
+                    589133569,
+                    2022121749,
+                    2772833166,
+                    1684778821,
+                    364165334,
+                    227994600,
+                    327213382,
+                    3539725110,
+                    2374709102,
+                    3028132580,
+                    2030652476,
+                    936325206,
+                    3667984180,
+                    2225344507,
+                    3019641659,
+                    3357170386,
+                    2398056953,
+                    1497061925,
+                    1050847135,
+                    4192772465,
+                    482796162,
+                    3434476507,
+                    2363378376,
+                    3865742281,
+                    1214611517,
+                    1812681597,
+                    442190791,
+                    4008454155,
+                    2097150058,
+                    2299873507,
+                    2271687465,
+                    65341464,
+                    3909834897,
+                    4191849184,
+                    2948027086,
+                    1854422935,
+                    3106072216,
+                    1248720320,
+                    1244979796,
+                    4146684032,
+                    431322281,
+                    126278301,
+                    2890856175,
+                    1168609574,
+                    2410133932,
+                    3224547351,
+                    3783886435,
+                    2713759167,
+                    1865842568,
+                    2654573634,
+                    49708649,
+                    2546457395,
+                    1904197916,
+                    703609641,
+                    996602380,
+                    3646377824,
+                    1148703224,
+                    1578078532,
+                    1164892386,
+                    915519603,
+                    2474154769,
+                    1089254753,
+                    3745312933,
+                    3414812466,
+                    2367372820,
+                    1726437799,
+                    3815640111,
+                    152932245,
+                    284895580,
+                    810310663,
+                    2594107735,
+                    1158161109,
+                    2320546542,
+                    2881473046,
+                    1626906331,
+                    156000585
+                ]
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 0.00800000037997961,
+                    "y": 0.00800000037997961,
+                    "z": 0.00800000037997961
+                }
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 732211536,
+            "tagComponent": {
+                "tag": "Camera"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 4.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "cameraComponent": {
+                "isPrimary": true,
+                "camera": {
+                    "projectionType": 0,
+                    "fieldOfView": 70.0,
+                    "orthoSize": 1.0,
+                    "zNear": 0.10000000149011612,
+                    "zFar": 1000.0
+                }
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 4165951998,
+            "tagComponent": {
+                "tag": "Directional Light"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": -0.41436561942100525,
+                    "y": -0.23379634320735931,
+                    "z": -0.1110299676656723,
+                    "w": 0.8725323677062988
+                },
+                "scale": {
+                    "x": 0.9999994039535522,
+                    "y": 1.000002384185791,
+                    "z": 1.0000039339065552
+                }
+            },
+            "directionalLightComponent": {
+                "color": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0,
+                    "w": 1.0
+                },
+                "intensity": 1.0,
+                "isEnabled": true
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 805859859,
+            "tagComponent": {
+                "tag": "Light"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 4.241155624389648,
+                    "y": 4.48587703704834,
+                    "z": -0.14173650741577148
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "pointLightComponent": {
+                "color": {
+                    "x": 0.7379032373428345,
+                    "y": 0.592683732509613,
+                    "z": 0.20827916264533997,
+                    "w": 1.0
+                },
+                "intensity": 1.0,
+                "radius": 10.0,
+                "isEnabled": true
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 1898192272,
+            "tagComponent": {
+                "tag": "Sky"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "cubeMapComponent": {
+                "material": 0
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 2560508331,
+            "tagComponent": {
+                "tag": "primitive 0"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 1010621630,
+                "submeshIndex": 0,
+                "primitiveIndex": 0
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3366051592,
+            "tagComponent": {
+                "tag": "primitive 1"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 746146398,
+                "submeshIndex": 0,
+                "primitiveIndex": 1
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 1584791479,
+            "tagComponent": {
+                "tag": "primitive 10"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 226124506,
+                "submeshIndex": 0,
+                "primitiveIndex": 10
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3829221856,
+            "tagComponent": {
+                "tag": "primitive 100"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 2279934916,
+                "submeshIndex": 0,
+                "primitiveIndex": 100
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 2423425105,
+            "tagComponent": {
+                "tag": "primitive 101"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 2931728932,
+                "submeshIndex": 0,
+                "primitiveIndex": 101
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 1326154398,
+            "tagComponent": {
+                "tag": "primitive 102"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 2279934916,
+                "submeshIndex": 0,
+                "primitiveIndex": 102
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 1659274086,
+            "tagComponent": {
+                "tag": "primitive 11"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 1979706725,
+                "submeshIndex": 0,
+                "primitiveIndex": 11
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 48814936,
+            "tagComponent": {
+                "tag": "primitive 12"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 1287422074,
+                "submeshIndex": 0,
+                "primitiveIndex": 12
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 2396703955,
+            "tagComponent": {
+                "tag": "primitive 13"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 2279934916,
+                "submeshIndex": 0,
+                "primitiveIndex": 13
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3826899095,
+            "tagComponent": {
+                "tag": "primitive 14"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 226124506,
+                "submeshIndex": 0,
+                "primitiveIndex": 14
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3276478695,
+            "tagComponent": {
+                "tag": "primitive 15"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 2279934916,
+                "submeshIndex": 0,
+                "primitiveIndex": 15
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 1340004202,
+            "tagComponent": {
+                "tag": "primitive 16"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 1979706725,
+                "submeshIndex": 0,
+                "primitiveIndex": 16
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3487325538,
+            "tagComponent": {
+                "tag": "primitive 17"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 226124506,
+                "submeshIndex": 0,
+                "primitiveIndex": 17
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 1246417287,
+            "tagComponent": {
+                "tag": "primitive 18"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 1979706725,
+                "submeshIndex": 0,
+                "primitiveIndex": 18
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 13779945,
+            "tagComponent": {
+                "tag": "primitive 19"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 226124506,
+                "submeshIndex": 0,
+                "primitiveIndex": 19
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3928966739,
+            "tagComponent": {
+                "tag": "primitive 2"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 3411035640,
+                "submeshIndex": 0,
+                "primitiveIndex": 2
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 2013574024,
+            "tagComponent": {
+                "tag": "primitive 20"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 1979706725,
+                "submeshIndex": 0,
+                "primitiveIndex": 20
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3024984497,
+            "tagComponent": {
+                "tag": "primitive 21"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 226124506,
+                "submeshIndex": 0,
+                "primitiveIndex": 21
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 2482523721,
+            "tagComponent": {
+                "tag": "primitive 22"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 1979706725,
+                "submeshIndex": 0,
+                "primitiveIndex": 22
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 742657720,
+            "tagComponent": {
+                "tag": "primitive 23"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 226124506,
+                "submeshIndex": 0,
+                "primitiveIndex": 23
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3130297933,
+            "tagComponent": {
+                "tag": "primitive 24"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 1979706725,
+                "submeshIndex": 0,
+                "primitiveIndex": 24
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 1830952779,
+            "tagComponent": {
+                "tag": "primitive 25"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 226124506,
+                "submeshIndex": 0,
+                "primitiveIndex": 25
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3028489204,
+            "tagComponent": {
+                "tag": "primitive 26"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 1979706725,
+                "submeshIndex": 0,
+                "primitiveIndex": 26
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 2316604614,
+            "tagComponent": {
+                "tag": "primitive 27"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 226124506,
+                "submeshIndex": 0,
+                "primitiveIndex": 27
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 1895322270,
+            "tagComponent": {
+                "tag": "primitive 28"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 1979706725,
+                "submeshIndex": 0,
+                "primitiveIndex": 28
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 1126342546,
+            "tagComponent": {
+                "tag": "primitive 29"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 226124506,
+                "submeshIndex": 0,
+                "primitiveIndex": 29
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 4137104517,
+            "tagComponent": {
+                "tag": "primitive 3"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 1021637020,
+                "submeshIndex": 0,
+                "primitiveIndex": 3
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 589133569,
+            "tagComponent": {
+                "tag": "primitive 30"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 1979706725,
+                "submeshIndex": 0,
+                "primitiveIndex": 30
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 2022121749,
+            "tagComponent": {
+                "tag": "primitive 31"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 226124506,
+                "submeshIndex": 0,
+                "primitiveIndex": 31
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 2772833166,
+            "tagComponent": {
+                "tag": "primitive 32"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 1979706725,
+                "submeshIndex": 0,
+                "primitiveIndex": 32
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 1684778821,
+            "tagComponent": {
+                "tag": "primitive 33"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 226124506,
+                "submeshIndex": 0,
+                "primitiveIndex": 33
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 364165334,
+            "tagComponent": {
+                "tag": "primitive 34"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 1979706725,
+                "submeshIndex": 0,
+                "primitiveIndex": 34
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 227994600,
+            "tagComponent": {
+                "tag": "primitive 35"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 2279934916,
+                "submeshIndex": 0,
+                "primitiveIndex": 35
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 327213382,
+            "tagComponent": {
+                "tag": "primitive 36"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 1979706725,
+                "submeshIndex": 0,
+                "primitiveIndex": 36
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3539725110,
+            "tagComponent": {
+                "tag": "primitive 37"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 2279934916,
+                "submeshIndex": 0,
+                "primitiveIndex": 37
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 2374709102,
+            "tagComponent": {
+                "tag": "primitive 38"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 1052443553,
+                "submeshIndex": 0,
+                "primitiveIndex": 38
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3028132580,
+            "tagComponent": {
+                "tag": "primitive 39"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 2279934916,
+                "submeshIndex": 0,
+                "primitiveIndex": 39
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 2030652476,
+            "tagComponent": {
+                "tag": "primitive 4"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 2279934916,
+                "submeshIndex": 0,
+                "primitiveIndex": 4
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 936325206,
+            "tagComponent": {
+                "tag": "primitive 40"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 1052443553,
+                "submeshIndex": 0,
+                "primitiveIndex": 40
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3667984180,
+            "tagComponent": {
+                "tag": "primitive 41"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 2279934916,
+                "submeshIndex": 0,
+                "primitiveIndex": 41
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 2225344507,
+            "tagComponent": {
+                "tag": "primitive 42"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 1052443553,
+                "submeshIndex": 0,
+                "primitiveIndex": 42
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3019641659,
+            "tagComponent": {
+                "tag": "primitive 43"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 2279934916,
+                "submeshIndex": 0,
+                "primitiveIndex": 43
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3357170386,
+            "tagComponent": {
+                "tag": "primitive 44"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 1287422074,
+                "submeshIndex": 0,
+                "primitiveIndex": 44
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 2398056953,
+            "tagComponent": {
+                "tag": "primitive 45"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 2279934916,
+                "submeshIndex": 0,
+                "primitiveIndex": 45
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 1497061925,
+            "tagComponent": {
+                "tag": "primitive 46"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 853124471,
+                "submeshIndex": 0,
+                "primitiveIndex": 46
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 1050847135,
+            "tagComponent": {
+                "tag": "primitive 47"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 26835769,
+                "submeshIndex": 0,
+                "primitiveIndex": 47
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 4192772465,
+            "tagComponent": {
+                "tag": "primitive 48"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 1979706725,
+                "submeshIndex": 0,
+                "primitiveIndex": 48
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 482796162,
+            "tagComponent": {
+                "tag": "primitive 49"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 4038659422,
+                "submeshIndex": 0,
+                "primitiveIndex": 49
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3434476507,
+            "tagComponent": {
+                "tag": "primitive 5"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 1979706725,
+                "submeshIndex": 0,
+                "primitiveIndex": 5
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 2363378376,
+            "tagComponent": {
+                "tag": "primitive 50"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 164269971,
+                "submeshIndex": 0,
+                "primitiveIndex": 50
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3865742281,
+            "tagComponent": {
+                "tag": "primitive 51"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 2279934916,
+                "submeshIndex": 0,
+                "primitiveIndex": 51
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 1214611517,
+            "tagComponent": {
+                "tag": "primitive 52"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 3411909566,
+                "submeshIndex": 0,
+                "primitiveIndex": 52
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 1812681597,
+            "tagComponent": {
+                "tag": "primitive 53"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 1010621630,
+                "submeshIndex": 0,
+                "primitiveIndex": 53
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 442190791,
+            "tagComponent": {
+                "tag": "primitive 54"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 1216619162,
+                "submeshIndex": 0,
+                "primitiveIndex": 54
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 4008454155,
+            "tagComponent": {
+                "tag": "primitive 55"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 2879181014,
+                "submeshIndex": 0,
+                "primitiveIndex": 55
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 2097150058,
+            "tagComponent": {
+                "tag": "primitive 56"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 2288448877,
+                "submeshIndex": 0,
+                "primitiveIndex": 56
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 2299873507,
+            "tagComponent": {
+                "tag": "primitive 57"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 1216619162,
+                "submeshIndex": 0,
+                "primitiveIndex": 57
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 2271687465,
+            "tagComponent": {
+                "tag": "primitive 58"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 2879181014,
+                "submeshIndex": 0,
+                "primitiveIndex": 58
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 65341464,
+            "tagComponent": {
+                "tag": "primitive 59"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 1216619162,
+                "submeshIndex": 0,
+                "primitiveIndex": 59
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3909834897,
+            "tagComponent": {
+                "tag": "primitive 6"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 226124506,
+                "submeshIndex": 0,
+                "primitiveIndex": 6
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 4191849184,
+            "tagComponent": {
+                "tag": "primitive 60"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 2288448877,
+                "submeshIndex": 0,
+                "primitiveIndex": 60
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 2948027086,
+            "tagComponent": {
+                "tag": "primitive 61"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 2879181014,
+                "submeshIndex": 0,
+                "primitiveIndex": 61
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 1854422935,
+            "tagComponent": {
+                "tag": "primitive 62"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 3411909566,
+                "submeshIndex": 0,
+                "primitiveIndex": 62
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3106072216,
+            "tagComponent": {
+                "tag": "primitive 63"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 908568375,
+                "submeshIndex": 0,
+                "primitiveIndex": 63
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 1248720320,
+            "tagComponent": {
+                "tag": "primitive 64"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 1926196836,
+                "submeshIndex": 0,
+                "primitiveIndex": 64
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 1244979796,
+            "tagComponent": {
+                "tag": "primitive 65"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 2216526477,
+                "submeshIndex": 0,
+                "primitiveIndex": 65
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 4146684032,
+            "tagComponent": {
+                "tag": "primitive 66"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 1926196836,
+                "submeshIndex": 0,
+                "primitiveIndex": 66
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 431322281,
+            "tagComponent": {
+                "tag": "primitive 67"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 2216526477,
+                "submeshIndex": 0,
+                "primitiveIndex": 67
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 126278301,
+            "tagComponent": {
+                "tag": "primitive 68"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 1926196836,
+                "submeshIndex": 0,
+                "primitiveIndex": 68
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 2890856175,
+            "tagComponent": {
+                "tag": "primitive 69"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 908568375,
+                "submeshIndex": 0,
+                "primitiveIndex": 69
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 1168609574,
+            "tagComponent": {
+                "tag": "primitive 7"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 26835769,
+                "submeshIndex": 0,
+                "primitiveIndex": 7
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 2410133932,
+            "tagComponent": {
+                "tag": "primitive 70"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 2216526477,
+                "submeshIndex": 0,
+                "primitiveIndex": 70
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3224547351,
+            "tagComponent": {
+                "tag": "primitive 71"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 1926196836,
+                "submeshIndex": 0,
+                "primitiveIndex": 71
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3783886435,
+            "tagComponent": {
+                "tag": "primitive 72"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 908568375,
+                "submeshIndex": 0,
+                "primitiveIndex": 72
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 2713759167,
+            "tagComponent": {
+                "tag": "primitive 73"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 676997770,
+                "submeshIndex": 0,
+                "primitiveIndex": 73
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 1865842568,
+            "tagComponent": {
+                "tag": "primitive 74"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 3604039914,
+                "submeshIndex": 0,
+                "primitiveIndex": 74
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 2654573634,
+            "tagComponent": {
+                "tag": "primitive 75"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 676997770,
+                "submeshIndex": 0,
+                "primitiveIndex": 75
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 49708649,
+            "tagComponent": {
+                "tag": "primitive 76"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 3604039914,
+                "submeshIndex": 0,
+                "primitiveIndex": 76
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 2546457395,
+            "tagComponent": {
+                "tag": "primitive 77"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 676997770,
+                "submeshIndex": 0,
+                "primitiveIndex": 77
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 1904197916,
+            "tagComponent": {
+                "tag": "primitive 78"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 3604039914,
+                "submeshIndex": 0,
+                "primitiveIndex": 78
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 703609641,
+            "tagComponent": {
+                "tag": "primitive 79"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 676997770,
+                "submeshIndex": 0,
+                "primitiveIndex": 79
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 996602380,
+            "tagComponent": {
+                "tag": "primitive 8"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 1979706725,
+                "submeshIndex": 0,
+                "primitiveIndex": 8
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3646377824,
+            "tagComponent": {
+                "tag": "primitive 80"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 3604039914,
+                "submeshIndex": 0,
+                "primitiveIndex": 80
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 1148703224,
+            "tagComponent": {
+                "tag": "primitive 81"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 746146398,
+                "submeshIndex": 0,
+                "primitiveIndex": 81
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 1578078532,
+            "tagComponent": {
+                "tag": "primitive 82"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 3411035640,
+                "submeshIndex": 0,
+                "primitiveIndex": 82
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 1164892386,
+            "tagComponent": {
+                "tag": "primitive 83"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 746146398,
+                "submeshIndex": 0,
+                "primitiveIndex": 83
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 915519603,
+            "tagComponent": {
+                "tag": "primitive 84"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 3411035640,
+                "submeshIndex": 0,
+                "primitiveIndex": 84
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 2474154769,
+            "tagComponent": {
+                "tag": "primitive 85"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 746146398,
+                "submeshIndex": 0,
+                "primitiveIndex": 85
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 1089254753,
+            "tagComponent": {
+                "tag": "primitive 86"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 3411035640,
+                "submeshIndex": 0,
+                "primitiveIndex": 86
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3745312933,
+            "tagComponent": {
+                "tag": "primitive 87"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 746146398,
+                "submeshIndex": 0,
+                "primitiveIndex": 87
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3414812466,
+            "tagComponent": {
+                "tag": "primitive 88"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 3411035640,
+                "submeshIndex": 0,
+                "primitiveIndex": 88
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 2367372820,
+            "tagComponent": {
+                "tag": "primitive 89"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 746146398,
+                "submeshIndex": 0,
+                "primitiveIndex": 89
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 1726437799,
+            "tagComponent": {
+                "tag": "primitive 9"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 853124471,
+                "submeshIndex": 0,
+                "primitiveIndex": 9
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3815640111,
+            "tagComponent": {
+                "tag": "primitive 90"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 3411035640,
+                "submeshIndex": 0,
+                "primitiveIndex": 90
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 152932245,
+            "tagComponent": {
+                "tag": "primitive 91"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 746146398,
+                "submeshIndex": 0,
+                "primitiveIndex": 91
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 284895580,
+            "tagComponent": {
+                "tag": "primitive 92"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 3411035640,
+                "submeshIndex": 0,
+                "primitiveIndex": 92
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 810310663,
+            "tagComponent": {
+                "tag": "primitive 93"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 746146398,
+                "submeshIndex": 0,
+                "primitiveIndex": 93
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 2594107735,
+            "tagComponent": {
+                "tag": "primitive 94"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 3411035640,
+                "submeshIndex": 0,
+                "primitiveIndex": 94
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 1158161109,
+            "tagComponent": {
+                "tag": "primitive 95"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 742077985,
+                "submeshIndex": 0,
+                "primitiveIndex": 95
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 2320546542,
+            "tagComponent": {
+                "tag": "primitive 96"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 589739203,
+                "submeshIndex": 0,
+                "primitiveIndex": 96
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 2881473046,
+            "tagComponent": {
+                "tag": "primitive 97"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 1021637020,
+                "submeshIndex": 0,
+                "primitiveIndex": 97
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 1626906331,
+            "tagComponent": {
+                "tag": "primitive 98"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 589739203,
+                "submeshIndex": 0,
+                "primitiveIndex": 98
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 156000585,
+            "tagComponent": {
+                "tag": "primitive 99"
+            },
+            "relationshipComponent": {
+                "parent": 2961715692,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 1795386204,
+                "material": 1021637020,
+                "submeshIndex": 0,
+                "primitiveIndex": 99
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        }
+    ]
+}

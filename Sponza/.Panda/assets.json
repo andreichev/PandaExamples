@@ -1,0 +1,2164 @@
+{
+    "assets": [
+        {
+            "id": 26835769,
+            "type": 4,
+            "meta": {
+                "materialPath": "Assets/models/Sponza_material_8_8.mat",
+                "shader": 0
+            }
+        },
+        {
+            "id": 121247285,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/models/6151467286084645207.jpg",
+                "cookedPath": ".Panda/Textures/Assets/models/6151467286084645207.ptex"
+            }
+        },
+        {
+            "id": 129812457,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/models/8114461559286000061.jpg",
+                "cookedPath": ".Panda/Textures/Assets/models/8114461559286000061.ptex"
+            }
+        },
+        {
+            "id": 132527265,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/models/11872827283454512094.jpg",
+                "cookedPath": ".Panda/Textures/Assets/models/11872827283454512094.ptex"
+            }
+        },
+        {
+            "id": 160545236,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/models/8747919177698443163.jpg",
+                "cookedPath": ".Panda/Textures/Assets/models/8747919177698443163.ptex"
+            }
+        },
+        {
+            "id": 164269971,
+            "type": 4,
+            "meta": {
+                "materialPath": "Assets/models/Sponza_material_2_2.mat",
+                "shader": 0
+            }
+        },
+        {
+            "id": 226124506,
+            "type": 4,
+            "meta": {
+                "materialPath": "Assets/models/Sponza_material_7_7.mat",
+                "shader": 0
+            }
+        },
+        {
+            "id": 291460067,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/models/8783994986360286082.jpg",
+                "cookedPath": ".Panda/Textures/Assets/models/8783994986360286082.ptex"
+            }
+        },
+        {
+            "id": 351938067,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/models/15295713303328085182.jpg",
+                "cookedPath": ".Panda/Textures/Assets/models/15295713303328085182.ptex"
+            }
+        },
+        {
+            "id": 485226871,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/models/9916269861720640319.jpg",
+                "cookedPath": ".Panda/Textures/Assets/models/9916269861720640319.ptex"
+            }
+        },
+        {
+            "id": 589739203,
+            "type": 4,
+            "meta": {
+                "materialPath": "Assets/models/Sponza_material_23_23.mat",
+                "shader": 0
+            }
+        },
+        {
+            "id": 641196437,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/models/6772804448157695701.jpg",
+                "cookedPath": ".Panda/Textures/Assets/models/6772804448157695701.ptex"
+            }
+        },
+        {
+            "id": 676997770,
+            "type": 4,
+            "meta": {
+                "materialPath": "Assets/models/Sponza_material_20_20.mat",
+                "shader": 0
+            }
+        },
+        {
+            "id": 742077985,
+            "type": 4,
+            "meta": {
+                "materialPath": "Assets/models/Sponza_material_22_22.mat",
+                "shader": 0
+            }
+        },
+        {
+            "id": 746146398,
+            "type": 4,
+            "meta": {
+                "materialPath": "Assets/models/Sponza_material_3_3.mat",
+                "shader": 0
+            }
+        },
+        {
+            "id": 807550418,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/models/2185409758123873465.jpg",
+                "cookedPath": ".Panda/Textures/Assets/models/2185409758123873465.ptex"
+            }
+        },
+        {
+            "id": 832817502,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/models/3455394979645218238.jpg",
+                "cookedPath": ".Panda/Textures/Assets/models/3455394979645218238.ptex"
+            }
+        },
+        {
+            "id": 853124471,
+            "type": 4,
+            "meta": {
+                "materialPath": "Assets/models/Sponza_material_9_9.mat",
+                "shader": 0
+            }
+        },
+        {
+            "id": 873648946,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/models/13824894030729245199.jpg",
+                "cookedPath": ".Panda/Textures/Assets/models/13824894030729245199.ptex"
+            }
+        },
+        {
+            "id": 908568375,
+            "type": 4,
+            "meta": {
+                "materialPath": "Assets/models/Sponza_material_17_17.mat",
+                "shader": 0
+            }
+        },
+        {
+            "id": 959617120,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/models/4975155472559461469.jpg",
+                "cookedPath": ".Panda/Textures/Assets/models/4975155472559461469.ptex"
+            }
+        },
+        {
+            "id": 987879952,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/models/2051777328469649772.jpg",
+                "cookedPath": ".Panda/Textures/Assets/models/2051777328469649772.ptex"
+            }
+        },
+        {
+            "id": 1010621630,
+            "type": 4,
+            "meta": {
+                "materialPath": "Assets/models/Sponza_material_0_0.mat",
+                "shader": 0
+            }
+        },
+        {
+            "id": 1021637020,
+            "type": 4,
+            "meta": {
+                "materialPath": "Assets/models/Sponza_material_4_4.mat",
+                "shader": 0
+            }
+        },
+        {
+            "id": 1041551413,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/models/2411100444841994089.jpg",
+                "cookedPath": ".Panda/Textures/Assets/models/2411100444841994089.ptex"
+            }
+        },
+        {
+            "id": 1052443553,
+            "type": 4,
+            "meta": {
+                "materialPath": "Assets/models/Sponza_material_11_11.mat",
+                "shader": 0
+            }
+        },
+        {
+            "id": 1192638589,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/models/14267839433702832875.jpg",
+                "cookedPath": ".Panda/Textures/Assets/models/14267839433702832875.ptex"
+            }
+        },
+        {
+            "id": 1216619162,
+            "type": 4,
+            "meta": {
+                "materialPath": "Assets/models/Sponza_material_14_14.mat",
+                "shader": 0
+            }
+        },
+        {
+            "id": 1232055663,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/models/3827035219084910048.jpg",
+                "cookedPath": ".Panda/Textures/Assets/models/3827035219084910048.ptex"
+            }
+        },
+        {
+            "id": 1266036928,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/models/15722799267630235092.jpg",
+                "cookedPath": ".Panda/Textures/Assets/models/15722799267630235092.ptex"
+            }
+        },
+        {
+            "id": 1272041250,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/models/7056944414013900257.jpg",
+                "cookedPath": ".Panda/Textures/Assets/models/7056944414013900257.ptex"
+            }
+        },
+        {
+            "id": 1287422074,
+            "type": 4,
+            "meta": {
+                "materialPath": "Assets/models/Sponza_material_10_10.mat",
+                "shader": 0
+            }
+        },
+        {
+            "id": 1340712822,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/models/2775690330959970771.jpg",
+                "cookedPath": ".Panda/Textures/Assets/models/2775690330959970771.ptex"
+            }
+        },
+        {
+            "id": 1391437897,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/models/6593109234861095314.jpg",
+                "cookedPath": ".Panda/Textures/Assets/models/6593109234861095314.ptex"
+            }
+        },
+        {
+            "id": 1439898690,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/models/4871783166746854860.jpg",
+                "cookedPath": ".Panda/Textures/Assets/models/4871783166746854860.ptex"
+            }
+        },
+        {
+            "id": 1672217776,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/models/7268504077753552595.jpg",
+                "cookedPath": ".Panda/Textures/Assets/models/7268504077753552595.ptex"
+            }
+        },
+        {
+            "id": 1687698183,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/models/466164707995436622.jpg",
+                "cookedPath": ".Panda/Textures/Assets/models/466164707995436622.ptex"
+            }
+        },
+        {
+            "id": 1723426599,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/models/715093869573992647.jpg",
+                "cookedPath": ".Panda/Textures/Assets/models/715093869573992647.ptex"
+            }
+        },
+        {
+            "id": 1730374989,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/models/14170708867020035030.jpg",
+                "cookedPath": ".Panda/Textures/Assets/models/14170708867020035030.ptex"
+            }
+        },
+        {
+            "id": 1757288403,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/models/5792855332885324923.jpg",
+                "cookedPath": ".Panda/Textures/Assets/models/5792855332885324923.ptex"
+            }
+        },
+        {
+            "id": 1759989339,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/models/13196865903111448057.jpg",
+                "cookedPath": ".Panda/Textures/Assets/models/13196865903111448057.ptex"
+            }
+        },
+        {
+            "id": 1768634356,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/models/8750083169368950601.jpg",
+                "cookedPath": ".Panda/Textures/Assets/models/8750083169368950601.ptex"
+            }
+        },
+        {
+            "id": 1784365599,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/models/14650633544276105767.jpg",
+                "cookedPath": ".Panda/Textures/Assets/models/14650633544276105767.ptex"
+            }
+        },
+        {
+            "id": 1795386204,
+            "type": 6,
+            "meta": {
+                "gltfPath": "Assets/models/Sponza.gltf",
+                "materials": [
+                    {
+                        "name": "material_0",
+                        "baseColorTexturePath": "Assets/models/5061699253647017043.png",
+                        "baseColorFactor": {
+                            "x": 0.5879999995231628,
+                            "y": 0.5879999995231628,
+                            "z": 0.5879999995231628,
+                            "w": 1.0
+                        },
+                        "metallicRoughnessTexturePath": "Assets/models/11872827283454512094.jpg",
+                        "metallicFactor": 1.0,
+                        "roughnessFactor": 1.0,
+                        "normalTexturePath": "Assets/models/8773302468495022225.jpg",
+                        "normalScale": 1.0,
+                        "occlusionTexturePath": "",
+                        "occlusionStrength": 0.0,
+                        "emissiveTexturePath": "",
+                        "emissiveFactor": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0,
+                            "w": 1.0
+                        },
+                        "alphaMode": 1,
+                        "alphaCutoff": 0.5,
+                        "doubleSided": true
+                    },
+                    {
+                        "name": "material_1",
+                        "baseColorTexturePath": "Assets/models/7268504077753552595.jpg",
+                        "baseColorFactor": {
+                            "x": 0.5879999995231628,
+                            "y": 0.5879999995231628,
+                            "z": 0.5879999995231628,
+                            "w": 1.0
+                        },
+                        "metallicRoughnessTexturePath": "Assets/models/8503262930880235456.jpg",
+                        "metallicFactor": 1.0,
+                        "roughnessFactor": 1.0,
+                        "normalTexturePath": "Assets/models/4477655471536070370.jpg",
+                        "normalScale": 1.0,
+                        "occlusionTexturePath": "",
+                        "occlusionStrength": 0.0,
+                        "emissiveTexturePath": "",
+                        "emissiveFactor": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0,
+                            "w": 1.0
+                        },
+                        "alphaMode": 0,
+                        "alphaCutoff": 0.5,
+                        "doubleSided": false
+                    },
+                    {
+                        "name": "material_2",
+                        "baseColorTexturePath": "Assets/models/white.png",
+                        "baseColorFactor": {
+                            "x": 0.5879999995231628,
+                            "y": 0.5879999995231628,
+                            "z": 0.5879999995231628,
+                            "w": 1.0
+                        },
+                        "metallicRoughnessTexturePath": "",
+                        "metallicFactor": 0.0,
+                        "roughnessFactor": 1.0,
+                        "normalTexturePath": "",
+                        "normalScale": 0.0,
+                        "occlusionTexturePath": "",
+                        "occlusionStrength": 0.0,
+                        "emissiveTexturePath": "",
+                        "emissiveFactor": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0,
+                            "w": 1.0
+                        },
+                        "alphaMode": 0,
+                        "alphaCutoff": 0.5,
+                        "doubleSided": false
+                    },
+                    {
+                        "name": "material_3",
+                        "baseColorTexturePath": "Assets/models/8006627369776289000.png",
+                        "baseColorFactor": {
+                            "x": 0.5879999995231628,
+                            "y": 0.5879999995231628,
+                            "z": 0.5879999995231628,
+                            "w": 1.0
+                        },
+                        "metallicRoughnessTexturePath": "Assets/models/715093869573992647.jpg",
+                        "metallicFactor": 1.0,
+                        "roughnessFactor": 1.0,
+                        "normalTexturePath": "Assets/models/12501374198249454378.jpg",
+                        "normalScale": 1.0,
+                        "occlusionTexturePath": "",
+                        "occlusionStrength": 0.0,
+                        "emissiveTexturePath": "",
+                        "emissiveFactor": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0,
+                            "w": 1.0
+                        },
+                        "alphaMode": 1,
+                        "alphaCutoff": 0.5,
+                        "doubleSided": true
+                    },
+                    {
+                        "name": "material_4",
+                        "baseColorTexturePath": "Assets/models/8750083169368950601.jpg",
+                        "baseColorFactor": {
+                            "x": 0.5879999995231628,
+                            "y": 0.5879999995231628,
+                            "z": 0.5879999995231628,
+                            "w": 1.0
+                        },
+                        "metallicRoughnessTexturePath": "Assets/models/16885566240357350108.jpg",
+                        "metallicFactor": 1.0,
+                        "roughnessFactor": 1.0,
+                        "normalTexturePath": "Assets/models/13982482287905699490.jpg",
+                        "normalScale": 1.0,
+                        "occlusionTexturePath": "",
+                        "occlusionStrength": 0.0,
+                        "emissiveTexturePath": "",
+                        "emissiveFactor": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0,
+                            "w": 1.0
+                        },
+                        "alphaMode": 0,
+                        "alphaCutoff": 0.5,
+                        "doubleSided": false
+                    },
+                    {
+                        "name": "material_5",
+                        "baseColorTexturePath": "Assets/models/5792855332885324923.jpg",
+                        "baseColorFactor": {
+                            "x": 0.5879999995231628,
+                            "y": 0.5879999995231628,
+                            "z": 0.5879999995231628,
+                            "w": 1.0
+                        },
+                        "metallicRoughnessTexturePath": "Assets/models/11968150294050148237.jpg",
+                        "metallicFactor": 1.0,
+                        "roughnessFactor": 1.0,
+                        "normalTexturePath": "Assets/models/16299174074766089871.jpg",
+                        "normalScale": 1.0,
+                        "occlusionTexturePath": "",
+                        "occlusionStrength": 0.0,
+                        "emissiveTexturePath": "",
+                        "emissiveFactor": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0,
+                            "w": 1.0
+                        },
+                        "alphaMode": 0,
+                        "alphaCutoff": 0.5,
+                        "doubleSided": false
+                    },
+                    {
+                        "name": "material_6",
+                        "baseColorTexturePath": "Assets/models/14650633544276105767.jpg",
+                        "baseColorFactor": {
+                            "x": 0.5879999995231628,
+                            "y": 0.5879999995231628,
+                            "z": 0.5879999995231628,
+                            "w": 1.0
+                        },
+                        "metallicRoughnessTexturePath": "Assets/models/4871783166746854860.jpg",
+                        "metallicFactor": 1.0,
+                        "roughnessFactor": 1.0,
+                        "normalTexturePath": "Assets/models/2051777328469649772.jpg",
+                        "normalScale": 1.0,
+                        "occlusionTexturePath": "",
+                        "occlusionStrength": 0.0,
+                        "emissiveTexturePath": "",
+                        "emissiveFactor": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0,
+                            "w": 1.0
+                        },
+                        "alphaMode": 0,
+                        "alphaCutoff": 0.5,
+                        "doubleSided": false
+                    },
+                    {
+                        "name": "material_7",
+                        "baseColorTexturePath": "Assets/models/15295713303328085182.jpg",
+                        "baseColorFactor": {
+                            "x": 0.5879999995231628,
+                            "y": 0.5879999995231628,
+                            "z": 0.5879999995231628,
+                            "w": 1.0
+                        },
+                        "metallicRoughnessTexturePath": "Assets/models/9916269861720640319.jpg",
+                        "metallicFactor": 1.0,
+                        "roughnessFactor": 1.0,
+                        "normalTexturePath": "Assets/models/10388182081421875623.jpg",
+                        "normalScale": 1.0,
+                        "occlusionTexturePath": "",
+                        "occlusionStrength": 0.0,
+                        "emissiveTexturePath": "",
+                        "emissiveFactor": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0,
+                            "w": 1.0
+                        },
+                        "alphaMode": 0,
+                        "alphaCutoff": 0.5,
+                        "doubleSided": false
+                    },
+                    {
+                        "name": "material_8",
+                        "baseColorTexturePath": "Assets/models/6047387724914829168.jpg",
+                        "baseColorFactor": {
+                            "x": 0.5879999995231628,
+                            "y": 0.5879999995231628,
+                            "z": 0.5879999995231628,
+                            "w": 1.0
+                        },
+                        "metallicRoughnessTexturePath": "Assets/models/8051790464816141987.jpg",
+                        "metallicFactor": 1.0,
+                        "roughnessFactor": 1.0,
+                        "normalTexturePath": "Assets/models/15722799267630235092.jpg",
+                        "normalScale": 1.0,
+                        "occlusionTexturePath": "",
+                        "occlusionStrength": 0.0,
+                        "emissiveTexturePath": "",
+                        "emissiveFactor": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0,
+                            "w": 1.0
+                        },
+                        "alphaMode": 0,
+                        "alphaCutoff": 0.5,
+                        "doubleSided": false
+                    },
+                    {
+                        "name": "material_9",
+                        "baseColorTexturePath": "Assets/models/5823059166183034438.jpg",
+                        "baseColorFactor": {
+                            "x": 0.5879999995231628,
+                            "y": 0.5879999995231628,
+                            "z": 0.5879999995231628,
+                            "w": 1.0
+                        },
+                        "metallicRoughnessTexturePath": "Assets/models/13824894030729245199.jpg",
+                        "metallicFactor": 1.0,
+                        "roughnessFactor": 1.0,
+                        "normalTexturePath": "Assets/models/14267839433702832875.jpg",
+                        "normalScale": 1.0,
+                        "occlusionTexturePath": "",
+                        "occlusionStrength": 0.0,
+                        "emissiveTexturePath": "",
+                        "emissiveFactor": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0,
+                            "w": 1.0
+                        },
+                        "alphaMode": 0,
+                        "alphaCutoff": 0.5,
+                        "doubleSided": false
+                    },
+                    {
+                        "name": "material_10",
+                        "baseColorTexturePath": "Assets/models/7441062115984513793.jpg",
+                        "baseColorFactor": {
+                            "x": 0.5879999995231628,
+                            "y": 0.5879999995231628,
+                            "z": 0.5879999995231628,
+                            "w": 1.0
+                        },
+                        "metallicRoughnessTexturePath": "Assets/models/8114461559286000061.jpg",
+                        "metallicFactor": 1.0,
+                        "roughnessFactor": 1.0,
+                        "normalTexturePath": "Assets/models/6667038893015345571.jpg",
+                        "normalScale": 1.0,
+                        "occlusionTexturePath": "",
+                        "occlusionStrength": 0.0,
+                        "emissiveTexturePath": "",
+                        "emissiveFactor": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0,
+                            "w": 1.0
+                        },
+                        "alphaMode": 0,
+                        "alphaCutoff": 0.5,
+                        "doubleSided": false
+                    },
+                    {
+                        "name": "material_11",
+                        "baseColorTexturePath": "Assets/models/11490520546946913238.jpg",
+                        "baseColorFactor": {
+                            "x": 0.5879999995231628,
+                            "y": 0.5879999995231628,
+                            "z": 0.5879999995231628,
+                            "w": 1.0
+                        },
+                        "metallicRoughnessTexturePath": "Assets/models/3455394979645218238.jpg",
+                        "metallicFactor": 1.0,
+                        "roughnessFactor": 1.0,
+                        "normalTexturePath": "Assets/models/3628158980083700836.jpg",
+                        "normalScale": 1.0,
+                        "occlusionTexturePath": "",
+                        "occlusionStrength": 0.0,
+                        "emissiveTexturePath": "",
+                        "emissiveFactor": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0,
+                            "w": 1.0
+                        },
+                        "alphaMode": 0,
+                        "alphaCutoff": 0.5,
+                        "doubleSided": false
+                    },
+                    {
+                        "name": "material_12",
+                        "baseColorTexturePath": "Assets/models/6151467286084645207.jpg",
+                        "baseColorFactor": {
+                            "x": 0.5879999995231628,
+                            "y": 0.5879999995231628,
+                            "z": 0.5879999995231628,
+                            "w": 1.0
+                        },
+                        "metallicRoughnessTexturePath": "Assets/models/8783994986360286082.jpg",
+                        "metallicFactor": 1.0,
+                        "roughnessFactor": 1.0,
+                        "normalTexturePath": "Assets/models/7645212358685992005.jpg",
+                        "normalScale": 1.0,
+                        "occlusionTexturePath": "",
+                        "occlusionStrength": 0.0,
+                        "emissiveTexturePath": "",
+                        "emissiveFactor": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0,
+                            "w": 1.0
+                        },
+                        "alphaMode": 0,
+                        "alphaCutoff": 0.5,
+                        "doubleSided": false
+                    },
+                    {
+                        "name": "material_13",
+                        "baseColorTexturePath": "Assets/models/4975155472559461469.jpg",
+                        "baseColorFactor": {
+                            "x": 0.5879999995231628,
+                            "y": 0.5879999995231628,
+                            "z": 0.5879999995231628,
+                            "w": 1.0
+                        },
+                        "metallicRoughnessTexturePath": "Assets/models/3371964815757888145.jpg",
+                        "metallicFactor": 1.0,
+                        "roughnessFactor": 1.0,
+                        "normalTexturePath": "Assets/models/2299742237651021498.jpg",
+                        "normalScale": 1.0,
+                        "occlusionTexturePath": "",
+                        "occlusionStrength": 0.0,
+                        "emissiveTexturePath": "",
+                        "emissiveFactor": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0,
+                            "w": 1.0
+                        },
+                        "alphaMode": 0,
+                        "alphaCutoff": 0.5,
+                        "doubleSided": false
+                    },
+                    {
+                        "name": "material_14",
+                        "baseColorTexturePath": "Assets/models/4675343432951571524.jpg",
+                        "baseColorFactor": {
+                            "x": 0.5879999995231628,
+                            "y": 0.5879999995231628,
+                            "z": 0.5879999995231628,
+                            "w": 1.0
+                        },
+                        "metallicRoughnessTexturePath": "Assets/models/7815564343179553343.jpg",
+                        "metallicFactor": 1.0,
+                        "roughnessFactor": 1.0,
+                        "normalTexturePath": "Assets/models/7056944414013900257.jpg",
+                        "normalScale": 1.0,
+                        "occlusionTexturePath": "",
+                        "occlusionStrength": 0.0,
+                        "emissiveTexturePath": "",
+                        "emissiveFactor": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0,
+                            "w": 1.0
+                        },
+                        "alphaMode": 0,
+                        "alphaCutoff": 0.5,
+                        "doubleSided": false
+                    },
+                    {
+                        "name": "material_15",
+                        "baseColorTexturePath": "Assets/models/2775690330959970771.jpg",
+                        "baseColorFactor": {
+                            "x": 0.5879999995231628,
+                            "y": 0.5879999995231628,
+                            "z": 0.5879999995231628,
+                            "w": 1.0
+                        },
+                        "metallicRoughnessTexturePath": "Assets/models/7815564343179553343.jpg",
+                        "metallicFactor": 1.0,
+                        "roughnessFactor": 1.0,
+                        "normalTexturePath": "Assets/models/2374361008830720677.jpg",
+                        "normalScale": 1.0,
+                        "occlusionTexturePath": "",
+                        "occlusionStrength": 0.0,
+                        "emissiveTexturePath": "",
+                        "emissiveFactor": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0,
+                            "w": 1.0
+                        },
+                        "alphaMode": 0,
+                        "alphaCutoff": 0.5,
+                        "doubleSided": false
+                    },
+                    {
+                        "name": "material_16",
+                        "baseColorTexturePath": "Assets/models/2185409758123873465.jpg",
+                        "baseColorFactor": {
+                            "x": 0.5879999995231628,
+                            "y": 0.5879999995231628,
+                            "z": 0.5879999995231628,
+                            "w": 1.0
+                        },
+                        "metallicRoughnessTexturePath": "Assets/models/7815564343179553343.jpg",
+                        "metallicFactor": 1.0,
+                        "roughnessFactor": 1.0,
+                        "normalTexturePath": "Assets/models/332936164838540657.jpg",
+                        "normalScale": 1.0,
+                        "occlusionTexturePath": "",
+                        "occlusionStrength": 0.0,
+                        "emissiveTexturePath": "",
+                        "emissiveFactor": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0,
+                            "w": 1.0
+                        },
+                        "alphaMode": 0,
+                        "alphaCutoff": 0.5,
+                        "doubleSided": false
+                    },
+                    {
+                        "name": "material_17",
+                        "baseColorTexturePath": "Assets/models/17876391417123941155.jpg",
+                        "baseColorFactor": {
+                            "x": 0.5879999995231628,
+                            "y": 0.5879999995231628,
+                            "z": 0.5879999995231628,
+                            "w": 1.0
+                        },
+                        "metallicRoughnessTexturePath": "Assets/models/466164707995436622.jpg",
+                        "metallicFactor": 1.0,
+                        "roughnessFactor": 1.0,
+                        "normalTexturePath": "Assets/models/6593109234861095314.jpg",
+                        "normalScale": 1.0,
+                        "occlusionTexturePath": "",
+                        "occlusionStrength": 0.0,
+                        "emissiveTexturePath": "",
+                        "emissiveFactor": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0,
+                            "w": 1.0
+                        },
+                        "alphaMode": 0,
+                        "alphaCutoff": 0.5,
+                        "doubleSided": false
+                    },
+                    {
+                        "name": "material_18",
+                        "baseColorTexturePath": "Assets/models/11474523244911310074.jpg",
+                        "baseColorFactor": {
+                            "x": 0.5879999995231628,
+                            "y": 0.5879999995231628,
+                            "z": 0.5879999995231628,
+                            "w": 1.0
+                        },
+                        "metallicRoughnessTexturePath": "Assets/models/466164707995436622.jpg",
+                        "metallicFactor": 1.0,
+                        "roughnessFactor": 1.0,
+                        "normalTexturePath": "Assets/models/4601176305987539675.jpg",
+                        "normalScale": 1.0,
+                        "occlusionTexturePath": "",
+                        "occlusionStrength": 0.0,
+                        "emissiveTexturePath": "",
+                        "emissiveFactor": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0,
+                            "w": 1.0
+                        },
+                        "alphaMode": 0,
+                        "alphaCutoff": 0.5,
+                        "doubleSided": false
+                    },
+                    {
+                        "name": "material_19",
+                        "baseColorTexturePath": "Assets/models/9288698199695299068.jpg",
+                        "baseColorFactor": {
+                            "x": 0.5879999995231628,
+                            "y": 0.5879999995231628,
+                            "z": 0.5879999995231628,
+                            "w": 1.0
+                        },
+                        "metallicRoughnessTexturePath": "Assets/models/466164707995436622.jpg",
+                        "metallicFactor": 1.0,
+                        "roughnessFactor": 1.0,
+                        "normalTexturePath": "Assets/models/4910669866631290573.jpg",
+                        "normalScale": 1.0,
+                        "occlusionTexturePath": "",
+                        "occlusionStrength": 0.0,
+                        "emissiveTexturePath": "",
+                        "emissiveFactor": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0,
+                            "w": 1.0
+                        },
+                        "alphaMode": 0,
+                        "alphaCutoff": 0.5,
+                        "doubleSided": false
+                    },
+                    {
+                        "name": "material_20",
+                        "baseColorTexturePath": "Assets/models/16275776544635328252.png",
+                        "baseColorFactor": {
+                            "x": 0.5879999995231628,
+                            "y": 0.5879999995231628,
+                            "z": 0.5879999995231628,
+                            "w": 1.0
+                        },
+                        "metallicRoughnessTexturePath": "Assets/models/1219024358953944284.jpg",
+                        "metallicFactor": 1.0,
+                        "roughnessFactor": 1.0,
+                        "normalTexturePath": "Assets/models/14170708867020035030.jpg",
+                        "normalScale": 1.0,
+                        "occlusionTexturePath": "",
+                        "occlusionStrength": 0.0,
+                        "emissiveTexturePath": "",
+                        "emissiveFactor": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0,
+                            "w": 1.0
+                        },
+                        "alphaMode": 1,
+                        "alphaCutoff": 0.5,
+                        "doubleSided": true
+                    },
+                    {
+                        "name": "material_21",
+                        "baseColorTexturePath": "Assets/models/755318871556304029.jpg",
+                        "baseColorFactor": {
+                            "x": 0.5879999995231628,
+                            "y": 0.5879999995231628,
+                            "z": 0.5879999995231628,
+                            "w": 1.0
+                        },
+                        "metallicRoughnessTexturePath": "Assets/models/2411100444841994089.jpg",
+                        "metallicFactor": 1.0,
+                        "roughnessFactor": 1.0,
+                        "normalTexturePath": "Assets/models/3827035219084910048.jpg",
+                        "normalScale": 1.0,
+                        "occlusionTexturePath": "",
+                        "occlusionStrength": 0.0,
+                        "emissiveTexturePath": "",
+                        "emissiveFactor": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0,
+                            "w": 1.0
+                        },
+                        "alphaMode": 0,
+                        "alphaCutoff": 0.5,
+                        "doubleSided": false
+                    },
+                    {
+                        "name": "material_22",
+                        "baseColorTexturePath": "Assets/models/8481240838833932244.jpg",
+                        "baseColorFactor": {
+                            "x": 0.5879999995231628,
+                            "y": 0.5879999995231628,
+                            "z": 0.5879999995231628,
+                            "w": 1.0
+                        },
+                        "metallicRoughnessTexturePath": "Assets/models/17556969131407844942.jpg",
+                        "metallicFactor": 1.0,
+                        "roughnessFactor": 1.0,
+                        "normalTexturePath": "Assets/models/10381718147657362067.jpg",
+                        "normalScale": 1.0,
+                        "occlusionTexturePath": "",
+                        "occlusionStrength": 0.0,
+                        "emissiveTexturePath": "",
+                        "emissiveFactor": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0,
+                            "w": 1.0
+                        },
+                        "alphaMode": 0,
+                        "alphaCutoff": 0.5,
+                        "doubleSided": false
+                    },
+                    {
+                        "name": "material_23",
+                        "baseColorTexturePath": "Assets/models/6772804448157695701.jpg",
+                        "baseColorFactor": {
+                            "x": 0.5879999995231628,
+                            "y": 0.5879999995231628,
+                            "z": 0.5879999995231628,
+                            "w": 1.0
+                        },
+                        "metallicRoughnessTexturePath": "Assets/models/13196865903111448057.jpg",
+                        "metallicFactor": 1.0,
+                        "roughnessFactor": 1.0,
+                        "normalTexturePath": "Assets/models/759203620573749278.jpg",
+                        "normalScale": 1.0,
+                        "occlusionTexturePath": "",
+                        "occlusionStrength": 0.0,
+                        "emissiveTexturePath": "",
+                        "emissiveFactor": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0,
+                            "w": 1.0
+                        },
+                        "alphaMode": 0,
+                        "alphaCutoff": 0.5,
+                        "doubleSided": false
+                    },
+                    {
+                        "name": "material_24",
+                        "baseColorTexturePath": "Assets/models/2969916736137545357.jpg",
+                        "baseColorFactor": {
+                            "x": 0.5879999995231628,
+                            "y": 0.5879999995231628,
+                            "z": 0.5879999995231628,
+                            "w": 1.0
+                        },
+                        "metallicRoughnessTexturePath": "Assets/models/8747919177698443163.jpg",
+                        "metallicFactor": 1.0,
+                        "roughnessFactor": 1.0,
+                        "normalTexturePath": "Assets/models/14118779221266351425.jpg",
+                        "normalScale": 1.0,
+                        "occlusionTexturePath": "",
+                        "occlusionStrength": 0.0,
+                        "emissiveTexturePath": "",
+                        "emissiveFactor": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0,
+                            "w": 1.0
+                        },
+                        "alphaMode": 0,
+                        "alphaCutoff": 0.5,
+                        "doubleSided": false
+                    }
+                ],
+                "primitiveMaterials": [
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 0,
+                        "materialIndex": 0
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 1,
+                        "materialIndex": 3
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 2,
+                        "materialIndex": 1
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 3,
+                        "materialIndex": 4
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 4,
+                        "materialIndex": 5
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 5,
+                        "materialIndex": 6
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 6,
+                        "materialIndex": 7
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 7,
+                        "materialIndex": 8
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 8,
+                        "materialIndex": 6
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 9,
+                        "materialIndex": 9
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 10,
+                        "materialIndex": 7
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 11,
+                        "materialIndex": 6
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 12,
+                        "materialIndex": 10
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 13,
+                        "materialIndex": 5
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 14,
+                        "materialIndex": 7
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 15,
+                        "materialIndex": 5
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 16,
+                        "materialIndex": 6
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 17,
+                        "materialIndex": 7
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 18,
+                        "materialIndex": 6
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 19,
+                        "materialIndex": 7
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 20,
+                        "materialIndex": 6
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 21,
+                        "materialIndex": 7
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 22,
+                        "materialIndex": 6
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 23,
+                        "materialIndex": 7
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 24,
+                        "materialIndex": 6
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 25,
+                        "materialIndex": 7
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 26,
+                        "materialIndex": 6
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 27,
+                        "materialIndex": 7
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 28,
+                        "materialIndex": 6
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 29,
+                        "materialIndex": 7
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 30,
+                        "materialIndex": 6
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 31,
+                        "materialIndex": 7
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 32,
+                        "materialIndex": 6
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 33,
+                        "materialIndex": 7
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 34,
+                        "materialIndex": 6
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 35,
+                        "materialIndex": 5
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 36,
+                        "materialIndex": 6
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 37,
+                        "materialIndex": 5
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 38,
+                        "materialIndex": 11
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 39,
+                        "materialIndex": 5
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 40,
+                        "materialIndex": 11
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 41,
+                        "materialIndex": 5
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 42,
+                        "materialIndex": 11
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 43,
+                        "materialIndex": 5
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 44,
+                        "materialIndex": 10
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 45,
+                        "materialIndex": 5
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 46,
+                        "materialIndex": 9
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 47,
+                        "materialIndex": 8
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 48,
+                        "materialIndex": 6
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 49,
+                        "materialIndex": 12
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 50,
+                        "materialIndex": 2
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 51,
+                        "materialIndex": 5
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 52,
+                        "materialIndex": 13
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 53,
+                        "materialIndex": 0
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 54,
+                        "materialIndex": 14
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 55,
+                        "materialIndex": 15
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 56,
+                        "materialIndex": 16
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 57,
+                        "materialIndex": 14
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 58,
+                        "materialIndex": 15
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 59,
+                        "materialIndex": 14
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 60,
+                        "materialIndex": 16
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 61,
+                        "materialIndex": 15
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 62,
+                        "materialIndex": 13
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 63,
+                        "materialIndex": 17
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 64,
+                        "materialIndex": 18
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 65,
+                        "materialIndex": 19
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 66,
+                        "materialIndex": 18
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 67,
+                        "materialIndex": 19
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 68,
+                        "materialIndex": 18
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 69,
+                        "materialIndex": 17
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 70,
+                        "materialIndex": 19
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 71,
+                        "materialIndex": 18
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 72,
+                        "materialIndex": 17
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 73,
+                        "materialIndex": 20
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 74,
+                        "materialIndex": 21
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 75,
+                        "materialIndex": 20
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 76,
+                        "materialIndex": 21
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 77,
+                        "materialIndex": 20
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 78,
+                        "materialIndex": 21
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 79,
+                        "materialIndex": 20
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 80,
+                        "materialIndex": 21
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 81,
+                        "materialIndex": 3
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 82,
+                        "materialIndex": 1
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 83,
+                        "materialIndex": 3
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 84,
+                        "materialIndex": 1
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 85,
+                        "materialIndex": 3
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 86,
+                        "materialIndex": 1
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 87,
+                        "materialIndex": 3
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 88,
+                        "materialIndex": 1
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 89,
+                        "materialIndex": 3
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 90,
+                        "materialIndex": 1
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 91,
+                        "materialIndex": 3
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 92,
+                        "materialIndex": 1
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 93,
+                        "materialIndex": 3
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 94,
+                        "materialIndex": 1
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 95,
+                        "materialIndex": 22
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 96,
+                        "materialIndex": 23
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 97,
+                        "materialIndex": 4
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 98,
+                        "materialIndex": 23
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 99,
+                        "materialIndex": 4
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 100,
+                        "materialIndex": 5
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 101,
+                        "materialIndex": 24
+                    },
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 102,
+                        "materialIndex": 5
+                    }
+                ]
+            }
+        },
+        {
+            "id": 1926196836,
+            "type": 4,
+            "meta": {
+                "materialPath": "Assets/models/Sponza_material_18_18.mat",
+                "shader": 0
+            }
+        },
+        {
+            "id": 1979706725,
+            "type": 4,
+            "meta": {
+                "materialPath": "Assets/models/Sponza_material_6_6.mat",
+                "shader": 0
+            }
+        },
+        {
+            "id": 2030365067,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/models/10388182081421875623.jpg",
+                "cookedPath": ".Panda/Textures/Assets/models/10388182081421875623.ptex"
+            }
+        },
+        {
+            "id": 2041418001,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/models/4601176305987539675.jpg",
+                "cookedPath": ".Panda/Textures/Assets/models/4601176305987539675.ptex"
+            }
+        },
+        {
+            "id": 2052788394,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/models/1219024358953944284.jpg",
+                "cookedPath": ".Panda/Textures/Assets/models/1219024358953944284.ptex"
+            }
+        },
+        {
+            "id": 2078558210,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/models/white.png",
+                "cookedPath": ".Panda/Textures/Assets/models/white.ptex"
+            }
+        },
+        {
+            "id": 2082840938,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/models/16275776544635328252.png",
+                "cookedPath": ".Panda/Textures/Assets/models/16275776544635328252.ptex"
+            }
+        },
+        {
+            "id": 2216526477,
+            "type": 4,
+            "meta": {
+                "materialPath": "Assets/models/Sponza_material_19_19.mat",
+                "shader": 0
+            }
+        },
+        {
+            "id": 2250276448,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/models/4477655471536070370.jpg",
+                "cookedPath": ".Panda/Textures/Assets/models/4477655471536070370.ptex"
+            }
+        },
+        {
+            "id": 2279934916,
+            "type": 4,
+            "meta": {
+                "materialPath": "Assets/models/Sponza_material_5_5.mat",
+                "shader": 0
+            }
+        },
+        {
+            "id": 2288448877,
+            "type": 4,
+            "meta": {
+                "materialPath": "Assets/models/Sponza_material_16_16.mat",
+                "shader": 0
+            }
+        },
+        {
+            "id": 2312375517,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/models/11490520546946913238.jpg",
+                "cookedPath": ".Panda/Textures/Assets/models/11490520546946913238.ptex"
+            }
+        },
+        {
+            "id": 2443750941,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/models/2969916736137545357.jpg",
+                "cookedPath": ".Panda/Textures/Assets/models/2969916736137545357.ptex"
+            }
+        },
+        {
+            "id": 2470579704,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/models/2374361008830720677.jpg",
+                "cookedPath": ".Panda/Textures/Assets/models/2374361008830720677.ptex"
+            }
+        },
+        {
+            "id": 2527034462,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/models/11968150294050148237.jpg",
+                "cookedPath": ".Panda/Textures/Assets/models/11968150294050148237.ptex"
+            }
+        },
+        {
+            "id": 2597896629,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/models/10381718147657362067.jpg",
+                "cookedPath": ".Panda/Textures/Assets/models/10381718147657362067.ptex"
+            }
+        },
+        {
+            "id": 2844096827,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/models/755318871556304029.jpg",
+                "cookedPath": ".Panda/Textures/Assets/models/755318871556304029.ptex"
+            }
+        },
+        {
+            "id": 2862477860,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/models/3371964815757888145.jpg",
+                "cookedPath": ".Panda/Textures/Assets/models/3371964815757888145.ptex"
+            }
+        },
+        {
+            "id": 2872589214,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/models/3628158980083700836.jpg",
+                "cookedPath": ".Panda/Textures/Assets/models/3628158980083700836.ptex"
+            }
+        },
+        {
+            "id": 2879181014,
+            "type": 4,
+            "meta": {
+                "materialPath": "Assets/models/Sponza_material_15_15.mat",
+                "shader": 0
+            }
+        },
+        {
+            "id": 2888926784,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/models/9288698199695299068.jpg",
+                "cookedPath": ".Panda/Textures/Assets/models/9288698199695299068.ptex"
+            }
+        },
+        {
+            "id": 2905478827,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/models/5823059166183034438.jpg",
+                "cookedPath": ".Panda/Textures/Assets/models/5823059166183034438.ptex"
+            }
+        },
+        {
+            "id": 2921384603,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/models/6047387724914829168.jpg",
+                "cookedPath": ".Panda/Textures/Assets/models/6047387724914829168.ptex"
+            }
+        },
+        {
+            "id": 2931728932,
+            "type": 4,
+            "meta": {
+                "materialPath": "Assets/models/Sponza_material_24_24.mat",
+                "shader": 0
+            }
+        },
+        {
+            "id": 2955077596,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/models/8503262930880235456.jpg",
+                "cookedPath": ".Panda/Textures/Assets/models/8503262930880235456.ptex"
+            }
+        },
+        {
+            "id": 2988039883,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/models/12501374198249454378.jpg",
+                "cookedPath": ".Panda/Textures/Assets/models/12501374198249454378.ptex"
+            }
+        },
+        {
+            "id": 3067531142,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/models/8051790464816141987.jpg",
+                "cookedPath": ".Panda/Textures/Assets/models/8051790464816141987.ptex"
+            }
+        },
+        {
+            "id": 3113873160,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/models/2299742237651021498.jpg",
+                "cookedPath": ".Panda/Textures/Assets/models/2299742237651021498.ptex"
+            }
+        },
+        {
+            "id": 3153698884,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/models/7815564343179553343.jpg",
+                "cookedPath": ".Panda/Textures/Assets/models/7815564343179553343.ptex"
+            }
+        },
+        {
+            "id": 3204425605,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/models/13982482287905699490.jpg",
+                "cookedPath": ".Panda/Textures/Assets/models/13982482287905699490.ptex"
+            }
+        },
+        {
+            "id": 3267281681,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/models/4675343432951571524.jpg",
+                "cookedPath": ".Panda/Textures/Assets/models/4675343432951571524.ptex"
+            }
+        },
+        {
+            "id": 3367082302,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/models/8773302468495022225.jpg",
+                "cookedPath": ".Panda/Textures/Assets/models/8773302468495022225.ptex"
+            }
+        },
+        {
+            "id": 3411035640,
+            "type": 4,
+            "meta": {
+                "materialPath": "Assets/models/Sponza_material_1_1.mat",
+                "shader": 0
+            }
+        },
+        {
+            "id": 3411909566,
+            "type": 4,
+            "meta": {
+                "materialPath": "Assets/models/Sponza_material_13_13.mat",
+                "shader": 0
+            }
+        },
+        {
+            "id": 3428047340,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/models/8006627369776289000.png",
+                "cookedPath": ".Panda/Textures/Assets/models/8006627369776289000.ptex"
+            }
+        },
+        {
+            "id": 3469628682,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/models/11474523244911310074.jpg",
+                "cookedPath": ".Panda/Textures/Assets/models/11474523244911310074.ptex"
+            }
+        },
+        {
+            "id": 3506974275,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/models/5061699253647017043.png",
+                "cookedPath": ".Panda/Textures/Assets/models/5061699253647017043.ptex"
+            }
+        },
+        {
+            "id": 3563880951,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/models/4910669866631290573.jpg",
+                "cookedPath": ".Panda/Textures/Assets/models/4910669866631290573.ptex"
+            }
+        },
+        {
+            "id": 3604039914,
+            "type": 4,
+            "meta": {
+                "materialPath": "Assets/models/Sponza_material_21_21.mat",
+                "shader": 0
+            }
+        },
+        {
+            "id": 3644906666,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/models/332936164838540657.jpg",
+                "cookedPath": ".Panda/Textures/Assets/models/332936164838540657.ptex"
+            }
+        },
+        {
+            "id": 3652087955,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/models/6667038893015345571.jpg",
+                "cookedPath": ".Panda/Textures/Assets/models/6667038893015345571.ptex"
+            }
+        },
+        {
+            "id": 3703292633,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/models/7441062115984513793.jpg",
+                "cookedPath": ".Panda/Textures/Assets/models/7441062115984513793.ptex"
+            }
+        },
+        {
+            "id": 3735737828,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/models/14118779221266351425.jpg",
+                "cookedPath": ".Panda/Textures/Assets/models/14118779221266351425.ptex"
+            }
+        },
+        {
+            "id": 3771565076,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/models/759203620573749278.jpg",
+                "cookedPath": ".Panda/Textures/Assets/models/759203620573749278.ptex"
+            }
+        },
+        {
+            "id": 3829314622,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/models/16299174074766089871.jpg",
+                "cookedPath": ".Panda/Textures/Assets/models/16299174074766089871.ptex"
+            }
+        },
+        {
+            "id": 3908336485,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/models/7645212358685992005.jpg",
+                "cookedPath": ".Panda/Textures/Assets/models/7645212358685992005.ptex"
+            }
+        },
+        {
+            "id": 3916698382,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/models/16885566240357350108.jpg",
+                "cookedPath": ".Panda/Textures/Assets/models/16885566240357350108.ptex"
+            }
+        },
+        {
+            "id": 3965755397,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/models/17556969131407844942.jpg",
+                "cookedPath": ".Panda/Textures/Assets/models/17556969131407844942.ptex"
+            }
+        },
+        {
+            "id": 4038659422,
+            "type": 4,
+            "meta": {
+                "materialPath": "Assets/models/Sponza_material_12_12.mat",
+                "shader": 0
+            }
+        },
+        {
+            "id": 4049107662,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/models/17876391417123941155.jpg",
+                "cookedPath": ".Panda/Textures/Assets/models/17876391417123941155.ptex"
+            }
+        },
+        {
+            "id": 4211810349,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/models/8481240838833932244.jpg",
+                "cookedPath": ".Panda/Textures/Assets/models/8481240838833932244.ptex"
+            }
+        }
+    ]
+}

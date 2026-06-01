@@ -4,6 +4,7 @@
 #include <Bamboo/Input.hpp>
 #include <Bamboo/Math.hpp>
 #include <Bamboo/ApplicationAPI.hpp>
+#include <Bamboo/WorldAPI.hpp>
 
 void Player::start() {
     defaultPos = TransformComponentAPI::getPosition(getEntity());
@@ -14,12 +15,15 @@ void Player::start() {
     setState(State::REST);
     groundContacts = 0;
     mobileJumpWasDown = false;
+    resetCooldown = 0.f;
     currentAnimation = &restAnim;
 }
 
 void Player::beginCollisionTouch(EntityHandle other) {
     if (strCmp("Ground", EntityAPI::getName(other), 6) == 0) {
         groundContacts++;
+    } else if (resetCooldown <= 0.f && strCmp("Enemy", EntityAPI::getName(other), 5) == 0) {
+        resetToStart();
     }
 }
 
@@ -32,12 +36,19 @@ void Player::endCollisionTouch(EntityHandle other) {
 }
 
 void Player::beginSensorOverlap(EntityHandle sensor) {
-    if (strCmp("DiedZone", EntityAPI::getName(sensor), 8) == 0) {
-        TransformComponentAPI::setPosition(getEntity(), defaultPos);
+    if (resetCooldown <= 0.f && strCmp("DiedZone", EntityAPI::getName(sensor), 8) == 0) {
+        resetToStart();
+    } else if (strCmp("LevelExit", EntityAPI::getName(sensor), 9) == 0 && nextLevel.isValid()) {
+        WorldAPI::load(nextLevel);
     }
 }
 
 void Player::update(float dt) {
+    if (resetCooldown > 0.f) {
+        resetCooldown -= dt;
+        if (resetCooldown < 0.f) { resetCooldown = 0.f; }
+    }
+
     auto velocity = Rigidbody2DComponentAPI::getLinearVelocity(getEntity());
     MobileInput mobileInput = readMobileInput();
 
@@ -99,6 +110,13 @@ Player::MobileInput Player::readMobileInput() {
     result.jumpPressed = jumpDown && !mobileJumpWasDown;
     mobileJumpWasDown = jumpDown;
     return result;
+}
+
+void Player::resetToStart() {
+    TransformComponentAPI::setPosition(getEntity(), defaultPos);
+    Rigidbody2DComponentAPI::setLinearVelocity(getEntity(), {});
+    groundContacts = 0;
+    resetCooldown = 1.0f;
 }
 
 void Player::setDirection(Player::Direction newDirection) {
