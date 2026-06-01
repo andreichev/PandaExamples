@@ -47,7 +47,12 @@
                 }
             },
             "scriptListComponent": {
-                "scripts": []
+                "scripts": [
+                    {
+                        "name": "HelloUIDemo",
+                        "scriptFields": []
+                    }
+                ]
             }
         },
         {
