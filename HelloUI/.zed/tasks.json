@@ -1,0 +1,109 @@
+[
+  {
+    "label": "Configure HelloUI Debug",
+    "command": "./Scripts/HelloUI/scripts/configure_scripts.sh",
+    "args": [
+      "debug"
+    ],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "use_new_terminal": false,
+    "allow_concurrent_runs": false,
+    "reveal": "always",
+    "hide": "never"
+  },
+  {
+    "label": "Build HelloUI Debug",
+    "command": "./Scripts/HelloUI/scripts/build_scripts.sh",
+    "args": [
+      "build-debug"
+    ],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "use_new_terminal": false,
+    "allow_concurrent_runs": false,
+    "reveal": "always",
+    "hide": "never"
+  },
+  {
+    "label": "Configure HelloUI Release",
+    "command": "./Scripts/HelloUI/scripts/configure_scripts.sh",
+    "args": [
+      "release"
+    ],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "use_new_terminal": false,
+    "allow_concurrent_runs": false,
+    "reveal": "always",
+    "hide": "never"
+  },
+  {
+    "label": "Build HelloUI Release",
+    "command": "./Scripts/HelloUI/scripts/build_scripts.sh",
+    "args": [
+      "build-release"
+    ],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "use_new_terminal": false,
+    "allow_concurrent_runs": false,
+    "reveal": "always",
+    "hide": "never"
+  },
+  {
+    "label": "Open Export Xcode macOS",
+    "command": "./Scripts/HelloUI/scripts/open_export_xcode.sh",
+    "args": [
+      "macos-debug"
+    ],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "use_new_terminal": true,
+    "allow_concurrent_runs": false,
+    "reveal": "always",
+    "hide": "never"
+  },
+  {
+    "label": "Open Export Xcode iOS Simulator",
+    "command": "./Scripts/HelloUI/scripts/open_export_xcode.sh",
+    "args": [
+      "ios-debug"
+    ],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "use_new_terminal": true,
+    "allow_concurrent_runs": false,
+    "reveal": "always",
+    "hide": "never"
+  },
+  {
+    "label": "Open Export Xcode iOS Device",
+    "command": "./Scripts/HelloUI/scripts/open_export_xcode.sh",
+    "args": [
+      "ios-device-debug"
+    ],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "use_new_terminal": true,
+    "allow_concurrent_runs": false,
+    "reveal": "always",
+    "hide": "never"
+  },
+  {
+    "label": "Open Export Visual Studio Windows",
+    "command": "./Scripts/HelloUI/scripts/open_export_visual_studio.sh",
+    "args": [
+      "windows-debug"
+    ],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "use_new_terminal": true,
+    "allow_concurrent_runs": false,
+    "reveal": "always",
+    "hide": "never"
+  },
+  {
+    "label": "Format Code",
+    "command": "./Scripts/HelloUI/scripts/format_code.sh",
+    "args": [
+    ],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "use_new_terminal": false,
+    "allow_concurrent_runs": false,
+    "reveal": "always",
+    "hide": "never"
+  }
+]

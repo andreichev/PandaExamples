@@ -1,0 +1,167 @@
+{
+  "version": 6,
+  "configurePresets": [
+    {
+      "name": "macos-debug",
+      "displayName": "macOS Debug",
+      "generator": "Xcode",
+      "binaryDir": "${sourceDir}/build/macos-debug",
+      "cacheVariables": {
+        "PandaSDK_DIR": "/Users/m.andreichev/Projects/Panda/bin/PandaSDK/lib/cmake/PandaSDK"
+      }
+    },
+    {
+      "name": "macos-release",
+      "displayName": "macOS Release",
+      "generator": "Xcode",
+      "binaryDir": "${sourceDir}/build/macos-release",
+      "cacheVariables": {
+        "PandaSDK_DIR": "/Users/m.andreichev/Projects/Panda/bin/PandaSDK/lib/cmake/PandaSDK"
+      }
+    },
+    {
+      "name": "ios-debug",
+      "displayName": "iOS Simulator Debug",
+      "generator": "Xcode",
+      "binaryDir": "${sourceDir}/build/ios-debug",
+      "cacheVariables": {
+        "PandaSDK_DIR": "/Users/m.andreichev/Projects/Panda/bin/PandaSDK/lib/cmake/PandaSDK",
+        "CMAKE_SYSTEM_NAME": "iOS",
+        "CMAKE_OSX_SYSROOT": "iphonesimulator",
+        "CMAKE_OSX_ARCHITECTURES": "arm64",
+        "CMAKE_OSX_DEPLOYMENT_TARGET": "14.0"
+      }
+    },
+    {
+      "name": "ios-release",
+      "displayName": "iOS Simulator Release",
+      "generator": "Xcode",
+      "binaryDir": "${sourceDir}/build/ios-release",
+      "cacheVariables": {
+        "PandaSDK_DIR": "/Users/m.andreichev/Projects/Panda/bin/PandaSDK/lib/cmake/PandaSDK",
+        "CMAKE_SYSTEM_NAME": "iOS",
+        "CMAKE_OSX_SYSROOT": "iphonesimulator",
+        "CMAKE_OSX_ARCHITECTURES": "arm64",
+        "CMAKE_OSX_DEPLOYMENT_TARGET": "14.0"
+      }
+    },
+    {
+      "name": "ios-device-debug",
+      "displayName": "iOS Device Debug",
+      "generator": "Xcode",
+      "binaryDir": "${sourceDir}/build/ios-device-debug",
+      "cacheVariables": {
+        "PandaSDK_DIR": "/Users/m.andreichev/Projects/Panda/bin/PandaSDK/lib/cmake/PandaSDK",
+        "CMAKE_SYSTEM_NAME": "iOS",
+        "CMAKE_OSX_SYSROOT": "iphoneos",
+        "CMAKE_OSX_ARCHITECTURES": "arm64",
+        "CMAKE_OSX_DEPLOYMENT_TARGET": "14.0"
+      }
+    },
+    {
+      "name": "ios-device-release",
+      "displayName": "iOS Device Release",
+      "generator": "Xcode",
+      "binaryDir": "${sourceDir}/build/ios-device-release",
+      "cacheVariables": {
+        "PandaSDK_DIR": "/Users/m.andreichev/Projects/Panda/bin/PandaSDK/lib/cmake/PandaSDK",
+        "CMAKE_SYSTEM_NAME": "iOS",
+        "CMAKE_OSX_SYSROOT": "iphoneos",
+        "CMAKE_OSX_ARCHITECTURES": "arm64",
+        "CMAKE_OSX_DEPLOYMENT_TARGET": "14.0"
+      }
+    },
+    {
+      "name": "linux-debug",
+      "displayName": "Linux Debug",
+      "generator": "Unix Makefiles",
+      "binaryDir": "${sourceDir}/build/linux-debug",
+      "cacheVariables": {
+        "PandaSDK_DIR": "/Users/m.andreichev/Projects/Panda/bin/PandaSDK/lib/cmake/PandaSDK",
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "linux-release",
+      "displayName": "Linux Release",
+      "generator": "Unix Makefiles",
+      "binaryDir": "${sourceDir}/build/linux-release",
+      "cacheVariables": {
+        "PandaSDK_DIR": "/Users/m.andreichev/Projects/Panda/bin/PandaSDK/lib/cmake/PandaSDK",
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "windows-debug",
+      "displayName": "Windows Debug",
+      "generator": "Visual Studio 17 2022",
+      "architecture": "x64",
+      "binaryDir": "${sourceDir}/build/windows-debug",
+      "cacheVariables": {
+        "PandaSDK_DIR": "/Users/m.andreichev/Projects/Panda/bin/PandaSDK/lib/cmake/PandaSDK"
+      }
+    },
+    {
+      "name": "windows-release",
+      "displayName": "Windows Release",
+      "generator": "Visual Studio 17 2022",
+      "architecture": "x64",
+      "binaryDir": "${sourceDir}/build/windows-release",
+      "cacheVariables": {
+        "PandaSDK_DIR": "/Users/m.andreichev/Projects/Panda/bin/PandaSDK/lib/cmake/PandaSDK"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "macos-debug",
+      "configurePreset": "macos-debug",
+      "configuration": "Debug"
+    },
+    {
+      "name": "macos-release",
+      "configurePreset": "macos-release",
+      "configuration": "Release"
+    },
+    {
+      "name": "ios-debug",
+      "configurePreset": "ios-debug",
+      "configuration": "Debug"
+    },
+    {
+      "name": "ios-release",
+      "configurePreset": "ios-release",
+      "configuration": "Release"
+    },
+    {
+      "name": "ios-device-debug",
+      "configurePreset": "ios-device-debug",
+      "configuration": "Debug"
+    },
+    {
+      "name": "ios-device-release",
+      "configurePreset": "ios-device-release",
+      "configuration": "Release"
+    },
+    {
+      "name": "linux-debug",
+      "configurePreset": "linux-debug",
+      "configuration": "Debug"
+    },
+    {
+      "name": "linux-release",
+      "configurePreset": "linux-release",
+      "configuration": "Release"
+    },
+    {
+      "name": "windows-debug",
+      "configurePreset": "windows-debug",
+      "configuration": "Debug"
+    },
+    {
+      "name": "windows-release",
+      "configurePreset": "windows-release",
+      "configuration": "Release"
+    }
+  ]
+}

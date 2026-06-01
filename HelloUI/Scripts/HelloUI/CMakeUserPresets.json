@@ -1,0 +1,37 @@
+{
+  "version": 6,
+  "configurePresets": [
+    {
+      "name": "debug",
+      "binaryDir": "${sourceDir}/cmake-build-debug",
+      "cacheVariables": {
+        "PandaSDK_DIR": "/Users/m.andreichev/Projects/Panda/bin/PandaSDK/lib/cmake/PandaSDK",
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+      }
+    },
+    {
+      "name": "release",
+      "binaryDir": "${sourceDir}/cmake-build-release",
+      "cacheVariables": {
+        "PandaSDK_DIR": "/Users/m.andreichev/Projects/Panda/bin/PandaSDK/lib/cmake/PandaSDK",
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "build-debug",
+      "configurePreset": "debug",
+      "targets": ["HelloUI"],
+      "jobs": 8
+    },
+    {
+      "name": "build-release",
+      "configurePreset": "release",
+      "targets": ["HelloUI"],
+      "jobs": 8
+    }
+  ]
+}
