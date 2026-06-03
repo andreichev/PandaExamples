@@ -28,7 +28,7 @@ private:
     void updateSelection();
     std::shared_ptr<PandaUI::Panel> makeCrosshair();
     std::shared_ptr<PandaUI::Panel> makeHotbar();
-    std::shared_ptr<PandaUI::Panel> makeSlot(const BlockSlot &slot, int index);
+    std::shared_ptr<PandaUI::Button> makeSlot(const BlockSlot &slot, int index);
     void applySlotStyle(size_t index, bool selected);
 
     static constexpr std::array<BlockSlot, 8> BLOCKS = {
@@ -45,7 +45,7 @@ private:
     PandaUI::Window m_window;
     Shared<BlocksCreation> m_blocksCreation;
     std::shared_ptr<PandaUI::Panel> m_root;
-    std::array<std::shared_ptr<PandaUI::Panel>, BLOCKS.size()> m_slots;
+    std::array<std::shared_ptr<PandaUI::Button>, BLOCKS.size()> m_slots;
     VoxelType m_displayedSelection = VoxelType::NOTHING;
 };
 

@@ -116,8 +116,8 @@ std::shared_ptr<PandaUI::Panel> NeverlandHUD::makeHotbar() {
     return hotbar;
 }
 
-std::shared_ptr<PandaUI::Panel> NeverlandHUD::makeSlot(const BlockSlot &slot, int index) {
-    auto view = std::make_shared<PandaUI::Panel>();
+std::shared_ptr<PandaUI::Button> NeverlandHUD::makeSlot(const BlockSlot &slot, int index) {
+    auto view = std::make_shared<PandaUI::Button>("");
     view->setClipsToBounds(true);
     view->style().setWidth(PandaUI::Length::points(48.f));
     view->style().setHeight(PandaUI::Length::points(52.f));
@@ -126,8 +126,16 @@ std::shared_ptr<PandaUI::Panel> NeverlandHUD::makeSlot(const BlockSlot &slot, in
     view->style().setFlexDirection(PandaUI::FlexDirection::Column);
     view->style().setAlignItems(PandaUI::Align::Center);
     view->style().setJustifyContent(PandaUI::Justify::Center);
-    view->setBackgroundColor(PandaUI::Color(0x2D3440DD));
+    view->setNormalColor(PandaUI::Color(0x2D3440DD));
+    view->setHoveredColor(PandaUI::Color(0x414A59EE));
+    view->setPressedColor(PandaUI::Color(0xF0F4FFFF));
     view->setOpacity(0.82f);
+    view->getTitleLabel()->setHidden(true);
+    view->setOnClick([this, type = slot.type](PandaUI::Button &) {
+        if (!m_blocksCreation) { return; }
+        m_blocksCreation->setSelectedBlock(type);
+        updateSelection();
+    });
 
     auto color = std::make_shared<PandaUI::Panel>();
     color->setBackgroundColor(PandaUI::Color(slot.color));
@@ -154,6 +162,8 @@ void NeverlandHUD::updateSelection() {
 
 void NeverlandHUD::applySlotStyle(size_t index, bool selected) {
     if (!m_slots[index]) { return; }
-    m_slots[index]->setBackgroundColor(selected ? PandaUI::Color(0xF0F4FFFF) : PandaUI::Color(0x2D3440DD));
+    m_slots[index]->setNormalColor(selected ? PandaUI::Color(0xF0F4FFFF) : PandaUI::Color(0x2D3440DD));
+    m_slots[index]->setHoveredColor(selected ? PandaUI::Color(0xFFFFFFFF) : PandaUI::Color(0x414A59EE));
+    m_slots[index]->setPressedColor(PandaUI::Color(0xF0F4FFFF));
     m_slots[index]->setOpacity(selected ? 1.f : 0.82f);
 }

@@ -1,0 +1,17 @@
+#include "UI/MainHeaderView.hpp"
+
+#include "UI/HelloUIStyle.hpp"
+
+namespace HelloUI {
+
+MainHeaderView::MainHeaderView() {
+    setBackgroundColor(PandaUI::Color(0x151B27FF));
+    style().setHeight(PandaUI::Length::points(116.f));
+    style().setFlexDirection(PandaUI::FlexDirection::Column);
+    style().setPadding(18.f);
+    style().setGap(8.f);
+    addSubview(makeLabel("HelloUI", 28.f, PandaUI::Color(0xFFFFFFFF)));
+    addSubview(makeLabel("Test project for retained-mode PandaUI from game scripting.", 15.f, PandaUI::Color(0x95A3BAFF)));
+}
+
+} // namespace HelloUI
