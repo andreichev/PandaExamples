@@ -15,11 +15,16 @@ public:
 
     void start() override;
     void update(float deltaTime) override;
+    VoxelType getSelectedBlock() const {
+        return m_selectedBlock;
+    }
+    void setSelectedBlock(VoxelType type);
 
 private:
     Vec3 getPosition();
     void setVoxel(int x, int y, int z, VoxelType type);
     void updateChunk(int chunkIndexX, int chunkIndexY, int chunkIndexZ);
+    void updateSelectedBlock();
 
     Shared<CameraMove> m_cameraMove;
     VoxelType m_selectedBlock;

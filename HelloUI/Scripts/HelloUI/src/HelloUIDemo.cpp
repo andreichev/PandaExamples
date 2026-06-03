@@ -3,7 +3,6 @@
 #include <Bamboo/Logger.hpp>
 
 #include <string>
-#include <utility>
 
 namespace {
 
@@ -19,11 +18,21 @@ std::shared_ptr<PandaUI::Label> makeLabel(const char *text, float size, PandaUI:
     return label;
 }
 
-std::shared_ptr<PandaUI::Panel> makeSpacer(float height) {
-    auto spacer = std::make_shared<PandaUI::Panel>();
-    spacer->setBackgroundColor(transparent());
+std::shared_ptr<PandaUI::Spacer> makeFixedSpacer(float height) {
+    auto spacer = std::make_shared<PandaUI::Spacer>();
+    spacer->style().setFlexGrow(0.f);
     spacer->style().setHeight(PandaUI::Length::points(height));
     return spacer;
+}
+
+std::shared_ptr<PandaUI::Panel> makeContentRoot(float padding) {
+    auto content = std::make_shared<PandaUI::Panel>();
+    content->setBackgroundColor(transparent());
+    content->style().setWidth(PandaUI::Length::percent(100.f));
+    content->style().setFlexGrow(1.f);
+    content->style().setFlexDirection(PandaUI::FlexDirection::Column);
+    content->style().setPadding(padding);
+    return content;
 }
 
 } // namespace
@@ -76,8 +85,13 @@ void HelloUIDemo::buildMainWindow() {
     auto root = std::make_shared<PandaUI::Panel>();
     root->setBackgroundColor(PandaUI::Color(0x0D111AFF));
     root->style().setFlexDirection(PandaUI::FlexDirection::Column);
-    root->style().setPadding(24.f);
-    root->style().setGap(16.f);
+
+    auto safeArea = std::make_shared<PandaUI::SafeAreaView>();
+    safeArea->setBackgroundColor(transparent());
+    safeArea->style().setFlexDirection(PandaUI::FlexDirection::Column);
+
+    auto content = makeContentRoot(24.f);
+    content->style().setGap(16.f);
 
     auto header = std::make_shared<PandaUI::Panel>();
     header->setBackgroundColor(PandaUI::Color(0x151B27FF));
@@ -87,7 +101,7 @@ void HelloUIDemo::buildMainWindow() {
     header->style().setGap(8.f);
     header->addSubview(makeLabel("HelloUI", 28.f, PandaUI::Color(0xFFFFFFFF)));
     header->addSubview(makeLabel("Test project for retained-mode PandaUI from game scripting.", 15.f, PandaUI::Color(0x95A3BAFF)));
-    root->addSubview(header);
+    content->addSubview(header);
 
     auto toolbar = std::make_shared<PandaUI::Panel>();
     toolbar->setBackgroundColor(transparent());
@@ -108,10 +122,10 @@ void HelloUIDemo::buildMainWindow() {
 
     toolbar->addSubview(clickButton);
     toolbar->addSubview(windowButton);
-    root->addSubview(toolbar);
+    content->addSubview(toolbar);
 
     m_statusLabel = makeLabel("Button clicks: 0", 16.f, PandaUI::Color(0xDCE4F2FF));
-    root->addSubview(m_statusLabel);
+    content->addSubview(m_statusLabel);
 
     auto scroll = std::make_shared<PandaUI::ScrollView>();
     scroll->style().setFlexGrow(1.f);
@@ -123,9 +137,11 @@ void HelloUIDemo::buildMainWindow() {
     scroll->addContentSubview(makeCard("ScrollView", "This area is scrollable and uses PandaUI bounce/overscroll behavior."));
     scroll->addContentSubview(makeCard("Runtime windows", "The Open window button creates a separate native PandaUI window."));
     scroll->addContentSubview(makeCard("SDK path", "The game script owns PandaUI objects; runtime receives draw data and input events."));
-    scroll->addContentSubview(makeSpacer(64.f));
-    root->addSubview(scroll);
+    scroll->addContentSubview(makeFixedSpacer(64.f));
+    content->addSubview(scroll);
 
+    safeArea->addSubview(content);
+    root->addSubview(safeArea);
     m_mainWindow.setRootView(root);
 }
 
@@ -145,10 +161,15 @@ void HelloUIDemo::openDemoWindow() {
     auto root = std::make_shared<PandaUI::Panel>();
     root->setBackgroundColor(PandaUI::Color(0x111318FF));
     root->style().setFlexDirection(PandaUI::FlexDirection::Column);
-    root->style().setPadding(22.f);
-    root->style().setGap(14.f);
-    root->addSubview(makeLabel("Secondary PandaUI Window", 24.f, PandaUI::Color(0xFFFFFFFF)));
-    root->addSubview(makeLabel("This window is created from a script and rendered by Panda runtime.", 14.f, PandaUI::Color(0xAEB9CCFF)));
+
+    auto safeArea = std::make_shared<PandaUI::SafeAreaView>();
+    safeArea->setBackgroundColor(transparent());
+    safeArea->style().setFlexDirection(PandaUI::FlexDirection::Column);
+
+    auto content = makeContentRoot(22.f);
+    content->style().setGap(14.f);
+    content->addSubview(makeLabel("Secondary PandaUI Window", 24.f, PandaUI::Color(0xFFFFFFFF)));
+    content->addSubview(makeLabel("This window is created from a script and rendered by Panda runtime.", 14.f, PandaUI::Color(0xAEB9CCFF)));
 
     auto row = std::make_shared<PandaUI::Panel>();
     row->setBackgroundColor(transparent());
@@ -161,14 +182,16 @@ void HelloUIDemo::openDemoWindow() {
     for (const auto &child : row->getSubviews()) {
         child->style().setFlexGrow(1.f);
     }
-    root->addSubview(row);
+    content->addSubview(row);
 
     auto closeButton = makeButton("Close", PandaUI::Color(0xE85D75FF));
     closeButton->setOnClick([window](PandaUI::Button &) mutable {
         window.close();
     });
-    root->addSubview(closeButton);
+    content->addSubview(closeButton);
 
+    safeArea->addSubview(content);
+    root->addSubview(safeArea);
     window.setRootView(root);
     m_demoWindows.push_back(window);
 }

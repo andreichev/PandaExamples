@@ -137,6 +137,10 @@
                     {
                         "name": "BlocksCreation",
                         "scriptFields": []
+                    },
+                    {
+                        "name": "NeverlandHUD",
+                        "scriptFields": []
                     }
                 ]
             }
