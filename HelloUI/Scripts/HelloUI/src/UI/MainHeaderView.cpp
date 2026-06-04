@@ -6,7 +6,6 @@ namespace HelloUI {
 
 MainHeaderView::MainHeaderView() {
     setBackgroundColor(PandaUI::Color(0x151B27FF));
-    style().setHeight(PandaUI::Length::points(116.f));
     style().setFlexDirection(PandaUI::FlexDirection::Column);
     style().setPadding(18.f);
     style().setGap(8.f);

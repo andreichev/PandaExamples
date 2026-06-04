@@ -7,7 +7,6 @@ namespace HelloUI {
 
 SecondaryCardsRowView::SecondaryCardsRowView() {
     setBackgroundColor(transparent());
-    style().setHeight(PandaUI::Length::points(120.f));
     style().setFlexDirection(PandaUI::FlexDirection::Row);
     style().setGap(12.f);
 

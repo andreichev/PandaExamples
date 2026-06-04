@@ -8,7 +8,6 @@ namespace HelloUI {
 
 MainToolbarView::MainToolbarView(Action onClick, Action onOpenWindow) {
     setBackgroundColor(transparent());
-    style().setHeight(PandaUI::Length::points(48.f));
     style().setFlexDirection(PandaUI::FlexDirection::Row);
     style().setGap(12.f);
 

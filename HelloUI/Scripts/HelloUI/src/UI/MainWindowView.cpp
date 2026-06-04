@@ -4,6 +4,7 @@
 #include "UI/HelloUIStyle.hpp"
 #include "UI/MainHeaderView.hpp"
 #include "UI/MainToolbarView.hpp"
+#include "UI/ScrollStressSectionView.hpp"
 
 #include <string>
 #include <utility>
@@ -35,7 +36,7 @@ MainWindowView::MainWindowView(Action onClick, Action onOpenWindow) {
 
     m_scrollView->addContentSubview(std::make_shared<DemoCardView>(
         "Layout",
-        "Flex direction, padding, gap, fixed height and grow are active here."
+        "Flex direction, padding, gap, intrinsic height and grow are active here."
     ));
     m_scrollView->addContentSubview(std::make_shared<DemoCardView>(
         "Input",
@@ -53,7 +54,7 @@ MainWindowView::MainWindowView(Action onClick, Action onOpenWindow) {
         "SDK path",
         "The game script owns PandaUI objects; runtime receives draw data and input events."
     ));
-    m_scrollView->addContentSubview(makeFixedSpacer(64.f));
+    m_scrollView->addContentSubview(std::make_shared<ScrollStressSectionView>());
 
     safeArea->addSubview(m_scrollView);
     addSubview(safeArea);

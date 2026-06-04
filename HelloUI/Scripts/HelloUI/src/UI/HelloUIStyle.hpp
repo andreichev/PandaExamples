@@ -13,6 +13,5 @@ inline PandaUI::Color transparent() {
 
 std::shared_ptr<PandaUI::Label> makeLabel(std::string text, float fontSize, PandaUI::Color color);
 std::shared_ptr<PandaUI::Button> makeButton(std::string title, PandaUI::Color color);
-std::shared_ptr<PandaUI::Spacer> makeFixedSpacer(float height);
 
 } // namespace HelloUI
