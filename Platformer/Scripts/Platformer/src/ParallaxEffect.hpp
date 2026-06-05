@@ -13,7 +13,7 @@ using namespace Bamboo;
 class ParallaxEffect  : public Bamboo::Script {
 public:
     void start() override;
-    void update(float dt) override;
+    void lateUpdate(float dt) override;
 
     EntityHandle target;
     float speed;

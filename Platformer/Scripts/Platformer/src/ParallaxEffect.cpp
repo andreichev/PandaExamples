@@ -14,7 +14,8 @@ void ParallaxEffect::start() {
     offsetX = position.x - targetPosition.x;
 }
 
-void ParallaxEffect::update(float dt) {
+void ParallaxEffect::lateUpdate(float dt) {
+    (void)dt;
     Vec3 targetPosition = TransformComponentAPI::getPosition(target);
     Vec3 position = TransformComponentAPI::getPosition(getEntity());
 

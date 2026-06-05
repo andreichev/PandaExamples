@@ -11,7 +11,7 @@ void Camera::start() {
     velocity = {};
 }
 
-void Camera::update(float dt) {
+void Camera::lateUpdate(float dt) {
     if (!target.isValid()) {
         LOG_ERROR("Player not valid");
         return;

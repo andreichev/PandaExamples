@@ -152,3 +152,10 @@ if(PLATFORM_MACOS OR PLATFORM_IOS OR PLATFORM_LINUX OR PLATFORM_WIN32)
         COMMENT "Copying cooked runtime data to app bundle"
     )
 endif()
+
+if(APPLE)
+    add_custom_command(TARGET Platformer POST_BUILD
+        COMMAND /usr/bin/xattr -cr "$<TARGET_BUNDLE_DIR:Platformer>"
+        COMMENT "Removing extended attributes from app bundle"
+    )
+endif()

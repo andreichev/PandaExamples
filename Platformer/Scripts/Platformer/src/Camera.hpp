@@ -13,7 +13,7 @@ using namespace Bamboo;
 class Camera : public Bamboo::Script {
 public:
     void start() override;
-    void update(float dt) override;
+    void lateUpdate(float dt) override;
 
     EntityHandle target;
     PANDA_FIELDS_BEGIN(Camera)

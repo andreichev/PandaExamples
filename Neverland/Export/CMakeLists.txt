@@ -154,6 +154,13 @@ if(PLATFORM_MACOS OR PLATFORM_IOS OR PLATFORM_LINUX OR PLATFORM_WIN32)
     )
 endif()
 
+if(APPLE)
+    add_custom_command(TARGET Neverland POST_BUILD
+        COMMAND /usr/bin/xattr -cr "$<TARGET_BUNDLE_DIR:Neverland>"
+        COMMENT "Removing extended attributes from app bundle"
+    )
+endif()
+
 # Dependencies - GLM
 add_subdirectory(${VENDOR_DIRECTORY}/glm build/glm_build)
 target_link_libraries(Neverland glm)

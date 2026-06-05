@@ -5,18 +5,16 @@ ROOT="$(CDPATH= cd -- "$(dirname -- "$0")/../../.." && pwd)"
 PRESET="${1:-windows-debug}"
 PROJECT_DIR="$ROOT/Export/build/$PRESET"
 
+cd "$ROOT/Export"
+cmake --preset "$PRESET"
+
 SOLUTION_PATH=""
 if [ -d "$PROJECT_DIR" ]; then
     SOLUTION_PATH="$(find "$PROJECT_DIR" -maxdepth 1 -name '*.sln' -print -quit)"
 fi
 if [ -z "$SOLUTION_PATH" ]; then
-    cd "$ROOT/Export"
-    cmake --preset "$PRESET"
-    SOLUTION_PATH="$(find "$PROJECT_DIR" -maxdepth 1 -name '*.sln' -print -quit)"
-    if [ -z "$SOLUTION_PATH" ]; then
-        echo "Visual Studio solution not found in: $PROJECT_DIR"
-        exit 1
-    fi
+    echo "Visual Studio solution not found in: $PROJECT_DIR"
+    exit 1
 fi
 
 if command -v cmd.exe >/dev/null 2>&1; then
