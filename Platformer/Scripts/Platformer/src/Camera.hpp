@@ -24,4 +24,4 @@ private:
     Vec3 velocity;
 };
 
-REGISTER_SCRIPT(Camera)
+REGISTER_SCRIPT(Camera, 100)

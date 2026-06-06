@@ -16,9 +16,9 @@ public:
     void lateUpdate(float dt) override;
 
     EntityHandle target;
-    float speed;
-    float offsetY;
-    float offsetX;
+    float speed = 1.f;
+    Vec3 originPosition;
+    Vec3 originTargetPosition;
 
     PANDA_FIELDS_BEGIN(ParallaxEffect)
     PANDA_FIELD(target)
@@ -26,4 +26,4 @@ public:
     PANDA_FIELDS_END
 };
 
-REGISTER_SCRIPT(ParallaxEffect)
+REGISTER_SCRIPT(ParallaxEffect, 200)
