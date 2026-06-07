@@ -1,0 +1,3 @@
+LIBRARY Game2048
+EXPORTS
+    pandaLoadPlugin
