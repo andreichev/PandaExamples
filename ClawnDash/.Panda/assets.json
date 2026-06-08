@@ -1,3 +1,26 @@
 {
-    "assets": []
+    "assets": [
+        {
+            "id": 3100001001,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/textures/spike.png",
+                "cookedPath": ".Panda/Textures/Assets/textures/spike.ptex"
+            }
+        },
+        {
+            "id": 3100001002,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/textures/block.png",
+                "cookedPath": ".Panda/Textures/Assets/textures/block.ptex"
+            }
+        }
+    ]
 }

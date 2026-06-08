@@ -71,10 +71,10 @@
                     "z": 0.0
                 },
                 "rotation": {
-                    "x": -0.3303661048412323,
-                    "y": -0.24321037530899048,
-                    "z": -0.0885213315486908,
-                    "w": 0.9076734781265259
+                    "x": -0.3303660750389099,
+                    "y": -0.2432103455066681,
+                    "z": -0.0885213240981102,
+                    "w": 0.9076733589172363
                 },
                 "scale": {
                     "x": 1.0,
@@ -97,9 +97,9 @@
             }
         },
         {
-            "id": 1898192272,
+            "id": 3100000101,
             "tagComponent": {
-                "tag": "Sky"
+                "tag": "Hazard"
             },
             "relationshipComponent": {
                 "parent": 0,
@@ -107,9 +107,9 @@
             },
             "transformComponent": {
                 "position": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
+                    "x": 8.0,
+                    "y": -2.3,
+                    "z": 0.22
                 },
                 "rotation": {
                     "x": 0.0,
@@ -118,13 +118,2399 @@
                     "w": 1.0
                 },
                 "scale": {
-                    "x": 1.0,
+                    "x": 0.72,
                     "y": 1.0,
                     "z": 1.0
                 }
             },
-            "cubeMapComponent": {
-                "material": 0
+            "spriteRendererComponent": {
+                "color": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0,
+                    "w": 1.0
+                },
+                "cols": 1,
+                "rows": 1,
+                "index": 0,
+                "material": 0,
+                "texture": 3100001001
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3100000102,
+            "tagComponent": {
+                "tag": "Hazard"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 16.0,
+                    "y": -2.3,
+                    "z": 0.22
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 0.72,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "spriteRendererComponent": {
+                "color": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0,
+                    "w": 1.0
+                },
+                "cols": 1,
+                "rows": 1,
+                "index": 0,
+                "material": 0,
+                "texture": 3100001001
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3100000103,
+            "tagComponent": {
+                "tag": "Hazard"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 25.0,
+                    "y": -2.275,
+                    "z": 0.22
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 0.9,
+                    "y": 1.05,
+                    "z": 1.0
+                }
+            },
+            "spriteRendererComponent": {
+                "color": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0,
+                    "w": 1.0
+                },
+                "cols": 1,
+                "rows": 1,
+                "index": 0,
+                "material": 0,
+                "texture": 3100001002
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3100000104,
+            "tagComponent": {
+                "tag": "Hazard"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 36.0,
+                    "y": -2.3,
+                    "z": 0.22
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 0.72,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "spriteRendererComponent": {
+                "color": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0,
+                    "w": 1.0
+                },
+                "cols": 1,
+                "rows": 1,
+                "index": 0,
+                "material": 0,
+                "texture": 3100001001
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3100000105,
+            "tagComponent": {
+                "tag": "Hazard"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 43.0,
+                    "y": -2.3,
+                    "z": 0.22
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 0.72,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "spriteRendererComponent": {
+                "color": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0,
+                    "w": 1.0
+                },
+                "cols": 1,
+                "rows": 1,
+                "index": 0,
+                "material": 0,
+                "texture": 3100001001
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3100000106,
+            "tagComponent": {
+                "tag": "Hazard"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 44.1,
+                    "y": -2.3,
+                    "z": 0.22
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 0.72,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "spriteRendererComponent": {
+                "color": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0,
+                    "w": 1.0
+                },
+                "cols": 1,
+                "rows": 1,
+                "index": 0,
+                "material": 0,
+                "texture": 3100001001
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3100000107,
+            "tagComponent": {
+                "tag": "Hazard"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 53.0,
+                    "y": -2.275,
+                    "z": 0.22
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 0.9,
+                    "y": 1.05,
+                    "z": 1.0
+                }
+            },
+            "spriteRendererComponent": {
+                "color": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0,
+                    "w": 1.0
+                },
+                "cols": 1,
+                "rows": 1,
+                "index": 0,
+                "material": 0,
+                "texture": 3100001002
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3100000108,
+            "tagComponent": {
+                "tag": "Hazard"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 62.0,
+                    "y": -2.3,
+                    "z": 0.22
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 0.72,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "spriteRendererComponent": {
+                "color": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0,
+                    "w": 1.0
+                },
+                "cols": 1,
+                "rows": 1,
+                "index": 0,
+                "material": 0,
+                "texture": 3100001001
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3100000109,
+            "tagComponent": {
+                "tag": "Hazard"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 63.05,
+                    "y": -2.3,
+                    "z": 0.22
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 0.72,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "spriteRendererComponent": {
+                "color": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0,
+                    "w": 1.0
+                },
+                "cols": 1,
+                "rows": 1,
+                "index": 0,
+                "material": 0,
+                "texture": 3100001001
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3100000110,
+            "tagComponent": {
+                "tag": "Hazard"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 64.1,
+                    "y": -2.3,
+                    "z": 0.22
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 0.72,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "spriteRendererComponent": {
+                "color": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0,
+                    "w": 1.0
+                },
+                "cols": 1,
+                "rows": 1,
+                "index": 0,
+                "material": 0,
+                "texture": 3100001001
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3100000111,
+            "tagComponent": {
+                "tag": "Hazard"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 76.0,
+                    "y": -2.275,
+                    "z": 0.22
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 0.9,
+                    "y": 1.05,
+                    "z": 1.0
+                }
+            },
+            "spriteRendererComponent": {
+                "color": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0,
+                    "w": 1.0
+                },
+                "cols": 1,
+                "rows": 1,
+                "index": 0,
+                "material": 0,
+                "texture": 3100001002
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3100000112,
+            "tagComponent": {
+                "tag": "Hazard"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 87.0,
+                    "y": -2.3,
+                    "z": 0.22
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 0.72,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "spriteRendererComponent": {
+                "color": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0,
+                    "w": 1.0
+                },
+                "cols": 1,
+                "rows": 1,
+                "index": 0,
+                "material": 0,
+                "texture": 3100001001
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3100000113,
+            "tagComponent": {
+                "tag": "Hazard"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 97.0,
+                    "y": -2.275,
+                    "z": 0.22
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 0.9,
+                    "y": 1.05,
+                    "z": 1.0
+                }
+            },
+            "spriteRendererComponent": {
+                "color": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0,
+                    "w": 1.0
+                },
+                "cols": 1,
+                "rows": 1,
+                "index": 0,
+                "material": 0,
+                "texture": 3100001002
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3100000114,
+            "tagComponent": {
+                "tag": "Hazard"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 106.0,
+                    "y": -2.3,
+                    "z": 0.22
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 0.72,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "spriteRendererComponent": {
+                "color": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0,
+                    "w": 1.0
+                },
+                "cols": 1,
+                "rows": 1,
+                "index": 0,
+                "material": 0,
+                "texture": 3100001001
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3100000115,
+            "tagComponent": {
+                "tag": "Hazard"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 107.1,
+                    "y": -2.3,
+                    "z": 0.22
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 0.72,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "spriteRendererComponent": {
+                "color": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0,
+                    "w": 1.0
+                },
+                "cols": 1,
+                "rows": 1,
+                "index": 0,
+                "material": 0,
+                "texture": 3100001001
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3100000116,
+            "tagComponent": {
+                "tag": "Hazard"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 115.0,
+                    "y": -2.3,
+                    "z": 0.22
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 0.72,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "spriteRendererComponent": {
+                "color": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0,
+                    "w": 1.0
+                },
+                "cols": 1,
+                "rows": 1,
+                "index": 0,
+                "material": 0,
+                "texture": 3100001001
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3100000002,
+            "tagComponent": {
+                "tag": "Finish"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 120.0,
+                    "y": -1.649999976158142,
+                    "z": 0.10000000149011612
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 0.44999998807907104,
+                    "y": 2.5999999046325684,
+                    "z": 1.0
+                }
+            },
+            "spriteRendererComponent": {
+                "color": {
+                    "x": 0.48627451062202454,
+                    "y": 1.0,
+                    "z": 0.6980392336845398,
+                    "w": 1.0
+                },
+                "cols": 1,
+                "rows": 1,
+                "index": 0,
+                "material": 0,
+                "texture": 0
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3100000302,
+            "tagComponent": {
+                "tag": "Ground"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 60.0,
+                    "y": -3.0,
+                    "z": 0.05000000074505806
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 150.0,
+                    "y": 0.4000000059604645,
+                    "z": 1.0
+                }
+            },
+            "spriteRendererComponent": {
+                "color": {
+                    "x": 0.12156862765550613,
+                    "y": 0.16078431904315948,
+                    "z": 0.21568627655506134,
+                    "w": 1.0
+                },
+                "cols": 1,
+                "rows": 1,
+                "index": 0,
+                "material": 0,
+                "texture": 0
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3100000303,
+            "tagComponent": {
+                "tag": "Ground Glow"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 60.0,
+                    "y": -2.75,
+                    "z": 0.07999999821186066
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 150.0,
+                    "y": 0.07999999821186066,
+                    "z": 1.0
+                }
+            },
+            "spriteRendererComponent": {
+                "color": {
+                    "x": 0.13333334028720856,
+                    "y": 0.8274509906768799,
+                    "z": 0.9333333373069763,
+                    "w": 1.0
+                },
+                "cols": 1,
+                "rows": 1,
+                "index": 0,
+                "material": 0,
+                "texture": 0
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3100000301,
+            "tagComponent": {
+                "tag": "Level Background"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 60.0,
+                    "y": 0.0,
+                    "z": -0.3499999940395355
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 150.0,
+                    "y": 13.0,
+                    "z": 1.0
+                }
+            },
+            "spriteRendererComponent": {
+                "color": {
+                    "x": 0.04313725605607033,
+                    "y": 0.062745101749897,
+                    "z": 0.125490203499794,
+                    "w": 1.0
+                },
+                "cols": 1,
+                "rows": 1,
+                "index": 0,
+                "material": 0,
+                "texture": 0
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3100000001,
+            "tagComponent": {
+                "tag": "Player"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": -4.0,
+                    "y": -2.4100000858306885,
+                    "z": 0.3499999940395355
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 0.7799999713897705,
+                    "y": 0.7799999713897705,
+                    "z": 1.0
+                }
+            },
+            "spriteRendererComponent": {
+                "color": {
+                    "x": 0.3686274588108063,
+                    "y": 0.9176470637321472,
+                    "z": 0.8313725590705872,
+                    "w": 1.0
+                },
+                "cols": 1,
+                "rows": 1,
+                "index": 0,
+                "material": 0,
+                "texture": 0
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3100000501,
+            "tagComponent": {
+                "tag": "Signal Dot 01"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": -4.0,
+                    "y": 2.9000000953674316,
+                    "z": -0.10000000149011612
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.38268348574638367,
+                    "w": 0.9238796234130859
+                },
+                "scale": {
+                    "x": 0.1599999964237213,
+                    "y": 0.1599999964237213,
+                    "z": 1.0
+                }
+            },
+            "spriteRendererComponent": {
+                "color": {
+                    "x": 0.40392157435417175,
+                    "y": 0.9098039269447327,
+                    "z": 0.9764705896377563,
+                    "w": 0.8666666746139526
+                },
+                "cols": 1,
+                "rows": 1,
+                "index": 0,
+                "material": 0,
+                "texture": 0
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3100000502,
+            "tagComponent": {
+                "tag": "Signal Dot 02"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 2.5,
+                    "y": 3.25,
+                    "z": -0.10000000149011612
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.38268348574638367,
+                    "w": 0.9238796234130859
+                },
+                "scale": {
+                    "x": 0.1599999964237213,
+                    "y": 0.1599999964237213,
+                    "z": 1.0
+                }
+            },
+            "spriteRendererComponent": {
+                "color": {
+                    "x": 0.40392157435417175,
+                    "y": 0.9098039269447327,
+                    "z": 0.9764705896377563,
+                    "w": 0.8666666746139526
+                },
+                "cols": 1,
+                "rows": 1,
+                "index": 0,
+                "material": 0,
+                "texture": 0
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3100000503,
+            "tagComponent": {
+                "tag": "Signal Dot 03"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 9.0,
+                    "y": 3.5999999046325684,
+                    "z": -0.10000000149011612
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.38268348574638367,
+                    "w": 0.9238796234130859
+                },
+                "scale": {
+                    "x": 0.1599999964237213,
+                    "y": 0.1599999964237213,
+                    "z": 1.0
+                }
+            },
+            "spriteRendererComponent": {
+                "color": {
+                    "x": 0.40392157435417175,
+                    "y": 0.9098039269447327,
+                    "z": 0.9764705896377563,
+                    "w": 0.8666666746139526
+                },
+                "cols": 1,
+                "rows": 1,
+                "index": 0,
+                "material": 0,
+                "texture": 0
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3100000504,
+            "tagComponent": {
+                "tag": "Signal Dot 04"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 15.5,
+                    "y": 3.950000047683716,
+                    "z": -0.10000000149011612
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.38268348574638367,
+                    "w": 0.9238796234130859
+                },
+                "scale": {
+                    "x": 0.1599999964237213,
+                    "y": 0.1599999964237213,
+                    "z": 1.0
+                }
+            },
+            "spriteRendererComponent": {
+                "color": {
+                    "x": 0.40392157435417175,
+                    "y": 0.9098039269447327,
+                    "z": 0.9764705896377563,
+                    "w": 0.8666666746139526
+                },
+                "cols": 1,
+                "rows": 1,
+                "index": 0,
+                "material": 0,
+                "texture": 0
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3100000505,
+            "tagComponent": {
+                "tag": "Signal Dot 05"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 22.0,
+                    "y": 2.9000000953674316,
+                    "z": -0.10000000149011612
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.38268348574638367,
+                    "w": 0.9238796234130859
+                },
+                "scale": {
+                    "x": 0.1599999964237213,
+                    "y": 0.1599999964237213,
+                    "z": 1.0
+                }
+            },
+            "spriteRendererComponent": {
+                "color": {
+                    "x": 0.40392157435417175,
+                    "y": 0.9098039269447327,
+                    "z": 0.9764705896377563,
+                    "w": 0.8666666746139526
+                },
+                "cols": 1,
+                "rows": 1,
+                "index": 0,
+                "material": 0,
+                "texture": 0
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3100000506,
+            "tagComponent": {
+                "tag": "Signal Dot 06"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 28.5,
+                    "y": 3.25,
+                    "z": -0.10000000149011612
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.38268348574638367,
+                    "w": 0.9238796234130859
+                },
+                "scale": {
+                    "x": 0.1599999964237213,
+                    "y": 0.1599999964237213,
+                    "z": 1.0
+                }
+            },
+            "spriteRendererComponent": {
+                "color": {
+                    "x": 0.40392157435417175,
+                    "y": 0.9098039269447327,
+                    "z": 0.9764705896377563,
+                    "w": 0.8666666746139526
+                },
+                "cols": 1,
+                "rows": 1,
+                "index": 0,
+                "material": 0,
+                "texture": 0
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3100000507,
+            "tagComponent": {
+                "tag": "Signal Dot 07"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 35.0,
+                    "y": 3.5999999046325684,
+                    "z": -0.10000000149011612
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.38268348574638367,
+                    "w": 0.9238796234130859
+                },
+                "scale": {
+                    "x": 0.1599999964237213,
+                    "y": 0.1599999964237213,
+                    "z": 1.0
+                }
+            },
+            "spriteRendererComponent": {
+                "color": {
+                    "x": 0.40392157435417175,
+                    "y": 0.9098039269447327,
+                    "z": 0.9764705896377563,
+                    "w": 0.8666666746139526
+                },
+                "cols": 1,
+                "rows": 1,
+                "index": 0,
+                "material": 0,
+                "texture": 0
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3100000508,
+            "tagComponent": {
+                "tag": "Signal Dot 08"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 41.5,
+                    "y": 3.950000047683716,
+                    "z": -0.10000000149011612
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.38268348574638367,
+                    "w": 0.9238796234130859
+                },
+                "scale": {
+                    "x": 0.1599999964237213,
+                    "y": 0.1599999964237213,
+                    "z": 1.0
+                }
+            },
+            "spriteRendererComponent": {
+                "color": {
+                    "x": 0.40392157435417175,
+                    "y": 0.9098039269447327,
+                    "z": 0.9764705896377563,
+                    "w": 0.8666666746139526
+                },
+                "cols": 1,
+                "rows": 1,
+                "index": 0,
+                "material": 0,
+                "texture": 0
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3100000509,
+            "tagComponent": {
+                "tag": "Signal Dot 09"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 48.0,
+                    "y": 2.9000000953674316,
+                    "z": -0.10000000149011612
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.38268348574638367,
+                    "w": 0.9238796234130859
+                },
+                "scale": {
+                    "x": 0.1599999964237213,
+                    "y": 0.1599999964237213,
+                    "z": 1.0
+                }
+            },
+            "spriteRendererComponent": {
+                "color": {
+                    "x": 0.40392157435417175,
+                    "y": 0.9098039269447327,
+                    "z": 0.9764705896377563,
+                    "w": 0.8666666746139526
+                },
+                "cols": 1,
+                "rows": 1,
+                "index": 0,
+                "material": 0,
+                "texture": 0
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3100000510,
+            "tagComponent": {
+                "tag": "Signal Dot 10"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 54.5,
+                    "y": 3.25,
+                    "z": -0.10000000149011612
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.38268348574638367,
+                    "w": 0.9238796234130859
+                },
+                "scale": {
+                    "x": 0.1599999964237213,
+                    "y": 0.1599999964237213,
+                    "z": 1.0
+                }
+            },
+            "spriteRendererComponent": {
+                "color": {
+                    "x": 0.40392157435417175,
+                    "y": 0.9098039269447327,
+                    "z": 0.9764705896377563,
+                    "w": 0.8666666746139526
+                },
+                "cols": 1,
+                "rows": 1,
+                "index": 0,
+                "material": 0,
+                "texture": 0
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3100000511,
+            "tagComponent": {
+                "tag": "Signal Dot 11"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 61.0,
+                    "y": 3.5999999046325684,
+                    "z": -0.10000000149011612
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.38268348574638367,
+                    "w": 0.9238796234130859
+                },
+                "scale": {
+                    "x": 0.1599999964237213,
+                    "y": 0.1599999964237213,
+                    "z": 1.0
+                }
+            },
+            "spriteRendererComponent": {
+                "color": {
+                    "x": 0.40392157435417175,
+                    "y": 0.9098039269447327,
+                    "z": 0.9764705896377563,
+                    "w": 0.8666666746139526
+                },
+                "cols": 1,
+                "rows": 1,
+                "index": 0,
+                "material": 0,
+                "texture": 0
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3100000512,
+            "tagComponent": {
+                "tag": "Signal Dot 12"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 67.5,
+                    "y": 3.950000047683716,
+                    "z": -0.10000000149011612
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.38268348574638367,
+                    "w": 0.9238796234130859
+                },
+                "scale": {
+                    "x": 0.1599999964237213,
+                    "y": 0.1599999964237213,
+                    "z": 1.0
+                }
+            },
+            "spriteRendererComponent": {
+                "color": {
+                    "x": 0.40392157435417175,
+                    "y": 0.9098039269447327,
+                    "z": 0.9764705896377563,
+                    "w": 0.8666666746139526
+                },
+                "cols": 1,
+                "rows": 1,
+                "index": 0,
+                "material": 0,
+                "texture": 0
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3100000513,
+            "tagComponent": {
+                "tag": "Signal Dot 13"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 74.0,
+                    "y": 2.9000000953674316,
+                    "z": -0.10000000149011612
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.38268348574638367,
+                    "w": 0.9238796234130859
+                },
+                "scale": {
+                    "x": 0.1599999964237213,
+                    "y": 0.1599999964237213,
+                    "z": 1.0
+                }
+            },
+            "spriteRendererComponent": {
+                "color": {
+                    "x": 0.40392157435417175,
+                    "y": 0.9098039269447327,
+                    "z": 0.9764705896377563,
+                    "w": 0.8666666746139526
+                },
+                "cols": 1,
+                "rows": 1,
+                "index": 0,
+                "material": 0,
+                "texture": 0
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3100000514,
+            "tagComponent": {
+                "tag": "Signal Dot 14"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 80.5,
+                    "y": 3.25,
+                    "z": -0.10000000149011612
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.38268348574638367,
+                    "w": 0.9238796234130859
+                },
+                "scale": {
+                    "x": 0.1599999964237213,
+                    "y": 0.1599999964237213,
+                    "z": 1.0
+                }
+            },
+            "spriteRendererComponent": {
+                "color": {
+                    "x": 0.40392157435417175,
+                    "y": 0.9098039269447327,
+                    "z": 0.9764705896377563,
+                    "w": 0.8666666746139526
+                },
+                "cols": 1,
+                "rows": 1,
+                "index": 0,
+                "material": 0,
+                "texture": 0
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3100000515,
+            "tagComponent": {
+                "tag": "Signal Dot 15"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 87.0,
+                    "y": 3.5999999046325684,
+                    "z": -0.10000000149011612
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.38268348574638367,
+                    "w": 0.9238796234130859
+                },
+                "scale": {
+                    "x": 0.1599999964237213,
+                    "y": 0.1599999964237213,
+                    "z": 1.0
+                }
+            },
+            "spriteRendererComponent": {
+                "color": {
+                    "x": 0.40392157435417175,
+                    "y": 0.9098039269447327,
+                    "z": 0.9764705896377563,
+                    "w": 0.8666666746139526
+                },
+                "cols": 1,
+                "rows": 1,
+                "index": 0,
+                "material": 0,
+                "texture": 0
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3100000516,
+            "tagComponent": {
+                "tag": "Signal Dot 16"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 93.5,
+                    "y": 3.950000047683716,
+                    "z": -0.10000000149011612
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.38268348574638367,
+                    "w": 0.9238796234130859
+                },
+                "scale": {
+                    "x": 0.1599999964237213,
+                    "y": 0.1599999964237213,
+                    "z": 1.0
+                }
+            },
+            "spriteRendererComponent": {
+                "color": {
+                    "x": 0.40392157435417175,
+                    "y": 0.9098039269447327,
+                    "z": 0.9764705896377563,
+                    "w": 0.8666666746139526
+                },
+                "cols": 1,
+                "rows": 1,
+                "index": 0,
+                "material": 0,
+                "texture": 0
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3100000517,
+            "tagComponent": {
+                "tag": "Signal Dot 17"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 100.0,
+                    "y": 2.9000000953674316,
+                    "z": -0.10000000149011612
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.38268348574638367,
+                    "w": 0.9238796234130859
+                },
+                "scale": {
+                    "x": 0.1599999964237213,
+                    "y": 0.1599999964237213,
+                    "z": 1.0
+                }
+            },
+            "spriteRendererComponent": {
+                "color": {
+                    "x": 0.40392157435417175,
+                    "y": 0.9098039269447327,
+                    "z": 0.9764705896377563,
+                    "w": 0.8666666746139526
+                },
+                "cols": 1,
+                "rows": 1,
+                "index": 0,
+                "material": 0,
+                "texture": 0
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3100000518,
+            "tagComponent": {
+                "tag": "Signal Dot 18"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 106.5,
+                    "y": 3.25,
+                    "z": -0.10000000149011612
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.38268348574638367,
+                    "w": 0.9238796234130859
+                },
+                "scale": {
+                    "x": 0.1599999964237213,
+                    "y": 0.1599999964237213,
+                    "z": 1.0
+                }
+            },
+            "spriteRendererComponent": {
+                "color": {
+                    "x": 0.40392157435417175,
+                    "y": 0.9098039269447327,
+                    "z": 0.9764705896377563,
+                    "w": 0.8666666746139526
+                },
+                "cols": 1,
+                "rows": 1,
+                "index": 0,
+                "material": 0,
+                "texture": 0
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3100000401,
+            "tagComponent": {
+                "tag": "Sky Pulse 01"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": -8.0,
+                    "y": 0.30000001192092896,
+                    "z": -0.20000000298023224
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.2000000476837158,
+                    "y": 1.399999976158142,
+                    "z": 1.0
+                }
+            },
+            "spriteRendererComponent": {
+                "color": {
+                    "x": 0.09019608050584793,
+                    "y": 0.14509804546833038,
+                    "z": 0.3294117748737335,
+                    "w": 0.6666666865348816
+                },
+                "cols": 1,
+                "rows": 1,
+                "index": 0,
+                "material": 0,
+                "texture": 0
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3100000402,
+            "tagComponent": {
+                "tag": "Sky Pulse 02"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.949999988079071,
+                    "z": -0.20000000298023224
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.2000000476837158,
+                    "y": 2.700000047683716,
+                    "z": 1.0
+                }
+            },
+            "spriteRendererComponent": {
+                "color": {
+                    "x": 0.09019608050584793,
+                    "y": 0.14509804546833038,
+                    "z": 0.3294117748737335,
+                    "w": 0.6666666865348816
+                },
+                "cols": 1,
+                "rows": 1,
+                "index": 0,
+                "material": 0,
+                "texture": 0
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3100000403,
+            "tagComponent": {
+                "tag": "Sky Pulse 03"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 8.0,
+                    "y": 1.600000023841858,
+                    "z": -0.20000000298023224
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.2000000476837158,
+                    "y": 4.0,
+                    "z": 1.0
+                }
+            },
+            "spriteRendererComponent": {
+                "color": {
+                    "x": 0.09019608050584793,
+                    "y": 0.14509804546833038,
+                    "z": 0.3294117748737335,
+                    "w": 0.6666666865348816
+                },
+                "cols": 1,
+                "rows": 1,
+                "index": 0,
+                "material": 0,
+                "texture": 0
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3100000404,
+            "tagComponent": {
+                "tag": "Sky Pulse 04"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 16.0,
+                    "y": 0.625,
+                    "z": -0.20000000298023224
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.2000000476837158,
+                    "y": 2.049999952316284,
+                    "z": 1.0
+                }
+            },
+            "spriteRendererComponent": {
+                "color": {
+                    "x": 0.09019608050584793,
+                    "y": 0.14509804546833038,
+                    "z": 0.3294117748737335,
+                    "w": 0.6666666865348816
+                },
+                "cols": 1,
+                "rows": 1,
+                "index": 0,
+                "material": 0,
+                "texture": 0
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3100000405,
+            "tagComponent": {
+                "tag": "Sky Pulse 05"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 24.0,
+                    "y": 1.274999976158142,
+                    "z": -0.20000000298023224
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.2000000476837158,
+                    "y": 3.3499999046325684,
+                    "z": 1.0
+                }
+            },
+            "spriteRendererComponent": {
+                "color": {
+                    "x": 0.09019608050584793,
+                    "y": 0.14509804546833038,
+                    "z": 0.3294117748737335,
+                    "w": 0.6666666865348816
+                },
+                "cols": 1,
+                "rows": 1,
+                "index": 0,
+                "material": 0,
+                "texture": 0
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3100000406,
+            "tagComponent": {
+                "tag": "Sky Pulse 06"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 32.0,
+                    "y": 0.30000001192092896,
+                    "z": -0.20000000298023224
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.2000000476837158,
+                    "y": 1.399999976158142,
+                    "z": 1.0
+                }
+            },
+            "spriteRendererComponent": {
+                "color": {
+                    "x": 0.09019608050584793,
+                    "y": 0.14509804546833038,
+                    "z": 0.3294117748737335,
+                    "w": 0.6666666865348816
+                },
+                "cols": 1,
+                "rows": 1,
+                "index": 0,
+                "material": 0,
+                "texture": 0
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3100000407,
+            "tagComponent": {
+                "tag": "Sky Pulse 07"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 40.0,
+                    "y": 0.949999988079071,
+                    "z": -0.20000000298023224
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.2000000476837158,
+                    "y": 2.700000047683716,
+                    "z": 1.0
+                }
+            },
+            "spriteRendererComponent": {
+                "color": {
+                    "x": 0.09019608050584793,
+                    "y": 0.14509804546833038,
+                    "z": 0.3294117748737335,
+                    "w": 0.6666666865348816
+                },
+                "cols": 1,
+                "rows": 1,
+                "index": 0,
+                "material": 0,
+                "texture": 0
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3100000408,
+            "tagComponent": {
+                "tag": "Sky Pulse 08"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 48.0,
+                    "y": 1.600000023841858,
+                    "z": -0.20000000298023224
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.2000000476837158,
+                    "y": 4.0,
+                    "z": 1.0
+                }
+            },
+            "spriteRendererComponent": {
+                "color": {
+                    "x": 0.09019608050584793,
+                    "y": 0.14509804546833038,
+                    "z": 0.3294117748737335,
+                    "w": 0.6666666865348816
+                },
+                "cols": 1,
+                "rows": 1,
+                "index": 0,
+                "material": 0,
+                "texture": 0
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3100000409,
+            "tagComponent": {
+                "tag": "Sky Pulse 09"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 56.0,
+                    "y": 0.625,
+                    "z": -0.20000000298023224
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.2000000476837158,
+                    "y": 2.049999952316284,
+                    "z": 1.0
+                }
+            },
+            "spriteRendererComponent": {
+                "color": {
+                    "x": 0.09019608050584793,
+                    "y": 0.14509804546833038,
+                    "z": 0.3294117748737335,
+                    "w": 0.6666666865348816
+                },
+                "cols": 1,
+                "rows": 1,
+                "index": 0,
+                "material": 0,
+                "texture": 0
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3100000410,
+            "tagComponent": {
+                "tag": "Sky Pulse 10"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 64.0,
+                    "y": 1.274999976158142,
+                    "z": -0.20000000298023224
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.2000000476837158,
+                    "y": 3.3499999046325684,
+                    "z": 1.0
+                }
+            },
+            "spriteRendererComponent": {
+                "color": {
+                    "x": 0.09019608050584793,
+                    "y": 0.14509804546833038,
+                    "z": 0.3294117748737335,
+                    "w": 0.6666666865348816
+                },
+                "cols": 1,
+                "rows": 1,
+                "index": 0,
+                "material": 0,
+                "texture": 0
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3100000411,
+            "tagComponent": {
+                "tag": "Sky Pulse 11"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 72.0,
+                    "y": 0.30000001192092896,
+                    "z": -0.20000000298023224
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.2000000476837158,
+                    "y": 1.399999976158142,
+                    "z": 1.0
+                }
+            },
+            "spriteRendererComponent": {
+                "color": {
+                    "x": 0.09019608050584793,
+                    "y": 0.14509804546833038,
+                    "z": 0.3294117748737335,
+                    "w": 0.6666666865348816
+                },
+                "cols": 1,
+                "rows": 1,
+                "index": 0,
+                "material": 0,
+                "texture": 0
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3100000412,
+            "tagComponent": {
+                "tag": "Sky Pulse 12"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 80.0,
+                    "y": 0.949999988079071,
+                    "z": -0.20000000298023224
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.2000000476837158,
+                    "y": 2.700000047683716,
+                    "z": 1.0
+                }
+            },
+            "spriteRendererComponent": {
+                "color": {
+                    "x": 0.09019608050584793,
+                    "y": 0.14509804546833038,
+                    "z": 0.3294117748737335,
+                    "w": 0.6666666865348816
+                },
+                "cols": 1,
+                "rows": 1,
+                "index": 0,
+                "material": 0,
+                "texture": 0
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3100000413,
+            "tagComponent": {
+                "tag": "Sky Pulse 13"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 88.0,
+                    "y": 1.600000023841858,
+                    "z": -0.20000000298023224
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.2000000476837158,
+                    "y": 4.0,
+                    "z": 1.0
+                }
+            },
+            "spriteRendererComponent": {
+                "color": {
+                    "x": 0.09019608050584793,
+                    "y": 0.14509804546833038,
+                    "z": 0.3294117748737335,
+                    "w": 0.6666666865348816
+                },
+                "cols": 1,
+                "rows": 1,
+                "index": 0,
+                "material": 0,
+                "texture": 0
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3100000414,
+            "tagComponent": {
+                "tag": "Sky Pulse 14"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 96.0,
+                    "y": 0.625,
+                    "z": -0.20000000298023224
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.2000000476837158,
+                    "y": 2.049999952316284,
+                    "z": 1.0
+                }
+            },
+            "spriteRendererComponent": {
+                "color": {
+                    "x": 0.09019608050584793,
+                    "y": 0.14509804546833038,
+                    "z": 0.3294117748737335,
+                    "w": 0.6666666865348816
+                },
+                "cols": 1,
+                "rows": 1,
+                "index": 0,
+                "material": 0,
+                "texture": 0
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3100000415,
+            "tagComponent": {
+                "tag": "Sky Pulse 15"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 104.0,
+                    "y": 1.274999976158142,
+                    "z": -0.20000000298023224
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.2000000476837158,
+                    "y": 3.3499999046325684,
+                    "z": 1.0
+                }
+            },
+            "spriteRendererComponent": {
+                "color": {
+                    "x": 0.09019608050584793,
+                    "y": 0.14509804546833038,
+                    "z": 0.3294117748737335,
+                    "w": 0.6666666865348816
+                },
+                "cols": 1,
+                "rows": 1,
+                "index": 0,
+                "material": 0,
+                "texture": 0
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3100000416,
+            "tagComponent": {
+                "tag": "Sky Pulse 16"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 112.0,
+                    "y": 0.30000001192092896,
+                    "z": -0.20000000298023224
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.2000000476837158,
+                    "y": 1.399999976158142,
+                    "z": 1.0
+                }
+            },
+            "spriteRendererComponent": {
+                "color": {
+                    "x": 0.09019608050584793,
+                    "y": 0.14509804546833038,
+                    "z": 0.3294117748737335,
+                    "w": 0.6666666865348816
+                },
+                "cols": 1,
+                "rows": 1,
+                "index": 0,
+                "material": 0,
+                "texture": 0
             },
             "scriptListComponent": {
                 "scripts": []

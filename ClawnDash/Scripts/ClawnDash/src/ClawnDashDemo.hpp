@@ -26,8 +26,11 @@ private:
     Bamboo::EntityHandle m_player;
     PandaUI::Window m_window;
     std::shared_ptr<ClawnDash::DashHudView> m_hudView;
-    std::vector<Bamboo::EntityHandle> m_createdEntities;
     std::vector<ClawnDash::Obstacle> m_obstacles;
+    float m_startX = 0.f;
+    float m_startY = 0.f;
+    float m_finishX = 0.f;
+    float m_groundY = -2.8f;
     float m_playerX = 0.f;
     float m_playerY = 0.f;
     float m_playerVelocityY = 0.f;
@@ -37,8 +40,8 @@ private:
     State m_state = State::Playing;
 
     void buildLevel();
+    void loadLevelEntities();
     void resetGame();
-    void destroyCreatedEntities();
     void updatePlaying(float deltaTime);
     void updateCamera();
     void updateHud();
@@ -47,20 +50,7 @@ private:
     bool readJumpPressed();
     bool readRestartPressed() const;
     void applyPlayerTransform();
-    void createGround();
-    void createDecorations();
-    void createHazards();
-    void createFinishGate();
-    Bamboo::EntityHandle createSprite(
-        const char *tag,
-        Bamboo::Vec3 position,
-        Bamboo::Vec3 scale,
-        Bamboo::Color color,
-        float rotationZ = 0.f
-    );
-    void addHazard(
-        float x, float y, float width, float height, Bamboo::Color color, float rotationZ = 0.f
-    );
+    ClawnDash::Rect readBounds(Bamboo::EntityHandle entity, float inset) const;
     ClawnDash::Rect playerBounds() const;
 };
 
