@@ -8,6 +8,8 @@
 
 #include <algorithm>
 #include <cmath>
+#include <cstddef>
+#include <cstdint>
 
 using namespace Bamboo;
 
@@ -39,32 +41,50 @@ PandaUI::Color uiColor(uint32_t rgba) {
 void ClawnDashDemo::start() {
     m_window = PandaUI::Window::main();
     if (m_window.isValid()) {
-        m_hudView = std::make_shared<ClawnDash::DashHudView>();
-        m_window.setRootView(m_hudView);
+        setupHud();
     } else {
         LOG_ERROR("ClawnDash: main PandaUI window is unavailable");
     }
 
     buildLevel();
-    resetGame();
+    showMainMenu();
     LOG_INFO("ClawnDash: started");
 }
 
 void ClawnDashDemo::update(float deltaTime) {
     const float dt = std::min(std::max(deltaTime, 0.f), MAX_DELTA_TIME);
 
-    if (readRestartPressed()) {
+    if (readMenuPressed()) {
+        showLevelSelect();
+        return;
+    }
+
+    if (m_state != State::MainMenu && m_state != State::LevelSelect && readRestartPressed()) {
         resetGame();
         return;
     }
 
     switch (m_state) {
+        case State::MainMenu:
+        case State::LevelSelect:
+            readJumpPressed();
+            break;
         case State::Playing:
             updatePlaying(dt);
             break;
         case State::Crashed:
+            if (readJumpPressed()) {
+                restartLevel();
+            }
+            break;
         case State::Finished:
-            readJumpPressed();
+            if (readJumpPressed()) {
+                if (m_currentLevelIndex + 1 < m_levels.size()) {
+                    startNextLevel();
+                } else {
+                    restartLevel();
+                }
+            }
             break;
     }
 
@@ -82,38 +102,167 @@ void ClawnDashDemo::shutdown() {
 void ClawnDashDemo::buildLevel() {
     m_obstacles.clear();
     m_player = {};
-    loadLevelEntities();
+    createLevels();
+    loadSharedEntities();
 }
 
-void ClawnDashDemo::loadLevelEntities() {
+void ClawnDashDemo::setupHud() {
+    m_hudView = std::make_shared<ClawnDash::DashHudView>();
+    m_hudView->setActions(
+        [this](std::size_t levelIndex) {
+            startLevel(levelIndex);
+        },
+        [this]() {
+            showMainMenu();
+        },
+        [this]() {
+            showLevelSelect();
+        },
+        [this]() {
+            restartLevel();
+        },
+        [this]() {
+            startNextLevel();
+        }
+    );
+    m_window.setRootView(m_hudView);
+}
+
+void ClawnDashDemo::createLevels() {
+    m_levels = {
+        {
+            .title = "First Contact",
+            .description = "Reaction jumps with long recovery windows.",
+            .hazardTag = "Level 1 Hazard",
+            .finishTag = "Level 1 Finish",
+            .startX = -4.f,
+            .startY = -2.41f,
+            .backgroundColor = 0x090E20FF,
+            .groundColor = 0x202B3EFF,
+            .groundGlowColor = 0x5EEAD4AA,
+            .accentColor = 0xFFD166FF,
+        },
+        {
+            .title = "Double Beats",
+            .description = "Denser pairs and short hold timings.",
+            .hazardTag = "Level 2 Hazard",
+            .finishTag = "Level 2 Finish",
+            .startX = 150.f,
+            .startY = -2.41f,
+            .backgroundColor = 0x120D27FF,
+            .groundColor = 0x2B2147FF,
+            .groundGlowColor = 0xB56CFFFF,
+            .accentColor = 0xB56CFFFF,
+        },
+        {
+            .title = "Memory Line",
+            .description = "Readable patterns, tighter timing, no speed tricks.",
+            .hazardTag = "Level 3 Hazard",
+            .finishTag = "Level 3 Finish",
+            .startX = 300.f,
+            .startY = -2.41f,
+            .backgroundColor = 0x071B22FF,
+            .groundColor = 0x153B42FF,
+            .groundGlowColor = 0x7CFFB2AA,
+            .accentColor = 0x7CFFB2FF,
+        },
+    };
+}
+
+void ClawnDashDemo::loadSharedEntities() {
     m_player = WorldAPI::findByTag("Player");
     if (!m_player.isValid()) {
         LOG_ERROR("ClawnDash: Player entity not found");
-        return;
     }
 
-    const Vec3 playerPosition = TransformComponentAPI::getPosition(m_player);
-    m_startX = playerPosition.x;
-    m_startY = playerPosition.y;
-
-    EntityHandle ground = WorldAPI::findByTag("Ground");
-    if (ground.isValid()) {
-        const Vec3 groundPosition = TransformComponentAPI::getPosition(ground);
-        const Vec3 groundScale = TransformComponentAPI::getScale(ground);
+    m_ground = WorldAPI::findByTag("Ground");
+    if (m_ground.isValid()) {
+        const Vec3 groundPosition = TransformComponentAPI::getPosition(m_ground);
+        const Vec3 groundScale = TransformComponentAPI::getScale(m_ground);
         m_groundY = groundPosition.y + std::abs(groundScale.y) * 0.5f;
     } else {
         LOG_ERROR("ClawnDash: Ground entity not found");
     }
 
-    EntityHandle finish = WorldAPI::findByTag("Finish");
-    if (!finish.isValid()) {
-        LOG_ERROR("ClawnDash: Finish entity not found");
+    m_groundGlow = WorldAPI::findByTag("Ground Glow");
+    m_background = WorldAPI::findByTag("Level Background");
+}
+
+bool ClawnDashDemo::loadLevelEntities(std::size_t levelIndex) {
+    if (levelIndex >= m_levels.size()) {
+        return false;
+    }
+
+    const ClawnDash::LevelInfo &level = m_levels[levelIndex];
+    m_startX = level.startX;
+    m_startY = level.startY;
+
+    m_finish = WorldAPI::findByTag(level.finishTag.c_str());
+    if (!m_finish.isValid()) {
+        LOG_ERROR("ClawnDash: finish entity not found");
+        return false;
+    }
+    m_finishX = TransformComponentAPI::getPosition(m_finish).x;
+
+    m_obstacles.clear();
+    for (EntityHandle hazard : WorldAPI::findAllByTag(level.hazardTag.c_str())) {
+        m_obstacles.push_back({hazard, readBounds(hazard, 0.78f)});
+    }
+    if (m_obstacles.empty()) {
+        LOG_ERROR("ClawnDash: level has no hazards");
+    }
+    return true;
+}
+
+void ClawnDashDemo::showMainMenu() {
+    m_state = State::MainMenu;
+    if (m_hudView) {
+        m_hudView->showMainMenu(m_levels);
+    }
+}
+
+void ClawnDashDemo::showLevelSelect() {
+    m_state = State::LevelSelect;
+    if (m_hudView) {
+        m_hudView->showLevelSelect(m_levels);
+    }
+}
+
+void ClawnDashDemo::startLevel(std::size_t levelIndex) {
+    if (!loadLevelEntities(levelIndex)) {
         return;
     }
-    m_finishX = TransformComponentAPI::getPosition(finish).x;
+    m_currentLevelIndex = levelIndex;
+    applyLevelTheme();
+    resetGame();
+    m_jumpWasDown = readJumpDown();
+}
 
-    for (EntityHandle hazard : WorldAPI::findAllByTag("Hazard")) {
-        m_obstacles.push_back({hazard, readBounds(hazard, 0.78f)});
+void ClawnDashDemo::restartLevel() {
+    startLevel(m_currentLevelIndex);
+}
+
+void ClawnDashDemo::startNextLevel() {
+    if (m_currentLevelIndex + 1 < m_levels.size()) {
+        startLevel(m_currentLevelIndex + 1);
+    } else {
+        showLevelSelect();
+    }
+}
+
+void ClawnDashDemo::applyLevelTheme() {
+    const ClawnDash::LevelInfo &level = m_levels[m_currentLevelIndex];
+    if (m_background.isValid()) {
+        SpriteRendererComponentAPI::setColor(m_background, color(level.backgroundColor));
+    }
+    if (m_ground.isValid()) {
+        SpriteRendererComponentAPI::setColor(m_ground, color(level.groundColor));
+    }
+    if (m_groundGlow.isValid()) {
+        SpriteRendererComponentAPI::setColor(m_groundGlow, color(level.groundGlowColor));
+    }
+    if (m_finish.isValid()) {
+        SpriteRendererComponentAPI::setColor(m_finish, color(0x7CFFB2FF));
     }
 }
 
@@ -127,6 +276,9 @@ void ClawnDashDemo::resetGame() {
     m_state = State::Playing;
     applyPlayerTransform();
     updateCamera();
+    if (m_hudView) {
+        m_hudView->showGameplay(m_levels[m_currentLevelIndex].title);
+    }
     updateHud();
 }
 
@@ -174,7 +326,7 @@ void ClawnDashDemo::updatePlaying(float deltaTime) {
 }
 
 void ClawnDashDemo::updateCamera() {
-    if (!m_player.isValid()) {
+    if (!m_player.isValid() || m_state == State::MainMenu || m_state == State::LevelSelect) {
         return;
     }
     TransformComponentAPI::setPosition(
@@ -183,53 +335,52 @@ void ClawnDashDemo::updateCamera() {
 }
 
 void ClawnDashDemo::updateHud() {
-    if (!m_hudView) {
+    if (!m_hudView || m_state != State::Playing) {
         return;
     }
     const float levelLength = std::max(m_finishX - m_startX, 1.f);
     m_hudView->setProgress(std::clamp((m_playerX - m_startX) / levelLength, 0.f, 1.f));
-
-    switch (m_state) {
-        case State::Playing:
-            m_hudView->setStatus("Space / Up / tap to jump", uiColor(0xFFD166FF));
-            break;
-        case State::Crashed:
-            m_hudView->setStatus("Crashed. Press R / Space / tap to restart", uiColor(0xFF5C8AFF));
-            break;
-        case State::Finished:
-            m_hudView->setStatus(
-                "Level complete. Press R / Space / tap to run again", uiColor(0x7CFFB2FF)
-            );
-            break;
-    }
+    m_hudView->setStatus("Space / Up / tap to jump", uiColor(m_levels[m_currentLevelIndex].accentColor));
 }
 
 void ClawnDashDemo::crash() {
     m_state = State::Crashed;
     SpriteRendererComponentAPI::setColor(m_player, color(0xFF5C8AFF));
     applyPlayerTransform();
+    if (m_hudView) {
+        m_hudView->showCrashed(m_levels[m_currentLevelIndex].title);
+    }
 }
 
 void ClawnDashDemo::finish() {
     m_state = State::Finished;
     SpriteRendererComponentAPI::setColor(m_player, color(0x7CFFB2FF));
     applyPlayerTransform();
+    if (m_hudView) {
+        m_hudView->showFinished(
+            m_levels[m_currentLevelIndex].title, m_currentLevelIndex + 1 < m_levels.size()
+        );
+    }
 }
 
 bool ClawnDashDemo::readJumpPressed() {
-    const bool jumpDown = Input::isKeyPressed(Key::SPACE) || Input::isKeyPressed(Key::UP) ||
-                          Input::isMouseButtonPressed(MouseButton::LEFT) || Input::touchCount() > 0;
+    const bool jumpDown = readJumpDown();
     const bool pressed = jumpDown && !m_jumpWasDown;
     m_jumpWasDown = jumpDown;
-
-    if (pressed && m_state != State::Playing) {
-        resetGame();
-    }
     return pressed;
+}
+
+bool ClawnDashDemo::readJumpDown() const {
+    return Input::isKeyPressed(Key::SPACE) || Input::isKeyPressed(Key::UP) ||
+           Input::isMouseButtonPressed(MouseButton::LEFT) || Input::touchCount() > 0;
 }
 
 bool ClawnDashDemo::readRestartPressed() const {
     return Input::isKeyJustPressed(Key::R);
+}
+
+bool ClawnDashDemo::readMenuPressed() const {
+    return Input::isKeyJustPressed(Key::ESCAPE);
 }
 
 void ClawnDashDemo::applyPlayerTransform() {
