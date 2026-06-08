@@ -42,6 +42,41 @@ void ClawnDashMenu::start() {
             .groundGlowColor = 0x7CFFB2AA,
             .accentColor = 0x7CFFB2FF,
         },
+        {
+            .title = "Speed Gate",
+            .description = "A visible speed portal changes pace and color.",
+            .accentColor = 0xFF8A5CFF,
+        },
+        {
+            .title = "Mini Steps",
+            .description = "Mini mode squeezes through lower gaps.",
+            .accentColor = 0x6EE7F9FF,
+        },
+        {
+            .title = "Gravity Drop",
+            .description = "Gravity flips briefly, then returns to normal.",
+            .accentColor = 0xF472B6FF,
+        },
+        {
+            .title = "Portal Chain",
+            .description = "Speed, mini, pad and orb in one readable run.",
+            .accentColor = 0xA3E635FF,
+        },
+        {
+            .title = "False Calm",
+            .description = "Quiet gaps hide late orbs and double spikes.",
+            .accentColor = 0xFACC15FF,
+        },
+        {
+            .title = "Compression",
+            .description = "Short recovery windows with no speed surprise.",
+            .accentColor = 0xFB7185FF,
+        },
+        {
+            .title = "Final Study",
+            .description = "A longer memory line using all current tools.",
+            .accentColor = 0xC084FCFF,
+        },
     };
     showMainMenu();
 }
@@ -75,7 +110,9 @@ void ClawnDashMenu::showLevelSelect() {
 }
 
 void ClawnDashMenu::loadLevel(std::size_t levelIndex) {
-    std::array<Bamboo::WorldHandle, 3> worlds = {level1, level2, level3};
+    std::array<Bamboo::WorldHandle, 10> worlds = {
+        level1, level2, level3, level4, level5, level6, level7, level8, level9, level10
+    };
     if (levelIndex >= worlds.size() || !worlds[levelIndex].isValid()) {
         LOG_ERROR("ClawnDashMenu: level world handle is not configured");
         return;

@@ -19,6 +19,7 @@ namespace {
 
 constexpr float PLAYER_SIZE = 0.78f;
 constexpr float RUN_SPEED = 6.4f;
+constexpr float SPEED_PORTAL_RUN_SPEED = 8.2f;
 constexpr float GRAVITY = -27.f;
 constexpr float JUMP_VELOCITY = 11.7f;
 constexpr float PAD_VELOCITY = 12.8f;
@@ -118,6 +119,7 @@ void ClawnDashLevelController::loadEntities() {
 
     m_groundGlow = WorldAPI::findByTag("Ground Glow");
     m_background = WorldAPI::findByTag("Level Background");
+    m_ceilingY = -m_groundY;
 
     m_finish = WorldAPI::findByTag("Finish");
     if (!m_finish.isValid()) {
@@ -140,9 +142,42 @@ void ClawnDashLevelController::loadEntities() {
     for (EntityHandle orb : WorldAPI::findAllByTag("Jump Orb")) {
         m_jumpOrbs.push_back({orb, readBounds(orb, 1.05f)});
     }
+
+    m_speedPortals.clear();
+    for (EntityHandle portal : WorldAPI::findAllByTag("Speed Portal")) {
+        m_speedPortals.push_back({portal, readBounds(portal, 1.05f)});
+    }
+
+    m_normalSpeedPortals.clear();
+    for (EntityHandle portal : WorldAPI::findAllByTag("Normal Speed Portal")) {
+        m_normalSpeedPortals.push_back({portal, readBounds(portal, 1.05f)});
+    }
+
+    m_miniPortals.clear();
+    for (EntityHandle portal : WorldAPI::findAllByTag("Mini Portal")) {
+        m_miniPortals.push_back({portal, readBounds(portal, 1.05f)});
+    }
+
+    m_normalPortals.clear();
+    for (EntityHandle portal : WorldAPI::findAllByTag("Normal Portal")) {
+        m_normalPortals.push_back({portal, readBounds(portal, 1.05f)});
+    }
+
+    m_gravityPortals.clear();
+    for (EntityHandle portal : WorldAPI::findAllByTag("Gravity Portal")) {
+        m_gravityPortals.push_back({portal, readBounds(portal, 1.05f)});
+    }
+
+    m_normalGravityPortals.clear();
+    for (EntityHandle portal : WorldAPI::findAllByTag("Normal Gravity Portal")) {
+        m_normalGravityPortals.push_back({portal, readBounds(portal, 1.05f)});
+    }
 }
 
 void ClawnDashLevelController::resetGame() {
+    m_runSpeed = RUN_SPEED;
+    m_gravitySign = 1.f;
+    m_playerScale = 1.f;
     m_playerX = m_startX;
     m_playerY = m_startY;
     m_playerVelocityY = 0.f;
@@ -151,6 +186,8 @@ void ClawnDashLevelController::resetGame() {
     m_jumpWasDown = readJumpDown();
     m_state = State::Playing;
     restoreTriggerColors();
+    restorePortalColors();
+    setBackgroundColor(baseBackgroundColor());
     applyPlayerTransform();
     updateCamera();
 
@@ -169,29 +206,35 @@ void ClawnDashLevelController::updatePlaying(float deltaTime) {
 
     const bool jumpPressed = readJumpPressed();
     if (jumpPressed && m_grounded) {
-        m_playerVelocityY = JUMP_VELOCITY;
+        m_playerVelocityY = JUMP_VELOCITY * m_gravitySign;
         m_grounded = false;
     }
 
-    m_playerX += RUN_SPEED * deltaTime;
-    m_playerVelocityY += GRAVITY * deltaTime;
+    m_playerX += m_runSpeed * deltaTime;
+    m_playerVelocityY += GRAVITY * m_gravitySign * deltaTime;
     m_playerY += m_playerVelocityY * deltaTime;
 
-    const float groundCenterY = m_groundY + PLAYER_SIZE * 0.5f;
-    if (m_playerY <= groundCenterY) {
+    const float groundCenterY = m_groundY + PLAYER_SIZE * m_playerScale * 0.5f;
+    const float ceilingCenterY = m_ceilingY - PLAYER_SIZE * m_playerScale * 0.5f;
+    if (m_gravitySign > 0.f && m_playerY <= groundCenterY) {
         m_playerY = groundCenterY;
+        m_playerVelocityY = 0.f;
+        m_grounded = true;
+    } else if (m_gravitySign < 0.f && m_playerY >= ceilingCenterY) {
+        m_playerY = ceilingCenterY;
         m_playerVelocityY = 0.f;
         m_grounded = true;
     }
 
     if (!m_grounded) {
-        m_playerRotation -= 520.f * deltaTime;
+        m_playerRotation -= 520.f * deltaTime * m_gravitySign;
     } else {
         m_playerRotation = std::round(m_playerRotation / 90.f) * 90.f;
     }
 
     const ClawnDash::Rect player = playerBounds();
     updateTriggers(player, jumpPressed);
+    updatePortals(player);
 
     for (const ClawnDash::Obstacle &obstacle : m_obstacles) {
         if (player.intersects(obstacle.bounds)) {
@@ -212,7 +255,7 @@ void ClawnDashLevelController::updateTriggers(const ClawnDash::Rect &player, boo
     for (ClawnDash::Trigger &pad : m_jumpPads) {
         if (!pad.used && player.intersects(pad.bounds)) {
             pad.used = true;
-            m_playerVelocityY = PAD_VELOCITY;
+            m_playerVelocityY = PAD_VELOCITY * m_gravitySign;
             m_grounded = false;
             SpriteRendererComponentAPI::setColor(pad.entity, color(0xFFE08AFF));
         }
@@ -221,9 +264,67 @@ void ClawnDashLevelController::updateTriggers(const ClawnDash::Rect &player, boo
     for (ClawnDash::Trigger &orb : m_jumpOrbs) {
         if (!orb.used && jumpPressed && player.intersects(orb.bounds)) {
             orb.used = true;
-            m_playerVelocityY = ORB_VELOCITY;
+            m_playerVelocityY = ORB_VELOCITY * m_gravitySign;
             m_grounded = false;
             SpriteRendererComponentAPI::setColor(orb.entity, color(0x8FB7FFFF));
+        }
+    }
+}
+
+void ClawnDashLevelController::updatePortals(const ClawnDash::Rect &player) {
+    for (ClawnDash::Portal &portal : m_speedPortals) {
+        if (!portal.used && player.intersects(portal.bounds)) {
+            portal.used = true;
+            m_runSpeed = SPEED_PORTAL_RUN_SPEED;
+            setBackgroundColor(0x22110BFF);
+            SpriteRendererComponentAPI::setColor(portal.entity, color(0xFFB15CFF));
+        }
+    }
+
+    for (ClawnDash::Portal &portal : m_normalSpeedPortals) {
+        if (!portal.used && player.intersects(portal.bounds)) {
+            portal.used = true;
+            m_runSpeed = RUN_SPEED;
+            setBackgroundColor(baseBackgroundColor());
+            SpriteRendererComponentAPI::setColor(portal.entity, color(0xBFDBFEFF));
+        }
+    }
+
+    for (ClawnDash::Portal &portal : m_miniPortals) {
+        if (!portal.used && player.intersects(portal.bounds)) {
+            portal.used = true;
+            m_playerScale = 0.62f;
+            SpriteRendererComponentAPI::setColor(portal.entity, color(0xA5F3FCFF));
+        }
+    }
+
+    for (ClawnDash::Portal &portal : m_normalPortals) {
+        if (!portal.used && player.intersects(portal.bounds)) {
+            portal.used = true;
+            m_playerScale = 1.f;
+            SpriteRendererComponentAPI::setColor(portal.entity, color(0xE5E7EBFF));
+        }
+    }
+
+    for (ClawnDash::Portal &portal : m_gravityPortals) {
+        if (!portal.used && player.intersects(portal.bounds)) {
+            portal.used = true;
+            m_gravitySign = -1.f;
+            m_playerVelocityY = std::abs(m_playerVelocityY);
+            m_grounded = false;
+            setBackgroundColor(0x230B1DFF);
+            SpriteRendererComponentAPI::setColor(portal.entity, color(0xF9A8D4FF));
+        }
+    }
+
+    for (ClawnDash::Portal &portal : m_normalGravityPortals) {
+        if (!portal.used && player.intersects(portal.bounds)) {
+            portal.used = true;
+            m_gravitySign = 1.f;
+            m_playerVelocityY = -std::abs(m_playerVelocityY);
+            m_grounded = false;
+            setBackgroundColor(baseBackgroundColor());
+            SpriteRendererComponentAPI::setColor(portal.entity, color(0x86EFACFF));
         }
     }
 }
@@ -313,6 +414,20 @@ const char *ClawnDashLevelController::levelTitle() const {
             return "Orb Switch";
         case 3:
             return "Memory Line";
+        case 4:
+            return "Speed Gate";
+        case 5:
+            return "Mini Steps";
+        case 6:
+            return "Gravity Drop";
+        case 7:
+            return "Portal Chain";
+        case 8:
+            return "False Calm";
+        case 9:
+            return "Compression";
+        case 10:
+            return "Final Study";
         default:
             return "Clawn Dash";
     }
@@ -326,8 +441,49 @@ uint32_t ClawnDashLevelController::accentColor() const {
             return 0xB56CFFFF;
         case 3:
             return 0x7CFFB2FF;
+        case 4:
+            return 0xFF8A5CFF;
+        case 5:
+            return 0x6EE7F9FF;
+        case 6:
+            return 0xF472B6FF;
+        case 7:
+            return 0xA3E635FF;
+        case 8:
+            return 0xFACC15FF;
+        case 9:
+            return 0xFB7185FF;
+        case 10:
+            return 0xC084FCFF;
         default:
             return 0xFFD166FF;
+    }
+}
+
+uint32_t ClawnDashLevelController::baseBackgroundColor() const {
+    switch (levelNumber) {
+        case 1:
+            return 0x090E20FF;
+        case 2:
+            return 0x120D27FF;
+        case 3:
+            return 0x071B22FF;
+        case 4:
+            return 0x120B08FF;
+        case 5:
+            return 0x071820FF;
+        case 6:
+            return 0x17071BFF;
+        case 7:
+            return 0x102008FF;
+        case 8:
+            return 0x1D1707FF;
+        case 9:
+            return 0x210A12FF;
+        case 10:
+            return 0x160A24FF;
+        default:
+            return 0x090E20FF;
     }
 }
 
@@ -357,6 +513,9 @@ void ClawnDashLevelController::applyPlayerTransform() {
     }
     TransformComponentAPI::setPosition(m_player, Vec3(m_playerX, m_playerY, 0.35f));
     TransformComponentAPI::setRotationEuler(m_player, Vec3(0.f, 0.f, m_playerRotation));
+    TransformComponentAPI::setScale(
+        m_player, Vec3(PLAYER_SIZE * m_playerScale, PLAYER_SIZE * m_playerScale, 1.f)
+    );
     if (m_state == State::Playing) {
         SpriteRendererComponentAPI::setColor(m_player, color(0x5EEAD4FF));
     }
@@ -373,6 +532,39 @@ void ClawnDashLevelController::restoreTriggerColors() {
     }
 }
 
+void ClawnDashLevelController::restorePortalColors() {
+    for (ClawnDash::Portal &portal : m_speedPortals) {
+        portal.used = false;
+        SpriteRendererComponentAPI::setColor(portal.entity, color(0xFF8A5CFF));
+    }
+    for (ClawnDash::Portal &portal : m_normalSpeedPortals) {
+        portal.used = false;
+        SpriteRendererComponentAPI::setColor(portal.entity, color(0x93C5FDFF));
+    }
+    for (ClawnDash::Portal &portal : m_miniPortals) {
+        portal.used = false;
+        SpriteRendererComponentAPI::setColor(portal.entity, color(0x6EE7F9FF));
+    }
+    for (ClawnDash::Portal &portal : m_normalPortals) {
+        portal.used = false;
+        SpriteRendererComponentAPI::setColor(portal.entity, color(0xE5E7EBFF));
+    }
+    for (ClawnDash::Portal &portal : m_gravityPortals) {
+        portal.used = false;
+        SpriteRendererComponentAPI::setColor(portal.entity, color(0xF472B6FF));
+    }
+    for (ClawnDash::Portal &portal : m_normalGravityPortals) {
+        portal.used = false;
+        SpriteRendererComponentAPI::setColor(portal.entity, color(0x86EFACFF));
+    }
+}
+
+void ClawnDashLevelController::setBackgroundColor(uint32_t rgba) {
+    if (m_background.isValid()) {
+        SpriteRendererComponentAPI::setColor(m_background, color(rgba));
+    }
+}
+
 ClawnDash::Rect ClawnDashLevelController::readBounds(EntityHandle entity, float inset) const {
     const Vec3 position = TransformComponentAPI::getPosition(entity);
     const Vec3 scale = TransformComponentAPI::getScale(entity);
@@ -382,5 +574,6 @@ ClawnDash::Rect ClawnDashLevelController::readBounds(EntityHandle entity, float 
 }
 
 ClawnDash::Rect ClawnDashLevelController::playerBounds() const {
-    return ClawnDash::Rect{m_playerX, m_playerY, PLAYER_SIZE * 0.72f, PLAYER_SIZE * 0.72f};
+    const float size = PLAYER_SIZE * m_playerScale * 0.72f;
+    return ClawnDash::Rect{m_playerX, m_playerY, size, size};
 }

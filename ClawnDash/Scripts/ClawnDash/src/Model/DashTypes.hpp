@@ -32,6 +32,12 @@ struct Trigger {
     bool used = false;
 };
 
+struct Portal {
+    Bamboo::EntityHandle entity;
+    Rect bounds;
+    bool used = false;
+};
+
 struct LevelInfo {
     std::string title;
     std::string description;
