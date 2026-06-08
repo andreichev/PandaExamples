@@ -1,27 +1,34 @@
 #pragma once
 
 #include "Model/DashTypes.hpp"
-#include "UI/DashHudView.hpp"
+#include "UI/GameplayHudView.hpp"
 
 #include <Bamboo/Bamboo.hpp>
 #include <Bamboo/Script.hpp>
 #include <PandaUI/PandaUI.hpp>
 
-#include <cstddef>
+#include <cstdint>
 #include <memory>
-#include <string>
 #include <vector>
 
-class ClawnDashDemo final : public Bamboo::Script {
+class ClawnDashLevelController final : public Bamboo::Script {
 public:
     void start() override;
     void update(float deltaTime) override;
     void shutdown() override;
 
+    Bamboo::WorldHandle menuWorld;
+    Bamboo::WorldHandle nextLevel;
+    int levelNumber = 1;
+
+    PANDA_FIELDS_BEGIN(ClawnDashLevelController)
+    PANDA_FIELD(menuWorld)
+    PANDA_FIELD(nextLevel)
+    PANDA_FIELD(levelNumber)
+    PANDA_FIELDS_END
+
 private:
     enum class State {
-        MainMenu,
-        LevelSelect,
         Playing,
         Crashed,
         Finished,
@@ -33,10 +40,10 @@ private:
     Bamboo::EntityHandle m_background;
     Bamboo::EntityHandle m_finish;
     PandaUI::Window m_window;
-    std::shared_ptr<ClawnDash::DashHudView> m_hudView;
-    std::vector<ClawnDash::LevelInfo> m_levels;
+    std::shared_ptr<ClawnDash::GameplayHudView> m_hudView;
     std::vector<ClawnDash::Obstacle> m_obstacles;
-    std::size_t m_currentLevelIndex = 0;
+    std::vector<ClawnDash::Trigger> m_jumpPads;
+    std::vector<ClawnDash::Trigger> m_jumpOrbs;
     float m_startX = 0.f;
     float m_startY = 0.f;
     float m_finishX = 0.f;
@@ -49,30 +56,26 @@ private:
     bool m_jumpWasDown = false;
     State m_state = State::Playing;
 
-    void buildLevel();
-    void setupHud();
-    void createLevels();
-    void loadSharedEntities();
-    bool loadLevelEntities(std::size_t levelIndex);
-    void showMainMenu();
-    void showLevelSelect();
-    void startLevel(std::size_t levelIndex);
-    void restartLevel();
-    void startNextLevel();
-    void applyLevelTheme();
+    void loadEntities();
     void resetGame();
     void updatePlaying(float deltaTime);
+    void updateTriggers(const ClawnDash::Rect &player, bool jumpPressed);
     void updateCamera();
     void updateHud();
     void crash();
     void finish();
+    void openMenu();
+    void loadNextLevel();
+    const char *levelTitle() const;
+    uint32_t accentColor() const;
     bool readJumpPressed();
     bool readJumpDown() const;
     bool readRestartPressed() const;
     bool readMenuPressed() const;
     void applyPlayerTransform();
+    void restoreTriggerColors();
     ClawnDash::Rect readBounds(Bamboo::EntityHandle entity, float inset) const;
     ClawnDash::Rect playerBounds() const;
 };
 
-REGISTER_SCRIPT(ClawnDashDemo)
+REGISTER_SCRIPT(ClawnDashLevelController)

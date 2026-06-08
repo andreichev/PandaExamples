@@ -21,6 +21,34 @@
                 "sourcePath": "Assets/textures/block.png",
                 "cookedPath": ".Panda/Textures/Assets/textures/block.ptex"
             }
+        },
+        {
+            "id": 3100002000,
+            "type": 7,
+            "meta": {
+                "worldPath": "Assets/menu.pnd"
+            }
+        },
+        {
+            "id": 3100002001,
+            "type": 7,
+            "meta": {
+                "worldPath": "Assets/levels/level1.pnd"
+            }
+        },
+        {
+            "id": 3100002002,
+            "type": 7,
+            "meta": {
+                "worldPath": "Assets/levels/level2.pnd"
+            }
+        },
+        {
+            "id": 3100002003,
+            "type": 7,
+            "meta": {
+                "worldPath": "Assets/levels/level3.pnd"
+            }
         }
     ]
 }

@@ -26,13 +26,15 @@ struct Obstacle {
     Rect bounds;
 };
 
+struct Trigger {
+    Bamboo::EntityHandle entity;
+    Rect bounds;
+    bool used = false;
+};
+
 struct LevelInfo {
     std::string title;
     std::string description;
-    std::string hazardTag;
-    std::string finishTag;
-    float startX = 0.f;
-    float startY = 0.f;
     uint32_t backgroundColor = 0x090E20FF;
     uint32_t groundColor = 0x202B3EFF;
     uint32_t groundGlowColor = 0x5EEAD4AA;
