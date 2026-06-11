@@ -20,7 +20,7 @@ LevelSelectView::LevelSelectView(
     card->style().setMargin(PandaUI::Edge::Top, 18.f);
     card->addSubview(makeLabel("Select Level", 32.f, PandaUI::Color(0xFFFFFFFF), 1));
     card->addSubview(makeLabel(
-        "The levels are separate worlds. Open them in the editor and move the obstacles directly.",
+        "Both levels are separate worlds. Open them in the editor and move the terrain directly.",
         15.f,
         PandaUI::Color(0xBEE7FFFF)
     ));

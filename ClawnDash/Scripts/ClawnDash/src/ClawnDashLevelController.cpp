@@ -17,17 +17,22 @@ using namespace Bamboo;
 
 namespace {
 
-constexpr float PLAYER_SIZE = 0.78f;
-constexpr float RUN_SPEED = 6.4f;
-constexpr float SPEED_PORTAL_RUN_SPEED = 8.2f;
-constexpr float GRAVITY = -27.f;
-constexpr float JUMP_VELOCITY = 11.7f;
-constexpr float PAD_VELOCITY = 12.8f;
-constexpr float ORB_VELOCITY = 11.0f;
+constexpr float PLAYER_SIZE = 1.0f;
+constexpr float RUN_SPEED = 12.0f;
+constexpr float SPEED_PORTAL_RUN_SPEED = 20.0f;
+constexpr float GRAVITY = -80.f;
+constexpr float JUMP_VELOCITY = 20.0f;
+constexpr float PAD_VELOCITY = 20.0f;
+constexpr float ORB_VELOCITY = 20.0f;
 constexpr float MAX_DELTA_TIME = 1.f / 30.f;
 constexpr float CAMERA_OFFSET_X = 4.8f;
 constexpr float CAMERA_Y = 0.2f;
 constexpr float CAMERA_Z = 10.f;
+constexpr float TERRAIN_COLLISION_SCALE = 0.86f;
+constexpr float GROUND_EPSILON = 0.08f;
+constexpr float FALL_KILL_DISTANCE = 6.0f;
+constexpr float JUMP_BUFFER_TIME = 0.12f;
+constexpr float COYOTE_TIME = 0.08f;
 
 Color color(uint32_t rgba) {
     const float r = static_cast<float>((rgba >> 24) & 0xff) / 255.f;
@@ -109,12 +114,18 @@ void ClawnDashLevelController::loadEntities() {
     m_startY = playerPosition.y;
 
     m_ground = WorldAPI::findByTag("Ground");
+    m_solids.clear();
     if (m_ground.isValid()) {
         const Vec3 groundPosition = TransformComponentAPI::getPosition(m_ground);
         const Vec3 groundScale = TransformComponentAPI::getScale(m_ground);
         m_groundY = groundPosition.y + std::abs(groundScale.y) * 0.5f;
+        m_solids.push_back({m_ground, readBounds(m_ground, 1.f)});
     } else {
         LOG_ERROR("ClawnDashLevelController: Ground entity not found");
+    }
+
+    for (EntityHandle solid : WorldAPI::findAllByTag("Solid")) {
+        m_solids.push_back({solid, readBounds(solid, 1.f)});
     }
 
     m_groundGlow = WorldAPI::findByTag("Ground Glow");
@@ -182,6 +193,8 @@ void ClawnDashLevelController::resetGame() {
     m_playerY = m_startY;
     m_playerVelocityY = 0.f;
     m_playerRotation = 0.f;
+    m_jumpBufferTimer = 0.f;
+    m_coyoteTimer = COYOTE_TIME;
     m_grounded = true;
     m_jumpWasDown = readJumpDown();
     m_state = State::Playing;
@@ -205,25 +218,40 @@ void ClawnDashLevelController::updatePlaying(float deltaTime) {
     }
 
     const bool jumpPressed = readJumpPressed();
-    if (jumpPressed && m_grounded) {
-        m_playerVelocityY = JUMP_VELOCITY * m_gravitySign;
-        m_grounded = false;
+    if (jumpPressed) {
+        m_jumpBufferTimer = JUMP_BUFFER_TIME;
+    } else {
+        m_jumpBufferTimer = std::max(0.f, m_jumpBufferTimer - deltaTime);
     }
 
+    if (m_grounded) {
+        m_coyoteTimer = COYOTE_TIME;
+    } else {
+        m_coyoteTimer = std::max(0.f, m_coyoteTimer - deltaTime);
+    }
+
+    if (m_jumpBufferTimer > 0.f && m_coyoteTimer > 0.f) {
+        m_playerVelocityY = JUMP_VELOCITY * m_gravitySign;
+        m_grounded = false;
+        m_jumpBufferTimer = 0.f;
+        m_coyoteTimer = 0.f;
+    }
+
+    const float previousX = m_playerX;
+    const float previousY = m_playerY;
     m_playerX += m_runSpeed * deltaTime;
     m_playerVelocityY += GRAVITY * m_gravitySign * deltaTime;
     m_playerY += m_playerVelocityY * deltaTime;
 
-    const float groundCenterY = m_groundY + PLAYER_SIZE * m_playerScale * 0.5f;
-    const float ceilingCenterY = m_ceilingY - PLAYER_SIZE * m_playerScale * 0.5f;
-    if (m_gravitySign > 0.f && m_playerY <= groundCenterY) {
-        m_playerY = groundCenterY;
-        m_playerVelocityY = 0.f;
-        m_grounded = true;
-    } else if (m_gravitySign < 0.f && m_playerY >= ceilingCenterY) {
-        m_playerY = ceilingCenterY;
-        m_playerVelocityY = 0.f;
-        m_grounded = true;
+    m_grounded = false;
+    if (!resolveSolidCollisions(previousX, previousY)) {
+        crash();
+        return;
+    }
+
+    if (m_playerY < m_groundY - FALL_KILL_DISTANCE || m_playerY > m_ceilingY + FALL_KILL_DISTANCE) {
+        crash();
+        return;
     }
 
     if (!m_grounded) {
@@ -233,7 +261,7 @@ void ClawnDashLevelController::updatePlaying(float deltaTime) {
     }
 
     const ClawnDash::Rect player = playerBounds();
-    updateTriggers(player, jumpPressed);
+    updateTriggers(player, m_jumpBufferTimer > 0.f);
     updatePortals(player);
 
     for (const ClawnDash::Obstacle &obstacle : m_obstacles) {
@@ -251,21 +279,24 @@ void ClawnDashLevelController::updatePlaying(float deltaTime) {
     applyPlayerTransform();
 }
 
-void ClawnDashLevelController::updateTriggers(const ClawnDash::Rect &player, bool jumpPressed) {
+void ClawnDashLevelController::updateTriggers(const ClawnDash::Rect &player, bool jumpRequested) {
     for (ClawnDash::Trigger &pad : m_jumpPads) {
         if (!pad.used && player.intersects(pad.bounds)) {
             pad.used = true;
             m_playerVelocityY = PAD_VELOCITY * m_gravitySign;
             m_grounded = false;
+            m_coyoteTimer = 0.f;
             SpriteRendererComponentAPI::setColor(pad.entity, color(0xFFE08AFF));
         }
     }
 
     for (ClawnDash::Trigger &orb : m_jumpOrbs) {
-        if (!orb.used && jumpPressed && player.intersects(orb.bounds)) {
+        if (!orb.used && jumpRequested && player.intersects(orb.bounds)) {
             orb.used = true;
             m_playerVelocityY = ORB_VELOCITY * m_gravitySign;
             m_grounded = false;
+            m_jumpBufferTimer = 0.f;
+            m_coyoteTimer = 0.f;
             SpriteRendererComponentAPI::setColor(orb.entity, color(0x8FB7FFFF));
         }
     }
@@ -312,6 +343,7 @@ void ClawnDashLevelController::updatePortals(const ClawnDash::Rect &player) {
             m_gravitySign = -1.f;
             m_playerVelocityY = std::abs(m_playerVelocityY);
             m_grounded = false;
+            m_coyoteTimer = 0.f;
             setBackgroundColor(0x230B1DFF);
             SpriteRendererComponentAPI::setColor(portal.entity, color(0xF9A8D4FF));
         }
@@ -323,6 +355,7 @@ void ClawnDashLevelController::updatePortals(const ClawnDash::Rect &player) {
             m_gravitySign = 1.f;
             m_playerVelocityY = -std::abs(m_playerVelocityY);
             m_grounded = false;
+            m_coyoteTimer = 0.f;
             setBackgroundColor(baseBackgroundColor());
             SpriteRendererComponentAPI::setColor(portal.entity, color(0x86EFACFF));
         }
@@ -409,25 +442,9 @@ void ClawnDashLevelController::loadNextLevel() {
 const char *ClawnDashLevelController::levelTitle() const {
     switch (levelNumber) {
         case 1:
-            return "First Contact";
+            return "Foundation";
         case 2:
-            return "Orb Switch";
-        case 3:
-            return "Memory Line";
-        case 4:
-            return "Speed Gate";
-        case 5:
-            return "Mini Steps";
-        case 6:
-            return "Gravity Drop";
-        case 7:
-            return "Portal Chain";
-        case 8:
-            return "False Calm";
-        case 9:
-            return "Compression";
-        case 10:
-            return "Final Study";
+            return "Pressure";
         default:
             return "Clawn Dash";
     }
@@ -439,22 +456,6 @@ uint32_t ClawnDashLevelController::accentColor() const {
             return 0xFFD166FF;
         case 2:
             return 0xB56CFFFF;
-        case 3:
-            return 0x7CFFB2FF;
-        case 4:
-            return 0xFF8A5CFF;
-        case 5:
-            return 0x6EE7F9FF;
-        case 6:
-            return 0xF472B6FF;
-        case 7:
-            return 0xA3E635FF;
-        case 8:
-            return 0xFACC15FF;
-        case 9:
-            return 0xFB7185FF;
-        case 10:
-            return 0xC084FCFF;
         default:
             return 0xFFD166FF;
     }
@@ -466,22 +467,6 @@ uint32_t ClawnDashLevelController::baseBackgroundColor() const {
             return 0x090E20FF;
         case 2:
             return 0x120D27FF;
-        case 3:
-            return 0x071B22FF;
-        case 4:
-            return 0x120B08FF;
-        case 5:
-            return 0x071820FF;
-        case 6:
-            return 0x17071BFF;
-        case 7:
-            return 0x102008FF;
-        case 8:
-            return 0x1D1707FF;
-        case 9:
-            return 0x210A12FF;
-        case 10:
-            return 0x160A24FF;
         default:
             return 0x090E20FF;
     }
@@ -573,7 +558,48 @@ ClawnDash::Rect ClawnDashLevelController::readBounds(EntityHandle entity, float 
     };
 }
 
+ClawnDash::Rect ClawnDashLevelController::playerCollisionBounds() const {
+    const float size = PLAYER_SIZE * m_playerScale * TERRAIN_COLLISION_SCALE;
+    return ClawnDash::Rect{m_playerX, m_playerY, size, size};
+}
+
 ClawnDash::Rect ClawnDashLevelController::playerBounds() const {
     const float size = PLAYER_SIZE * m_playerScale * 0.72f;
     return ClawnDash::Rect{m_playerX, m_playerY, size, size};
+}
+
+bool ClawnDashLevelController::resolveSolidCollisions(float previousX, float previousY) {
+    const float halfSize = PLAYER_SIZE * m_playerScale * TERRAIN_COLLISION_SCALE * 0.5f;
+    const ClawnDash::Rect previousBounds{
+        previousX, previousY, halfSize * 2.f, halfSize * 2.f
+    };
+
+    for (const ClawnDash::Obstacle &solid : m_solids) {
+        const ClawnDash::Rect currentBounds = playerCollisionBounds();
+        if (!currentBounds.intersects(solid.bounds)) {
+            continue;
+        }
+
+        if (m_gravitySign > 0.f) {
+            const bool wasAbove = previousBounds.bottom() >= solid.bounds.top() - GROUND_EPSILON;
+            if (wasAbove && m_playerVelocityY <= 0.f) {
+                m_playerY = solid.bounds.top() + halfSize;
+                m_playerVelocityY = 0.f;
+                m_grounded = true;
+                continue;
+            }
+        } else {
+            const bool wasBelow = previousBounds.top() <= solid.bounds.bottom() + GROUND_EPSILON;
+            if (wasBelow && m_playerVelocityY >= 0.f) {
+                m_playerY = solid.bounds.bottom() - halfSize;
+                m_playerVelocityY = 0.f;
+                m_grounded = true;
+                continue;
+            }
+        }
+
+        return false;
+    }
+
+    return true;
 }

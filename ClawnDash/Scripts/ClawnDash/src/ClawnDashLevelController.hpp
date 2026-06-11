@@ -41,6 +41,7 @@ private:
     Bamboo::EntityHandle m_finish;
     PandaUI::Window m_window;
     std::shared_ptr<ClawnDash::GameplayHudView> m_hudView;
+    std::vector<ClawnDash::Obstacle> m_solids;
     std::vector<ClawnDash::Obstacle> m_obstacles;
     std::vector<ClawnDash::Trigger> m_jumpPads;
     std::vector<ClawnDash::Trigger> m_jumpOrbs;
@@ -62,6 +63,8 @@ private:
     float m_playerY = 0.f;
     float m_playerVelocityY = 0.f;
     float m_playerRotation = 0.f;
+    float m_jumpBufferTimer = 0.f;
+    float m_coyoteTimer = 0.f;
     bool m_grounded = false;
     bool m_jumpWasDown = false;
     State m_state = State::Playing;
@@ -69,7 +72,7 @@ private:
     void loadEntities();
     void resetGame();
     void updatePlaying(float deltaTime);
-    void updateTriggers(const ClawnDash::Rect &player, bool jumpPressed);
+    void updateTriggers(const ClawnDash::Rect &player, bool jumpRequested);
     void updatePortals(const ClawnDash::Rect &player);
     void updateCamera();
     void updateHud();
@@ -89,7 +92,9 @@ private:
     void restorePortalColors();
     void setBackgroundColor(uint32_t rgba);
     ClawnDash::Rect readBounds(Bamboo::EntityHandle entity, float inset) const;
+    ClawnDash::Rect playerCollisionBounds() const;
     ClawnDash::Rect playerBounds() const;
+    bool resolveSolidCollisions(float previousX, float previousY);
 };
 
 REGISTER_SCRIPT(ClawnDashLevelController)

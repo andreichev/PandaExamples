@@ -62,54 +62,6 @@
                                 "fieldId": 2101028151,
                                 "type": 5,
                                 "value": 3100002002
-                            },
-                            {
-                                "name": "level3",
-                                "fieldId": 2084250532,
-                                "type": 5,
-                                "value": 3100002003
-                            },
-                            {
-                                "name": "level4",
-                                "fieldId": 2067472913,
-                                "type": 5,
-                                "value": 3100002004
-                            },
-                            {
-                                "name": "level5",
-                                "fieldId": 2050695294,
-                                "type": 5,
-                                "value": 3100002005
-                            },
-                            {
-                                "name": "level6",
-                                "fieldId": 2033917675,
-                                "type": 5,
-                                "value": 3100002006
-                            },
-                            {
-                                "name": "level7",
-                                "fieldId": 2017140056,
-                                "type": 5,
-                                "value": 3100002007
-                            },
-                            {
-                                "name": "level8",
-                                "fieldId": 2000362437,
-                                "type": 5,
-                                "value": 3100002008
-                            },
-                            {
-                                "name": "level9",
-                                "fieldId": 1983584818,
-                                "type": 5,
-                                "value": 3100002009
-                            },
-                            {
-                                "name": "level10",
-                                "fieldId": 2971556750,
-                                "type": 5,
-                                "value": 3100002010
                             }
                         ]
                     }

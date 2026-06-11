@@ -13,11 +13,14 @@ struct Rect {
     float width = 0.f;
     float height = 0.f;
 
+    float left() const { return x - width * 0.5f; }
+    float right() const { return x + width * 0.5f; }
+    float bottom() const { return y - height * 0.5f; }
+    float top() const { return y + height * 0.5f; }
+
     bool intersects(const Rect &other) const {
-        return x - width * 0.5f < other.x + other.width * 0.5f &&
-               x + width * 0.5f > other.x - other.width * 0.5f &&
-               y - height * 0.5f < other.y + other.height * 0.5f &&
-               y + height * 0.5f > other.y - other.height * 0.5f;
+        return left() < other.right() && right() > other.left() && bottom() < other.top() &&
+               top() > other.bottom();
     }
 };
 

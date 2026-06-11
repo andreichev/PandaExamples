@@ -26,77 +26,21 @@
             "id": 3100002000,
             "type": 7,
             "meta": {
-                "worldPath": "Assets/menu.pnd"
+                "worldPath": "Assets/menu.world"
             }
         },
         {
             "id": 3100002001,
             "type": 7,
             "meta": {
-                "worldPath": "Assets/levels/level1.pnd"
+                "worldPath": "Assets/levels/level1.world"
             }
         },
         {
             "id": 3100002002,
             "type": 7,
             "meta": {
-                "worldPath": "Assets/levels/level2.pnd"
-            }
-        },
-        {
-            "id": 3100002003,
-            "type": 7,
-            "meta": {
-                "worldPath": "Assets/levels/level3.pnd"
-            }
-        },
-        {
-            "id": 3100002004,
-            "type": 7,
-            "meta": {
-                "worldPath": "Assets/levels/level4.pnd"
-            }
-        },
-        {
-            "id": 3100002005,
-            "type": 7,
-            "meta": {
-                "worldPath": "Assets/levels/level5.pnd"
-            }
-        },
-        {
-            "id": 3100002006,
-            "type": 7,
-            "meta": {
-                "worldPath": "Assets/levels/level6.pnd"
-            }
-        },
-        {
-            "id": 3100002007,
-            "type": 7,
-            "meta": {
-                "worldPath": "Assets/levels/level7.pnd"
-            }
-        },
-        {
-            "id": 3100002008,
-            "type": 7,
-            "meta": {
-                "worldPath": "Assets/levels/level8.pnd"
-            }
-        },
-        {
-            "id": 3100002009,
-            "type": 7,
-            "meta": {
-                "worldPath": "Assets/levels/level9.pnd"
-            }
-        },
-        {
-            "id": 3100002010,
-            "type": 7,
-            "meta": {
-                "worldPath": "Assets/levels/level10.pnd"
+                "worldPath": "Assets/levels/level2.world"
             }
         }
     ]

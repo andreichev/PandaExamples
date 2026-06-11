@@ -17,7 +17,7 @@ MainMenuView::MainMenuView(Action startLevel, Action selectLevel) {
     card->style().setMargin(PandaUI::Edge::Top, 42.f);
     card->addSubview(makeLabel("CLAWN DASH", 42.f, PandaUI::Color(0xFFFFFFFF), 1));
     card->addSubview(makeLabel(
-        "Reaction, timing, and memory. No level locks, no hidden grind.",
+        "Editable worlds for testing jumps, walls, platforms, and falls.",
         16.f,
         PandaUI::Color(0xBEE7FFFF)
     ));
