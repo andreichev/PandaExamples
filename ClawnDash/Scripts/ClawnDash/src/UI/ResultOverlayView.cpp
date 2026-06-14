@@ -16,13 +16,13 @@ ResultOverlayView::ResultOverlayView(
     Action secondaryAction
 ) {
     setBackgroundColor(PandaUI::Color(0x00000000));
-    style().setWidth(PandaUI::Length::percent(100.f));
-    style().setHeight(PandaUI::Length::percent(100.f));
-    style().setPadding(PandaUI::Edge::All, 28.f);
-    style().setFlexDirection(PandaUI::FlexDirection::Column);
+    layout().setWidth(PandaUI::Length::percent(100.f));
+    layout().setHeight(PandaUI::Length::percent(100.f));
+    layout().setPadding(PandaUI::Edge::All, 28.f);
+    layout().setFlexDirection(PandaUI::FlexDirection::Column);
 
     auto card = makeMenuCard();
-    card->style().setMargin(PandaUI::Edge::Top, 48.f);
+    card->layout().setMargin(PandaUI::Edge::Top, 48.f);
     card->addSubview(makeLabel(std::move(title), 28.f, PandaUI::Color(0xFFFFFFFF), 1));
     card->addSubview(makeLabel(std::move(message), 18.f, messageColor, 2));
 

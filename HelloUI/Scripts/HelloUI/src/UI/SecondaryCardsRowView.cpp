@@ -7,15 +7,15 @@ namespace HelloUI {
 
 SecondaryCardsRowView::SecondaryCardsRowView() {
     setBackgroundColor(transparent());
-    style().setFlexDirection(PandaUI::FlexDirection::Row);
-    style().setGap(12.f);
+    layout().setFlexDirection(PandaUI::FlexDirection::Row);
+    layout().setGap(12.f);
 
     addSubview(std::make_shared<DemoCardView>("Panel", "Stable View object"));
     addSubview(std::make_shared<DemoCardView>("Label", "Intrinsic text size"));
     addSubview(std::make_shared<DemoCardView>("Button", "Pointer events"));
 
     for (const auto &child : getSubviews()) {
-        child->style().setFlexGrow(1.f);
+        child->layout().setFlexGrow(1.f);
     }
 }
 

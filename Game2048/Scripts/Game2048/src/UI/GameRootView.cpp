@@ -10,25 +10,25 @@ namespace Game2048 {
 
 GameRootView::GameRootView() {
     setBackgroundColor(PandaUI::Color(0x17120EFF));
-    style().setFlexDirection(PandaUI::FlexDirection::Column);
+    layout().setFlexDirection(PandaUI::FlexDirection::Column);
 
     auto safeArea = std::make_shared<PandaUI::SafeAreaView>();
     safeArea->setBackgroundColor(transparent());
-    safeArea->style().setFlexGrow(1.f);
-    safeArea->style().setWidth(PandaUI::Length::percent(100.f));
-    safeArea->style().setFlexDirection(PandaUI::FlexDirection::Column);
-    safeArea->style().setAlignItems(PandaUI::Align::Center);
-    safeArea->style().setJustifyContent(PandaUI::Justify::Center);
+    safeArea->layout().setFlexGrow(1.f);
+    safeArea->layout().setWidth(PandaUI::Length::percent(100.f));
+    safeArea->layout().setFlexDirection(PandaUI::FlexDirection::Column);
+    safeArea->layout().setAlignItems(PandaUI::Align::Center);
+    safeArea->layout().setJustifyContent(PandaUI::Justify::Center);
 
     auto content = std::make_shared<PandaUI::Panel>();
     content->setBackgroundColor(transparent());
-    content->style().setFlexDirection(PandaUI::FlexDirection::Column);
-    content->style().setAlignItems(PandaUI::Align::Center);
-    content->style().setJustifyContent(PandaUI::Justify::Center);
-    content->style().setGap(18.f);
-    content->style().setPadding(24.f);
-    content->style().setFlexGrow(1.f);
-    content->style().setWidth(PandaUI::Length::percent(100.f));
+    content->layout().setFlexDirection(PandaUI::FlexDirection::Column);
+    content->layout().setAlignItems(PandaUI::Align::Center);
+    content->layout().setJustifyContent(PandaUI::Justify::Center);
+    content->layout().setGap(18.f);
+    content->layout().setPadding(24.f);
+    content->layout().setFlexGrow(1.f);
+    content->layout().setWidth(PandaUI::Length::percent(100.f));
 
     m_headerView = std::make_shared<HeaderView>([this]() { reset(); });
     content->addSubview(m_headerView);
@@ -91,11 +91,11 @@ void GameRootView::applyResponsiveLayout() {
         m_headerView->setContentWidth(boardSize);
     }
     if (m_boardView) {
-        m_boardView->style().setWidth(PandaUI::Length::points(boardSize));
-        m_boardView->style().setHeight(PandaUI::Length::points(boardSize));
+        m_boardView->layout().setWidth(PandaUI::Length::points(boardSize));
+        m_boardView->layout().setHeight(PandaUI::Length::points(boardSize));
     }
     if (m_hintLabel) {
-        m_hintLabel->style().setWidth(PandaUI::Length::points(boardSize));
+        m_hintLabel->layout().setWidth(PandaUI::Length::points(boardSize));
     }
 }
 

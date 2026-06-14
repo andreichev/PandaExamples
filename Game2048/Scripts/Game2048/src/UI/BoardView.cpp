@@ -26,21 +26,21 @@ BoardView::BoardView(GameBoard &board, MoveCallback onMove, Action onRestart)
 
     m_cellLayer = std::make_shared<PandaUI::Panel>();
     m_cellLayer->setBackgroundColor(transparent());
-    m_cellLayer->styleSetAbsolute();
-    m_cellLayer->styleSetInsetsFromParent({});
+    m_cellLayer->layoutSetAbsolute();
+    m_cellLayer->layoutSetInsetsFromParent({});
     addSubview(m_cellLayer);
 
     for (auto &cell : m_cells) {
         cell = std::make_shared<PandaUI::Panel>();
         cell->setBackgroundColor(PandaUI::Color(0xCDC1B4FF));
-        cell->styleSetAbsolute();
+        cell->layoutSetAbsolute();
         m_cellLayer->addSubview(cell);
     }
 
     m_tileLayer = std::make_shared<PandaUI::Panel>();
     m_tileLayer->setBackgroundColor(transparent());
-    m_tileLayer->styleSetAbsolute();
-    m_tileLayer->styleSetInsetsFromParent({});
+    m_tileLayer->layoutSetAbsolute();
+    m_tileLayer->layoutSetInsetsFromParent({});
     m_tileLayer->setUserInteractionEnabled(false);
     addSubview(m_tileLayer);
 
@@ -106,10 +106,10 @@ void BoardView::syncCells(const Metrics &metrics) {
         for (int x = 0; x < BOARD_SIZE; ++x) {
             std::shared_ptr<PandaUI::Panel> cell = m_cells[y * BOARD_SIZE + x];
             PandaUI::Point origin = originFor(Pos(x, y), metrics);
-            cell->style().setWidth(PandaUI::Length::points(metrics.cellSize));
-            cell->style().setHeight(PandaUI::Length::points(metrics.cellSize));
-            cell->style().setPosition(PandaUI::Edge::Left, PandaUI::Length::points(origin.x));
-            cell->style().setPosition(PandaUI::Edge::Top, PandaUI::Length::points(origin.y));
+            cell->layout().setWidth(PandaUI::Length::points(metrics.cellSize));
+            cell->layout().setHeight(PandaUI::Length::points(metrics.cellSize));
+            cell->layout().setPosition(PandaUI::Edge::Left, PandaUI::Length::points(origin.x));
+            cell->layout().setPosition(PandaUI::Edge::Top, PandaUI::Length::points(origin.y));
         }
     }
 }

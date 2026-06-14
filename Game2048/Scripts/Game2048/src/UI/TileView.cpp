@@ -9,10 +9,10 @@ namespace Game2048 {
 
 TileView::TileView() {
     setClipsToBounds(true);
-    styleSetAbsolute();
-    style().setFlexDirection(PandaUI::FlexDirection::Row);
-    style().setAlignItems(PandaUI::Align::Center);
-    style().setJustifyContent(PandaUI::Justify::Center);
+    layoutSetAbsolute();
+    layout().setFlexDirection(PandaUI::FlexDirection::Row);
+    layout().setAlignItems(PandaUI::Align::Center);
+    layout().setJustifyContent(PandaUI::Justify::Center);
 
     m_label = makeLabel("", 32.f, PandaUI::Color(0x776E65FF));
     m_label->setUserInteractionEnabled(false);
@@ -35,10 +35,10 @@ void TileView::setTile(int value, float cellSize, float scale) {
 void TileView::setVisualFrame(PandaUI::Point origin, float cellSize, float scale) {
     const float visualSize = cellSize * scale;
     const float inset = (cellSize - visualSize) * 0.5f;
-    style().setWidth(PandaUI::Length::points(visualSize));
-    style().setHeight(PandaUI::Length::points(visualSize));
-    style().setPosition(PandaUI::Edge::Left, PandaUI::Length::points(origin.x + inset));
-    style().setPosition(PandaUI::Edge::Top, PandaUI::Length::points(origin.y + inset));
+    layout().setWidth(PandaUI::Length::points(visualSize));
+    layout().setHeight(PandaUI::Length::points(visualSize));
+    layout().setPosition(PandaUI::Edge::Left, PandaUI::Length::points(origin.x + inset));
+    layout().setPosition(PandaUI::Edge::Top, PandaUI::Length::points(origin.y + inset));
 }
 
 } // namespace Game2048
