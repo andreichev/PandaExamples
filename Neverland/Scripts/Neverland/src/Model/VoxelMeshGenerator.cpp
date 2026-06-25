@@ -6,8 +6,6 @@
 #include "VoxelTextureMapper.hpp"
 #include "GameContext.hpp"
 
-#include <Bamboo/Logger.hpp>
-
 Vec2 getUV(uint8_t tileIndex) {
     // Размер одной текстуры на карте uv
     float uvSize = 1.f / 16.f;
@@ -404,9 +402,6 @@ MeshData VoxelMeshGenerator::makeOneChunkMesh(
             }
         }
     }
-    LOG_INFO("MESH GENERATED.");
-    LOG_INFO("VERTICES COUNT: %d", vertices.size());
-    LOG_INFO("INDICES COUNT: %d", indices.size());
     return MeshData(vertices, indices);
 }
 

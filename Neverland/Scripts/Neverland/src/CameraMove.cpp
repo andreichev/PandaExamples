@@ -55,7 +55,13 @@ void CameraMove::update(float deltaTime) {
         m_pitch = glm::clamp(m_pitch, -maxPitch, maxPitch);
         syncRotationFromAngles();
     }
-    if (Input::isKeyJustPressed(Key::TAB)) { ApplicationAPI::toggleCursorLock(); }
+    if (Input::isKeyJustPressed(Key::TAB)) {
+        ApplicationAPI::setCursorLocked(!ApplicationAPI::isCursorLocked());
+    }
+}
+
+void CameraMove::shutdown() {
+    ApplicationAPI::setCursorLocked(false);
 }
 
 void CameraMove::updateVectors() {

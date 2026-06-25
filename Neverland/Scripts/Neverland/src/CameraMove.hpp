@@ -14,6 +14,7 @@ class CameraMove final : public Script {
 public:
     void start() override;
     void update(float deltaTime) override;
+    void shutdown() override;
 
     Vec3 getFront() {
         return Vec3(m_front.x, m_front.y, m_front.z);

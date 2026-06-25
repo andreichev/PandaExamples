@@ -16,10 +16,49 @@ PandaUI::Color transparent() {
 std::shared_ptr<PandaUI::Label>
 makeLabel(const std::string &text, float fontSize, PandaUI::Color color) {
     auto label = std::make_shared<PandaUI::Label>(text);
-    label->setFontSize(fontSize);
+    label->setFont(PandaUI::Font(fontSize));
     label->setTextColor(color);
     return label;
 }
+
+class HotbarSlotButton final : public PandaUI::Button {
+public:
+    HotbarSlotButton()
+        : PandaUI::Button("")
+        , m_selected(false) {
+        updateSlotAppearance();
+    }
+
+    void setSlotSelected(bool selected) {
+        if (m_selected == selected) { return; }
+        m_selected = selected;
+        setOpacity(m_selected ? 1.f : 0.82f);
+        updateSlotAppearance();
+    }
+
+private:
+    void controlStateChanged(PandaUI::ControlState, PandaUI::ControlState) override {
+        updateSlotAppearance();
+    }
+
+    void themeChanged() override {
+        updateSlotAppearance();
+    }
+
+    void updateSlotAppearance() {
+        if (hasControlState(PandaUI::ControlState::Highlighted)) {
+            setBackgroundColor(PandaUI::Color(0xF0F4FFFF));
+        } else if (hasControlState(PandaUI::ControlState::Hovered)) {
+            setBackgroundColor(m_selected ? PandaUI::Color(0xFFFFFFFF) : PandaUI::Color(0x414A59EE));
+        } else {
+            setBackgroundColor(m_selected ? PandaUI::Color(0xF0F4FFFF) : PandaUI::Color(0x2D3440DD));
+        }
+        surface().setBorderColor(m_selected ? PandaUI::Color(0xFFFFFFFF) : PandaUI::Color(0x5C6676AA));
+        surface().setShadowColor(m_selected ? PandaUI::Color(0x00000038) : PandaUI::Color(0x00000024));
+    }
+
+    bool m_selected;
+};
 
 } // namespace
 
@@ -118,7 +157,8 @@ std::shared_ptr<PandaUI::Panel> NeverlandHUD::makeHotbar() {
 }
 
 std::shared_ptr<PandaUI::Button> NeverlandHUD::makeSlot(const BlockSlot &slot, int index) {
-    auto view = std::make_shared<PandaUI::Button>("");
+    auto view = std::make_shared<HotbarSlotButton>();
+    view->setFocusable(false);
     view->setClipsToBounds(true);
     view->layout().setWidth(PandaUI::Length::points(48.f));
     view->layout().setHeight(PandaUI::Length::points(52.f));
@@ -127,9 +167,6 @@ std::shared_ptr<PandaUI::Button> NeverlandHUD::makeSlot(const BlockSlot &slot, i
     view->layout().setFlexDirection(PandaUI::FlexDirection::Column);
     view->layout().setAlignItems(PandaUI::Align::Center);
     view->layout().setJustifyContent(PandaUI::Justify::Center);
-    view->setNormalColor(PandaUI::Color(0x2D3440DD));
-    view->setHoveredColor(PandaUI::Color(0x414A59EE));
-    view->setPressedColor(PandaUI::Color(0xF0F4FFFF));
     view->setOpacity(0.82f);
     view->getTitleLabel()->setHidden(true);
     view->setOnClick([this, type = slot.type](PandaUI::Button &) {
@@ -163,12 +200,7 @@ void NeverlandHUD::updateSelection() {
 
 void NeverlandHUD::applySlotStyle(size_t index, bool selected) {
     if (!m_slots[index]) { return; }
-    m_slots[index]->setNormalColor(
-        selected ? PandaUI::Color(0xF0F4FFFF) : PandaUI::Color(0x2D3440DD)
-    );
-    m_slots[index]->setHoveredColor(
-        selected ? PandaUI::Color(0xFFFFFFFF) : PandaUI::Color(0x414A59EE)
-    );
-    m_slots[index]->setPressedColor(PandaUI::Color(0xF0F4FFFF));
-    m_slots[index]->setOpacity(selected ? 1.f : 0.82f);
+    auto slot = std::dynamic_pointer_cast<HotbarSlotButton>(m_slots[index]);
+    if (!slot) { return; }
+    slot->setSlotSelected(selected);
 }

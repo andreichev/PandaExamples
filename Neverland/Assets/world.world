@@ -10,39 +10,6 @@
     },
     "entities": [
         {
-            "id": 387589424,
-            "tagComponent": {
-                "tag": "Suzanne.gltf"
-            },
-            "relationshipComponent": {
-                "parent": 0,
-                "children": [
-                    3511483999
-                ]
-            },
-            "transformComponent": {
-                "position": {
-                    "x": 103.0,
-                    "y": -23.0,
-                    "z": 106.0
-                },
-                "rotation": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0,
-                    "w": 1.0
-                },
-                "scale": {
-                    "x": 15.0,
-                    "y": 15.0,
-                    "z": 15.0
-                }
-            },
-            "scriptListComponent": {
-                "scripts": []
-            }
-        },
-        {
             "id": 1857420722,
             "tagComponent": {
                 "tag": "Base"
@@ -195,10 +162,10 @@
                     "z": 0.0000010887160897254944
                 },
                 "rotation": {
-                    "x": -0.03186526522040367,
-                    "y": 0.2500545084476471,
-                    "z": 0.12232883274555206,
-                    "w": 0.9599442481994629
+                    "x": -0.03186526894569397,
+                    "y": 0.2500545382499695,
+                    "z": 0.12232884764671326,
+                    "w": 0.9599443674087524
                 },
                 "scale": {
                     "x": 0.9999980330467224,
@@ -215,43 +182,6 @@
                 },
                 "intensity": 0.5,
                 "isEnabled": true
-            },
-            "scriptListComponent": {
-                "scripts": []
-            }
-        },
-        {
-            "id": 3511483999,
-            "tagComponent": {
-                "tag": "primitive 0"
-            },
-            "relationshipComponent": {
-                "parent": 387589424,
-                "children": []
-            },
-            "transformComponent": {
-                "position": {
-                    "x": 0.0,
-                    "y": 4.344006538391113,
-                    "z": 0.0
-                },
-                "rotation": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0,
-                    "w": 1.0
-                },
-                "scale": {
-                    "x": 1.0,
-                    "y": 1.0,
-                    "z": 1.0
-                }
-            },
-            "importedSubmeshComponent": {
-                "importedMesh": 3651530327,
-                "material": 460212091,
-                "submeshIndex": 0,
-                "primitiveIndex": 0
             },
             "scriptListComponent": {
                 "scripts": []

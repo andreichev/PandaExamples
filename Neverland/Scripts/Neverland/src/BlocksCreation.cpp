@@ -78,6 +78,10 @@ void BlocksCreation::setVoxel(int x, int y, int z, VoxelType type) {
 void BlocksCreation::update(float deltaTime) {
     updateSelectedBlock();
 
+    // While the initial chunk meshes are still being built in the background, voxel
+    // edits are disabled so a worker never reads voxel data the main thread mutates.
+    if (!GameContext::isWorldLoaded()) { return; }
+
     bool leftPressed;
     bool rightPressed;
     if (Input::isKeyPressed(Key::E)) {
