@@ -281,7 +281,49 @@
                 "isEnabled": true
             },
             "scriptListComponent": {
-                "scripts": []
+                "scripts": [
+                    {
+                        "name": "SunCycle",
+                        "scriptFields": [
+                            {
+                                "name": "enabled",
+                                "fieldId": 185664262,
+                                "type": 0,
+                                "value": 1
+                            },
+                            {
+                                "name": "cycleSeconds",
+                                "fieldId": 1069767414,
+                                "type": 1,
+                                "value": 180.0
+                            },
+                            {
+                                "name": "minSunIntensity",
+                                "fieldId": 4094324036,
+                                "type": 1,
+                                "value": 0.019999999552965164
+                            },
+                            {
+                                "name": "maxSunIntensity",
+                                "fieldId": 1664345754,
+                                "type": 1,
+                                "value": 0.8500000238418579
+                            },
+                            {
+                                "name": "minAmbientIntensity",
+                                "fieldId": 2390201246,
+                                "type": 1,
+                                "value": 0.05999999865889549
+                            },
+                            {
+                                "name": "maxAmbientIntensity",
+                                "fieldId": 2311388332,
+                                "type": 1,
+                                "value": 0.36000001430511475
+                            }
+                        ]
+                    }
+                ]
             }
         }
     ]
