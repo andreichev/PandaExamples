@@ -31,7 +31,7 @@ struct ChunkCoordHash {
 
 struct ChunkData {
     static constexpr int SIZE_X = 20;
-    static constexpr int SIZE_Y = 20;
+    static constexpr int SIZE_Y = 80;
     static constexpr int SIZE_Z = 20;
     static constexpr int VOXEL_COUNT = SIZE_X * SIZE_Y * SIZE_Z;
 

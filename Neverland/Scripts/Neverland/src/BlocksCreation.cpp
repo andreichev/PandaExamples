@@ -13,7 +13,7 @@
 
 void BlocksCreation::start() {
     m_selectedBlock = VoxelType::GROUND;
-    m_cameraMove = EntityAPI::getScript<CameraMove>(getEntity());
+    m_playerController = EntityAPI::getScript<PlayerController>(getEntity());
 }
 
 void BlocksCreation::setSelectedBlock(VoxelType type) {
@@ -86,7 +86,7 @@ void BlocksCreation::update(float deltaTime) {
     }
     if (!leftPressed && !rightPressed) { return; }
     Vec3 position = getPosition();
-    Vec3 target = m_cameraMove->getFront();
+    Vec3 target = m_playerController->getFront();
     auto v = GameContext::s_chunkStorage->bresenham3D(
         position.x, position.y, position.z, target.x, target.y, target.z, MAXIMUM_DISTANCE
     );

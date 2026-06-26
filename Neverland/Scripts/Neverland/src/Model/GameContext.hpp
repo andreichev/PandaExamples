@@ -12,6 +12,7 @@ public:
     static PandaAsync::Scheduler *s_scheduler;
     // Chunk mesh jobs still in flight (touched only on the main thread).
     static int s_pendingChunkJobs;
+    static int s_pendingRegionJobs;
     static MaterialHandle s_chunkMaterial;
 
     static void init();

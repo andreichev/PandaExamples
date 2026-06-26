@@ -5,7 +5,7 @@
 #pragma once
 
 #include "Model/ChunksStorage.hpp"
-#include "CameraMove.hpp"
+#include "PlayerController.hpp"
 
 #include <Bamboo/Bamboo.hpp>
 
@@ -26,7 +26,7 @@ private:
     void updateChunk(const ChunkCoord &coord);
     void updateSelectedBlock();
 
-    Shared<CameraMove> m_cameraMove;
+    Shared<PlayerController> m_playerController;
     VoxelType m_selectedBlock;
 };
 

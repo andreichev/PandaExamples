@@ -241,6 +241,52 @@ void ChunksStorage::unloadChunksOutside(const ChunkCoord &center, int horizontal
     }
 }
 
+void ChunksStorage::unloadChunksWithoutViewsOutside(
+    const ChunkCoord &center, int horizontalDistance
+) {
+    std::vector<ChunkCoord> chunksToErase;
+    const int distance = std::max(horizontalDistance, 0);
+
+    for (auto &[coord, chunk] : m_chunks) {
+        if (isInsideHorizontalDistance(coord, center, distance)) { continue; }
+        if (chunk->isMeshBuildQueued()) { continue; }
+        if (chunk->hasView()) { continue; }
+        if (chunk->isModifiedByPlayer()) {
+            chunk->clearMesh();
+            continue;
+        }
+        chunksToErase.emplace_back(coord);
+    }
+
+    for (const ChunkCoord &coord : chunksToErase) {
+        m_chunks.erase(coord);
+    }
+}
+
+void ChunksStorage::destroyChunkViewsOutside(const ChunkCoord &center, int horizontalDistance) {
+    const int distance = std::max(horizontalDistance, 0);
+    for (auto &[coord, chunk] : m_chunks) {
+        if (isInsideHorizontalDistance(coord, center, distance)) { continue; }
+        if (chunk->isMeshBuildQueued()) { continue; }
+        chunk->clearMesh();
+    }
+}
+
+void ChunksStorage::destroyChunkViewsOutsideIf(
+    const ChunkCoord &center,
+    int horizontalDistance,
+    const std::function<bool(const ChunkCoord &)> &shouldDestroy
+) {
+    const int distance = std::max(horizontalDistance, 0);
+    for (auto &[coord, chunk] : m_chunks) {
+        if (isInsideHorizontalDistance(coord, center, distance)) { continue; }
+        if (chunk->isMeshBuildQueued()) { continue; }
+        if (!chunk->hasView()) { continue; }
+        if (!shouldDestroy(coord)) { continue; }
+        chunk->clearMesh();
+    }
+}
+
 Chunk *ChunksStorage::getChunk(const ChunkCoord &coord) {
     if (!isChunkCoordInBounds(coord)) { return nullptr; }
     auto iterator = m_chunks.find(coord);
@@ -289,6 +335,14 @@ ChunksStorageStats ChunksStorage::collectStats() const {
         if (chunk->isModifiedByPlayer()) { stats.modifiedChunks++; }
         stats.vertices += chunk->getVertexCount();
         stats.indices += chunk->getIndexCount();
+    }
+    for (const auto &[key, region] : m_regions) {
+        (void)key;
+        if (region->hasView()) { stats.regionsWithView++; }
+        if (region->isMeshBuildQueued()) { stats.regionMeshBuildQueued++; }
+        if (region->needsRemesh()) { stats.dirtyRegions++; }
+        stats.regionVertices += region->getVertexCount();
+        stats.regionIndices += region->getIndexCount();
     }
     return stats;
 }
@@ -341,6 +395,61 @@ bool ChunksStorage::makeMeshSnapshot(const ChunkCoord &coord, ChunkMeshSnapshot 
         }
     }
     return true;
+}
+
+RegionMesh *ChunksStorage::ensureRegion(const RegionMeshKey &key) {
+    auto existing = m_regions.find(key);
+    if (existing != m_regions.end()) { return existing->second.get(); }
+
+    auto region = std::make_unique<RegionMesh>();
+    region->setKey(key);
+    RegionMesh *result = region.get();
+    m_regions.emplace(key, std::move(region));
+    return result;
+}
+
+RegionMesh *ChunksStorage::getRegion(const RegionMeshKey &key) {
+    auto iterator = m_regions.find(key);
+    if (iterator == m_regions.end()) { return nullptr; }
+    return iterator->second.get();
+}
+
+const RegionMesh *ChunksStorage::getRegion(const RegionMeshKey &key) const {
+    auto iterator = m_regions.find(key);
+    if (iterator == m_regions.end()) { return nullptr; }
+    return iterator->second.get();
+}
+
+void ChunksStorage::unloadRegionsExcept(
+    const std::unordered_set<RegionMeshKey, RegionMeshKeyHash> &activeRegions
+) {
+    std::vector<RegionMeshKey> regionsToErase;
+    for (const auto &[key, region] : m_regions) {
+        if (activeRegions.contains(key)) { continue; }
+        if (region->isMeshBuildQueued()) { continue; }
+        regionsToErase.emplace_back(key);
+    }
+
+    for (const RegionMeshKey &key : regionsToErase) {
+        m_regions.erase(key);
+    }
+}
+
+void ChunksStorage::unloadRegionsExceptIf(
+    const std::unordered_set<RegionMeshKey, RegionMeshKeyHash> &activeRegions,
+    const std::function<bool(const RegionMeshKey &)> &shouldUnload
+) {
+    std::vector<RegionMeshKey> regionsToErase;
+    for (const auto &[key, region] : m_regions) {
+        if (activeRegions.contains(key)) { continue; }
+        if (region->isMeshBuildQueued()) { continue; }
+        if (!shouldUnload(key)) { continue; }
+        regionsToErase.emplace_back(key);
+    }
+
+    for (const RegionMeshKey &key : regionsToErase) {
+        m_regions.erase(key);
+    }
 }
 
 std::optional<VoxelRaycastData> ChunksStorage::bresenham3D(
