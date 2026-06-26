@@ -46,7 +46,7 @@ struct VoxelTextureData {
 
 class VoxelTextureMapper final {
 public:
-    static VoxelTextureData &getTextureData(Voxel *voxel) {
+    static VoxelTextureData &getTextureData(const Voxel *voxel) {
         VoxelTextureData &data = s_data[static_cast<int>(voxel->type)];
         // ASSERT(data.type == voxel->type, "CHECK VOXEL ID");
         return data;

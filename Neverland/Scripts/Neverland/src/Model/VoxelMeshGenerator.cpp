@@ -4,7 +4,6 @@
 
 #include "VoxelMeshGenerator.hpp"
 #include "VoxelTextureMapper.hpp"
-#include "GameContext.hpp"
 
 Vec2 getUV(uint8_t tileIndex) {
     // Размер одной текстуры на карте uv
@@ -31,23 +30,22 @@ Color toColor(uint32_t hex) {
     return color;
 }
 
-MeshData VoxelMeshGenerator::makeOneChunkMesh(
-    int chunkIndexX, int chunkIndexY, int chunkIndexZ, bool ambientOcclusion
-) {
-    ChunksStorage& chunks = *GameContext::s_chunkStorage;
-    Chunk &chunk = chunks.chunks
-                       [chunkIndexY * ChunksStorage::SIZE_X * ChunksStorage::SIZE_Z +
-                        chunkIndexX * ChunksStorage::SIZE_X + chunkIndexZ];
+ChunkMeshBuildResult
+VoxelMeshGenerator::makeOneChunkMesh(const ChunkMeshSnapshot &snapshot, bool ambientOcclusion) {
     std::vector<Vertex> vertices;
     std::vector<uint32_t> indices;
     for (int voxelIndexX = 0; voxelIndexX < Chunk::SIZE_X; voxelIndexX++) {
         for (int voxelIndexY = 0; voxelIndexY < Chunk::SIZE_Y; voxelIndexY++) {
             for (int voxelIndexZ = 0; voxelIndexZ < Chunk::SIZE_Z; voxelIndexZ++) {
-                int x = voxelIndexX + chunkIndexX * Chunk::SIZE_X;
-                int y = voxelIndexY + chunkIndexY * Chunk::SIZE_Y;
-                int z = voxelIndexZ + chunkIndexZ * Chunk::SIZE_Z;
+                int x = voxelIndexX + snapshot.coord.x * Chunk::SIZE_X;
+                int y = voxelIndexY + snapshot.coord.y * Chunk::SIZE_Y;
+                int z = voxelIndexZ + snapshot.coord.z * Chunk::SIZE_Z;
 
-                Voxel *currentVoxel = chunk.get(voxelIndexX, voxelIndexY, voxelIndexZ);
+                const Voxel *currentVoxel = snapshot.getPadded(
+                    voxelIndexX + ChunkMeshSnapshot::PADDING,
+                    voxelIndexY + ChunkMeshSnapshot::PADDING,
+                    voxelIndexZ + ChunkMeshSnapshot::PADDING
+                );
                 if (currentVoxel == nullptr || currentVoxel->isAir()) { continue; }
                 VoxelTextureData &textureData = VoxelTextureMapper::getTextureData(currentVoxel);
 
@@ -58,30 +56,34 @@ MeshData VoxelMeshGenerator::makeOneChunkMesh(
                 float a = 0, b = 0, c = 0, d = 0, e = 0, f = 0, g = 0, h = 0;
 
                 // Front
-                if (isAir(x, y, z + 1, chunks)) {
+                if (isAir(x, y, z + 1, snapshot)) {
                     addFaceIndices(vertices.size(), indices);
                     const Vec3 normal(0.f, 0.f, 1.f);
                     light = 1.0f;
                     if (ambientOcclusion) {
                         // top
-                        a = (isAir(x, y + 1, z + 1, chunks) ? 0.0f : 1.0f) * ambientOcclusionFactor;
+                        a = (isAir(x, y + 1, z + 1, snapshot) ? 0.0f : 1.0f) *
+                            ambientOcclusionFactor;
                         // bottom
-                        b = (isAir(x, y - 1, z + 1, chunks) ? 0.0f : 1.0f) * ambientOcclusionFactor;
+                        b = (isAir(x, y - 1, z + 1, snapshot) ? 0.0f : 1.0f) *
+                            ambientOcclusionFactor;
                         // left
-                        c = (isAir(x + 1, y, z + 1, chunks) ? 0.0f : 1.0f) * ambientOcclusionFactor;
+                        c = (isAir(x + 1, y, z + 1, snapshot) ? 0.0f : 1.0f) *
+                            ambientOcclusionFactor;
                         // right
-                        d = (isAir(x - 1, y, z + 1, chunks) ? 0.0f : 1.0f) * ambientOcclusionFactor;
+                        d = (isAir(x - 1, y, z + 1, snapshot) ? 0.0f : 1.0f) *
+                            ambientOcclusionFactor;
                         // top left
-                        e = (isAir(x + 1, y + 1, z + 1, chunks) ? 0.0f : 1.0f) *
+                        e = (isAir(x + 1, y + 1, z + 1, snapshot) ? 0.0f : 1.0f) *
                             ambientOcclusionFactor;
                         // top right
-                        f = (isAir(x - 1, y + 1, z + 1, chunks) ? 0.0f : 1.0f) *
+                        f = (isAir(x - 1, y + 1, z + 1, snapshot) ? 0.0f : 1.0f) *
                             ambientOcclusionFactor;
                         // bottom left
-                        g = (isAir(x + 1, y - 1, z + 1, chunks) ? 0.0f : 1.0f) *
+                        g = (isAir(x + 1, y - 1, z + 1, snapshot) ? 0.0f : 1.0f) *
                             ambientOcclusionFactor;
                         // bottom right
-                        h = (isAir(x - 1, y - 1, z + 1, chunks) ? 0.0f : 1.0f) *
+                        h = (isAir(x - 1, y - 1, z + 1, snapshot) ? 0.0f : 1.0f) *
                             ambientOcclusionFactor;
                     }
                     Vec2 uv = getUV(textureData.sideTileIndex);
@@ -115,30 +117,34 @@ MeshData VoxelMeshGenerator::makeOneChunkMesh(
                     )); // 3
                 }
                 // Back
-                if (isAir(x, y, z - 1, chunks)) {
+                if (isAir(x, y, z - 1, snapshot)) {
                     addFaceIndices(vertices.size(), indices);
                     const Vec3 normal(0.f, 0.f, -1.f);
                     light = 0.75f;
                     if (ambientOcclusion) {
                         // top
-                        a = (isAir(x, y + 1, z - 1, chunks) ? 0.0f : 1.0f) * ambientOcclusionFactor;
+                        a = (isAir(x, y + 1, z - 1, snapshot) ? 0.0f : 1.0f) *
+                            ambientOcclusionFactor;
                         // bottom
-                        b = (isAir(x, y - 1, z - 1, chunks) ? 0.0f : 1.0f) * ambientOcclusionFactor;
+                        b = (isAir(x, y - 1, z - 1, snapshot) ? 0.0f : 1.0f) *
+                            ambientOcclusionFactor;
                         // right
-                        c = (isAir(x - 1, y, z - 1, chunks) ? 0.0f : 1.0f) * ambientOcclusionFactor;
+                        c = (isAir(x - 1, y, z - 1, snapshot) ? 0.0f : 1.0f) *
+                            ambientOcclusionFactor;
                         // left
-                        d = (isAir(x + 1, y, z - 1, chunks) ? 0.0f : 1.0f) * ambientOcclusionFactor;
+                        d = (isAir(x + 1, y, z - 1, snapshot) ? 0.0f : 1.0f) *
+                            ambientOcclusionFactor;
                         // top right
-                        e = (isAir(x - 1, y + 1, z - 1, chunks) ? 0.0f : 1.0f) *
+                        e = (isAir(x - 1, y + 1, z - 1, snapshot) ? 0.0f : 1.0f) *
                             ambientOcclusionFactor;
                         // bottom right
-                        f = (isAir(x - 1, y - 1, z - 1, chunks) ? 0.0f : 1.0f) *
+                        f = (isAir(x - 1, y - 1, z - 1, snapshot) ? 0.0f : 1.0f) *
                             ambientOcclusionFactor;
                         // top left
-                        g = (isAir(x + 1, y + 1, z - 1, chunks) ? 0.0f : 1.0f) *
+                        g = (isAir(x + 1, y + 1, z - 1, snapshot) ? 0.0f : 1.0f) *
                             ambientOcclusionFactor;
                         // bottom left
-                        h = (isAir(x + 1, y - 1, z - 1, chunks) ? 0.0f : 1.0f) *
+                        h = (isAir(x + 1, y - 1, z - 1, snapshot) ? 0.0f : 1.0f) *
                             ambientOcclusionFactor;
                     }
                     Vec2 uv = getUV(textureData.sideTileIndex);
@@ -172,30 +178,34 @@ MeshData VoxelMeshGenerator::makeOneChunkMesh(
                     )); // 7
                 }
                 // Top
-                if (isAir(x, y + 1, z, chunks)) {
+                if (isAir(x, y + 1, z, snapshot)) {
                     addFaceIndices(vertices.size(), indices);
                     const Vec3 normal(0.f, 1.f, 0.f);
                     light = 0.95f;
                     if (ambientOcclusion) {
                         // left
-                        a = (isAir(x + 1, y + 1, z, chunks) ? 0.0f : 1.0f) * ambientOcclusionFactor;
+                        a = (isAir(x + 1, y + 1, z, snapshot) ? 0.0f : 1.0f) *
+                            ambientOcclusionFactor;
                         // right
-                        b = (isAir(x - 1, y + 1, z, chunks) ? 0.0f : 1.0f) * ambientOcclusionFactor;
+                        b = (isAir(x - 1, y + 1, z, snapshot) ? 0.0f : 1.0f) *
+                            ambientOcclusionFactor;
                         // back
-                        c = (isAir(x, y + 1, z + 1, chunks) ? 0.0f : 1.0f) * ambientOcclusionFactor;
+                        c = (isAir(x, y + 1, z + 1, snapshot) ? 0.0f : 1.0f) *
+                            ambientOcclusionFactor;
                         // front
-                        d = (isAir(x, y + 1, z - 1, chunks) ? 0.0f : 1.0f) * ambientOcclusionFactor;
+                        d = (isAir(x, y + 1, z - 1, snapshot) ? 0.0f : 1.0f) *
+                            ambientOcclusionFactor;
                         // left back
-                        e = (isAir(x + 1, y + 1, z + 1, chunks) ? 0.0f : 1.0f) *
+                        e = (isAir(x + 1, y + 1, z + 1, snapshot) ? 0.0f : 1.0f) *
                             ambientOcclusionFactor;
                         // left front
-                        f = (isAir(x + 1, y + 1, z - 1, chunks) ? 0.0f : 1.0f) *
+                        f = (isAir(x + 1, y + 1, z - 1, snapshot) ? 0.0f : 1.0f) *
                             ambientOcclusionFactor;
                         // right back
-                        g = (isAir(x - 1, y + 1, z + 1, chunks) ? 0.0f : 1.0f) *
+                        g = (isAir(x - 1, y + 1, z + 1, snapshot) ? 0.0f : 1.0f) *
                             ambientOcclusionFactor;
                         // right front
-                        h = (isAir(x - 1, y + 1, z - 1, chunks) ? 0.0f : 1.0f) *
+                        h = (isAir(x - 1, y + 1, z - 1, snapshot) ? 0.0f : 1.0f) *
                             ambientOcclusionFactor;
                     }
                     Vec2 uv = getUV(textureData.topTileIndex);
@@ -229,30 +239,34 @@ MeshData VoxelMeshGenerator::makeOneChunkMesh(
                     )); // 9
                 }
                 // Bottom
-                if (isAir(x, y - 1, z, chunks)) {
+                if (isAir(x, y - 1, z, snapshot)) {
                     addFaceIndices(vertices.size(), indices);
                     const Vec3 normal(0.f, -1.f, 0.f);
                     light = 0.85f;
                     if (ambientOcclusion) {
                         // left
-                        a = (isAir(x + 1, y - 1, z, chunks) ? 0.0f : 1.0f) * ambientOcclusionFactor;
+                        a = (isAir(x + 1, y - 1, z, snapshot) ? 0.0f : 1.0f) *
+                            ambientOcclusionFactor;
                         // right
-                        b = (isAir(x - 1, y - 1, z, chunks) ? 0.0f : 1.0f) * ambientOcclusionFactor;
+                        b = (isAir(x - 1, y - 1, z, snapshot) ? 0.0f : 1.0f) *
+                            ambientOcclusionFactor;
                         // back
-                        c = (isAir(x, y - 1, z + 1, chunks) ? 0.0f : 1.0f) * ambientOcclusionFactor;
+                        c = (isAir(x, y - 1, z + 1, snapshot) ? 0.0f : 1.0f) *
+                            ambientOcclusionFactor;
                         // front
-                        d = (isAir(x, y - 1, z - 1, chunks) ? 0.0f : 1.0f) * ambientOcclusionFactor;
+                        d = (isAir(x, y - 1, z - 1, snapshot) ? 0.0f : 1.0f) *
+                            ambientOcclusionFactor;
                         // left back
-                        e = (isAir(x + 1, y - 1, z + 1, chunks) ? 0.0f : 1.0f) *
+                        e = (isAir(x + 1, y - 1, z + 1, snapshot) ? 0.0f : 1.0f) *
                             ambientOcclusionFactor;
                         // left front
-                        f = (isAir(x + 1, y - 1, z - 1, chunks) ? 0.0f : 1.0f) *
+                        f = (isAir(x + 1, y - 1, z - 1, snapshot) ? 0.0f : 1.0f) *
                             ambientOcclusionFactor;
                         // right back
-                        g = (isAir(x - 1, y - 1, z + 1, chunks) ? 0.0f : 1.0f) *
+                        g = (isAir(x - 1, y - 1, z + 1, snapshot) ? 0.0f : 1.0f) *
                             ambientOcclusionFactor;
                         // right front
-                        h = (isAir(x - 1, y - 1, z - 1, chunks) ? 0.0f : 1.0f) *
+                        h = (isAir(x - 1, y - 1, z - 1, snapshot) ? 0.0f : 1.0f) *
                             ambientOcclusionFactor;
                     }
                     Vec2 uv = getUV(textureData.bottomTileIndex);
@@ -286,30 +300,34 @@ MeshData VoxelMeshGenerator::makeOneChunkMesh(
                     )); // 15
                 }
                 // Right
-                if (isAir(x - 1, y, z, chunks)) {
+                if (isAir(x - 1, y, z, snapshot)) {
                     addFaceIndices(vertices.size(), indices);
                     const Vec3 normal(-1.f, 0.f, 0.f);
                     light = 0.9f;
                     if (ambientOcclusion) {
                         // top
-                        a = (isAir(x - 1, y + 1, z, chunks) ? 0.0f : 1.0f) * ambientOcclusionFactor;
+                        a = (isAir(x - 1, y + 1, z, snapshot) ? 0.0f : 1.0f) *
+                            ambientOcclusionFactor;
                         // bottom
-                        b = (isAir(x - 1, y - 1, z, chunks) ? 0.0f : 1.0f) * ambientOcclusionFactor;
+                        b = (isAir(x - 1, y - 1, z, snapshot) ? 0.0f : 1.0f) *
+                            ambientOcclusionFactor;
                         // front
-                        c = (isAir(x - 1, y, z + 1, chunks) ? 0.0f : 1.0f) * ambientOcclusionFactor;
+                        c = (isAir(x - 1, y, z + 1, snapshot) ? 0.0f : 1.0f) *
+                            ambientOcclusionFactor;
                         // back
-                        d = (isAir(x - 1, y, z - 1, chunks) ? 0.0f : 1.0f) * ambientOcclusionFactor;
+                        d = (isAir(x - 1, y, z - 1, snapshot) ? 0.0f : 1.0f) *
+                            ambientOcclusionFactor;
                         // top front
-                        e = (isAir(x - 1, y + 1, z + 1, chunks) ? 0.0f : 1.0f) *
+                        e = (isAir(x - 1, y + 1, z + 1, snapshot) ? 0.0f : 1.0f) *
                             ambientOcclusionFactor;
                         // bottom front
-                        f = (isAir(x - 1, y - 1, z + 1, chunks) ? 0.0f : 1.0f) *
+                        f = (isAir(x - 1, y - 1, z + 1, snapshot) ? 0.0f : 1.0f) *
                             ambientOcclusionFactor;
                         // top back
-                        g = (isAir(x - 1, y + 1, z - 1, chunks) ? 0.0f : 1.0f) *
+                        g = (isAir(x - 1, y + 1, z - 1, snapshot) ? 0.0f : 1.0f) *
                             ambientOcclusionFactor;
                         // bottom back
-                        h = (isAir(x - 1, y - 1, z - 1, chunks) ? 0.0f : 1.0f) *
+                        h = (isAir(x - 1, y - 1, z - 1, snapshot) ? 0.0f : 1.0f) *
                             ambientOcclusionFactor;
                     }
                     Vec2 uv = getUV(textureData.sideTileIndex);
@@ -343,30 +361,34 @@ MeshData VoxelMeshGenerator::makeOneChunkMesh(
                     )); // 19
                 }
                 // Left
-                if (isAir(x + 1, y, z, chunks)) {
+                if (isAir(x + 1, y, z, snapshot)) {
                     addFaceIndices(vertices.size(), indices);
                     const Vec3 normal(1.f, 0.f, 0.f);
                     light = 0.8f;
                     if (ambientOcclusion) {
                         // top
-                        a = (isAir(x + 1, y + 1, z, chunks) ? 0.0f : 1.0f) * ambientOcclusionFactor;
+                        a = (isAir(x + 1, y + 1, z, snapshot) ? 0.0f : 1.0f) *
+                            ambientOcclusionFactor;
                         // bottom
-                        b = (isAir(x + 1, y - 1, z, chunks) ? 0.0f : 1.0f) * ambientOcclusionFactor;
+                        b = (isAir(x + 1, y - 1, z, snapshot) ? 0.0f : 1.0f) *
+                            ambientOcclusionFactor;
                         // front
-                        c = (isAir(x + 1, y, z + 1, chunks) ? 0.0f : 1.0f) * ambientOcclusionFactor;
+                        c = (isAir(x + 1, y, z + 1, snapshot) ? 0.0f : 1.0f) *
+                            ambientOcclusionFactor;
                         // back
-                        d = (isAir(x + 1, y, z - 1, chunks) ? 0.0f : 1.0f) * ambientOcclusionFactor;
+                        d = (isAir(x + 1, y, z - 1, snapshot) ? 0.0f : 1.0f) *
+                            ambientOcclusionFactor;
                         // top front
-                        e = (isAir(x + 1, y + 1, z + 1, chunks) ? 0.0f : 1.0f) *
+                        e = (isAir(x + 1, y + 1, z + 1, snapshot) ? 0.0f : 1.0f) *
                             ambientOcclusionFactor;
                         // top back
-                        f = (isAir(x + 1, y + 1, z - 1, chunks) ? 0.0f : 1.0f) *
+                        f = (isAir(x + 1, y + 1, z - 1, snapshot) ? 0.0f : 1.0f) *
                             ambientOcclusionFactor;
                         // bottom front
-                        g = (isAir(x + 1, y - 1, z + 1, chunks) ? 0.0f : 1.0f) *
+                        g = (isAir(x + 1, y - 1, z + 1, snapshot) ? 0.0f : 1.0f) *
                             ambientOcclusionFactor;
                         // bottom back
-                        h = (isAir(x + 1, y - 1, z - 1, chunks) ? 0.0f : 1.0f) *
+                        h = (isAir(x + 1, y - 1, z - 1, snapshot) ? 0.0f : 1.0f) *
                             ambientOcclusionFactor;
                     }
                     Vec2 uv = getUV(textureData.sideTileIndex);
@@ -402,10 +424,10 @@ MeshData VoxelMeshGenerator::makeOneChunkMesh(
             }
         }
     }
-    return MeshData(vertices, indices);
+    return ChunkMeshBuildResult{snapshot.coord, snapshot.version, MeshData(vertices, indices)};
 }
 
-void VoxelMeshGenerator::addFaceIndices(uint32_t offset, std::vector<uint32_t>& indices) {
+void VoxelMeshGenerator::addFaceIndices(uint32_t offset, std::vector<uint32_t> &indices) {
     indices.emplace_back(offset);
     indices.emplace_back(offset + 1);
     indices.emplace_back(offset + 2);
@@ -414,8 +436,6 @@ void VoxelMeshGenerator::addFaceIndices(uint32_t offset, std::vector<uint32_t>& 
     indices.emplace_back(offset);
 }
 
-inline bool VoxelMeshGenerator::isAir(int x, int y, int z, ChunksStorage &chunks) {
-    Voxel *voxel = chunks.getVoxel(x, y, z);
-    if (voxel == nullptr) { return true; }
-    return voxel->isAir();
+bool VoxelMeshGenerator::isAir(int x, int y, int z, const ChunkMeshSnapshot &snapshot) {
+    return snapshot.isAirWorld(x, y, z);
 }

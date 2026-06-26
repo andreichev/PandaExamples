@@ -23,7 +23,7 @@ public:
 private:
     Vec3 getPosition();
     void setVoxel(int x, int y, int z, VoxelType type);
-    void updateChunk(int chunkIndexX, int chunkIndexY, int chunkIndexZ);
+    void updateChunk(const ChunkCoord &coord);
     void updateSelectedBlock();
 
     Shared<CameraMove> m_cameraMove;

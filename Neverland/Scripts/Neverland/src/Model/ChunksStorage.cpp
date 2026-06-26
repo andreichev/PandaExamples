@@ -8,6 +8,9 @@
 
 #include <Bamboo/Logger.hpp>
 
+#include <cmath>
+#include <limits>
+
 ChunksStorage::~ChunksStorage() {
     delete[] chunks;
 }
@@ -15,6 +18,14 @@ ChunksStorage::~ChunksStorage() {
 ChunksStorage::ChunksStorage() {
     LOG_INFO("NOISE GENERATION STARTED, number of chunks: %d", SIZE_X * SIZE_Y * SIZE_Z);
     chunks = new Chunk[SIZE_X * SIZE_Y * SIZE_Z];
+    for (int chunkY = 0; chunkY < SIZE_Y; chunkY++) {
+        for (int chunkX = 0; chunkX < SIZE_X; chunkX++) {
+            for (int chunkZ = 0; chunkZ < SIZE_Z; chunkZ++) {
+                ChunkCoord coord{chunkX, chunkY, chunkZ};
+                chunks[chunkIndex(coord)].setCoord(coord);
+            }
+        }
+    }
 
     float terrain[WORLD_SIZE_X * WORLD_SIZE_Z];
     PerlinNoise::generate2DCustom(2, 4, 1.0f, terrain, WORLD_SIZE_X, WORLD_SIZE_Z);
@@ -23,7 +34,7 @@ ChunksStorage::ChunksStorage() {
         for (int y = 0; y < WORLD_SIZE_Y; y++) {
             for (int z = 0; z < WORLD_SIZE_Z; z++) {
                 VoxelType voxelType;
-                int height = (int)(terrain[x * WORLD_SIZE_X + z] * WORLD_SIZE_Y);
+                int height = (int)(terrain[x * WORLD_SIZE_Z + z] * WORLD_SIZE_Y);
                 if (y < height) {
                     voxelType = y <= 2 ? VoxelType::STONE : VoxelType::GROUND;
                 } else if (y == height) {
@@ -37,51 +48,130 @@ ChunksStorage::ChunksStorage() {
                 int voxelIndexX = x % Chunk::SIZE_X;
                 int voxelIndexY = y % Chunk::SIZE_Y;
                 int voxelIndexZ = z % Chunk::SIZE_Z;
-                chunks
-                    [chunkIndexY * ChunksStorage::SIZE_X * ChunksStorage::SIZE_Z +
-                     chunkIndexX * ChunksStorage::SIZE_X + chunkIndexZ]
-                        .m_data
-                            [voxelIndexY * Chunk::SIZE_X * Chunk::SIZE_Z +
-                             voxelIndexX * Chunk::SIZE_X + voxelIndexZ]
-                        .type = voxelType;
+                ChunkCoord coord{chunkIndexX, chunkIndexY, chunkIndexZ};
+                chunks[chunkIndex(coord)]
+                    .data()
+                    .voxels[ChunkData::index(voxelIndexX, voxelIndexY, voxelIndexZ)]
+                    .type = voxelType;
             }
         }
     }
 }
 
+int ChunksStorage::floorDiv(int value, int divisor) {
+    int quotient = value / divisor;
+    int remainder = value % divisor;
+    if (remainder != 0 && ((remainder < 0) != (divisor < 0))) { quotient--; }
+    return quotient;
+}
+
+int ChunksStorage::floorMod(int value, int divisor) {
+    int remainder = value % divisor;
+    if (remainder < 0) { remainder += divisor; }
+    return remainder;
+}
+
+bool ChunksStorage::isWorldCoordInBounds(int x, int y, int z) {
+    return x >= 0 && y >= 0 && z >= 0 && x < WORLD_SIZE_X && y < WORLD_SIZE_Y && z < WORLD_SIZE_Z;
+}
+
+bool ChunksStorage::isChunkCoordInBounds(const ChunkCoord &coord) {
+    return coord.x >= 0 && coord.y >= 0 && coord.z >= 0 && coord.x < SIZE_X && coord.y < SIZE_Y &&
+           coord.z < SIZE_Z;
+}
+
+ChunkCoord ChunksStorage::worldToChunkCoord(int x, int y, int z) {
+    return {floorDiv(x, Chunk::SIZE_X), floorDiv(y, Chunk::SIZE_Y), floorDiv(z, Chunk::SIZE_Z)};
+}
+
+int ChunksStorage::worldToLocalX(int x) {
+    return floorMod(x, Chunk::SIZE_X);
+}
+
+int ChunksStorage::worldToLocalY(int y) {
+    return floorMod(y, Chunk::SIZE_Y);
+}
+
+int ChunksStorage::worldToLocalZ(int z) {
+    return floorMod(z, Chunk::SIZE_Z);
+}
+
+int ChunksStorage::chunkIndex(const ChunkCoord &coord) {
+    return coord.y * SIZE_X * SIZE_Z + coord.x * SIZE_Z + coord.z;
+}
+
 void ChunksStorage::setVoxel(int x, int y, int z, VoxelType type) {
-    if (x < 0 || y < 0 || z < 0 || x >= WORLD_SIZE_X || y >= WORLD_SIZE_Y || z >= WORLD_SIZE_Z)
-        return;
-    int chunkIndexX = x / Chunk::SIZE_X;
-    int chunkIndexY = y / Chunk::SIZE_Y;
-    int chunkIndexZ = z / Chunk::SIZE_Z;
-    chunks
-        [chunkIndexY * ChunksStorage::SIZE_X * ChunksStorage::SIZE_Z +
-         chunkIndexX * ChunksStorage::SIZE_X + chunkIndexZ]
-            .set(x % Chunk::SIZE_X, y % Chunk::SIZE_Y, z % Chunk::SIZE_Z, type);
+    if (!isWorldCoordInBounds(x, y, z)) { return; }
+    Chunk *chunk = getChunk(worldToChunkCoord(x, y, z));
+    if (chunk == nullptr) { return; }
+    chunk->set(worldToLocalX(x), worldToLocalY(y), worldToLocalZ(z), type);
 }
 
 Voxel *ChunksStorage::getVoxel(int x, int y, int z) {
-    if (x < 0 || y < 0 || z < 0 || x >= WORLD_SIZE_X || y >= WORLD_SIZE_Y || z >= WORLD_SIZE_Z)
-        return nullptr;
-    int chunkIndexX = x / Chunk::SIZE_X;
-    int chunkIndexY = y / Chunk::SIZE_Y;
-    int chunkIndexZ = z / Chunk::SIZE_Z;
-    return chunks
-        [chunkIndexY * ChunksStorage::SIZE_X * ChunksStorage::SIZE_Z +
-         chunkIndexX * ChunksStorage::SIZE_X + chunkIndexZ]
-            .get(x % Chunk::SIZE_X, y % Chunk::SIZE_Y, z % Chunk::SIZE_Z);
+    if (!isWorldCoordInBounds(x, y, z)) { return nullptr; }
+    Chunk *chunk = getChunk(worldToChunkCoord(x, y, z));
+    if (chunk == nullptr) { return nullptr; }
+    return chunk->get(worldToLocalX(x), worldToLocalY(y), worldToLocalZ(z));
+}
+
+const Voxel *ChunksStorage::getVoxel(int x, int y, int z) const {
+    if (!isWorldCoordInBounds(x, y, z)) { return nullptr; }
+    const Chunk *chunk = getChunk(worldToChunkCoord(x, y, z));
+    if (chunk == nullptr) { return nullptr; }
+    return chunk->get(worldToLocalX(x), worldToLocalY(y), worldToLocalZ(z));
+}
+
+Chunk *ChunksStorage::getChunk(const ChunkCoord &coord) {
+    if (!isChunkCoordInBounds(coord)) { return nullptr; }
+    return &chunks[chunkIndex(coord)];
+}
+
+const Chunk *ChunksStorage::getChunk(const ChunkCoord &coord) const {
+    if (!isChunkCoordInBounds(coord)) { return nullptr; }
+    return &chunks[chunkIndex(coord)];
 }
 
 Chunk *ChunksStorage::getChunk(int x, int y, int z) {
-    if (x < 0 || y < 0 || z < 0 || x >= WORLD_SIZE_X || y >= WORLD_SIZE_Y || z >= WORLD_SIZE_Z)
-        return nullptr;
-    int chunkIndexX = x / Chunk::SIZE_X;
-    int chunkIndexY = y / Chunk::SIZE_Y;
-    int chunkIndexZ = z / Chunk::SIZE_Z;
-    return &chunks
-        [chunkIndexY * ChunksStorage::SIZE_X * ChunksStorage::SIZE_Z +
-         chunkIndexX * ChunksStorage::SIZE_X + chunkIndexZ];
+    if (!isWorldCoordInBounds(x, y, z)) { return nullptr; }
+    return getChunk(worldToChunkCoord(x, y, z));
+}
+
+const Chunk *ChunksStorage::getChunk(int x, int y, int z) const {
+    if (!isWorldCoordInBounds(x, y, z)) { return nullptr; }
+    return getChunk(worldToChunkCoord(x, y, z));
+}
+
+bool ChunksStorage::makeMeshSnapshot(const ChunkCoord &coord, ChunkMeshSnapshot &snapshot) const {
+    const Chunk *chunk = getChunk(coord);
+    if (chunk == nullptr) { return false; }
+
+    snapshot.coord = coord;
+    snapshot.version = chunk->getVersion();
+
+    const int originX = coord.x * Chunk::SIZE_X;
+    const int originY = coord.y * Chunk::SIZE_Y;
+    const int originZ = coord.z * Chunk::SIZE_Z;
+
+    for (int localY = -ChunkMeshSnapshot::PADDING;
+         localY < Chunk::SIZE_Y + ChunkMeshSnapshot::PADDING;
+         localY++) {
+        for (int localX = -ChunkMeshSnapshot::PADDING;
+             localX < Chunk::SIZE_X + ChunkMeshSnapshot::PADDING;
+             localX++) {
+            for (int localZ = -ChunkMeshSnapshot::PADDING;
+                 localZ < Chunk::SIZE_Z + ChunkMeshSnapshot::PADDING;
+                 localZ++) {
+                const Voxel *voxel = getVoxel(originX + localX, originY + localY, originZ + localZ);
+                snapshot.setPadded(
+                    localX + ChunkMeshSnapshot::PADDING,
+                    localY + ChunkMeshSnapshot::PADDING,
+                    localZ + ChunkMeshSnapshot::PADDING,
+                    voxel != nullptr ? *voxel : Voxel(VoxelType::NOTHING)
+                );
+            }
+        }
+    }
+    return true;
 }
 
 std::optional<VoxelRaycastData> ChunksStorage::bresenham3D(

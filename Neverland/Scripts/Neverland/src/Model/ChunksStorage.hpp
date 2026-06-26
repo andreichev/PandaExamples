@@ -5,6 +5,7 @@
 #pragma once
 
 #include "Chunk.hpp"
+#include "ChunkMeshSnapshot.hpp"
 #include "VoxelRaycastData.hpp"
 
 #include <optional>
@@ -24,9 +25,26 @@ public:
     ChunksStorage();
     ~ChunksStorage();
 
+    static bool isWorldCoordInBounds(int x, int y, int z);
+    static bool isChunkCoordInBounds(const ChunkCoord &coord);
+    static ChunkCoord worldToChunkCoord(int x, int y, int z);
+    static int worldToLocalX(int x);
+    static int worldToLocalY(int y);
+    static int worldToLocalZ(int z);
+
     void setVoxel(int x, int y, int z, VoxelType type);
     Voxel *getVoxel(int x, int y, int z);
+    const Voxel *getVoxel(int x, int y, int z) const;
+    Chunk *getChunk(const ChunkCoord &coord);
+    const Chunk *getChunk(const ChunkCoord &coord) const;
     Chunk *getChunk(int x, int y, int z);
+    const Chunk *getChunk(int x, int y, int z) const;
+    bool makeMeshSnapshot(const ChunkCoord &coord, ChunkMeshSnapshot &snapshot) const;
     std::optional<VoxelRaycastData>
     bresenham3D(float x1, float y1, float z1, float x2, float y2, float z2, int maximumDistance);
+
+private:
+    static int floorDiv(int value, int divisor);
+    static int floorMod(int value, int divisor);
+    static int chunkIndex(const ChunkCoord &coord);
 };

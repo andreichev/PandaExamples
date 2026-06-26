@@ -31,55 +31,44 @@ void BlocksCreation::updateSelectedBlock() {
     if (Input::isKeyJustPressed(Key::KEY_8)) { setSelectedBlock(VoxelType::SAND); }
 }
 
-void BlocksCreation::updateChunk(int chunkIndexX, int chunkIndexY, int chunkIndexZ) {
-    LOG_INFO("UPDATE CHUNK %d %d %d", chunkIndexX, chunkIndexY, chunkIndexZ);
-    MeshData data = VoxelMeshGenerator::makeOneChunkMesh(
-        chunkIndexX, chunkIndexY, chunkIndexZ, true
-    );
-    MeshHandle mesh = GameContext::s_chunkStorage
-        ->chunks
-            [chunkIndexY * ChunksStorage::SIZE_X * ChunksStorage::SIZE_Z +
-             chunkIndexX * ChunksStorage::SIZE_X + chunkIndexZ]
-        .getMesh();
-    MeshAPI::update(mesh, data);
+void BlocksCreation::updateChunk(const ChunkCoord &coord) {
+    if (!ChunksStorage::isChunkCoordInBounds(coord)) { return; }
+
+    LOG_INFO("UPDATE CHUNK %d %d %d", coord.x, coord.y, coord.z);
+    ChunkMeshSnapshot snapshot;
+    if (!GameContext::s_chunkStorage->makeMeshSnapshot(coord, snapshot)) { return; }
+
+    ChunkMeshBuildResult result = VoxelMeshGenerator::makeOneChunkMesh(snapshot, true);
+    Chunk *chunk = GameContext::s_chunkStorage->getChunk(result.coord);
+    if (chunk == nullptr || chunk->getVersion() != result.version) { return; }
+
+    MeshAPI::update(chunk->getMesh(), result.meshData);
+    chunk->clearNeedsRemesh();
 }
 
 void BlocksCreation::setVoxel(int x, int y, int z, VoxelType type) {
-    if (x < 0 || y < 0 || z < 0 || x >= ChunksStorage::WORLD_SIZE_X ||
-        y >= ChunksStorage::WORLD_SIZE_Y || z >= ChunksStorage::WORLD_SIZE_Z)
-        return;
+    if (!ChunksStorage::isWorldCoordInBounds(x, y, z)) { return; }
 
     GameContext::s_chunkStorage->setVoxel(x, y, z, type);
-    int chunkIndexX = x / Chunk::SIZE_X;
-    int chunkIndexY = y / Chunk::SIZE_Y;
-    int chunkIndexZ = z / Chunk::SIZE_Z;
-    updateChunk(chunkIndexX, chunkIndexY, chunkIndexZ);
+    ChunkCoord coord = ChunksStorage::worldToChunkCoord(x, y, z);
+    const int localX = ChunksStorage::worldToLocalX(x);
+    const int localY = ChunksStorage::worldToLocalY(y);
+    const int localZ = ChunksStorage::worldToLocalZ(z);
 
-    if (x % Chunk::SIZE_X == 0 && chunkIndexX > 0) {
-        updateChunk(chunkIndexX - 1, chunkIndexY, chunkIndexZ);
-    }
-    if (x % Chunk::SIZE_X == Chunk::SIZE_X - 1 && chunkIndexX < ChunksStorage::SIZE_X - 1) {
-        updateChunk(chunkIndexX + 1, chunkIndexY, chunkIndexZ);
-    }
-    if (z % Chunk::SIZE_Z == 0 && chunkIndexZ > 0) {
-        updateChunk(chunkIndexX, chunkIndexY, chunkIndexZ - 1);
-    }
-    if (z % Chunk::SIZE_Z == Chunk::SIZE_Z - 1 && chunkIndexZ < ChunksStorage::SIZE_Z - 1) {
-        updateChunk(chunkIndexX, chunkIndexY, chunkIndexZ + 1);
-    }
-    if (y % Chunk::SIZE_Y == 0 && chunkIndexY > 0) {
-        updateChunk(chunkIndexX, chunkIndexY - 1, chunkIndexZ);
-    }
-    if (y % Chunk::SIZE_Y == Chunk::SIZE_Y - 1 && chunkIndexY < ChunksStorage::SIZE_Y - 1) {
-        updateChunk(chunkIndexX, chunkIndexY + 1, chunkIndexZ);
-    }
+    updateChunk(coord);
+
+    if (localX == 0) { updateChunk({coord.x - 1, coord.y, coord.z}); }
+    if (localX == Chunk::SIZE_X - 1) { updateChunk({coord.x + 1, coord.y, coord.z}); }
+    if (localZ == 0) { updateChunk({coord.x, coord.y, coord.z - 1}); }
+    if (localZ == Chunk::SIZE_Z - 1) { updateChunk({coord.x, coord.y, coord.z + 1}); }
+    if (localY == 0) { updateChunk({coord.x, coord.y - 1, coord.z}); }
+    if (localY == Chunk::SIZE_Y - 1) { updateChunk({coord.x, coord.y + 1, coord.z}); }
 }
 
 void BlocksCreation::update(float deltaTime) {
     updateSelectedBlock();
 
-    // While the initial chunk meshes are still being built in the background, voxel
-    // edits are disabled so a worker never reads voxel data the main thread mutates.
+    // Keep voxel edits disabled until the initial world is visible.
     if (!GameContext::isWorldLoaded()) { return; }
 
     bool leftPressed;
