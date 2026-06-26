@@ -25,7 +25,7 @@ bool isSolidVoxel(int x, int y, int z) {
         // holes, while unloaded air above terrain stays passable.
         return y <= ChunksStorage::terrainHeight(x, z);
     }
-    return !voxel->isAir();
+    return voxel->isSolid();
 }
 
 Aabb makeBodyAabb(const glm::vec3 &eyePosition, const VoxelCharacterConfig &config) {

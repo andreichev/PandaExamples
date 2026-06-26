@@ -22,6 +22,15 @@ float smoothStep(float value) {
     return value * value * (3.0f - 2.0f * value);
 }
 
+float clamp01(float value) {
+    return std::clamp(value, 0.0f, 1.0f);
+}
+
+float smoothRange(float edge0, float edge1, float value) {
+    if (edge0 == edge1) { return value >= edge1 ? 1.0f : 0.0f; }
+    return smoothStep(clamp01((value - edge0) / (edge1 - edge0)));
+}
+
 int localFloorDiv(int value, int divisor) {
     int quotient = value / divisor;
     int remainder = value % divisor;
@@ -44,13 +53,17 @@ float hashNoise(int x, int z) {
     return static_cast<float>(hash & 0x00ffffffu) / static_cast<float>(0x00ffffffu);
 }
 
-float valueNoise(int x, int z, int cellSize) {
-    const int cellX = localFloorDiv(x, cellSize);
-    const int cellZ = localFloorDiv(z, cellSize);
+float hashNoiseSalted(int x, int z, int salt) {
+    return hashNoise(x + salt * 1299721, z - salt * 479001599);
+}
+
+float valueNoise(int x, int z, int cellSizeX, int cellSizeZ) {
+    const int cellX = localFloorDiv(x, cellSizeX);
+    const int cellZ = localFloorDiv(z, cellSizeZ);
     const float localX =
-        static_cast<float>(localFloorMod(x, cellSize)) / static_cast<float>(cellSize);
+        static_cast<float>(localFloorMod(x, cellSizeX)) / static_cast<float>(cellSizeX);
     const float localZ =
-        static_cast<float>(localFloorMod(z, cellSize)) / static_cast<float>(cellSize);
+        static_cast<float>(localFloorMod(z, cellSizeZ)) / static_cast<float>(cellSizeZ);
     const float tx = smoothStep(localX);
     const float tz = smoothStep(localZ);
 
@@ -61,6 +74,104 @@ float valueNoise(int x, int z, int cellSize) {
     const float nx0 = lerpFloat(n00, n10, tx);
     const float nx1 = lerpFloat(n01, n11, tx);
     return lerpFloat(nx0, nx1, tz);
+}
+
+float valueNoise(int x, int z, int cellSize) {
+    return valueNoise(x, z, cellSize, cellSize);
+}
+
+float ridged(float noise) {
+    return 1.0f - std::abs(noise * 2.0f - 1.0f);
+}
+
+int slopeAround(int x, int z) {
+    const int center = ChunksStorage::terrainHeight(x, z);
+    const int dx = std::abs(ChunksStorage::terrainHeight(x + 1, z) - center);
+    const int dz = std::abs(ChunksStorage::terrainHeight(x, z + 1) - center);
+    return std::max(dx, dz);
+}
+
+bool isFlatEnoughForDecoration(int x, int z) {
+    return slopeAround(x, z) <= 2;
+}
+
+bool shouldPlaceTallGrass(int x, int z, int height) {
+    if (height + 1 >= ChunksStorage::WORLD_MAX_Y) { return false; }
+    if (!isFlatEnoughForDecoration(x, z)) { return false; }
+
+    const float coverage = valueNoise(x + 17'431, z - 4'211, 48);
+    if (coverage < 0.42f) { return false; }
+    return hashNoiseSalted(x, z, 31) > 0.74f;
+}
+
+bool isBirchTreeBase(int x, int z, int height) {
+    if (height + 8 >= ChunksStorage::WORLD_MAX_Y) { return false; }
+    if (!isFlatEnoughForDecoration(x, z)) { return false; }
+
+    constexpr int TREE_CELL_SIZE = 14;
+    const int cellX = localFloorDiv(x, TREE_CELL_SIZE);
+    const int cellZ = localFloorDiv(z, TREE_CELL_SIZE);
+    if (hashNoiseSalted(cellX, cellZ, 43) < 0.57f) { return false; }
+
+    const int jitterX = static_cast<int>(std::round((hashNoiseSalted(cellX, cellZ, 47) - 0.5f) * 6.0f));
+    const int jitterZ = static_cast<int>(std::round((hashNoiseSalted(cellX, cellZ, 53) - 0.5f) * 6.0f));
+    const int anchorX = cellX * TREE_CELL_SIZE + TREE_CELL_SIZE / 2 + jitterX;
+    const int anchorZ = cellZ * TREE_CELL_SIZE + TREE_CELL_SIZE / 2 + jitterZ;
+    return x == anchorX && z == anchorZ;
+}
+
+void setGeneratedVoxel(
+    Chunk &chunk,
+    int originX,
+    int originY,
+    int originZ,
+    int worldX,
+    int worldY,
+    int worldZ,
+    VoxelType type
+) {
+    if (worldX < originX || worldX >= originX + Chunk::SIZE_X) { return; }
+    if (worldY < originY || worldY >= originY + Chunk::SIZE_Y) { return; }
+    if (worldZ < originZ || worldZ >= originZ + Chunk::SIZE_Z) { return; }
+    if (!ChunksStorage::isWorldCoordInBounds(worldX, worldY, worldZ)) { return; }
+
+    const int localX = worldX - originX;
+    const int localY = worldY - originY;
+    const int localZ = worldZ - originZ;
+    chunk.data().voxels[ChunkData::index(localX, localY, localZ)].type = type;
+}
+
+void placeBirchTree(
+    Chunk &chunk, int originX, int originY, int originZ, int baseX, int baseY, int baseZ
+) {
+    const int trunkHeight = 5 + static_cast<int>(hashNoiseSalted(baseX, baseZ, 59) * 3.0f);
+    for (int y = baseY; y < baseY + trunkHeight; y++) {
+        setGeneratedVoxel(chunk, originX, originY, originZ, baseX, y, baseZ, VoxelType::BIRCH_LOG);
+    }
+
+    const int leafCenterY = baseY + trunkHeight;
+    for (int dy = -2; dy <= 2; dy++) {
+        const int radius = dy <= 0 ? 2 : 1;
+        for (int dx = -radius; dx <= radius; dx++) {
+            for (int dz = -radius; dz <= radius; dz++) {
+                if (dx == 0 && dz == 0 && dy <= 0) { continue; }
+                if (std::abs(dx) == radius && std::abs(dz) == radius &&
+                    hashNoiseSalted(baseX + dx, baseZ + dz, leafCenterY + dy) < 0.35f) {
+                    continue;
+                }
+                setGeneratedVoxel(
+                    chunk,
+                    originX,
+                    originY,
+                    originZ,
+                    baseX + dx,
+                    leafCenterY + dy,
+                    baseZ + dz,
+                    VoxelType::BIRCH_LEAVES
+                );
+            }
+        }
+    }
 }
 
 } // namespace
@@ -92,6 +203,17 @@ void ChunksStorage::generateChunkData(Chunk &chunk) {
                     voxelType = VoxelType::GRASS;
                 }
                 chunk.data().voxels[ChunkData::index(localX, localY, localZ)].type = voxelType;
+            }
+
+            if (shouldPlaceTallGrass(worldX, worldZ, height)) {
+                setGeneratedVoxel(
+                    chunk, originX, originY, originZ, worldX, height + 1, worldZ, VoxelType::TALL_GRASS
+                );
+            }
+
+            if (localX > 3 && localX < Chunk::SIZE_X - 4 && localZ > 3 &&
+                localZ < Chunk::SIZE_Z - 4 && isBirchTreeBase(worldX, worldZ, height)) {
+                placeBirchTree(chunk, originX, originY, originZ, worldX, height + 1, worldZ);
             }
         }
     }
@@ -139,25 +261,37 @@ int ChunksStorage::worldToLocalZ(int z) {
 }
 
 float ChunksStorage::terrainNoise(int x, int z) {
-    float value = 0.0f;
-    float amplitude = 1.0f;
-    float amplitudeSum = 0.0f;
-    const int cellSizes[] = {128, 64, 32, 16};
-    for (int cellSize : cellSizes) {
-        value += valueNoise(x, z, cellSize) * amplitude;
-        amplitudeSum += amplitude;
-        amplitude *= 0.5f;
-    }
-    return value / amplitudeSum;
+    const float continental = valueNoise(x - 8'719, z + 2'931, 520);
+    const float mountainMask = smoothRange(0.48f, 0.78f, continental);
+
+    const float plainRoll =
+        valueNoise(x + 1'319, z - 6'127, 180) * 0.60f + valueNoise(x - 701, z + 907, 64) * 0.40f;
+
+    const int diagonalA = x + z / 2;
+    const int diagonalB = z - x / 3;
+    const float ridgeA = std::pow(ridged(valueNoise(x + 14'003, z - 8'003, 420, 96)), 1.65f);
+    const float ridgeB = std::pow(ridged(valueNoise(diagonalA - 3'101, diagonalB + 10'123, 320, 128)), 1.45f);
+    const float ridgeField = clamp01(ridgeA * 0.72f + ridgeB * 0.36f);
+
+    const float fine = valueNoise(x + 3'331, z + 1'337, 36);
+    return clamp01(plainRoll * 0.28f + mountainMask * ridgeField * 0.66f + fine * 0.06f);
 }
 
 int ChunksStorage::terrainHeight(int x, int z) {
-    const float noise = terrainNoise(x, z);
-    const int minHeight = WORLD_MIN_Y + 8;
-    const int maxHeight = WORLD_MAX_Y - 12;
-    const int height = static_cast<int>(
-        std::round(lerpFloat(static_cast<float>(minHeight), static_cast<float>(maxHeight), noise))
-    );
+    const float continental = valueNoise(x - 8'719, z + 2'931, 520);
+    const float mountainMask = smoothRange(0.48f, 0.78f, continental);
+    const float plains = valueNoise(x + 1'319, z - 6'127, 180) * 0.60f +
+                         valueNoise(x - 701, z + 907, 64) * 0.40f;
+    const int diagonalA = x + z / 2;
+    const int diagonalB = z - x / 3;
+    const float ridgeA = std::pow(ridged(valueNoise(x + 14'003, z - 8'003, 420, 96)), 1.65f);
+    const float ridgeB = std::pow(ridged(valueNoise(diagonalA - 3'101, diagonalB + 10'123, 320, 128)), 1.45f);
+    const float ridgeField = clamp01(ridgeA * 0.72f + ridgeB * 0.36f);
+    const float fine = valueNoise(x + 3'331, z + 1'337, 36);
+
+    const float plainHeight = static_cast<float>(WORLD_MIN_Y + 13) + plains * 9.0f + fine * 2.0f;
+    const float mountainHeight = ridgeField * 38.0f + std::pow(fine, 1.6f) * 5.0f;
+    const int height = static_cast<int>(std::round(plainHeight + mountainMask * mountainHeight));
     return std::clamp(height, WORLD_MIN_Y + 1, WORLD_MAX_Y - 2);
 }
 
@@ -485,7 +619,7 @@ std::optional<VoxelRaycastData> ChunksStorage::bresenham3D(
 
     while (t <= maximumDistance) {
         Voxel *voxel = getVoxel(ix, iy, iz);
-        if (voxel != nullptr && voxel->type != VoxelType::NOTHING) {
+        if (voxel != nullptr && voxel->isSolid()) {
             end.x = ix;
             end.y = iy;
             end.z = iz;

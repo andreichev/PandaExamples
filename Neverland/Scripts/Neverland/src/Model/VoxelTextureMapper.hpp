@@ -74,5 +74,11 @@ VoxelTextureData VoxelTextureMapper::s_data[] = {
     // ПЕСЧАНИК
     VoxelTextureData(VoxelType::SAND_STONE, 10),
     // ПЕСОК
-    VoxelTextureData(VoxelType::SAND, 11)
+    VoxelTextureData(VoxelType::SAND, 11),
+    // БЕРЕЗОВЫЙ СТВОЛ
+    VoxelTextureData(VoxelType::BIRCH_LOG, 15, 0xFFFFFFFF, 14, 0xFFFFFFFF, 14, 0xFFFFFFFF),
+    // ЛИСТВА БЕРЕЗЫ
+    VoxelTextureData(VoxelType::BIRCH_LEAVES, 13, 0x7CCB55FF, 13, 0x86D962FF, 13, 0x6FB64DFF),
+    // ВЫСОКАЯ ТРАВА
+    VoxelTextureData(VoxelType::TALL_GRASS, 4, 0x76C957FF, 4, 0x76C957FF, 4, 0x76C957FF)
 };

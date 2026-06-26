@@ -25,8 +25,22 @@ private:
     void setVoxel(int x, int y, int z, VoxelType type);
     void updateChunk(const ChunkCoord &coord);
     void updateSelectedBlock();
+    void updateTouchBlockInput(float deltaTime, bool &placePressed, bool &breakPressed);
+
+    struct TouchActionState {
+        int id = -1;
+        float startX = 0.0f;
+        float startY = 0.0f;
+        float lastX = 0.0f;
+        float lastY = 0.0f;
+        float duration = 0.0f;
+        float repeatTimer = 0.0f;
+        bool active = false;
+        bool moved = false;
+    };
 
     Shared<PlayerController> m_playerController;
+    TouchActionState m_touchAction;
     VoxelType m_selectedBlock;
 };
 

@@ -237,7 +237,7 @@
                 }
             },
             "cubeMapComponent": {
-                "material": 0
+                "material": 3264501902
             },
             "scriptListComponent": {
                 "scripts": []

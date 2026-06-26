@@ -12,12 +12,24 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
 
+#include <algorithm>
 #include <cmath>
 
 namespace {
 
 Quat toBambooQuat(const glm::quat &quat) {
     return Quat(quat.x, quat.y, quat.z, quat.w);
+}
+
+bool findTouchById(int id, Input::Touch &outTouch) {
+    for (int index = 0; index < Input::touchCount(); index++) {
+        Input::Touch touch;
+        if (!Input::tryGetTouch(index, touch)) { continue; }
+        if (touch.id != id) { continue; }
+        outTouch = touch;
+        return true;
+    }
+    return false;
 }
 
 } // namespace
@@ -34,6 +46,7 @@ void PlayerController::start() {
 }
 
 void PlayerController::update(float deltaTime) {
+    updateTouchControls();
     updateLook();
     updateCharacter(deltaTime);
 }
@@ -42,15 +55,111 @@ void PlayerController::shutdown() {
     ApplicationAPI::setCursorLocked(false);
 }
 
+void PlayerController::updateTouchControls() {
+    m_touchMoveDirection = glm::vec3(0.0f);
+    m_touchLookDeltaX = 0.0f;
+    m_touchLookDeltaY = 0.0f;
+    m_touchJumpPressed = false;
+
+    if (enableTouchControls == 0) {
+        m_moveTouch.active = false;
+        m_lookTouch.active = false;
+        return;
+    }
+
+    const float width = static_cast<float>(std::max(ApplicationAPI::getWidth(), 1u));
+    const float height = static_cast<float>(std::max(ApplicationAPI::getHeight(), 1u));
+
+    auto updateExistingTouch = [](TouchTracker &tracker, float &deltaX, float &deltaY) {
+        deltaX = 0.0f;
+        deltaY = 0.0f;
+        if (!tracker.active) { return false; }
+
+        Input::Touch touch;
+        if (!findTouchById(tracker.id, touch)) {
+            tracker.active = false;
+            tracker.id = -1;
+            return false;
+        }
+
+        deltaX = touch.x - tracker.lastX;
+        deltaY = touch.y - tracker.lastY;
+        tracker.lastX = touch.x;
+        tracker.lastY = touch.y;
+        return true;
+    };
+
+    float moveDeltaX = 0.0f;
+    float moveDeltaY = 0.0f;
+    (void)updateExistingTouch(m_moveTouch, moveDeltaX, moveDeltaY);
+
+    float lookDeltaX = 0.0f;
+    float lookDeltaY = 0.0f;
+    if (updateExistingTouch(m_lookTouch, lookDeltaX, lookDeltaY)) {
+        m_touchLookDeltaX = lookDeltaX;
+        m_touchLookDeltaY = lookDeltaY;
+    }
+
+    for (int index = 0; index < Input::touchCount(); index++) {
+        Input::Touch touch;
+        if (!Input::tryGetTouch(index, touch)) { continue; }
+        if ((m_moveTouch.active && touch.id == m_moveTouch.id) ||
+            (m_lookTouch.active && touch.id == m_lookTouch.id)) {
+            continue;
+        }
+
+        const bool leftHalf = touch.x < width * 0.5f;
+        TouchTracker *tracker = nullptr;
+        if (leftHalf && !m_moveTouch.active) {
+            tracker = &m_moveTouch;
+            if (touch.y < height * 0.45f) { m_touchJumpPressed = true; }
+        } else if (!leftHalf && !m_lookTouch.active) {
+            tracker = &m_lookTouch;
+        }
+        if (tracker == nullptr) { continue; }
+
+        tracker->id = touch.id;
+        tracker->startX = touch.x;
+        tracker->startY = touch.y;
+        tracker->lastX = touch.x;
+        tracker->lastY = touch.y;
+        tracker->active = true;
+    }
+
+    if (m_moveTouch.active) {
+        const float radius = std::max(touchMoveRadius, 1.0f);
+        glm::vec2 move(
+            (m_moveTouch.lastX - m_moveTouch.startX) / radius,
+            -(m_moveTouch.lastY - m_moveTouch.startY) / radius
+        );
+        const float length = glm::length(move);
+        if (length > 1.0f) { move /= length; }
+        if (glm::length(move) > 0.05f) {
+            m_touchMoveDirection = getHorizontalRight() * move.x + getHorizontalForward() * move.y;
+            if (glm::length(m_touchMoveDirection) > 0.0001f) {
+                m_touchMoveDirection = glm::normalize(m_touchMoveDirection);
+            }
+        }
+    }
+}
+
 void PlayerController::updateLook() {
-    if (ApplicationAPI::isCursorLocked()) {
+    const bool hasTouchLook =
+        std::abs(m_touchLookDeltaX) > 0.001f || std::abs(m_touchLookDeltaY) > 0.001f;
+    if (ApplicationAPI::isCursorLocked() || hasTouchLook) {
         double deltaX = Input::getMouseDeltaX();
         double deltaY = Input::getMouseDeltaY();
+        if (!ApplicationAPI::isCursorLocked()) {
+            deltaX = 0.0;
+            deltaY = 0.0;
+        }
         // DeltaX - смещение мыши за реальное время, поэтому умножение на deltaTime не требуется.
         // Действия в реальном мире не нужно умножать на deltaTime, умножать нужно только действия в
         // игровом мире.
         m_pitch += glm::radians(static_cast<float>(-deltaY * mouseSpeed));
         m_yaw += glm::radians(static_cast<float>(-deltaX * mouseSpeed));
+        m_pitch += glm::radians(-m_touchLookDeltaY * touchLookSpeed);
+        m_yaw += glm::radians(-m_touchLookDeltaX * touchLookSpeed);
         const float maxPitch = glm::radians(89.0f);
         m_pitch = glm::clamp(m_pitch, -maxPitch, maxPitch);
         syncRotationFromAngles();
@@ -71,6 +180,7 @@ void PlayerController::updateCharacter(float deltaTime) {
     if (Input::isKeyPressed(Key::S)) { inputDirection -= getHorizontalForward(); }
     if (Input::isKeyPressed(Key::A)) { inputDirection -= getHorizontalRight(); }
     if (Input::isKeyPressed(Key::D)) { inputDirection += getHorizontalRight(); }
+    inputDirection += m_touchMoveDirection;
     if (glm::length(inputDirection) > 0.0001f) { inputDirection = glm::normalize(inputDirection); }
 
     glm::vec3 position = getEyePosition();
@@ -92,7 +202,7 @@ void PlayerController::updateCharacter(float deltaTime) {
     VoxelCharacterInput input;
     input.horizontalDirection = inputDirection;
     input.horizontalSpeed = speed;
-    input.jumpPressed = !isFlyMode && Input::isKeyJustPressed(Key::SPACE);
+    input.jumpPressed = !isFlyMode && (Input::isKeyJustPressed(Key::SPACE) || m_touchJumpPressed);
     input.flyMode = isFlyMode;
     if (isFlyMode) {
         if (Input::isKeyPressed(Key::SPACE)) { input.flyVerticalInput += 1.0f; }

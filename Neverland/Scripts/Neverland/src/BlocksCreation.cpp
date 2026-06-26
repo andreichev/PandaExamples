@@ -7,9 +7,33 @@
 #include "Model/GameContext.hpp"
 
 #include <Bamboo/Input.hpp>
+#include <Bamboo/ApplicationAPI.hpp>
 #include <Bamboo/EntityAPI.hpp>
 #include <Bamboo/Components/TransformComponentAPI.hpp>
 #include <Bamboo/Components/MeshComponentAPI.hpp>
+
+#include <cmath>
+
+namespace {
+
+bool findTouchById(int id, Input::Touch &outTouch) {
+    for (int index = 0; index < Input::touchCount(); index++) {
+        Input::Touch touch;
+        if (!Input::tryGetTouch(index, touch)) { continue; }
+        if (touch.id != id) { continue; }
+        outTouch = touch;
+        return true;
+    }
+    return false;
+}
+
+float distanceSquared(float ax, float ay, float bx, float by) {
+    const float dx = ax - bx;
+    const float dy = ay - by;
+    return dx * dx + dy * dy;
+}
+
+} // namespace
 
 void BlocksCreation::start() {
     m_selectedBlock = VoxelType::GROUND;
@@ -30,6 +54,8 @@ void BlocksCreation::updateSelectedBlock() {
     if (Input::isKeyJustPressed(Key::KEY_6)) { setSelectedBlock(VoxelType::STONE_BRICKS); }
     if (Input::isKeyJustPressed(Key::KEY_7)) { setSelectedBlock(VoxelType::SAND_STONE); }
     if (Input::isKeyJustPressed(Key::KEY_8)) { setSelectedBlock(VoxelType::SAND); }
+    if (Input::isKeyJustPressed(Key::KEY_9)) { setSelectedBlock(VoxelType::BIRCH_LOG); }
+    if (Input::isKeyJustPressed(Key::KEY_0)) { setSelectedBlock(VoxelType::TALL_GRASS); }
 }
 
 void BlocksCreation::updateChunk(const ChunkCoord &coord) {
@@ -69,34 +95,86 @@ void BlocksCreation::setVoxel(int x, int y, int z, VoxelType type) {
     if (localY == Chunk::SIZE_Y - 1) { updateChunk({coord.x, coord.y + 1, coord.z}); }
 }
 
+void BlocksCreation::updateTouchBlockInput(float deltaTime, bool &placePressed, bool &breakPressed) {
+    const float width = static_cast<float>(ApplicationAPI::getWidth());
+    if (width <= 0.0f) { return; }
+
+    constexpr float MOVE_THRESHOLD_SQUARED = 24.0f * 24.0f;
+    constexpr float TAP_MAX_SECONDS = 0.32f;
+    constexpr float HOLD_BREAK_SECONDS = 0.45f;
+    constexpr float HOLD_REPEAT_SECONDS = 0.18f;
+
+    if (m_touchAction.active) {
+        Input::Touch touch;
+        if (findTouchById(m_touchAction.id, touch)) {
+            m_touchAction.duration += deltaTime;
+            m_touchAction.repeatTimer -= deltaTime;
+            m_touchAction.lastX = touch.x;
+            m_touchAction.lastY = touch.y;
+            if (distanceSquared(touch.x, touch.y, m_touchAction.startX, m_touchAction.startY) >
+                MOVE_THRESHOLD_SQUARED) {
+                m_touchAction.moved = true;
+            }
+            if (!m_touchAction.moved && m_touchAction.duration >= HOLD_BREAK_SECONDS &&
+                m_touchAction.repeatTimer <= 0.0f) {
+                breakPressed = true;
+                m_touchAction.repeatTimer = HOLD_REPEAT_SECONDS;
+            }
+            return;
+        }
+
+        if (!m_touchAction.moved && m_touchAction.duration <= TAP_MAX_SECONDS) { placePressed = true; }
+        m_touchAction = {};
+    }
+
+    for (int index = 0; index < Input::touchCount(); index++) {
+        Input::Touch touch;
+        if (!Input::tryGetTouch(index, touch)) { continue; }
+        if (touch.x < width * 0.5f) { continue; }
+
+        m_touchAction.id = touch.id;
+        m_touchAction.startX = touch.x;
+        m_touchAction.startY = touch.y;
+        m_touchAction.lastX = touch.x;
+        m_touchAction.lastY = touch.y;
+        m_touchAction.duration = 0.0f;
+        m_touchAction.repeatTimer = HOLD_BREAK_SECONDS;
+        m_touchAction.active = true;
+        m_touchAction.moved = false;
+        break;
+    }
+}
+
 void BlocksCreation::update(float deltaTime) {
     updateSelectedBlock();
 
     // Keep voxel edits disabled until the initial world is visible.
     if (!GameContext::isWorldLoaded()) { return; }
 
-    bool leftPressed;
-    bool rightPressed;
+    bool placePressed;
+    bool breakPressed;
     if (Input::isKeyPressed(Key::E)) {
-        leftPressed = Input::isMouseButtonPressed(MouseButton::LEFT);
-        rightPressed = Input::isMouseButtonPressed(MouseButton::RIGHT);
+        placePressed = Input::isMouseButtonPressed(MouseButton::LEFT);
+        breakPressed = Input::isMouseButtonPressed(MouseButton::RIGHT);
     } else {
-        leftPressed = Input::isMouseButtonJustPressed(MouseButton::LEFT);
-        rightPressed = Input::isMouseButtonJustPressed(MouseButton::RIGHT);
+        placePressed = Input::isMouseButtonJustPressed(MouseButton::LEFT);
+        breakPressed = Input::isMouseButtonJustPressed(MouseButton::RIGHT);
     }
-    if (!leftPressed && !rightPressed) { return; }
+    updateTouchBlockInput(deltaTime, placePressed, breakPressed);
+    if (!placePressed && !breakPressed) { return; }
+    if (!m_playerController) { return; }
     Vec3 position = getPosition();
     Vec3 target = m_playerController->getFront();
     auto v = GameContext::s_chunkStorage->bresenham3D(
         position.x, position.y, position.z, target.x, target.y, target.z, MAXIMUM_DISTANCE
     );
     if (v && v->voxel != nullptr) {
-        if (leftPressed) {
+        if (placePressed) {
             int x = v->end.x + v->normal.x;
             int y = v->end.y + v->normal.y;
             int z = v->end.z + v->normal.z;
             setVoxel(x, y, z, m_selectedBlock);
-        } else if (rightPressed) {
+        } else if (breakPressed) {
             int x = v->end.x;
             int y = v->end.y;
             int z = v->end.z;

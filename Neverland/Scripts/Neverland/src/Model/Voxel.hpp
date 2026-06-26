@@ -16,7 +16,10 @@ enum class VoxelType {
     STONE_BRICKS = 6,
     SAND_STONE = 7,
     SAND = 8,
-    COUNT = 9
+    BIRCH_LOG = 9,
+    BIRCH_LEAVES = 10,
+    TALL_GRASS = 11,
+    COUNT = 12
 };
 
 struct Voxel {
@@ -30,5 +33,13 @@ struct Voxel {
 
     inline bool isAir() const {
         return type == VoxelType::NOTHING;
+    }
+
+    inline bool isSolid() const {
+        return type != VoxelType::NOTHING && type != VoxelType::TALL_GRASS;
+    }
+
+    inline bool occludesFaces() const {
+        return type != VoxelType::NOTHING && type != VoxelType::TALL_GRASS;
     }
 };

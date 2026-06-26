@@ -40,6 +40,6 @@ struct ChunkMeshSnapshot {
 
     bool isAirWorld(int x, int y, int z) const {
         const Voxel *voxel = getWorld(x, y, z);
-        return voxel == nullptr || voxel->isAir();
+        return voxel == nullptr || !voxel->occludesFaces();
     }
 };

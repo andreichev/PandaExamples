@@ -30,6 +30,78 @@ Color toColor(uint32_t hex) {
     return color;
 }
 
+void addDoubleSidedQuad(
+    std::vector<Vertex> &vertices,
+    std::vector<uint32_t> &indices,
+    const Vec3 &p0,
+    const Vec3 &p1,
+    const Vec3 &p2,
+    const Vec3 &p3,
+    const Vec2 &uv,
+    float uvSize,
+    Color color,
+    float light
+) {
+    const Vec3 normal(0.f, 1.f, 0.f);
+    VoxelMeshGenerator::addFaceIndices(static_cast<uint32_t>(vertices.size()), indices);
+    vertices.emplace_back(Vertex(p0, Vec2(uv.x, uv.y + uvSize), normal, color, light));
+    vertices.emplace_back(Vertex(p1, Vec2(uv.x + uvSize, uv.y + uvSize), normal, color, light));
+    vertices.emplace_back(Vertex(p2, Vec2(uv.x + uvSize, uv.y), normal, color, light));
+    vertices.emplace_back(Vertex(p3, Vec2(uv.x, uv.y), normal, color, light));
+
+    VoxelMeshGenerator::addFaceIndices(static_cast<uint32_t>(vertices.size()), indices);
+    const Vec3 backNormal(0.f, -1.f, 0.f);
+    vertices.emplace_back(Vertex(p3, Vec2(uv.x, uv.y), backNormal, color, light));
+    vertices.emplace_back(Vertex(p2, Vec2(uv.x + uvSize, uv.y), backNormal, color, light));
+    vertices.emplace_back(Vertex(p1, Vec2(uv.x + uvSize, uv.y + uvSize), backNormal, color, light));
+    vertices.emplace_back(Vertex(p0, Vec2(uv.x, uv.y + uvSize), backNormal, color, light));
+}
+
+void addTallGrassMesh(
+    std::vector<Vertex> &vertices,
+    std::vector<uint32_t> &indices,
+    int x,
+    int y,
+    int z,
+    VoxelTextureData &textureData,
+    float uvSize
+) {
+    const Vec2 uv = getUV(textureData.sideTileIndex);
+    const Color color = toColor(textureData.sideColor);
+    const float light = 0.98f;
+    const float minX = static_cast<float>(x) + 0.08f;
+    const float maxX = static_cast<float>(x) + 0.92f;
+    const float minZ = static_cast<float>(z) + 0.08f;
+    const float maxZ = static_cast<float>(z) + 0.92f;
+    const float bottomY = static_cast<float>(y);
+    const float topY = static_cast<float>(y) + 0.92f;
+
+    addDoubleSidedQuad(
+        vertices,
+        indices,
+        Vec3(minX, bottomY, minZ),
+        Vec3(maxX, bottomY, maxZ),
+        Vec3(maxX, topY, maxZ),
+        Vec3(minX, topY, minZ),
+        uv,
+        uvSize,
+        color,
+        light
+    );
+    addDoubleSidedQuad(
+        vertices,
+        indices,
+        Vec3(maxX, bottomY, minZ),
+        Vec3(minX, bottomY, maxZ),
+        Vec3(minX, topY, maxZ),
+        Vec3(maxX, topY, minZ),
+        uv,
+        uvSize,
+        color,
+        light
+    );
+}
+
 ChunkMeshBuildResult
 VoxelMeshGenerator::makeOneChunkMesh(const ChunkMeshSnapshot &snapshot, bool ambientOcclusion) {
     std::vector<Vertex> vertices;
@@ -51,6 +123,11 @@ VoxelMeshGenerator::makeOneChunkMesh(const ChunkMeshSnapshot &snapshot, bool amb
 
                 float uvSize = 1.f / 16.f;
                 uvSize -= 0.001f;
+
+                if (currentVoxel->type == VoxelType::TALL_GRASS) {
+                    addTallGrassMesh(vertices, indices, x, y, z, textureData, uvSize);
+                    continue;
+                }
 
                 float light;
                 float a = 0, b = 0, c = 0, d = 0, e = 0, f = 0, g = 0, h = 0;

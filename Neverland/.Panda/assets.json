@@ -65,6 +65,22 @@
             }
         },
         {
+            "id": 3264501901,
+            "type": 3,
+            "meta": {
+                "vertexSourcePath": "Assets/materials/sky_gradient/sky_gradient_vert.hlsl",
+                "fragmentSourcePath": "Assets/materials/sky_gradient/sky_gradient_frag.hlsl"
+            }
+        },
+        {
+            "id": 3264501902,
+            "type": 4,
+            "meta": {
+                "materialPath": "Assets/materials/sky_gradient/sky_gradient.mat",
+                "shader": 3264501901
+            }
+        },
+        {
             "id": 3651530327,
             "type": 6,
             "meta": {
