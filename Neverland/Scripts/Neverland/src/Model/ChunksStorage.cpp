@@ -100,11 +100,11 @@ int ChunksStorage::chunkIndex(const ChunkCoord &coord) {
     return coord.y * SIZE_X * SIZE_Z + coord.x * SIZE_Z + coord.z;
 }
 
-void ChunksStorage::setVoxel(int x, int y, int z, VoxelType type) {
-    if (!isWorldCoordInBounds(x, y, z)) { return; }
+bool ChunksStorage::setVoxel(int x, int y, int z, VoxelType type) {
+    if (!isWorldCoordInBounds(x, y, z)) { return false; }
     Chunk *chunk = getChunk(worldToChunkCoord(x, y, z));
-    if (chunk == nullptr) { return; }
-    chunk->set(worldToLocalX(x), worldToLocalY(y), worldToLocalZ(z), type);
+    if (chunk == nullptr) { return false; }
+    return chunk->set(worldToLocalX(x), worldToLocalY(y), worldToLocalZ(z), type);
 }
 
 Voxel *ChunksStorage::getVoxel(int x, int y, int z) {

@@ -64,7 +64,7 @@ public:
     bool needsRemesh() const;
     void clearNeedsRemesh();
 
-    void set(int x, int y, int z, VoxelType type);
+    bool set(int x, int y, int z, VoxelType type);
     Voxel *get(int x, int y, int z);
     const Voxel *get(int x, int y, int z) const;
     ChunkData &data();

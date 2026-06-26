@@ -25,14 +25,15 @@ Chunk::Chunk() {
     MeshComponentAPI::setMesh(m_view.entity, m_view.mesh);
 }
 
-void Chunk::set(int x, int y, int z, VoxelType type) {
-    if (x < 0 || y < 0 || z < 0 || x >= SIZE_X || y >= SIZE_Y || z >= SIZE_Z) return;
+bool Chunk::set(int x, int y, int z, VoxelType type) {
+    if (x < 0 || y < 0 || z < 0 || x >= SIZE_X || y >= SIZE_Y || z >= SIZE_Z) return false;
     Voxel &voxel = m_data.voxels[ChunkData::index(x, y, z)];
-    if (voxel.type == type) { return; }
+    if (voxel.type == type) { return false; }
     voxel.type = type;
     m_data.version++;
     m_data.needsRemesh = true;
     m_data.modifiedByPlayer = true;
+    return true;
 }
 
 Voxel *Chunk::get(int x, int y, int z) {

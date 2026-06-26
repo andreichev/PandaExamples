@@ -32,7 +32,7 @@ public:
     static int worldToLocalY(int y);
     static int worldToLocalZ(int z);
 
-    void setVoxel(int x, int y, int z, VoxelType type);
+    bool setVoxel(int x, int y, int z, VoxelType type);
     Voxel *getVoxel(int x, int y, int z);
     const Voxel *getVoxel(int x, int y, int z) const;
     Chunk *getChunk(const ChunkCoord &coord);

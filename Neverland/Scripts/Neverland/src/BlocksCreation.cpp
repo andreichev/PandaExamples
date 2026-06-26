@@ -49,7 +49,7 @@ void BlocksCreation::updateChunk(const ChunkCoord &coord) {
 void BlocksCreation::setVoxel(int x, int y, int z, VoxelType type) {
     if (!ChunksStorage::isWorldCoordInBounds(x, y, z)) { return; }
 
-    GameContext::s_chunkStorage->setVoxel(x, y, z, type);
+    if (!GameContext::s_chunkStorage->setVoxel(x, y, z, type)) { return; }
     ChunkCoord coord = ChunksStorage::worldToChunkCoord(x, y, z);
     const int localX = ChunksStorage::worldToLocalX(x);
     const int localY = ChunksStorage::worldToLocalY(y);
