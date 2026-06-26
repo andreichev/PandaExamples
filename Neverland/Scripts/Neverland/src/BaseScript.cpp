@@ -20,7 +20,7 @@ namespace {
 
 constexpr int MAX_RENDER_DISTANCE = 200;
 constexpr int MAX_NEAR_CHUNK_DISTANCE = 12;
-constexpr int LOD_HANDOFF_CHUNKS = 2;
+constexpr int REGION_LOD_CENTER_SNAP_CHUNKS = 4;
 constexpr int DATA_RADIUS_PADDING = 2;
 constexpr int CHUNK_LOAD_BUDGET_PER_FRAME = 12;
 constexpr int MESH_SCHEDULE_BUDGET_PER_FRAME = 4;
@@ -188,6 +188,22 @@ ChunkCoord BaseScript::getPlayerChunkCenter() {
     return center;
 }
 
+ChunkCoord BaseScript::getRegionLodCenter(const ChunkCoord &center) {
+    if (!m_hasRegionLodCenter) {
+        m_regionLodCenter = center;
+        m_hasRegionLodCenter = true;
+        return m_regionLodCenter;
+    }
+
+    const int snapChunks = std::max(1, REGION_LOD_CENTER_SNAP_CHUNKS);
+    if (std::abs(center.x - m_regionLodCenter.x) >= snapChunks ||
+        std::abs(center.z - m_regionLodCenter.z) >= snapChunks) {
+        m_regionLodCenter = center;
+    }
+    m_regionLodCenter.y = center.y;
+    return m_regionLodCenter;
+}
+
 int BaseScript::getEffectiveRenderDistance() {
     const int requestedDistance = nonNegative(renderDistance);
     const int effectiveDistance = std::min(requestedDistance, MAX_RENDER_DISTANCE);
@@ -210,11 +226,14 @@ int BaseScript::getEffectiveNearDistance(int effectiveRenderDistance) {
 }
 
 int BaseScript::getExactBuildDistance(int effectiveRenderDistance, int effectiveNearDistance) {
-    return std::min(effectiveRenderDistance, effectiveNearDistance + LOD_HANDOFF_CHUNKS);
+    return std::min(effectiveRenderDistance, effectiveNearDistance + nonNegative(lodHandoffChunks));
 }
 
 void BaseScript::rebuildStreamingQueues(
-    const ChunkCoord &center, int effectiveRenderDistance, int effectiveNearDistance
+    const ChunkCoord &center,
+    const ChunkCoord &regionCenter,
+    int effectiveRenderDistance,
+    int effectiveNearDistance
 ) {
     const int exactBuildDistance =
         getExactBuildDistance(effectiveRenderDistance, effectiveNearDistance);
@@ -226,6 +245,7 @@ void BaseScript::rebuildStreamingQueues(
     m_streamingCenter = center;
     m_streamingRenderDistance = effectiveRenderDistance;
     m_streamingNearDistance = effectiveNearDistance;
+    m_streamingExactBuildDistance = exactBuildDistance;
     m_hasStreamingCenter = true;
 
     std::vector<ChunkCoord> loadCoords;
@@ -251,10 +271,10 @@ void BaseScript::rebuildStreamingQueues(
     for (const RegionLodBand &band : buildRegionLodBands(effectiveNearDistance, effectiveRenderDistance)) {
         for (int offsetX = -band.maxDistance; offsetX <= band.maxDistance; offsetX++) {
             for (int offsetZ = -band.maxDistance; offsetZ <= band.maxDistance; offsetZ++) {
-                ChunkCoord coord{center.x + offsetX, center.y, center.z + offsetZ};
+                ChunkCoord coord{regionCenter.x + offsetX, regionCenter.y, regionCenter.z + offsetZ};
                 if (!ChunksStorage::isChunkCoordInBounds(coord)) { continue; }
-                if (!isInsideHorizontalDistance(coord, center, band.maxDistance)) { continue; }
-                if (isInsideHorizontalDistance(coord, center, band.minDistance)) { continue; }
+                if (!isInsideHorizontalDistance(coord, regionCenter, band.maxDistance)) { continue; }
+                if (isInsideHorizontalDistance(coord, regionCenter, band.minDistance)) { continue; }
 
                 RegionMeshKey key{
                     floorDiv(coord.x, band.regionSizeChunks),
@@ -263,7 +283,7 @@ void BaseScript::rebuildStreamingQueues(
                 };
                 if (!activeRegions.emplace(key).second) { continue; }
 
-                regionRequests.emplace_back(makeRegionRequest(band, key, center));
+                regionRequests.emplace_back(makeRegionRequest(band, key, regionCenter));
             }
         }
     }
@@ -279,9 +299,9 @@ void BaseScript::rebuildStreamingQueues(
     std::sort(
         regionRequests.begin(),
         regionRequests.end(),
-        [center](const RegionMeshBuildRequest &left, const RegionMeshBuildRequest &right) {
-            const int leftDistance = regionDistanceSquared(left, center);
-            const int rightDistance = regionDistanceSquared(right, center);
+        [regionCenter](const RegionMeshBuildRequest &left, const RegionMeshBuildRequest &right) {
+            const int leftDistance = regionDistanceSquared(left, regionCenter);
+            const int rightDistance = regionDistanceSquared(right, regionCenter);
             if (leftDistance != rightDistance) { return leftDistance < rightDistance; }
             return left.key.lod < right.key.lod;
         }
@@ -300,11 +320,14 @@ void BaseScript::rebuildStreamingQueues(
     }
 
     m_activeRegionKeys = activeRegions;
-    cleanupStreamingViews(center, effectiveRenderDistance, effectiveNearDistance, exactBuildDistance);
+    cleanupStreamingViews(
+        center, regionCenter, effectiveRenderDistance, effectiveNearDistance, exactBuildDistance
+    );
 }
 
 void BaseScript::cleanupStreamingViews(
     const ChunkCoord &center,
+    const ChunkCoord &regionCenter,
     int effectiveRenderDistance,
     int effectiveNearDistance,
     int exactBuildDistance
@@ -314,10 +337,12 @@ void BaseScript::cleanupStreamingViews(
     GameContext::s_chunkStorage->destroyChunkViewsOutsideIf(
         center,
         exactBuildDistance,
-        [this, center, effectiveRenderDistance, effectiveNearDistance](const ChunkCoord &coord) {
+        [this, center, regionCenter, effectiveRenderDistance, effectiveNearDistance](
+            const ChunkCoord &coord
+        ) {
             if (!isInsideHorizontalDistance(coord, center, effectiveRenderDistance)) { return true; }
             return isChunkCoveredByReadyRegionLod(
-                coord, center, effectiveRenderDistance, effectiveNearDistance
+                coord, regionCenter, effectiveRenderDistance, effectiveNearDistance
             );
         }
     );
@@ -392,14 +417,16 @@ void BaseScript::updateStreaming() {
     if (GameContext::s_chunkStorage == nullptr || GameContext::s_scheduler == nullptr) { return; }
 
     const ChunkCoord center = getPlayerChunkCenter();
+    const ChunkCoord regionCenter = getRegionLodCenter(center);
     const int effectiveRenderDistance = getEffectiveRenderDistance();
     const int effectiveNearDistance = getEffectiveNearDistance(effectiveRenderDistance);
     const int exactBuildDistance =
         getExactBuildDistance(effectiveRenderDistance, effectiveNearDistance);
     if (!m_hasStreamingCenter || !(center == m_streamingCenter) ||
         effectiveRenderDistance != m_streamingRenderDistance ||
-        effectiveNearDistance != m_streamingNearDistance) {
-        rebuildStreamingQueues(center, effectiveRenderDistance, effectiveNearDistance);
+        effectiveNearDistance != m_streamingNearDistance ||
+        exactBuildDistance != m_streamingExactBuildDistance) {
+        rebuildStreamingQueues(center, regionCenter, effectiveRenderDistance, effectiveNearDistance);
     }
 
     for (int i = 0; i < CHUNK_LOAD_BUDGET_PER_FRAME; i++) {
@@ -416,7 +443,9 @@ void BaseScript::updateStreaming() {
         if (!scheduleNextRegionMesh(material)) { break; }
     }
 
-    cleanupStreamingViews(center, effectiveRenderDistance, effectiveNearDistance, exactBuildDistance);
+    cleanupStreamingViews(
+        center, regionCenter, effectiveRenderDistance, effectiveNearDistance, exactBuildDistance
+    );
 }
 
 bool BaseScript::loadNextChunk() {
@@ -561,7 +590,8 @@ void BaseScript::logStreamingStats(float deltaTime) {
         "Neverland chunks: loaded=%zu chunkView=%zu regionView=%zu dirty=%zu regionDirty=%zu "
         "queued=%zu regionQueued=%zu modified=%zu pendingJobs=%d pendingRegionJobs=%d "
         "loadQueue=%zu meshQueue=%zu regionQueue=%zu vertices=%zu indices=%zu "
-        "regionVertices=%zu regionIndices=%zu center=(%d,%d,%d) rd=%d near=%d exact=%d",
+        "regionVertices=%zu regionIndices=%zu center=(%d,%d,%d) lodCenter=(%d,%d,%d) "
+        "rd=%d near=%d exact=%d",
         stats.loadedChunks,
         stats.chunksWithView,
         stats.regionsWithView,
@@ -582,6 +612,9 @@ void BaseScript::logStreamingStats(float deltaTime) {
         m_streamingCenter.x,
         m_streamingCenter.y,
         m_streamingCenter.z,
+        m_regionLodCenter.x,
+        m_regionLodCenter.y,
+        m_regionLodCenter.z,
         m_streamingRenderDistance,
         m_streamingNearDistance,
         exactBuildDistance

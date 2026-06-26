@@ -64,6 +64,12 @@
                                 "fieldId": 1754507689,
                                 "type": 0,
                                 "value": 8
+                            },
+                            {
+                                "name": "lodHandoffChunks",
+                                "fieldId": 2839420306,
+                                "type": 0,
+                                "value": 0
                             }
                         ]
                     }
@@ -111,7 +117,86 @@
                 "scripts": [
                     {
                         "name": "PlayerController",
-                        "scriptFields": []
+                        "scriptFields": [
+                            {
+                                "name": "mouseSpeed",
+                                "fieldId": 3770851288,
+                                "type": 1,
+                                "value": 0.20000000298023224
+                            },
+                            {
+                                "name": "moveSpeed",
+                                "fieldId": 430501054,
+                                "type": 1,
+                                "value": 6.0
+                            },
+                            {
+                                "name": "sprintMultiplier",
+                                "fieldId": 1862896985,
+                                "type": 1,
+                                "value": 1.600000023841858
+                            },
+                            {
+                                "name": "gravity",
+                                "fieldId": 3583022444,
+                                "type": 1,
+                                "value": 28.0
+                            },
+                            {
+                                "name": "jumpSpeed",
+                                "fieldId": 3705032417,
+                                "type": 1,
+                                "value": 8.5
+                            },
+                            {
+                                "name": "maxFallSpeed",
+                                "fieldId": 3441637612,
+                                "type": 1,
+                                "value": 48.0
+                            },
+                            {
+                                "name": "playerRadius",
+                                "fieldId": 1413903965,
+                                "type": 1,
+                                "value": 0.30000001192092896
+                            },
+                            {
+                                "name": "playerHeight",
+                                "fieldId": 2294906112,
+                                "type": 1,
+                                "value": 1.7999999523162842
+                            },
+                            {
+                                "name": "eyeHeight",
+                                "fieldId": 2202421840,
+                                "type": 1,
+                                "value": 1.6200000047683716
+                            },
+                            {
+                                "name": "stepHeight",
+                                "fieldId": 3552244567,
+                                "type": 1,
+                                "value": 1.0499999523162842
+                            },
+                            {
+                                "name": "groundSnapDistance",
+                                "fieldId": 3484132182,
+                                "type": 1,
+                                "value": 0.11999999731779099
+                            },
+                            {
+                                "name": "coyoteTime",
+                                "fieldId": 113740022,
+                                "type": 1,
+                                "value": 0.07999999821186066
+                            },
+                            {
+                                "name": "flyMode",
+                                "fieldId": 2571237424,
+                                "type": 0,
+                                "value": 0
+                            }
+                        ]
                     },
                     {
                         "name": "BlocksCreation",
@@ -174,10 +259,10 @@
                     "z": 0.0000010887160897254944
                 },
                 "rotation": {
-                    "x": -0.03186526894569397,
-                    "y": 0.2500545382499695,
-                    "z": 0.12232884764671326,
-                    "w": 0.9599443674087524
+                    "x": -0.03186526522040367,
+                    "y": 0.2500545084476471,
+                    "z": 0.12232883274555206,
+                    "w": 0.9599442481994629
                 },
                 "scale": {
                     "x": 0.9999980330467224,

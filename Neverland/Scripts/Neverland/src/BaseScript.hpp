@@ -15,12 +15,14 @@ public:
     int var;
     int renderDistance = 5;
     int nearChunkDistance = 8;
+    int lodHandoffChunks = 2;
     MaterialHandle material;
 
     PANDA_FIELDS_BEGIN(BaseScript)
     PANDA_FIELD(var)
     PANDA_FIELD(renderDistance)
     PANDA_FIELD(nearChunkDistance)
+    PANDA_FIELD(lodHandoffChunks)
     PANDA_FIELD(material)
     PANDA_FIELDS_END
 
@@ -30,14 +32,19 @@ public:
 
 private:
     ChunkCoord getPlayerChunkCenter();
+    ChunkCoord getRegionLodCenter(const ChunkCoord &center);
     int getEffectiveRenderDistance();
     int getEffectiveNearDistance(int effectiveRenderDistance);
     int getExactBuildDistance(int effectiveRenderDistance, int effectiveNearDistance);
     void rebuildStreamingQueues(
-        const ChunkCoord &center, int effectiveRenderDistance, int effectiveNearDistance
+        const ChunkCoord &center,
+        const ChunkCoord &regionCenter,
+        int effectiveRenderDistance,
+        int effectiveNearDistance
     );
     void cleanupStreamingViews(
         const ChunkCoord &center,
+        const ChunkCoord &regionCenter,
         int effectiveRenderDistance,
         int effectiveNearDistance,
         int exactBuildDistance
@@ -64,9 +71,12 @@ private:
     ChunkCoord m_streamingCenter;
     int m_streamingRenderDistance = -1;
     int m_streamingNearDistance = -1;
+    int m_streamingExactBuildDistance = -1;
     float m_statsLogTimer = 0.0f;
     bool m_hasStreamingCenter = false;
+    bool m_hasRegionLodCenter = false;
     bool m_warnedRenderDistanceClamp = false;
+    ChunkCoord m_regionLodCenter;
     std::deque<ChunkCoord> m_chunkLoadQueue;
     std::deque<ChunkCoord> m_meshBuildQueue;
     std::deque<RegionMeshBuildRequest> m_regionMeshBuildQueue;

@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include "Physics/VoxelCharacterController.hpp"
+
 #include <Bamboo/Script.hpp>
 #include <Bamboo/Bamboo.hpp>
 #include <glm/glm.hpp>
@@ -12,6 +14,36 @@ using namespace Bamboo;
 
 class PlayerController final : public Script {
 public:
+    float mouseSpeed = 0.2f;
+    float moveSpeed = 6.0f;
+    float sprintMultiplier = 1.6f;
+    float gravity = 28.0f;
+    float jumpSpeed = 8.5f;
+    float maxFallSpeed = 48.0f;
+    float playerRadius = 0.3f;
+    float playerHeight = 1.8f;
+    float eyeHeight = 1.62f;
+    float stepHeight = 1.05f;
+    float groundSnapDistance = 0.12f;
+    float coyoteTime = 0.08f;
+    int flyMode = 0;
+
+    PANDA_FIELDS_BEGIN(PlayerController)
+    PANDA_FIELD(mouseSpeed)
+    PANDA_FIELD(moveSpeed)
+    PANDA_FIELD(sprintMultiplier)
+    PANDA_FIELD(gravity)
+    PANDA_FIELD(jumpSpeed)
+    PANDA_FIELD(maxFallSpeed)
+    PANDA_FIELD(playerRadius)
+    PANDA_FIELD(playerHeight)
+    PANDA_FIELD(eyeHeight)
+    PANDA_FIELD(stepHeight)
+    PANDA_FIELD(groundSnapDistance)
+    PANDA_FIELD(coyoteTime)
+    PANDA_FIELD(flyMode)
+    PANDA_FIELDS_END
+
     void start() override;
     void update(float deltaTime) override;
     void shutdown() override;
@@ -28,31 +60,12 @@ private:
     void setEyePosition(const glm::vec3 &position);
     glm::vec3 getHorizontalForward() const;
     glm::vec3 getHorizontalRight() const;
-    bool moveHorizontalWithStep(glm::vec3 &position, const glm::vec3 &translation);
-    bool moveAxis(
-        glm::vec3 &position,
-        int axis,
-        float translation,
-        bool &hitNegative,
-        bool &hitPositive
-    ) const;
     void syncRotationFromAngles();
     void syncAnglesFromRotation(const Quat &rotation);
 
-    float m_mouseSpeed = 0.2f;
-    float m_moveSpeed = 6.0f;
-    float m_sprintMultiplier = 1.6f;
-    float m_gravity = 28.0f;
-    float m_jumpSpeed = 8.5f;
-    float m_maxFallSpeed = 48.0f;
-    float m_playerRadius = 0.3f;
-    float m_playerHeight = 1.8f;
-    float m_eyeHeight = 1.62f;
-    float m_stepHeight = 1.05f;
-    float m_verticalVelocity = 0.0f;
+    VoxelCharacterState m_characterState;
     float m_yaw = 0.0f;
     float m_pitch = 0.0f;
-    bool m_grounded = false;
     glm::vec3 m_front = glm::vec3(0.0f, 0.0f, -1.0f);
     glm::vec3 m_up = glm::vec3(0.0f, 1.0f, 0.0f);
     glm::vec3 m_right = glm::vec3(1.0f, 0.0f, 0.0f);
