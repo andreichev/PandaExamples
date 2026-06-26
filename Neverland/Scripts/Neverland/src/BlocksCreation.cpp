@@ -9,6 +9,7 @@
 #include <Bamboo/Input.hpp>
 #include <Bamboo/EntityAPI.hpp>
 #include <Bamboo/Components/TransformComponentAPI.hpp>
+#include <Bamboo/Components/MeshComponentAPI.hpp>
 
 void BlocksCreation::start() {
     m_selectedBlock = VoxelType::GROUND;
@@ -42,7 +43,10 @@ void BlocksCreation::updateChunk(const ChunkCoord &coord) {
     Chunk *chunk = GameContext::s_chunkStorage->getChunk(result.coord);
     if (chunk == nullptr || chunk->getVersion() != result.version) { return; }
 
-    MeshAPI::update(chunk->getMesh(), result.meshData);
+    chunk->updateMesh(result.meshData);
+    if (chunk->hasView() && GameContext::s_chunkMaterial.id != BAMBOO_INVALID_HANDLE) {
+        MeshComponentAPI::setMaterial(chunk->getEntity(), GameContext::s_chunkMaterial);
+    }
     chunk->clearNeedsRemesh();
 }
 

@@ -10,13 +10,14 @@ public:
     // Owns the chunk-mesh background jobs. Lives for the world's lifetime and is
     // torn down in deinit() before the script module is unloaded.
     static PandaAsync::Scheduler *s_scheduler;
-    // Initial-build jobs still in flight (touched only on the main thread).
+    // Chunk mesh jobs still in flight (touched only on the main thread).
     static int s_pendingChunkJobs;
+    static MaterialHandle s_chunkMaterial;
 
     static void init();
     static void deinit();
 
-    // True once the initial chunk meshes have all been uploaded. Voxel edits are
-    // still gated until then so gameplay starts from a fully visible world.
+    // True once scheduled chunk meshes have all been uploaded. Voxel edits are
+    // still gated while streaming is catching up.
     static bool isWorldLoaded();
 };

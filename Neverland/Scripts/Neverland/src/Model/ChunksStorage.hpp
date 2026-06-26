@@ -8,22 +8,24 @@
 #include "ChunkMeshSnapshot.hpp"
 #include "VoxelRaycastData.hpp"
 
+#include <memory>
 #include <optional>
+#include <unordered_map>
+#include <vector>
 
 class ChunksStorage {
 public:
-    static const int SIZE_X = 10;
-    static const int SIZE_Y = 4;
-    static const int SIZE_Z = 10;
-
-    static const int WORLD_SIZE_X = ChunksStorage::SIZE_X * Chunk::SIZE_X;
-    static const int WORLD_SIZE_Y = ChunksStorage::SIZE_Y * Chunk::SIZE_Y;
-    static const int WORLD_SIZE_Z = ChunksStorage::SIZE_Z * Chunk::SIZE_Z;
-
-    Chunk *chunks;
+    static constexpr int MIN_CHUNK_Y = 0;
+    static constexpr int HEIGHT_CHUNKS = 4;
+    static constexpr int MAX_CHUNK_Y = MIN_CHUNK_Y + HEIGHT_CHUNKS;
+    static constexpr int WORLD_MIN_Y = MIN_CHUNK_Y * Chunk::SIZE_Y;
+    static constexpr int WORLD_MAX_Y = MAX_CHUNK_Y * Chunk::SIZE_Y;
+    static constexpr int WORLD_SIZE_Y = WORLD_MAX_Y - WORLD_MIN_Y;
+    static constexpr int MAX_HORIZONTAL_CHUNK_COORD = 1'000'000;
+    static constexpr int WORLD_HORIZONTAL_LIMIT = MAX_HORIZONTAL_CHUNK_COORD * Chunk::SIZE_X;
 
     ChunksStorage();
-    ~ChunksStorage();
+    ~ChunksStorage() = default;
 
     static bool isWorldCoordInBounds(int x, int y, int z);
     static bool isChunkCoordInBounds(const ChunkCoord &coord);
@@ -35,10 +37,14 @@ public:
     bool setVoxel(int x, int y, int z, VoxelType type);
     Voxel *getVoxel(int x, int y, int z);
     const Voxel *getVoxel(int x, int y, int z) const;
+    Chunk *ensureChunk(const ChunkCoord &coord);
+    void ensureChunksAround(const ChunkCoord &center, int horizontalDistance);
+    void unloadChunksOutside(const ChunkCoord &center, int horizontalDistance);
     Chunk *getChunk(const ChunkCoord &coord);
     const Chunk *getChunk(const ChunkCoord &coord) const;
     Chunk *getChunk(int x, int y, int z);
     const Chunk *getChunk(int x, int y, int z) const;
+    bool hasMeshNeighborhood(const ChunkCoord &coord) const;
     bool makeMeshSnapshot(const ChunkCoord &coord, ChunkMeshSnapshot &snapshot) const;
     std::optional<VoxelRaycastData>
     bresenham3D(float x1, float y1, float z1, float x2, float y2, float z2, int maximumDistance);
@@ -46,5 +52,12 @@ public:
 private:
     static int floorDiv(int value, int divisor);
     static int floorMod(int value, int divisor);
-    static int chunkIndex(const ChunkCoord &coord);
+    static float terrainNoise(int x, int z);
+    static int terrainHeight(int x, int z);
+    static bool isInsideHorizontalDistance(
+        const ChunkCoord &coord, const ChunkCoord &center, int horizontalDistance
+    );
+    void generateChunkData(Chunk &chunk);
+
+    std::unordered_map<ChunkCoord, std::unique_ptr<Chunk>, ChunkCoordHash> m_chunks;
 };

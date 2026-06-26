@@ -6,9 +6,11 @@
 
 #include "Voxel.hpp"
 
+#include <Bamboo/Assets/MeshAPI.hpp>
 #include <Bamboo/Base.hpp>
 
 #include <array>
+#include <cstddef>
 #include <cstdint>
 
 using namespace Bamboo;
@@ -23,6 +25,10 @@ inline bool operator==(const ChunkCoord &left, const ChunkCoord &right) {
     return left.x == right.x && left.y == right.y && left.z == right.z;
 }
 
+struct ChunkCoordHash {
+    std::size_t operator()(const ChunkCoord &coord) const noexcept;
+};
+
 struct ChunkData {
     static constexpr int SIZE_X = 20;
     static constexpr int SIZE_Y = 20;
@@ -34,6 +40,8 @@ struct ChunkData {
     uint32_t version = 0;
     bool needsRemesh = true;
     bool modifiedByPlayer = false;
+    bool meshBuildQueued = false;
+    bool meshUploaded = false;
 
     static int index(int x, int y, int z);
 };
@@ -61,8 +69,14 @@ public:
     const ChunkCoord &getCoord() const;
     void setCoord(const ChunkCoord &coord);
     uint32_t getVersion() const;
+    bool hasView() const;
     bool needsRemesh() const;
+    bool isModifiedByPlayer() const;
+    bool isMeshBuildQueued() const;
+    void setMeshBuildQueued(bool queued);
     void clearNeedsRemesh();
+    void updateMesh(const MeshData &meshData);
+    void clearMesh();
 
     bool set(int x, int y, int z, VoxelType type);
     Voxel *get(int x, int y, int z);
@@ -73,6 +87,9 @@ public:
     const ChunkView &view() const;
 
 private:
+    void ensureView();
+    void destroyView();
+
     ChunkData m_data;
     ChunkView m_view;
 };

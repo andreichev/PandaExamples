@@ -5,6 +5,8 @@
 #include <Bamboo/Script.hpp>
 #include <Bamboo/Bamboo.hpp>
 
+#include <deque>
+
 using namespace Bamboo;
 
 class BaseScript : public Script {
@@ -22,6 +24,24 @@ public:
     void start() override;
     void update(float dt) override;
     void shutdown() override;
+
+private:
+    ChunkCoord getPlayerChunkCenter();
+    int getEffectiveRenderDistance();
+    void rebuildStreamingQueues(const ChunkCoord &center, int effectiveRenderDistance);
+    void updateStreaming();
+    bool loadNextChunk();
+    bool scheduleNextChunkMesh(MaterialHandle chunkMaterial);
+    bool scheduleChunkMesh(const ChunkCoord &coord, MaterialHandle chunkMaterial);
+
+    EntityHandle m_streamingTarget;
+    ChunkCoord m_streamingCenter;
+    int m_streamingRenderDistance = -1;
+    int m_framesUntilUnloadCleanup = 0;
+    bool m_hasStreamingCenter = false;
+    bool m_warnedRenderDistanceClamp = false;
+    std::deque<ChunkCoord> m_chunkLoadQueue;
+    std::deque<ChunkCoord> m_meshBuildQueue;
 };
 
 REGISTER_SCRIPT(BaseScript)

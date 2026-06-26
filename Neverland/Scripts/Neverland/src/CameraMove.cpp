@@ -21,12 +21,7 @@ Quat toBambooQuat(const glm::quat &quat) {
 } // namespace
 
 void CameraMove::start() {
-    TransformComponentAPI::setPosition(
-        getEntity(),
-        {ChunksStorage::WORLD_SIZE_X / 2,
-         ChunksStorage::WORLD_SIZE_Y / 2,
-         ChunksStorage::WORLD_SIZE_Z / 2}
-    );
+    TransformComponentAPI::setPosition(getEntity(), {0, ChunksStorage::WORLD_SIZE_Y / 2, 0});
     TransformComponentAPI::setRotation(
         getEntity(), toBambooQuat(glm::quat(glm::vec3(glm::radians(25.f), 0.f, 0.f)))
     );
@@ -40,9 +35,7 @@ void CameraMove::update(float deltaTime) {
     if (Input::isKeyPressed(Key::A)) { translate(-m_right * speed); }
     if (Input::isKeyPressed(Key::D)) { translate(m_right * speed); }
     if (Input::isKeyPressed(Key::SPACE)) { translate(m_up * speed); }
-    if (Input::isKeyPressed(Key::LEFT_SHIFT)) {
-        translate(-m_up * speed);
-    }
+    if (Input::isKeyPressed(Key::LEFT_SHIFT)) { translate(-m_up * speed); }
     if (ApplicationAPI::isCursorLocked()) {
         double deltaX = Input::getMouseDeltaX();
         double deltaY = Input::getMouseDeltaY();
@@ -77,7 +70,9 @@ void CameraMove::translate(glm::vec3 translation) {
 }
 
 void CameraMove::syncRotationFromAngles() {
-    TransformComponentAPI::setRotation(getEntity(), toBambooQuat(glm::quat(glm::vec3(m_pitch, m_yaw, 0.0f))));
+    TransformComponentAPI::setRotation(
+        getEntity(), toBambooQuat(glm::quat(glm::vec3(m_pitch, m_yaw, 0.0f)))
+    );
     updateVectors();
 }
 
