@@ -164,8 +164,10 @@ int ChunksStorage::terrainHeight(int x, int z) {
 bool ChunksStorage::isInsideHorizontalDistance(
     const ChunkCoord &coord, const ChunkCoord &center, int horizontalDistance
 ) {
-    return std::abs(coord.x - center.x) <= horizontalDistance &&
-           std::abs(coord.z - center.z) <= horizontalDistance;
+    const long long dx = static_cast<long long>(coord.x) - center.x;
+    const long long dz = static_cast<long long>(coord.z) - center.z;
+    const long long radius = horizontalDistance;
+    return dx * dx + dz * dz <= radius * radius;
 }
 
 bool ChunksStorage::setVoxel(int x, int y, int z, VoxelType type) {
@@ -212,7 +214,9 @@ void ChunksStorage::ensureChunksAround(const ChunkCoord &center, int horizontalD
     for (int chunkY = MIN_CHUNK_Y; chunkY < MAX_CHUNK_Y; chunkY++) {
         for (int chunkX = minX; chunkX <= maxX; chunkX++) {
             for (int chunkZ = minZ; chunkZ <= maxZ; chunkZ++) {
-                ensureChunk({chunkX, chunkY, chunkZ});
+                const ChunkCoord coord{chunkX, chunkY, chunkZ};
+                if (!isInsideHorizontalDistance(coord, center, distance)) { continue; }
+                ensureChunk(coord);
             }
         }
     }
@@ -272,6 +276,21 @@ bool ChunksStorage::hasMeshNeighborhood(const ChunkCoord &coord) const {
         }
     }
     return true;
+}
+
+ChunksStorageStats ChunksStorage::collectStats() const {
+    ChunksStorageStats stats;
+    stats.loadedChunks = m_chunks.size();
+    for (const auto &[coord, chunk] : m_chunks) {
+        (void)coord;
+        if (chunk->hasView()) { stats.chunksWithView++; }
+        if (chunk->isMeshBuildQueued()) { stats.meshBuildQueuedChunks++; }
+        if (chunk->needsRemesh()) { stats.dirtyChunks++; }
+        if (chunk->isModifiedByPlayer()) { stats.modifiedChunks++; }
+        stats.vertices += chunk->getVertexCount();
+        stats.indices += chunk->getIndexCount();
+    }
+    return stats;
 }
 
 bool ChunksStorage::makeMeshSnapshot(const ChunkCoord &coord, ChunkMeshSnapshot &snapshot) const {

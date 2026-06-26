@@ -13,6 +13,16 @@
 #include <unordered_map>
 #include <vector>
 
+struct ChunksStorageStats {
+    std::size_t loadedChunks = 0;
+    std::size_t chunksWithView = 0;
+    std::size_t meshBuildQueuedChunks = 0;
+    std::size_t dirtyChunks = 0;
+    std::size_t modifiedChunks = 0;
+    std::size_t vertices = 0;
+    std::size_t indices = 0;
+};
+
 class ChunksStorage {
 public:
     static constexpr int MIN_CHUNK_Y = 0;
@@ -45,6 +55,7 @@ public:
     Chunk *getChunk(int x, int y, int z);
     const Chunk *getChunk(int x, int y, int z) const;
     bool hasMeshNeighborhood(const ChunkCoord &coord) const;
+    ChunksStorageStats collectStats() const;
     bool makeMeshSnapshot(const ChunkCoord &coord, ChunkMeshSnapshot &snapshot) const;
     std::optional<VoxelRaycastData>
     bresenham3D(float x1, float y1, float z1, float x2, float y2, float z2, int maximumDistance);

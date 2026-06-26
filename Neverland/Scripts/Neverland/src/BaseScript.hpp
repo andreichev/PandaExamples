@@ -30,6 +30,7 @@ private:
     int getEffectiveRenderDistance();
     void rebuildStreamingQueues(const ChunkCoord &center, int effectiveRenderDistance);
     void updateStreaming();
+    void logStreamingStats(float deltaTime);
     bool loadNextChunk();
     bool scheduleNextChunkMesh(MaterialHandle chunkMaterial);
     bool scheduleChunkMesh(const ChunkCoord &coord, MaterialHandle chunkMaterial);
@@ -38,6 +39,7 @@ private:
     ChunkCoord m_streamingCenter;
     int m_streamingRenderDistance = -1;
     int m_framesUntilUnloadCleanup = 0;
+    float m_statsLogTimer = 0.0f;
     bool m_hasStreamingCenter = false;
     bool m_warnedRenderDistanceClamp = false;
     std::deque<ChunkCoord> m_chunkLoadQueue;

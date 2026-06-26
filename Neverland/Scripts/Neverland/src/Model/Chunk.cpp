@@ -50,6 +50,8 @@ void Chunk::destroyView() {
         m_view.entity = {};
     }
     m_data.meshUploaded = false;
+    m_data.vertexCount = 0;
+    m_data.indexCount = 0;
 }
 
 bool Chunk::set(int x, int y, int z, VoxelType type) {
@@ -97,6 +99,14 @@ bool Chunk::hasView() const {
     return m_view.entity.id != BAMBOO_INVALID_HANDLE && m_view.mesh.id != BAMBOO_INVALID_HANDLE;
 }
 
+std::size_t Chunk::getVertexCount() const {
+    return m_data.vertexCount;
+}
+
+std::size_t Chunk::getIndexCount() const {
+    return m_data.indexCount;
+}
+
 bool Chunk::needsRemesh() const {
     return m_data.needsRemesh;
 }
@@ -125,6 +135,8 @@ void Chunk::updateMesh(const MeshData &meshData) {
     ensureView();
     MeshAPI::update(m_view.mesh, meshData);
     m_data.meshUploaded = true;
+    m_data.vertexCount = meshData.vertices.size();
+    m_data.indexCount = meshData.indices.size();
 }
 
 void Chunk::clearMesh() {

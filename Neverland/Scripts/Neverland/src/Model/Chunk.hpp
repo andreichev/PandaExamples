@@ -42,6 +42,8 @@ struct ChunkData {
     bool modifiedByPlayer = false;
     bool meshBuildQueued = false;
     bool meshUploaded = false;
+    std::size_t vertexCount = 0;
+    std::size_t indexCount = 0;
 
     static int index(int x, int y, int z);
 };
@@ -70,6 +72,8 @@ public:
     void setCoord(const ChunkCoord &coord);
     uint32_t getVersion() const;
     bool hasView() const;
+    std::size_t getVertexCount() const;
+    std::size_t getIndexCount() const;
     bool needsRemesh() const;
     bool isModifiedByPlayer() const;
     bool isMeshBuildQueued() const;

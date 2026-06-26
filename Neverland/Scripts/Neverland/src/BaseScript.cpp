@@ -16,22 +16,23 @@
 namespace {
 
 constexpr int MAX_RENDER_DISTANCE = 8;
+constexpr int DATA_RADIUS_PADDING = 2;
 constexpr int CHUNK_LOAD_BUDGET_PER_FRAME = 12;
 constexpr int MESH_SCHEDULE_BUDGET_PER_FRAME = 4;
 constexpr int MESH_SCHEDULE_ATTEMPT_BUDGET_PER_FRAME = 16;
 constexpr int MAX_PENDING_MESH_JOBS = 8;
 constexpr int UNLOAD_CLEANUP_INTERVAL_FRAMES = 30;
+constexpr float STATS_LOG_INTERVAL_SECONDS = 1.0f;
 
 int nonNegative(int value) {
     return value < 0 ? 0 : value;
 }
 
-int absInt(int value) {
-    return value < 0 ? -value : value;
-}
-
 bool isInsideHorizontalDistance(const ChunkCoord &coord, const ChunkCoord &center, int distance) {
-    return absInt(coord.x - center.x) <= distance && absInt(coord.z - center.z) <= distance;
+    const long long dx = static_cast<long long>(coord.x) - center.x;
+    const long long dz = static_cast<long long>(coord.z) - center.z;
+    const long long radius = distance;
+    return dx * dx + dz * dz <= radius * radius;
 }
 
 int toWorldCoord(float value) {
@@ -81,9 +82,11 @@ ChunkCoord BaseScript::getPlayerChunkCenter() {
     if (!m_streamingTarget.isValid()) { m_streamingTarget = WorldAPI::findByTag("Camera"); }
     const EntityHandle target = m_streamingTarget.isValid() ? m_streamingTarget : getEntity();
     const Vec3 position = TransformComponentAPI::getPosition(target);
-    return ChunksStorage::worldToChunkCoord(
+    ChunkCoord center = ChunksStorage::worldToChunkCoord(
         toWorldCoord(position.x), toWorldCoord(position.y), toWorldCoord(position.z)
     );
+    center.y = ChunksStorage::MIN_CHUNK_Y;
+    return center;
 }
 
 int BaseScript::getEffectiveRenderDistance() {
@@ -103,7 +106,7 @@ int BaseScript::getEffectiveRenderDistance() {
 }
 
 void BaseScript::rebuildStreamingQueues(const ChunkCoord &center, int effectiveRenderDistance) {
-    const int dataDistance = effectiveRenderDistance + 1;
+    const int dataDistance = effectiveRenderDistance + DATA_RADIUS_PADDING;
     m_chunkLoadQueue.clear();
     m_meshBuildQueue.clear();
     m_streamingCenter = center;
@@ -118,6 +121,7 @@ void BaseScript::rebuildStreamingQueues(const ChunkCoord &center, int effectiveR
             for (int offsetZ = -dataDistance; offsetZ <= dataDistance; offsetZ++) {
                 ChunkCoord coord{center.x + offsetX, indexY, center.z + offsetZ};
                 if (!ChunksStorage::isChunkCoordInBounds(coord)) { continue; }
+                if (!isInsideHorizontalDistance(coord, center, dataDistance)) { continue; }
                 loadCoords.emplace_back(coord);
                 if (isInsideHorizontalDistance(coord, center, effectiveRenderDistance) &&
                     hasNeighborhoodInsideDataDistance(coord, center, dataDistance)) {
@@ -168,7 +172,9 @@ void BaseScript::updateStreaming() {
 
     m_framesUntilUnloadCleanup--;
     if (m_framesUntilUnloadCleanup <= 0) {
-        GameContext::s_chunkStorage->unloadChunksOutside(center, effectiveRenderDistance + 1);
+        GameContext::s_chunkStorage->unloadChunksOutside(
+            center, effectiveRenderDistance + DATA_RADIUS_PADDING
+        );
         m_framesUntilUnloadCleanup = UNLOAD_CLEANUP_INTERVAL_FRAMES;
     }
 }
@@ -245,12 +251,41 @@ bool BaseScript::scheduleChunkMesh(const ChunkCoord &coord, MaterialHandle chunk
     return true;
 }
 
+void BaseScript::logStreamingStats(float deltaTime) {
+    if (GameContext::s_chunkStorage == nullptr) { return; }
+    m_statsLogTimer += deltaTime;
+    if (m_statsLogTimer < STATS_LOG_INTERVAL_SECONDS) { return; }
+    m_statsLogTimer = 0.0f;
+
+    const ChunksStorageStats stats = GameContext::s_chunkStorage->collectStats();
+    LOG_INFO(
+        "Neverland chunks: loaded=%zu view=%zu dirty=%zu queued=%zu modified=%zu "
+        "pendingJobs=%d loadQueue=%zu meshQueue=%zu vertices=%zu indices=%zu center=(%d,%d,%d) "
+        "rd=%d",
+        stats.loadedChunks,
+        stats.chunksWithView,
+        stats.dirtyChunks,
+        stats.meshBuildQueuedChunks,
+        stats.modifiedChunks,
+        GameContext::s_pendingChunkJobs,
+        m_chunkLoadQueue.size(),
+        m_meshBuildQueue.size(),
+        stats.vertices,
+        stats.indices,
+        m_streamingCenter.x,
+        m_streamingCenter.y,
+        m_streamingCenter.z,
+        m_streamingRenderDistance
+    );
+}
+
 void BaseScript::update(float dt) {
     // Apply a bounded number of finished chunk meshes per frame to avoid GPU spikes.
     if (GameContext::s_scheduler != nullptr) {
         GameContext::s_scheduler->processCompletions(PandaAsync::CompletionBudget{4, 2.0});
     }
     updateStreaming();
+    logStreamingStats(dt);
     if (Input::isKeyPressed(Key::L)) { LOG_INFO("Hello Panda! var: %d", var); }
 }
 
