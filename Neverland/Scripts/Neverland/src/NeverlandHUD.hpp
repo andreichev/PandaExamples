@@ -1,6 +1,7 @@
 #pragma once
 
 #include "BlocksCreation.hpp"
+#include "NeverlandHUDLayout.hpp"
 
 #include <Bamboo/Bamboo.hpp>
 #include <Bamboo/Script.hpp>
@@ -27,11 +28,14 @@ private:
     void buildUI();
     void updateSelection();
     std::shared_ptr<PandaUI::Panel> makeCrosshair();
+    std::shared_ptr<PandaUI::Panel> makeTouchControls();
+    std::shared_ptr<PandaUI::Panel> makeMovePad();
+    std::shared_ptr<PandaUI::Panel> makeActionControls();
     std::shared_ptr<PandaUI::Panel> makeHotbar();
     std::shared_ptr<PandaUI::Button> makeSlot(const BlockSlot &slot, int index);
     void applySlotStyle(size_t index, bool selected);
 
-    static constexpr std::array<BlockSlot, 8> BLOCKS = {
+    static constexpr std::array<BlockSlot, NeverlandHUDLayout::HotbarSlotCount> BLOCKS = {
         BlockSlot{VoxelType::GRASS, "Grass", 0x79C85AFF},
         BlockSlot{VoxelType::GROUND, "Dirt", 0x8C5A32FF},
         BlockSlot{VoxelType::TREE, "Wood", 0x8A5A2BFF},
@@ -40,6 +44,8 @@ private:
         BlockSlot{VoxelType::STONE_BRICKS, "Bricks", 0x70777DFF},
         BlockSlot{VoxelType::SAND_STONE, "Sandstone", 0xD7B56CFF},
         BlockSlot{VoxelType::SAND, "Sand", 0xE2D58BFF},
+        BlockSlot{VoxelType::BIRCH_LOG, "Birch", 0xDCD3C0FF},
+        BlockSlot{VoxelType::TALL_GRASS, "Tall Grass", 0x76C957FF},
     };
 
     PandaUI::Window m_window;

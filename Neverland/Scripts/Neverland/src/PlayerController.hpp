@@ -28,6 +28,7 @@ public:
     float coyoteTime = 0.08f;
     float touchLookSpeed = 0.12f;
     float touchMoveRadius = 90.0f;
+    float doubleJumpFlyWindow = 0.45f;
     int enableTouchControls = 1;
     int flyMode = 0;
 
@@ -46,6 +47,7 @@ public:
     PANDA_FIELD(coyoteTime)
     PANDA_FIELD(touchLookSpeed)
     PANDA_FIELD(touchMoveRadius)
+    PANDA_FIELD(doubleJumpFlyWindow)
     PANDA_FIELD(enableTouchControls)
     PANDA_FIELD(flyMode)
     PANDA_FIELDS_END
@@ -64,6 +66,8 @@ private:
     void updateTouchControls();
     void updateLook();
     void updateCharacter(float deltaTime);
+    void setFlyModeEnabled(bool enabled);
+    bool updateJumpModeToggle(bool jumpPressed, float deltaTime);
     glm::vec3 getEyePosition();
     void setEyePosition(const glm::vec3 &position);
     glm::vec3 getHorizontalForward() const;
@@ -87,6 +91,8 @@ private:
     float m_touchLookDeltaX = 0.0f;
     float m_touchLookDeltaY = 0.0f;
     bool m_touchJumpPressed = false;
+    float m_doubleJumpTimer = 0.0f;
+    bool m_waitingForDoubleJump = false;
     float m_yaw = 0.0f;
     float m_pitch = 0.0f;
     glm::vec3 m_front = glm::vec3(0.0f, 0.0f, -1.0f);

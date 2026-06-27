@@ -5,6 +5,7 @@
 #include "BlocksCreation.hpp"
 #include "Model/VoxelMeshGenerator.hpp"
 #include "Model/GameContext.hpp"
+#include "NeverlandTouchControls.hpp"
 
 #include <Bamboo/Input.hpp>
 #include <Bamboo/ApplicationAPI.hpp>
@@ -12,7 +13,6 @@
 #include <Bamboo/Components/TransformComponentAPI.hpp>
 #include <Bamboo/Components/MeshComponentAPI.hpp>
 
-#include <algorithm>
 #include <cmath>
 
 namespace {
@@ -32,15 +32,6 @@ float distanceSquared(float ax, float ay, float bx, float by) {
     const float dx = ax - bx;
     const float dy = ay - by;
     return dx * dx + dy * dy;
-}
-
-bool isInsideHotbarTouchArea(float x, float y, float width, float height) {
-    constexpr float HOTBAR_WIDTH = 472.0f;
-    constexpr float HOTBAR_TOUCH_HEIGHT = 128.0f;
-    const float halfWidth = std::min(width, HOTBAR_WIDTH) * 0.5f;
-    const float left = width * 0.5f - halfWidth;
-    const float right = width * 0.5f + halfWidth;
-    return x >= left && x <= right && y >= height - HOTBAR_TOUCH_HEIGHT;
 }
 
 } // namespace
@@ -111,6 +102,7 @@ void BlocksCreation::updateTouchBlockInput(
     const float width = static_cast<float>(ApplicationAPI::getWidth());
     const float height = static_cast<float>(ApplicationAPI::getHeight());
     if (width <= 0.0f || height <= 0.0f) { return; }
+    NeverlandTouchControls::updateIgnoredTouches(width, height);
 
     constexpr float MOVE_THRESHOLD_SQUARED = 24.0f * 24.0f;
     constexpr float TAP_MAX_SECONDS = 0.32f;
@@ -118,6 +110,11 @@ void BlocksCreation::updateTouchBlockInput(
     constexpr float HOLD_REPEAT_SECONDS = 0.18f;
 
     if (m_touchAction.active) {
+        if (NeverlandTouchControls::isTouchIgnored(m_touchAction.id)) {
+            m_touchAction = {};
+            return;
+        }
+
         Input::Touch touch;
         if (findTouchById(m_touchAction.id, touch)) {
             m_touchAction.duration += deltaTime;
@@ -149,8 +146,8 @@ void BlocksCreation::updateTouchBlockInput(
     for (int index = 0; index < Input::touchCount(); index++) {
         Input::Touch touch;
         if (!Input::tryGetTouch(index, touch)) { continue; }
+        if (NeverlandTouchControls::isTouchIgnored(touch.id)) { continue; }
         if (touch.x < width * 0.5f) { continue; }
-        if (isInsideHotbarTouchArea(touch.x, touch.y, width, height)) { continue; }
 
         m_touchAction.id = touch.id;
         m_touchAction.startX = touch.x;

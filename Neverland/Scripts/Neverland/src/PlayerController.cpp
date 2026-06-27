@@ -4,6 +4,7 @@
 
 #include "PlayerController.hpp"
 #include "Model/ChunksStorage.hpp"
+#include "NeverlandTouchControls.hpp"
 
 #include <Bamboo/Math.hpp>
 #include <Bamboo/Input.hpp>
@@ -37,6 +38,7 @@ bool findTouchById(int id, Input::Touch &outTouch) {
 } // namespace
 
 void PlayerController::start() {
+    NeverlandTouchControls::reset();
     const int groundHeight = ChunksStorage::terrainHeight(0, 0);
     TransformComponentAPI::setPosition(
         getEntity(), {0.0f, groundHeight + 1.0f + eyeHeight + 1.0f, 0.0f}
@@ -54,6 +56,7 @@ void PlayerController::update(float deltaTime) {
 }
 
 void PlayerController::shutdown() {
+    NeverlandTouchControls::reset();
     ApplicationAPI::setCursorLocked(false);
 }
 
@@ -66,11 +69,13 @@ void PlayerController::updateTouchControls() {
     if (enableTouchControls == 0) {
         m_moveTouch.active = false;
         m_lookTouch.active = false;
+        NeverlandTouchControls::reset();
         return;
     }
 
     const float width = static_cast<float>(std::max(ApplicationAPI::getWidth(), 1u));
     const float height = static_cast<float>(std::max(ApplicationAPI::getHeight(), 1u));
+    NeverlandTouchControls::updateIgnoredTouches(width, height);
 
     auto updateExistingTouch = [](TouchTracker &tracker, float &deltaX, float &deltaY) {
         deltaX = 0.0f;
@@ -105,6 +110,7 @@ void PlayerController::updateTouchControls() {
     for (int index = 0; index < Input::touchCount(); index++) {
         Input::Touch touch;
         if (!Input::tryGetTouch(index, touch)) { continue; }
+        if (NeverlandTouchControls::isTouchIgnored(touch.id)) { continue; }
         if ((m_moveTouch.active && touch.id == m_moveTouch.id) ||
             (m_lookTouch.active && touch.id == m_lookTouch.id)) {
             continue;
@@ -143,6 +149,21 @@ void PlayerController::updateTouchControls() {
             }
         }
     }
+
+    const NeverlandTouchControls::MoveAxes buttonMove = NeverlandTouchControls::getMoveAxes();
+    if (std::abs(buttonMove.x) > 0.001f || std::abs(buttonMove.y) > 0.001f) {
+        glm::vec3 buttonMoveDirection =
+            getHorizontalRight() * buttonMove.x + getHorizontalForward() * buttonMove.y;
+        if (glm::length(buttonMoveDirection) > 0.0001f) {
+            m_touchMoveDirection += glm::normalize(buttonMoveDirection);
+            if (glm::length(m_touchMoveDirection) > 0.0001f) {
+                m_touchMoveDirection = glm::normalize(m_touchMoveDirection);
+            } else {
+                m_touchMoveDirection = glm::vec3(0.0f);
+            }
+        }
+    }
+    m_touchJumpPressed = m_touchJumpPressed || NeverlandTouchControls::consumeJumpPressed();
 }
 
 void PlayerController::updateLook() {
@@ -173,8 +194,7 @@ void PlayerController::updateLook() {
 
 void PlayerController::updateCharacter(float deltaTime) {
     if (Input::isKeyJustPressed(Key::F)) {
-        flyMode = flyMode == 0 ? 1 : 0;
-        m_characterState = {};
+        setFlyModeEnabled(flyMode == 0);
     }
 
     glm::vec3 inputDirection(0.0f);
@@ -186,6 +206,8 @@ void PlayerController::updateCharacter(float deltaTime) {
     if (glm::length(inputDirection) > 0.0001f) { inputDirection = glm::normalize(inputDirection); }
 
     glm::vec3 position = getEyePosition();
+    const bool jumpPressed = Input::isKeyJustPressed(Key::SPACE) || m_touchJumpPressed;
+    const bool gameplayJumpPressed = updateJumpModeToggle(jumpPressed, deltaTime);
     const bool isFlyMode = flyMode != 0;
     const float speed =
         moveSpeed * (!isFlyMode && Input::isKeyPressed(Key::LEFT_SHIFT) ? sprintMultiplier : 1.0f);
@@ -204,16 +226,67 @@ void PlayerController::updateCharacter(float deltaTime) {
     VoxelCharacterInput input;
     input.horizontalDirection = inputDirection;
     input.horizontalSpeed = speed;
-    input.jumpPressed = !isFlyMode && (Input::isKeyJustPressed(Key::SPACE) || m_touchJumpPressed);
+    input.jumpPressed = !isFlyMode && gameplayJumpPressed;
     input.flyMode = isFlyMode;
     if (isFlyMode) {
-        if (Input::isKeyPressed(Key::SPACE)) { input.flyVerticalInput += 1.0f; }
+        if (Input::isKeyPressed(Key::SPACE) ||
+            (enableTouchControls != 0 && NeverlandTouchControls::isJumpDown())) {
+            input.flyVerticalInput += 1.0f;
+        }
         if (Input::isKeyPressed(Key::LEFT_SHIFT)) { input.flyVerticalInput -= 1.0f; }
     }
 
     VoxelCharacterController::move(position, m_characterState, config, input, deltaTime);
 
     setEyePosition(position);
+}
+
+void PlayerController::setFlyModeEnabled(bool enabled) {
+    const int nextFlyMode = enabled ? 1 : 0;
+    if (flyMode == nextFlyMode) { return; }
+    flyMode = nextFlyMode;
+    m_characterState = {};
+    m_doubleJumpTimer = 0.0f;
+    m_waitingForDoubleJump = false;
+}
+
+bool PlayerController::updateJumpModeToggle(bool jumpPressed, float deltaTime) {
+    if (flyMode != 0) {
+        if (m_doubleJumpTimer > 0.0f) {
+            m_doubleJumpTimer = std::max(0.0f, m_doubleJumpTimer - deltaTime);
+            if (m_doubleJumpTimer <= 0.0f) { m_waitingForDoubleJump = false; }
+        }
+
+        if (!jumpPressed) { return false; }
+
+        if (m_waitingForDoubleJump && m_doubleJumpTimer > 0.0f) {
+            setFlyModeEnabled(false);
+            return false;
+        }
+
+        m_waitingForDoubleJump = true;
+        m_doubleJumpTimer = std::max(doubleJumpFlyWindow, 0.35f);
+        return false;
+    }
+
+    if (m_characterState.grounded && !jumpPressed) {
+        m_waitingForDoubleJump = false;
+        m_doubleJumpTimer = 0.0f;
+    }
+
+    if (!jumpPressed) { return false; }
+
+    const bool canNormalJump = m_characterState.grounded || m_characterState.coyoteTimer > 0.0f;
+    if (m_waitingForDoubleJump && !canNormalJump) {
+        setFlyModeEnabled(true);
+        return false;
+    }
+
+    if (canNormalJump) {
+        m_waitingForDoubleJump = true;
+        m_doubleJumpTimer = 0.0f;
+    }
+    return true;
 }
 
 void PlayerController::updateVectors() {
