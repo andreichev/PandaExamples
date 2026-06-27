@@ -101,6 +101,29 @@ void addQuad(
     vertices.emplace_back(Vertex(p3, getTileUV(tileIndex, 0.f, 0.f), normal, color, light));
 }
 
+void addQuadWithUv(
+    std::vector<Vertex> &vertices,
+    std::vector<uint32_t> &indices,
+    const Vec3 &p0,
+    const Vec3 &p1,
+    const Vec3 &p2,
+    const Vec3 &p3,
+    const Vec3 &normal,
+    const Color &color,
+    uint8_t tileIndex,
+    float light,
+    const Vec2 &uv0,
+    const Vec2 &uv1,
+    const Vec2 &uv2,
+    const Vec2 &uv3
+) {
+    VoxelMeshGenerator::addFaceIndices(static_cast<uint32_t>(vertices.size()), indices);
+    vertices.emplace_back(Vertex(p0, getTileUV(tileIndex, uv0.x, uv0.y), normal, color, light));
+    vertices.emplace_back(Vertex(p1, getTileUV(tileIndex, uv1.x, uv1.y), normal, color, light));
+    vertices.emplace_back(Vertex(p2, getTileUV(tileIndex, uv2.x, uv2.y), normal, color, light));
+    vertices.emplace_back(Vertex(p3, getTileUV(tileIndex, uv3.x, uv3.y), normal, color, light));
+}
+
 float skirtBottomY(int height, int step) {
     const int skirtDepth = std::max(step * 2, 8);
     return static_cast<float>(std::max(ChunksStorage::WORLD_MIN_Y, height + 1 - skirtDepth));
@@ -158,7 +181,7 @@ void addHeightfieldCell(
 
     const SideBottom left = getSideBottom(height, worldX - step, worldZ, step, request);
     if (left.visible && left.y < topY) {
-        addQuad(
+        addQuadWithUv(
             vertices,
             indices,
             Vec3(x0, left.y, z0),
@@ -168,13 +191,17 @@ void addHeightfieldCell(
             Vec3(-1.f, 0.f, 0.f),
             sideColor,
             GRASS_SIDE_TILE,
-            LIGHT_X_NEGATIVE
+            LIGHT_X_NEGATIVE,
+            Vec2(0.f, 1.f),
+            Vec2(1.f, 1.f),
+            Vec2(1.f, 0.f),
+            Vec2(0.f, 0.f)
         );
     }
 
     const SideBottom right = getSideBottom(height, worldX + step, worldZ, step, request);
     if (right.visible && right.y < topY) {
-        addQuad(
+        addQuadWithUv(
             vertices,
             indices,
             Vec3(x1, right.y, z0),
@@ -184,13 +211,17 @@ void addHeightfieldCell(
             Vec3(1.f, 0.f, 0.f),
             sideColor,
             GRASS_SIDE_TILE,
-            LIGHT_X_POSITIVE
+            LIGHT_X_POSITIVE,
+            Vec2(1.f, 1.f),
+            Vec2(1.f, 0.f),
+            Vec2(0.f, 0.f),
+            Vec2(0.f, 1.f)
         );
     }
 
     const SideBottom back = getSideBottom(height, worldX, worldZ - step, step, request);
     if (back.visible && back.y < topY) {
-        addQuad(
+        addQuadWithUv(
             vertices,
             indices,
             Vec3(x0, back.y, z0),
@@ -200,13 +231,17 @@ void addHeightfieldCell(
             Vec3(0.f, 0.f, -1.f),
             sideColor,
             GRASS_SIDE_TILE,
-            LIGHT_BACK_Z_NEGATIVE
+            LIGHT_BACK_Z_NEGATIVE,
+            Vec2(1.f, 1.f),
+            Vec2(1.f, 0.f),
+            Vec2(0.f, 0.f),
+            Vec2(0.f, 1.f)
         );
     }
 
     const SideBottom front = getSideBottom(height, worldX, worldZ + step, step, request);
     if (front.visible && front.y < topY) {
-        addQuad(
+        addQuadWithUv(
             vertices,
             indices,
             Vec3(x0, front.y, z1),
@@ -216,7 +251,11 @@ void addHeightfieldCell(
             Vec3(0.f, 0.f, 1.f),
             sideColor,
             GRASS_SIDE_TILE,
-            LIGHT_FRONT_Z_POSITIVE
+            LIGHT_FRONT_Z_POSITIVE,
+            Vec2(0.f, 1.f),
+            Vec2(1.f, 1.f),
+            Vec2(1.f, 0.f),
+            Vec2(0.f, 0.f)
         );
     }
 }

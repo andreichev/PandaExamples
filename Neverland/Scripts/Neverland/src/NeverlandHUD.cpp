@@ -13,6 +13,14 @@ PandaUI::Color transparent() {
     return PandaUI::Color(0x00000000);
 }
 
+bool shouldShowCrosshair() {
+#if defined(NEVERLAND_MOBILE)
+    return false;
+#else
+    return true;
+#endif
+}
+
 std::shared_ptr<PandaUI::Label>
 makeLabel(const std::string &text, float fontSize, PandaUI::Color color) {
     auto label = std::make_shared<PandaUI::Label>(text);
@@ -97,7 +105,7 @@ void NeverlandHUD::buildUI() {
     safeArea->setBackgroundColor(transparent());
     safeArea->addSubview(makeHotbar());
 
-    m_root->addSubview(makeCrosshair());
+    if (shouldShowCrosshair()) { m_root->addSubview(makeCrosshair()); }
     m_root->addSubview(safeArea);
     m_window.setRootView(m_root);
 }

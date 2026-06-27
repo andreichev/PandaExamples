@@ -25,7 +25,9 @@ private:
     void setVoxel(int x, int y, int z, VoxelType type);
     void updateChunk(const ChunkCoord &coord);
     void updateSelectedBlock();
-    void updateTouchBlockInput(float deltaTime, bool &placePressed, bool &breakPressed);
+    void updateTouchBlockInput(
+        float deltaTime, bool &placePressed, bool &breakPressed, Vec2 &touchAim, bool &hasTouchAim
+    );
 
     struct TouchActionState {
         int id = -1;

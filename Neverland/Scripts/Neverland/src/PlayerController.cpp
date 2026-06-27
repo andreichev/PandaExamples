@@ -17,6 +17,8 @@
 
 namespace {
 
+constexpr float CAMERA_VERTICAL_FOV_DEGREES = 70.0f;
+
 Quat toBambooQuat(const glm::quat &quat) {
     return Quat(quat.x, quat.y, quat.z, quat.w);
 }
@@ -229,6 +231,20 @@ glm::vec3 PlayerController::getEyePosition() {
 
 void PlayerController::setEyePosition(const glm::vec3 &position) {
     TransformComponentAPI::setPosition(getEntity(), {position.x, position.y, position.z});
+}
+
+Vec3 PlayerController::getRayDirectionForScreenPoint(float screenX, float screenY) const {
+    const float width = static_cast<float>(std::max(ApplicationAPI::getWidth(), 1u));
+    const float height = static_cast<float>(std::max(ApplicationAPI::getHeight(), 1u));
+    const float ndcX = (2.0f * screenX / width) - 1.0f;
+    const float ndcY = 1.0f - (2.0f * screenY / height);
+    const float aspect = width / height;
+    const float tanHalfFov = std::tan(glm::radians(CAMERA_VERTICAL_FOV_DEGREES) * 0.5f);
+
+    const glm::vec3 direction = glm::normalize(
+        m_front + m_right * (ndcX * tanHalfFov * aspect) + m_up * (ndcY * tanHalfFov)
+    );
+    return Vec3(direction.x, direction.y, direction.z);
 }
 
 glm::vec3 PlayerController::getHorizontalForward() const {

@@ -12,6 +12,7 @@
 #include <Bamboo/Components/TransformComponentAPI.hpp>
 #include <Bamboo/Components/MeshComponentAPI.hpp>
 
+#include <algorithm>
 #include <cmath>
 
 namespace {
@@ -31,6 +32,15 @@ float distanceSquared(float ax, float ay, float bx, float by) {
     const float dx = ax - bx;
     const float dy = ay - by;
     return dx * dx + dy * dy;
+}
+
+bool isInsideHotbarTouchArea(float x, float y, float width, float height) {
+    constexpr float HOTBAR_WIDTH = 472.0f;
+    constexpr float HOTBAR_TOUCH_HEIGHT = 128.0f;
+    const float halfWidth = std::min(width, HOTBAR_WIDTH) * 0.5f;
+    const float left = width * 0.5f - halfWidth;
+    const float right = width * 0.5f + halfWidth;
+    return x >= left && x <= right && y >= height - HOTBAR_TOUCH_HEIGHT;
 }
 
 } // namespace
@@ -95,9 +105,12 @@ void BlocksCreation::setVoxel(int x, int y, int z, VoxelType type) {
     if (localY == Chunk::SIZE_Y - 1) { updateChunk({coord.x, coord.y + 1, coord.z}); }
 }
 
-void BlocksCreation::updateTouchBlockInput(float deltaTime, bool &placePressed, bool &breakPressed) {
+void BlocksCreation::updateTouchBlockInput(
+    float deltaTime, bool &placePressed, bool &breakPressed, Vec2 &touchAim, bool &hasTouchAim
+) {
     const float width = static_cast<float>(ApplicationAPI::getWidth());
-    if (width <= 0.0f) { return; }
+    const float height = static_cast<float>(ApplicationAPI::getHeight());
+    if (width <= 0.0f || height <= 0.0f) { return; }
 
     constexpr float MOVE_THRESHOLD_SQUARED = 24.0f * 24.0f;
     constexpr float TAP_MAX_SECONDS = 0.32f;
@@ -118,12 +131,18 @@ void BlocksCreation::updateTouchBlockInput(float deltaTime, bool &placePressed, 
             if (!m_touchAction.moved && m_touchAction.duration >= HOLD_BREAK_SECONDS &&
                 m_touchAction.repeatTimer <= 0.0f) {
                 breakPressed = true;
+                touchAim = Vec2(touch.x, touch.y);
+                hasTouchAim = true;
                 m_touchAction.repeatTimer = HOLD_REPEAT_SECONDS;
             }
             return;
         }
 
-        if (!m_touchAction.moved && m_touchAction.duration <= TAP_MAX_SECONDS) { placePressed = true; }
+        if (!m_touchAction.moved && m_touchAction.duration <= TAP_MAX_SECONDS) {
+            placePressed = true;
+            touchAim = Vec2(m_touchAction.lastX, m_touchAction.lastY);
+            hasTouchAim = true;
+        }
         m_touchAction = {};
     }
 
@@ -131,6 +150,7 @@ void BlocksCreation::updateTouchBlockInput(float deltaTime, bool &placePressed, 
         Input::Touch touch;
         if (!Input::tryGetTouch(index, touch)) { continue; }
         if (touch.x < width * 0.5f) { continue; }
+        if (isInsideHotbarTouchArea(touch.x, touch.y, width, height)) { continue; }
 
         m_touchAction.id = touch.id;
         m_touchAction.startX = touch.x;
@@ -160,11 +180,14 @@ void BlocksCreation::update(float deltaTime) {
         placePressed = Input::isMouseButtonJustPressed(MouseButton::LEFT);
         breakPressed = Input::isMouseButtonJustPressed(MouseButton::RIGHT);
     }
-    updateTouchBlockInput(deltaTime, placePressed, breakPressed);
+    Vec2 touchAim;
+    bool hasTouchAim = false;
+    updateTouchBlockInput(deltaTime, placePressed, breakPressed, touchAim, hasTouchAim);
     if (!placePressed && !breakPressed) { return; }
     if (!m_playerController) { return; }
     Vec3 position = getPosition();
-    Vec3 target = m_playerController->getFront();
+    Vec3 target = hasTouchAim ? m_playerController->getRayDirectionForScreenPoint(touchAim.x, touchAim.y)
+                              : m_playerController->getFront();
     auto v = GameContext::s_chunkStorage->bresenham3D(
         position.x, position.y, position.z, target.x, target.y, target.z, MAXIMUM_DISTANCE
     );

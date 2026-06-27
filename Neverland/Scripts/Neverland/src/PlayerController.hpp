@@ -57,6 +57,7 @@ public:
     Vec3 getFront() {
         return Vec3(m_front.x, m_front.y, m_front.z);
     }
+    Vec3 getRayDirectionForScreenPoint(float screenX, float screenY) const;
 
 private:
     void updateVectors();
