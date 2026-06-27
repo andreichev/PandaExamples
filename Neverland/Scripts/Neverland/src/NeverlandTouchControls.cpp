@@ -20,6 +20,10 @@ struct State {
 
 State s_state;
 std::vector<int> s_ignoredTouchIds;
+float s_safeTop = 0.0f;
+float s_safeLeft = 0.0f;
+float s_safeRight = 0.0f;
+float s_safeBottom = 0.0f;
 
 bool &buttonState(Button button) {
     switch (button) {
@@ -76,6 +80,13 @@ void ignoreTouch(int id) {
     s_ignoredTouchIds.push_back(id);
 }
 
+void setSafeAreaInsets(float top, float left, float right, float bottom) {
+    s_safeTop = top;
+    s_safeLeft = left;
+    s_safeRight = right;
+    s_safeBottom = bottom;
+}
+
 void updateIgnoredTouches(float width, float height) {
     std::erase_if(s_ignoredTouchIds, [](int id) {
         return !findTouchById(id);
@@ -84,7 +95,18 @@ void updateIgnoredTouches(float width, float height) {
     for (int index = 0; index < Bamboo::Input::touchCount(); index++) {
         Bamboo::Input::Touch touch;
         if (!Bamboo::Input::tryGetTouch(index, touch)) { continue; }
-        if (!NeverlandHUDLayout::isInsideInteractiveHUDTouchArea(touch.x, touch.y, width, height)) { continue; }
+        if (!NeverlandHUDLayout::isInsideInteractiveHUDTouchArea(
+                touch.x,
+                touch.y,
+                width,
+                height,
+                s_safeTop,
+                s_safeLeft,
+                s_safeRight,
+                s_safeBottom
+            )) {
+            continue;
+        }
         ignoreTouch(touch.id);
     }
 }
@@ -96,6 +118,7 @@ bool isTouchIgnored(int id) {
 void reset() {
     s_state = {};
     s_ignoredTouchIds.clear();
+    setSafeAreaInsets(0.0f, 0.0f, 0.0f, 0.0f);
 }
 
 } // namespace NeverlandTouchControls

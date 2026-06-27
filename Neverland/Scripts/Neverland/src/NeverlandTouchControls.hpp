@@ -20,6 +20,7 @@ MoveAxes getMoveAxes();
 bool consumeJumpPressed();
 bool isJumpDown();
 void ignoreTouch(int id);
+void setSafeAreaInsets(float top, float left, float right, float bottom);
 void updateIgnoredTouches(float width, float height);
 bool isTouchIgnored(int id);
 void reset();

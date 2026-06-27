@@ -93,6 +93,17 @@ public:
     }
 };
 
+class PassThroughSafeAreaView final : public PandaUI::SafeAreaView {
+public:
+    PandaUI::View *hitTest(PandaUI::Point windowPosition) override {
+        for (auto it = getSubviews().rbegin(); it != getSubviews().rend(); ++it) {
+            PandaUI::View *hitView = (*it)->hitTest(windowPosition);
+            if (hitView) { return hitView; }
+        }
+        return nullptr;
+    }
+};
+
 class TouchControlButton final : public PandaUI::Button {
 public:
     using PressCallback = std::function<void(bool)>;
@@ -167,10 +178,12 @@ void NeverlandHUD::start() {
     NeverlandTouchControls::reset();
     m_blocksCreation = EntityAPI::getScript<BlocksCreation>(getEntity());
     buildUI();
+    updateTouchControlSafeArea();
     updateSelection();
 }
 
 void NeverlandHUD::update(float) {
+    updateTouchControlSafeArea();
     updateSelection();
 }
 
@@ -207,6 +220,12 @@ void NeverlandHUD::buildUI() {
     m_root->addSubview(safeArea);
     if (shouldShowTouchControls()) { m_root->addSubview(makeTouchControls()); }
     m_window.setRootView(m_root);
+}
+
+void NeverlandHUD::updateTouchControlSafeArea() {
+    if (!m_window.isValid()) { return; }
+    const PandaUI::EdgeInsets insets = m_window.getSafeAreaInsets();
+    NeverlandTouchControls::setSafeAreaInsets(insets.top, insets.left, insets.right, insets.bottom);
 }
 
 std::shared_ptr<PandaUI::Panel> NeverlandHUD::makeCrosshair() {
@@ -249,15 +268,21 @@ std::shared_ptr<PandaUI::Panel> NeverlandHUD::makeCrosshair() {
 }
 
 std::shared_ptr<PandaUI::Panel> NeverlandHUD::makeTouchControls() {
-    auto overlay = std::make_shared<PassThroughPanel>();
+    auto overlay = std::make_shared<PassThroughSafeAreaView>();
     overlay->setBackgroundColor(transparent());
     overlay->layoutSetAbsolute();
     overlay->layout().setPosition(PandaUI::Edge::Left, PandaUI::Length::points(0.f));
     overlay->layout().setPosition(PandaUI::Edge::Top, PandaUI::Length::points(0.f));
     overlay->layout().setWidth(PandaUI::Length::percent(100.f));
     overlay->layout().setHeight(PandaUI::Length::percent(100.f));
-    overlay->addSubview(makeMovePad());
-    overlay->addSubview(makeActionControls());
+
+    auto content = std::make_shared<PassThroughPanel>();
+    content->setBackgroundColor(transparent());
+    content->layout().setWidth(PandaUI::Length::percent(100.f));
+    content->layout().setFlexGrow(1.f);
+    content->addSubview(makeMovePad());
+    content->addSubview(makeActionControls());
+    overlay->addSubview(content);
     return overlay;
 }
 
@@ -265,8 +290,8 @@ std::shared_ptr<PandaUI::Panel> NeverlandHUD::makeMovePad() {
     auto pad = std::make_shared<PandaUI::Panel>();
     pad->setBackgroundColor(transparent());
     pad->layoutSetAbsolute();
-    pad->layout().setPosition(PandaUI::Edge::Left, PandaUI::Length::points(NeverlandHUDLayout::TouchControlsMargin));
-    pad->layout().setPosition(PandaUI::Edge::Bottom, PandaUI::Length::points(NeverlandHUDLayout::TouchControlsBottom));
+    pad->layout().setPosition(PandaUI::Edge::Left, PandaUI::Length::points(NeverlandHUDLayout::MovePadLeftMargin));
+    pad->layout().setPosition(PandaUI::Edge::Bottom, PandaUI::Length::points(NeverlandHUDLayout::MovePadBottom));
     pad->layout().setWidth(PandaUI::Length::points(NeverlandHUDLayout::MovePadSize));
     pad->layout().setHeight(PandaUI::Length::points(NeverlandHUDLayout::MovePadSize));
 
@@ -318,8 +343,8 @@ std::shared_ptr<PandaUI::Panel> NeverlandHUD::makeActionControls() {
     auto panel = std::make_shared<PandaUI::Panel>();
     panel->setBackgroundColor(transparent());
     panel->layoutSetAbsolute();
-    panel->layout().setPosition(PandaUI::Edge::Right, PandaUI::Length::points(NeverlandHUDLayout::TouchControlsMargin));
-    panel->layout().setPosition(PandaUI::Edge::Bottom, PandaUI::Length::points(NeverlandHUDLayout::TouchControlsBottom));
+    panel->layout().setPosition(PandaUI::Edge::Right, PandaUI::Length::points(NeverlandHUDLayout::ActionControlsMargin));
+    panel->layout().setPosition(PandaUI::Edge::Bottom, PandaUI::Length::points(NeverlandHUDLayout::ActionControlsBottom));
     panel->layout().setWidth(PandaUI::Length::points(NeverlandHUDLayout::JumpButtonWidth));
     panel->layout().setHeight(PandaUI::Length::points(NeverlandHUDLayout::JumpButtonHeight));
 

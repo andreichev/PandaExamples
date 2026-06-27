@@ -26,6 +26,7 @@ private:
     };
 
     void buildUI();
+    void updateTouchControlSafeArea();
     void updateSelection();
     std::shared_ptr<PandaUI::Panel> makeCrosshair();
     std::shared_ptr<PandaUI::Panel> makeTouchControls();
