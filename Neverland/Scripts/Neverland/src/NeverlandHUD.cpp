@@ -1,17 +1,110 @@
 #include "NeverlandHUD.hpp"
+#include "Model/VoxelTextureMapper.hpp"
 #include "NeverlandTouchControls.hpp"
 
 #include <Bamboo/EntityAPI.hpp>
 #include <Bamboo/Logger.hpp>
+#include <Bamboo/Assets/TextureAPI.hpp>
+#include <Bamboo/UI/TextureAPI.hpp>
 
+#include <algorithm>
+#include <cstdint>
 #include <functional>
 #include <string>
 #include <utility>
+#include <vector>
 
 namespace {
 
 PandaUI::Color transparent() {
     return PandaUI::Color(0x00000000);
+}
+
+struct Rgba {
+    uint8_t r = 0;
+    uint8_t g = 0;
+    uint8_t b = 0;
+    uint8_t a = 0;
+};
+
+struct TexturePixels {
+    uint32_t width = 0;
+    uint32_t height = 0;
+    std::vector<unsigned char> pixels;
+};
+
+constexpr uint32_t PREVIEW_SIZE = 32;
+
+Rgba colorFromHex(uint32_t hex) {
+    return {
+        static_cast<uint8_t>((hex >> 24) & 0xFF),
+        static_cast<uint8_t>((hex >> 16) & 0xFF),
+        static_cast<uint8_t>((hex >> 8) & 0xFF),
+        static_cast<uint8_t>(hex & 0xFF)
+    };
+}
+
+Rgba multiplyColor(Rgba color, uint32_t tintHex) {
+    const Rgba tint = colorFromHex(tintHex);
+    const auto multiply = [](uint8_t value, uint8_t tintValue) {
+        return static_cast<uint8_t>(static_cast<int>(value) * static_cast<int>(tintValue) / 255);
+    };
+    color.r = multiply(color.r, tint.r);
+    color.g = multiply(color.g, tint.g);
+    color.b = multiply(color.b, tint.b);
+    color.a = static_cast<uint8_t>(
+        std::clamp(static_cast<int>(color.a) * static_cast<int>(tint.a) / 255, 0, 255)
+    );
+    return color;
+}
+
+Rgba sampleTile(const TexturePixels &atlas, uint8_t tileIndex, uint32_t x, uint32_t y, uint32_t tintHex) {
+    constexpr uint32_t TILE_COUNT = 16;
+    const uint32_t tileSize = atlas.width / TILE_COUNT;
+    if (tileSize == 0 || atlas.height < tileSize) { return {}; }
+
+    const uint32_t tileX = static_cast<uint32_t>(tileIndex % TILE_COUNT) * tileSize;
+    const uint32_t tileY = static_cast<uint32_t>(tileIndex / TILE_COUNT) * tileSize;
+    const uint32_t sourceX = std::min(tileX + x * tileSize / PREVIEW_SIZE, atlas.width - 1);
+    const uint32_t sourceY = std::min(tileY + y * tileSize / PREVIEW_SIZE, atlas.height - 1);
+    const size_t index = (static_cast<size_t>(sourceY) * atlas.width + sourceX) * 4;
+    if (index + 3 >= atlas.pixels.size()) { return {}; }
+
+    Rgba color{atlas.pixels[index], atlas.pixels[index + 1], atlas.pixels[index + 2],
+               atlas.pixels[index + 3]};
+    return multiplyColor(color, tintHex);
+}
+
+struct PreviewTile {
+    uint8_t index = 0;
+    uint32_t tint = 0xFFFFFFFF;
+};
+
+PreviewTile getPreviewTile(VoxelType type, const VoxelTextureData &texture) {
+    if (type == VoxelType::GRASS) { return {texture.topTileIndex, texture.topColor}; }
+    return {texture.sideTileIndex, texture.sideColor};
+}
+
+PandaUI::TextureHandle makeTexturePreview(const TexturePixels &atlas, VoxelType type) {
+    Voxel voxel(type);
+    const VoxelTextureData &texture = VoxelTextureMapper::getTextureData(&voxel);
+    const PreviewTile previewTile = getPreviewTile(type, texture);
+    std::vector<unsigned char> pixels(PREVIEW_SIZE * PREVIEW_SIZE * 4, 0);
+
+    for (uint32_t y = 0; y < PREVIEW_SIZE; ++y) {
+        for (uint32_t x = 0; x < PREVIEW_SIZE; ++x) {
+            const Rgba color = sampleTile(atlas, previewTile.index, x, y, previewTile.tint);
+            const size_t index = (static_cast<size_t>(y) * PREVIEW_SIZE + x) * 4;
+            pixels[index] = color.r;
+            pixels[index + 1] = color.g;
+            pixels[index + 2] = color.b;
+            pixels[index + 3] = color.a;
+        }
+    }
+
+    return Bamboo::UI::createTextureRGBA8(
+        pixels.data(), static_cast<uint16_t>(PREVIEW_SIZE), static_cast<uint16_t>(PREVIEW_SIZE)
+    );
 }
 
 bool shouldShowCrosshair() {
@@ -38,6 +131,24 @@ makeLabel(const std::string &text, float fontSize, PandaUI::Color color) {
     return label;
 }
 
+std::shared_ptr<PandaUI::Panel> makeBlockPreview(PandaUI::TextureHandle texture) {
+    auto preview = std::make_shared<PandaUI::Panel>();
+    preview->setBackgroundColor(transparent());
+    preview->layout().setWidth(PandaUI::Length::points(NeverlandHUDLayout::HotbarSwatchWidth));
+    preview->layout().setHeight(PandaUI::Length::points(NeverlandHUDLayout::HotbarSwatchHeight));
+
+    if (texture) {
+        auto image = std::make_shared<PandaUI::ImageView>(texture);
+        image->setContentMode(PandaUI::ImageContentMode::Fit);
+        image->setUserInteractionEnabled(false);
+        image->layout().setWidth(PandaUI::Length::points(NeverlandHUDLayout::HotbarSwatchWidth));
+        image->layout().setHeight(PandaUI::Length::points(NeverlandHUDLayout::HotbarSwatchHeight));
+        preview->addSubview(image);
+    }
+
+    return preview;
+}
+
 class HotbarSlotButton final : public PandaUI::Button {
 public:
     HotbarSlotButton()
@@ -55,7 +166,9 @@ public:
 
 private:
     bool pointerDown(PandaUI::PointerEvent &event) override {
-        if (event.type == PandaUI::PointerType::Touch) { NeverlandTouchControls::ignoreTouch(event.pointerId); }
+        if (event.type == PandaUI::PointerType::Touch) {
+            NeverlandTouchControls::ignoreTouch(event.pointerId);
+        }
         return PandaUI::Button::pointerDown(event);
     }
 
@@ -71,12 +184,20 @@ private:
         if (hasControlState(PandaUI::ControlState::Highlighted)) {
             setBackgroundColor(PandaUI::Color(0xF0F4FFFF));
         } else if (hasControlState(PandaUI::ControlState::Hovered)) {
-            setBackgroundColor(m_selected ? PandaUI::Color(0xFFFFFFFF) : PandaUI::Color(0x414A59EE));
+            setBackgroundColor(
+                m_selected ? PandaUI::Color(0xFFFFFFFF) : PandaUI::Color(0x414A59EE)
+            );
         } else {
-            setBackgroundColor(m_selected ? PandaUI::Color(0xF0F4FFFF) : PandaUI::Color(0x2D3440DD));
+            setBackgroundColor(
+                m_selected ? PandaUI::Color(0xF0F4FFFF) : PandaUI::Color(0x2D3440DD)
+            );
         }
-        surface().setBorderColor(m_selected ? PandaUI::Color(0xFFFFFFFF) : PandaUI::Color(0x5C6676AA));
-        surface().setShadowColor(m_selected ? PandaUI::Color(0x00000038) : PandaUI::Color(0x00000024));
+        surface().setBorderColor(
+            m_selected ? PandaUI::Color(0xFFFFFFFF) : PandaUI::Color(0x5C6676AA)
+        );
+        surface().setShadowColor(
+            m_selected ? PandaUI::Color(0x00000038) : PandaUI::Color(0x00000024)
+        );
     }
 
     bool m_selected;
@@ -125,7 +246,9 @@ public:
 
 private:
     bool pointerDown(PandaUI::PointerEvent &event) override {
-        if (event.type == PandaUI::PointerType::Touch) { NeverlandTouchControls::ignoreTouch(event.pointerId); }
+        if (event.type == PandaUI::PointerType::Touch) {
+            NeverlandTouchControls::ignoreTouch(event.pointerId);
+        }
         return PandaUI::Button::pointerDown(event);
     }
 
@@ -190,7 +313,9 @@ void NeverlandHUD::update(float) {
 void NeverlandHUD::shutdown() {
     NeverlandTouchControls::reset();
     if (m_window.isValid()) { m_window.setRootView(nullptr); }
+    destroyBlockPreviewTextures();
     m_slots.fill(nullptr);
+    m_selectionLabel.reset();
     m_root.reset();
     m_blocksCreation.reset();
     m_displayedSelection = VoxelType::NOTHING;
@@ -202,6 +327,7 @@ void NeverlandHUD::buildUI() {
         LOG_ERROR("NeverlandHUD: main PandaUI window is unavailable");
         return;
     }
+    loadBlockPreviewTextures();
 
     m_root = std::make_shared<PandaUI::Panel>();
     m_root->setBackgroundColor(transparent());
@@ -214,12 +340,41 @@ void NeverlandHUD::buildUI() {
     safeArea->layout().setFlexDirection(PandaUI::FlexDirection::Column);
     safeArea->layout().setJustifyContent(PandaUI::Justify::End);
     safeArea->layout().setAlignItems(PandaUI::Align::Center);
+    safeArea->addSubview(makeSelectionPill());
     safeArea->addSubview(makeHotbar());
 
     if (shouldShowCrosshair()) { m_root->addSubview(makeCrosshair()); }
     m_root->addSubview(safeArea);
     if (shouldShowTouchControls()) { m_root->addSubview(makeTouchControls()); }
     m_window.setRootView(m_root);
+}
+
+void NeverlandHUD::loadBlockPreviewTextures() {
+    destroyBlockPreviewTextures();
+
+    const Bamboo::TextureAPI::TexturePixelsRGBA8 texture = Bamboo::TextureAPI::readPixelsRGBA8(blocksTileTexture);
+    if (!texture) {
+        LOG_ERROR("NeverlandHUD: failed to read block preview texture asset %u", blocksTileTexture.id);
+        return;
+    }
+
+    TexturePixels atlas;
+    atlas.width = texture.width;
+    atlas.height = texture.height;
+    atlas.pixels = texture.pixels;
+
+    for (size_t i = 0; i < BLOCKS.size(); ++i) {
+        m_previewTextures[i] = makeTexturePreview(atlas, BLOCKS[i].type);
+    }
+}
+
+void NeverlandHUD::destroyBlockPreviewTextures() {
+    for (PandaUI::TextureHandle &texture : m_previewTextures) {
+        if (texture) {
+            Bamboo::UI::destroyTexture(texture);
+            texture = {};
+        }
+    }
 }
 
 void NeverlandHUD::updateTouchControlSafeArea() {
@@ -248,17 +403,28 @@ std::shared_ptr<PandaUI::Panel> NeverlandHUD::makeCrosshair() {
     auto horizontal = std::make_shared<PandaUI::Panel>();
     horizontal->setBackgroundColor(PandaUI::Color(0xFFFFFFFF));
     horizontal->layoutSetAbsolute();
-    horizontal->layout().setPosition(PandaUI::Edge::Left, PandaUI::Length::points(NeverlandHUDLayout::CrosshairLineInset));
-    horizontal->layout().setPosition(PandaUI::Edge::Top, PandaUI::Length::points(NeverlandHUDLayout::CrosshairLineCenter));
+    horizontal->layout().setPosition(
+        PandaUI::Edge::Left, PandaUI::Length::points(NeverlandHUDLayout::CrosshairLineInset)
+    );
+    horizontal->layout().setPosition(
+        PandaUI::Edge::Top, PandaUI::Length::points(NeverlandHUDLayout::CrosshairLineCenter)
+    );
     horizontal->layout().setWidth(PandaUI::Length::points(NeverlandHUDLayout::CrosshairLineLength));
-    horizontal->layout().setHeight(PandaUI::Length::points(NeverlandHUDLayout::CrosshairLineThickness));
+    horizontal->layout().setHeight(
+        PandaUI::Length::points(NeverlandHUDLayout::CrosshairLineThickness)
+    );
 
     auto vertical = std::make_shared<PandaUI::Panel>();
     vertical->setBackgroundColor(PandaUI::Color(0xFFFFFFFF));
     vertical->layoutSetAbsolute();
-    vertical->layout().setPosition(PandaUI::Edge::Left, PandaUI::Length::points(NeverlandHUDLayout::CrosshairLineCenter));
-    vertical->layout().setPosition(PandaUI::Edge::Top, PandaUI::Length::points(NeverlandHUDLayout::CrosshairLineInset));
-    vertical->layout().setWidth(PandaUI::Length::points(NeverlandHUDLayout::CrosshairLineThickness));
+    vertical->layout().setPosition(
+        PandaUI::Edge::Left, PandaUI::Length::points(NeverlandHUDLayout::CrosshairLineCenter)
+    );
+    vertical->layout().setPosition(
+        PandaUI::Edge::Top, PandaUI::Length::points(NeverlandHUDLayout::CrosshairLineInset)
+    );
+    vertical->layout().setWidth(PandaUI::Length::points(NeverlandHUDLayout::CrosshairLineThickness)
+    );
     vertical->layout().setHeight(PandaUI::Length::points(NeverlandHUDLayout::CrosshairLineLength));
 
     crosshair->addSubview(horizontal);
@@ -290,8 +456,12 @@ std::shared_ptr<PandaUI::Panel> NeverlandHUD::makeMovePad() {
     auto pad = std::make_shared<PandaUI::Panel>();
     pad->setBackgroundColor(transparent());
     pad->layoutSetAbsolute();
-    pad->layout().setPosition(PandaUI::Edge::Left, PandaUI::Length::points(NeverlandHUDLayout::MovePadLeftMargin));
-    pad->layout().setPosition(PandaUI::Edge::Bottom, PandaUI::Length::points(NeverlandHUDLayout::MovePadBottom));
+    pad->layout().setPosition(
+        PandaUI::Edge::Left, PandaUI::Length::points(NeverlandHUDLayout::MovePadLeftMargin)
+    );
+    pad->layout().setPosition(
+        PandaUI::Edge::Bottom, PandaUI::Length::points(NeverlandHUDLayout::MovePadBottom)
+    );
     pad->layout().setWidth(PandaUI::Length::points(NeverlandHUDLayout::MovePadSize));
     pad->layout().setHeight(PandaUI::Length::points(NeverlandHUDLayout::MovePadSize));
 
@@ -299,7 +469,9 @@ std::shared_ptr<PandaUI::Panel> NeverlandHUD::makeMovePad() {
     forward->layoutSetAbsolute();
     forward->layout().setPosition(
         PandaUI::Edge::Left,
-        PandaUI::Length::points(NeverlandHUDLayout::TouchButtonSize + NeverlandHUDLayout::TouchButtonGap)
+        PandaUI::Length::points(
+            NeverlandHUDLayout::TouchButtonSize + NeverlandHUDLayout::TouchButtonGap
+        )
     );
     forward->layout().setPosition(PandaUI::Edge::Top, PandaUI::Length::points(0.f));
     pad->addSubview(forward);
@@ -309,7 +481,9 @@ std::shared_ptr<PandaUI::Panel> NeverlandHUD::makeMovePad() {
     left->layout().setPosition(PandaUI::Edge::Left, PandaUI::Length::points(0.f));
     left->layout().setPosition(
         PandaUI::Edge::Top,
-        PandaUI::Length::points(NeverlandHUDLayout::TouchButtonSize + NeverlandHUDLayout::TouchButtonGap)
+        PandaUI::Length::points(
+            NeverlandHUDLayout::TouchButtonSize + NeverlandHUDLayout::TouchButtonGap
+        )
     );
     pad->addSubview(left);
 
@@ -317,11 +491,15 @@ std::shared_ptr<PandaUI::Panel> NeverlandHUD::makeMovePad() {
     backward->layoutSetAbsolute();
     backward->layout().setPosition(
         PandaUI::Edge::Left,
-        PandaUI::Length::points(NeverlandHUDLayout::TouchButtonSize + NeverlandHUDLayout::TouchButtonGap)
+        PandaUI::Length::points(
+            NeverlandHUDLayout::TouchButtonSize + NeverlandHUDLayout::TouchButtonGap
+        )
     );
     backward->layout().setPosition(
         PandaUI::Edge::Top,
-        PandaUI::Length::points((NeverlandHUDLayout::TouchButtonSize + NeverlandHUDLayout::TouchButtonGap) * 2.0f)
+        PandaUI::Length::points(
+            (NeverlandHUDLayout::TouchButtonSize + NeverlandHUDLayout::TouchButtonGap) * 2.0f
+        )
     );
     pad->addSubview(backward);
 
@@ -329,11 +507,15 @@ std::shared_ptr<PandaUI::Panel> NeverlandHUD::makeMovePad() {
     right->layoutSetAbsolute();
     right->layout().setPosition(
         PandaUI::Edge::Left,
-        PandaUI::Length::points((NeverlandHUDLayout::TouchButtonSize + NeverlandHUDLayout::TouchButtonGap) * 2.0f)
+        PandaUI::Length::points(
+            (NeverlandHUDLayout::TouchButtonSize + NeverlandHUDLayout::TouchButtonGap) * 2.0f
+        )
     );
     right->layout().setPosition(
         PandaUI::Edge::Top,
-        PandaUI::Length::points(NeverlandHUDLayout::TouchButtonSize + NeverlandHUDLayout::TouchButtonGap)
+        PandaUI::Length::points(
+            NeverlandHUDLayout::TouchButtonSize + NeverlandHUDLayout::TouchButtonGap
+        )
     );
     pad->addSubview(right);
     return pad;
@@ -343,8 +525,12 @@ std::shared_ptr<PandaUI::Panel> NeverlandHUD::makeActionControls() {
     auto panel = std::make_shared<PandaUI::Panel>();
     panel->setBackgroundColor(transparent());
     panel->layoutSetAbsolute();
-    panel->layout().setPosition(PandaUI::Edge::Right, PandaUI::Length::points(NeverlandHUDLayout::ActionControlsMargin));
-    panel->layout().setPosition(PandaUI::Edge::Bottom, PandaUI::Length::points(NeverlandHUDLayout::ActionControlsBottom));
+    panel->layout().setPosition(
+        PandaUI::Edge::Right, PandaUI::Length::points(NeverlandHUDLayout::ActionControlsMargin)
+    );
+    panel->layout().setPosition(
+        PandaUI::Edge::Bottom, PandaUI::Length::points(NeverlandHUDLayout::ActionControlsBottom)
+    );
     panel->layout().setWidth(PandaUI::Length::points(NeverlandHUDLayout::JumpButtonWidth));
     panel->layout().setHeight(PandaUI::Length::points(NeverlandHUDLayout::JumpButtonHeight));
 
@@ -360,14 +546,32 @@ std::shared_ptr<PandaUI::Panel> NeverlandHUD::makeActionControls() {
     return panel;
 }
 
+std::shared_ptr<PandaUI::Panel> NeverlandHUD::makeSelectionPill() {
+    auto pill = std::make_shared<PandaUI::Panel>();
+    pill->setBackgroundColor(PandaUI::Color(0x111319B8));
+    pill->surface().setCornerRadius(11.0f);
+    pill->surface().setBorderWidth(1.0f);
+    pill->surface().setBorderColor(PandaUI::Color(0xFFFFFF33));
+    pill->layout().setMargin(PandaUI::Edge::Bottom, 8.0f);
+    pill->layout().setPadding(PandaUI::Edge::Horizontal, 12.0f);
+    pill->layout().setPadding(PandaUI::Edge::Vertical, 5.0f);
+
+    m_selectionLabel = makeLabel("", 13.0f, PandaUI::Color(0xF4F7FFFF));
+    pill->addSubview(m_selectionLabel);
+    return pill;
+}
+
 std::shared_ptr<PandaUI::Panel> NeverlandHUD::makeHotbar() {
     auto hotbar = std::make_shared<PandaUI::Panel>();
     hotbar->setBackgroundColor(PandaUI::Color(0x111319CC));
     hotbar->setClipsToBounds(true);
+    hotbar->surface().setCornerRadius(NeverlandHUDLayout::HotbarCornerRadius);
     hotbar->layout().setWidth(PandaUI::Length::points(NeverlandHUDLayout::HotbarWidth));
     hotbar->layout().setHeight(PandaUI::Length::points(NeverlandHUDLayout::HotbarHeight));
     hotbar->layout().setMargin(PandaUI::Edge::Bottom, NeverlandHUDLayout::HotbarBottomMargin);
-    hotbar->layout().setPadding(PandaUI::Edge::Horizontal, NeverlandHUDLayout::HotbarPaddingHorizontal);
+    hotbar->layout().setPadding(
+        PandaUI::Edge::Horizontal, NeverlandHUDLayout::HotbarPaddingHorizontal
+    );
     hotbar->layout().setPadding(PandaUI::Edge::Vertical, NeverlandHUDLayout::HotbarPaddingVertical);
     hotbar->layout().setGap(NeverlandHUDLayout::HotbarGap);
     hotbar->layout().setFlexDirection(PandaUI::FlexDirection::Row);
@@ -399,15 +603,11 @@ std::shared_ptr<PandaUI::Button> NeverlandHUD::makeSlot(const BlockSlot &slot, i
         updateSelection();
     });
 
-    auto color = std::make_shared<PandaUI::Panel>();
-    color->setBackgroundColor(PandaUI::Color(slot.color));
-    color->layout().setWidth(PandaUI::Length::points(NeverlandHUDLayout::HotbarSwatchWidth));
-    color->layout().setHeight(PandaUI::Length::points(NeverlandHUDLayout::HotbarSwatchHeight));
-    view->addSubview(color);
-
-    const std::string keyLabel = index == 9 ? "0" : std::to_string(index + 1);
-    auto label = makeLabel(keyLabel, NeverlandHUDLayout::HotbarLabelFontSize, PandaUI::Color(0xE9EDF4FF));
-    view->addSubview(label);
+    const PandaUI::TextureHandle previewTexture =
+        index >= 0 && index < static_cast<int>(m_previewTextures.size())
+            ? m_previewTextures[static_cast<size_t>(index)]
+            : PandaUI::TextureHandle{};
+    view->addSubview(makeBlockPreview(previewTexture));
 
     return view;
 }
@@ -417,9 +617,12 @@ void NeverlandHUD::updateSelection() {
     VoxelType selected = m_blocksCreation->getSelectedBlock();
     if (selected == m_displayedSelection) { return; }
 
+    const char *selectedName = "";
     for (size_t i = 0; i < BLOCKS.size(); ++i) {
         applySlotStyle(i, BLOCKS[i].type == selected);
+        if (BLOCKS[i].type == selected) { selectedName = BLOCKS[i].name; }
     }
+    if (m_selectionLabel) { m_selectionLabel->setText(selectedName); }
     m_displayedSelection = selected;
 }
 

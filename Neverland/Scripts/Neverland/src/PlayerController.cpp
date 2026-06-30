@@ -19,6 +19,8 @@
 namespace {
 
 constexpr float CAMERA_VERTICAL_FOV_DEGREES = 70.0f;
+constexpr float LEGACY_SPRINT_MULTIPLIER = 1.6f;
+constexpr float UPDATED_SPRINT_MULTIPLIER = 2.1f;
 
 Quat toBambooQuat(const glm::quat &quat) {
     return Quat(quat.x, quat.y, quat.z, quat.w);
@@ -39,10 +41,14 @@ bool findTouchById(int id, Input::Touch &outTouch) {
 
 void PlayerController::start() {
     NeverlandTouchControls::reset();
+    if (std::abs(sprintMultiplier - LEGACY_SPRINT_MULTIPLIER) < 0.01f) {
+        sprintMultiplier = UPDATED_SPRINT_MULTIPLIER;
+    }
     const int groundHeight = ChunksStorage::terrainHeight(0, 0);
-    TransformComponentAPI::setPosition(
-        getEntity(), {0.0f, groundHeight + 1.0f + eyeHeight + 1.0f, 0.0f}
-    );
+    m_physicsEyePosition = glm::vec3(0.0f, groundHeight + 1.0f + eyeHeight + 1.0f, 0.0f);
+    m_visualYOffset = 0.0f;
+    m_hasPhysicsEyePosition = true;
+    setEyePosition(m_physicsEyePosition);
     TransformComponentAPI::setRotation(
         getEntity(), toBambooQuat(glm::quat(glm::vec3(glm::radians(25.f), 0.f, 0.f)))
     );
@@ -206,6 +212,8 @@ void PlayerController::updateCharacter(float deltaTime) {
     if (glm::length(inputDirection) > 0.0001f) { inputDirection = glm::normalize(inputDirection); }
 
     glm::vec3 position = getEyePosition();
+    const glm::vec3 previousPhysicsPosition = position;
+    const bool wasGrounded = m_characterState.grounded;
     const bool jumpPressed = Input::isKeyJustPressed(Key::SPACE) || m_touchJumpPressed;
     const bool gameplayJumpPressed = updateJumpModeToggle(jumpPressed, deltaTime);
     const bool isFlyMode = flyMode != 0;
@@ -238,7 +246,11 @@ void PlayerController::updateCharacter(float deltaTime) {
 
     VoxelCharacterController::move(position, m_characterState, config, input, deltaTime);
 
-    setEyePosition(position);
+    updateStepSmoothing(
+        previousPhysicsPosition, position, wasGrounded, gameplayJumpPressed, deltaTime
+    );
+    m_physicsEyePosition = position;
+    setEyePosition(m_physicsEyePosition + glm::vec3(0.0f, m_visualYOffset, 0.0f));
 }
 
 void PlayerController::setFlyModeEnabled(bool enabled) {
@@ -246,8 +258,39 @@ void PlayerController::setFlyModeEnabled(bool enabled) {
     if (flyMode == nextFlyMode) { return; }
     flyMode = nextFlyMode;
     m_characterState = {};
+    m_visualYOffset = 0.0f;
     m_doubleJumpTimer = 0.0f;
     m_waitingForDoubleJump = false;
+}
+
+void PlayerController::updateStepSmoothing(
+    const glm::vec3 &previousPhysicsPosition,
+    const glm::vec3 &physicsPosition,
+    bool wasGrounded,
+    bool jumpPressed,
+    float deltaTime
+) {
+    const float smoothingSpeed = std::max(stepSmoothingSpeed, 0.0f);
+    if (smoothingSpeed <= 0.0f || flyMode != 0) {
+        m_visualYOffset = 0.0f;
+        return;
+    }
+
+    const float deltaY = physicsPosition.y - previousPhysicsPosition.y;
+    const bool steppedUp =
+        wasGrounded && m_characterState.grounded && !jumpPressed && deltaY > 0.05f;
+    if (steppedUp) {
+        // Keep collision exact, but let the camera catch up visually after block step-up.
+        m_visualYOffset = std::max(
+            m_visualYOffset - deltaY,
+            -std::max(stepHeight, 0.0f)
+        );
+    } else if (!m_characterState.grounded || deltaY < -0.01f) {
+        m_visualYOffset = 0.0f;
+        return;
+    }
+
+    m_visualYOffset = std::min(m_visualYOffset + smoothingSpeed * deltaTime, 0.0f);
 }
 
 bool PlayerController::updateJumpModeToggle(bool jumpPressed, float deltaTime) {
@@ -298,6 +341,7 @@ void PlayerController::updateVectors() {
 }
 
 glm::vec3 PlayerController::getEyePosition() {
+    if (m_hasPhysicsEyePosition) { return m_physicsEyePosition; }
     const Vec3 position = TransformComponentAPI::getPosition(getEntity());
     return glm::vec3(position.x, position.y, position.z);
 }

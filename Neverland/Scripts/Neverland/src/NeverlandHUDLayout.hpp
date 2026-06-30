@@ -14,7 +14,7 @@ constexpr float HotbarSlotPadding = 4.0f;
 constexpr float HotbarSlotGap = 3.0f;
 constexpr float HotbarSwatchWidth = 28.0f;
 constexpr float HotbarSwatchHeight = 22.0f;
-constexpr float HotbarLabelFontSize = 11.0f;
+constexpr float HotbarCornerRadius = 15.0f;
 
 constexpr float HotbarPaddingHorizontal = 8.0f;
 constexpr float HotbarPaddingVertical = 7.0f;

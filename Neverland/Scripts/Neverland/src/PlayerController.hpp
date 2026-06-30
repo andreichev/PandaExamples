@@ -16,7 +16,7 @@ class PlayerController final : public Script {
 public:
     float mouseSpeed = 0.2f;
     float moveSpeed = 6.0f;
-    float sprintMultiplier = 1.6f;
+    float sprintMultiplier = 2.1f;
     float gravity = 28.0f;
     float jumpSpeed = 8.5f;
     float maxFallSpeed = 48.0f;
@@ -26,6 +26,7 @@ public:
     float stepHeight = 1.05f;
     float groundSnapDistance = 0.12f;
     float coyoteTime = 0.08f;
+    float stepSmoothingSpeed = 8.0f;
     float touchLookSpeed = 0.12f;
     float touchMoveRadius = 90.0f;
     float doubleJumpFlyWindow = 0.45f;
@@ -45,6 +46,7 @@ public:
     PANDA_FIELD(stepHeight)
     PANDA_FIELD(groundSnapDistance)
     PANDA_FIELD(coyoteTime)
+    PANDA_FIELD(stepSmoothingSpeed)
     PANDA_FIELD(touchLookSpeed)
     PANDA_FIELD(touchMoveRadius)
     PANDA_FIELD(doubleJumpFlyWindow)
@@ -68,6 +70,13 @@ private:
     void updateCharacter(float deltaTime);
     void setFlyModeEnabled(bool enabled);
     bool updateJumpModeToggle(bool jumpPressed, float deltaTime);
+    void updateStepSmoothing(
+        const glm::vec3 &previousPhysicsPosition,
+        const glm::vec3 &physicsPosition,
+        bool wasGrounded,
+        bool jumpPressed,
+        float deltaTime
+    );
     glm::vec3 getEyePosition();
     void setEyePosition(const glm::vec3 &position);
     glm::vec3 getHorizontalForward() const;
@@ -85,6 +94,9 @@ private:
     };
 
     VoxelCharacterState m_characterState;
+    glm::vec3 m_physicsEyePosition = glm::vec3(0.0f);
+    float m_visualYOffset = 0.0f;
+    bool m_hasPhysicsEyePosition = false;
     TouchTracker m_moveTouch;
     TouchTracker m_lookTouch;
     glm::vec3 m_touchMoveDirection = glm::vec3(0.0f);

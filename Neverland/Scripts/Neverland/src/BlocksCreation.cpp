@@ -34,11 +34,32 @@ float distanceSquared(float ax, float ay, float bx, float by) {
     return dx * dx + dy * dy;
 }
 
+bool isKeyboardMovingInput() {
+    return Input::isKeyPressed(Key::W) || Input::isKeyPressed(Key::A) ||
+           Input::isKeyPressed(Key::S) || Input::isKeyPressed(Key::D);
+}
+
+bool isMovingInput() {
+    const NeverlandTouchControls::MoveAxes touchAxes = NeverlandTouchControls::getMoveAxes();
+    return isKeyboardMovingInput() || std::abs(touchAxes.x) > 0.001f ||
+           std::abs(touchAxes.y) > 0.001f;
+}
+
+bool isSprintingInput(bool moving) {
+    return moving && Input::isKeyPressed(Key::LEFT_SHIFT);
+}
+
 } // namespace
 
 void BlocksCreation::start() {
     m_selectedBlock = VoxelType::GROUND;
     m_playerController = EntityAPI::getScript<PlayerController>(getEntity());
+}
+
+void BlocksCreation::shutdown() {
+    m_heldItemView.shutdown();
+    m_playerController.reset();
+    m_touchAction = {};
 }
 
 void BlocksCreation::setSelectedBlock(VoxelType type) {
@@ -164,12 +185,14 @@ void BlocksCreation::updateTouchBlockInput(
 
 void BlocksCreation::update(float deltaTime) {
     updateSelectedBlock();
+    const bool moving = isMovingInput();
+    m_heldItemView.update(getEntity(), m_selectedBlock, moving, isSprintingInput(moving), deltaTime);
 
     // Keep voxel edits disabled until the initial world is visible.
     if (!GameContext::isWorldLoaded()) { return; }
 
-    bool placePressed;
-    bool breakPressed;
+    bool placePressed = false;
+    bool breakPressed = false;
     if (Input::isKeyPressed(Key::E)) {
         placePressed = Input::isMouseButtonPressed(MouseButton::LEFT);
         breakPressed = Input::isMouseButtonPressed(MouseButton::RIGHT);
@@ -183,8 +206,9 @@ void BlocksCreation::update(float deltaTime) {
     if (!placePressed && !breakPressed) { return; }
     if (!m_playerController) { return; }
     Vec3 position = getPosition();
-    Vec3 target = hasTouchAim ? m_playerController->getRayDirectionForScreenPoint(touchAim.x, touchAim.y)
-                              : m_playerController->getFront();
+    Vec3 target = hasTouchAim
+                      ? m_playerController->getRayDirectionForScreenPoint(touchAim.x, touchAim.y)
+                      : m_playerController->getFront();
     auto v = GameContext::s_chunkStorage->bresenham3D(
         position.x, position.y, position.z, target.x, target.y, target.z, MAXIMUM_DISTANCE
     );

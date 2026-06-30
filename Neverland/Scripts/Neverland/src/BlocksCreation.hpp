@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include "HeldItemView.hpp"
 #include "Model/ChunksStorage.hpp"
 #include "PlayerController.hpp"
 
@@ -15,6 +16,7 @@ public:
 
     void start() override;
     void update(float deltaTime) override;
+    void shutdown() override;
     VoxelType getSelectedBlock() const {
         return m_selectedBlock;
     }
@@ -42,6 +44,7 @@ private:
     };
 
     Shared<PlayerController> m_playerController;
+    HeldItemView m_heldItemView;
     TouchActionState m_touchAction;
     VoxelType m_selectedBlock;
 };

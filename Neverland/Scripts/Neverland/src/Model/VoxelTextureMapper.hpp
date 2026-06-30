@@ -6,6 +6,8 @@
 
 #include "Voxel.hpp"
 
+#include <array>
+#include <cstddef>
 #include <cstdint>
 
 struct VoxelTextureData {
@@ -47,38 +49,39 @@ struct VoxelTextureData {
 class VoxelTextureMapper final {
 public:
     static VoxelTextureData &getTextureData(const Voxel *voxel) {
-        VoxelTextureData &data = s_data[static_cast<int>(voxel->type)];
+        VoxelTextureData &data = s_data[static_cast<std::size_t>(voxel->type)];
         // ASSERT(data.type == voxel->type, "CHECK VOXEL ID");
         return data;
     }
 
 private:
-    static VoxelTextureData s_data[];
-};
-
-VoxelTextureData VoxelTextureMapper::s_data[] = {
-    // ВОЗДУХ
-    VoxelTextureData(VoxelType::NOTHING, 0),
-    // ТРАВА
-    VoxelTextureData(VoxelType::GRASS, 2, 0xFFFFFFFF, 3, 0x9EEA6CFF, 1, 0xFFFFFFFF),
-    // ЗЕМЛЯ
-    VoxelTextureData(VoxelType::GROUND, 1),
-    // ДЕРЕВО
-    VoxelTextureData(VoxelType::TREE, 5, 0xFFFFFFFF, 6, 0xFFFFFFFF, 6, 0xFFFFFFFF),
-    // ДОСКИ
-    VoxelTextureData(VoxelType::BOARDS, 7),
-    // КАМЕНЬ
-    VoxelTextureData(VoxelType::STONE, 8),
-    // КАМЕННЫЕ КИРПИЧИ
-    VoxelTextureData(VoxelType::STONE_BRICKS, 9),
-    // ПЕСЧАНИК
-    VoxelTextureData(VoxelType::SAND_STONE, 10),
-    // ПЕСОК
-    VoxelTextureData(VoxelType::SAND, 11),
-    // БЕРЕЗОВЫЙ СТВОЛ
-    VoxelTextureData(VoxelType::BIRCH_LOG, 15, 0xFFFFFFFF, 14, 0xFFFFFFFF, 14, 0xFFFFFFFF),
-    // ЛИСТВА БЕРЕЗЫ
-    VoxelTextureData(VoxelType::BIRCH_LEAVES, 13, 0x7CCB55FF, 13, 0x86D962FF, 13, 0x6FB64DFF),
-    // ВЫСОКАЯ ТРАВА
-    VoxelTextureData(VoxelType::TALL_GRASS, 4, 0x76C957FF, 4, 0x76C957FF, 4, 0x76C957FF)
+    inline static std::array<VoxelTextureData, static_cast<std::size_t>(VoxelType::COUNT)> s_data =
+        {
+            // ВОЗДУХ
+            VoxelTextureData(VoxelType::NOTHING, 0),
+            // ТРАВА
+            VoxelTextureData(VoxelType::GRASS, 2, 0xFFFFFFFF, 3, 0x9EEA6CFF, 1, 0xFFFFFFFF),
+            // ЗЕМЛЯ
+            VoxelTextureData(VoxelType::GROUND, 1),
+            // ДЕРЕВО
+            VoxelTextureData(VoxelType::TREE, 5, 0xFFFFFFFF, 6, 0xFFFFFFFF, 6, 0xFFFFFFFF),
+            // ДОСКИ
+            VoxelTextureData(VoxelType::BOARDS, 7),
+            // КАМЕНЬ
+            VoxelTextureData(VoxelType::STONE, 8),
+            // КАМЕННЫЕ КИРПИЧИ
+            VoxelTextureData(VoxelType::STONE_BRICKS, 9),
+            // ПЕСЧАНИК
+            VoxelTextureData(VoxelType::SAND_STONE, 10),
+            // ПЕСОК
+            VoxelTextureData(VoxelType::SAND, 11),
+            // БЕРЕЗОВЫЙ СТВОЛ
+            VoxelTextureData(VoxelType::BIRCH_LOG, 15, 0xFFFFFFFF, 14, 0xFFFFFFFF, 14, 0xFFFFFFFF),
+            // ЛИСТВА БЕРЕЗЫ
+            VoxelTextureData(
+                VoxelType::BIRCH_LEAVES, 13, 0x7CCB55FF, 13, 0x86D962FF, 13, 0x6FB64DFF
+            ),
+            // ВЫСОКАЯ ТРАВА
+            VoxelTextureData(VoxelType::TALL_GRASS, 4, 0x76C957FF, 4, 0x76C957FF, 4, 0x76C957FF)
+    };
 };

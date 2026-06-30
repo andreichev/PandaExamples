@@ -134,7 +134,7 @@ VoxelMeshGenerator::makeOneChunkMesh(const ChunkMeshSnapshot &snapshot, bool amb
 
                 // Front
                 if (isAir(x, y, z + 1, snapshot)) {
-                    addFaceIndices(vertices.size(), indices);
+                    addFaceIndices(static_cast<uint32_t>(vertices.size()), indices);
                     const Vec3 normal(0.f, 0.f, 1.f);
                     light = 1.0f;
                     if (ambientOcclusion) {
@@ -195,7 +195,7 @@ VoxelMeshGenerator::makeOneChunkMesh(const ChunkMeshSnapshot &snapshot, bool amb
                 }
                 // Back
                 if (isAir(x, y, z - 1, snapshot)) {
-                    addFaceIndices(vertices.size(), indices);
+                    addFaceIndices(static_cast<uint32_t>(vertices.size()), indices);
                     const Vec3 normal(0.f, 0.f, -1.f);
                     light = 0.75f;
                     if (ambientOcclusion) {
@@ -256,7 +256,7 @@ VoxelMeshGenerator::makeOneChunkMesh(const ChunkMeshSnapshot &snapshot, bool amb
                 }
                 // Top
                 if (isAir(x, y + 1, z, snapshot)) {
-                    addFaceIndices(vertices.size(), indices);
+                    addFaceIndices(static_cast<uint32_t>(vertices.size()), indices);
                     const Vec3 normal(0.f, 1.f, 0.f);
                     light = 0.95f;
                     if (ambientOcclusion) {
@@ -317,7 +317,7 @@ VoxelMeshGenerator::makeOneChunkMesh(const ChunkMeshSnapshot &snapshot, bool amb
                 }
                 // Bottom
                 if (isAir(x, y - 1, z, snapshot)) {
-                    addFaceIndices(vertices.size(), indices);
+                    addFaceIndices(static_cast<uint32_t>(vertices.size()), indices);
                     const Vec3 normal(0.f, -1.f, 0.f);
                     light = 0.85f;
                     if (ambientOcclusion) {
@@ -378,7 +378,7 @@ VoxelMeshGenerator::makeOneChunkMesh(const ChunkMeshSnapshot &snapshot, bool amb
                 }
                 // Right
                 if (isAir(x - 1, y, z, snapshot)) {
-                    addFaceIndices(vertices.size(), indices);
+                    addFaceIndices(static_cast<uint32_t>(vertices.size()), indices);
                     const Vec3 normal(-1.f, 0.f, 0.f);
                     light = 0.9f;
                     if (ambientOcclusion) {
@@ -439,7 +439,7 @@ VoxelMeshGenerator::makeOneChunkMesh(const ChunkMeshSnapshot &snapshot, bool amb
                 }
                 // Left
                 if (isAir(x + 1, y, z, snapshot)) {
-                    addFaceIndices(vertices.size(), indices);
+                    addFaceIndices(static_cast<uint32_t>(vertices.size()), indices);
                     const Vec3 normal(1.f, 0.f, 0.f);
                     light = 0.8f;
                     if (ambientOcclusion) {
