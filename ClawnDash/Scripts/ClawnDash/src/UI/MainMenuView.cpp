@@ -23,7 +23,6 @@ MainMenuView::MainMenuView(Action startLevel, Action selectLevel) {
     ));
 
     auto start = makeButton("Start Level 1", PandaUI::Color(0x5EEAD4FF));
-    start->setTextColor(PandaUI::Color(0x09201DFF));
     start->setOnClick([action = std::move(startLevel)](PandaUI::Button &) {
         if (action) {
             action();
@@ -32,7 +31,6 @@ MainMenuView::MainMenuView(Action startLevel, Action selectLevel) {
     card->addSubview(start);
 
     auto select = makeButton("Choose Level", PandaUI::Color(0xFFD166FF));
-    select->setTextColor(PandaUI::Color(0x111827FF));
     select->setOnClick([action = std::move(selectLevel)](PandaUI::Button &) {
         if (action) {
             action();

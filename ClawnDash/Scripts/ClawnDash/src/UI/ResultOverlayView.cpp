@@ -27,7 +27,6 @@ ResultOverlayView::ResultOverlayView(
     card->addSubview(makeLabel(std::move(message), 18.f, messageColor, 2));
 
     auto primary = makeButton(std::move(primaryTitle), messageColor);
-    primary->setTextColor(PandaUI::Color(0x0C2115FF));
     primary->setOnClick([action = std::move(primaryAction)](PandaUI::Button &) {
         if (action) {
             action();

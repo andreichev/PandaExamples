@@ -31,7 +31,6 @@ LevelSelectView::LevelSelectView(
             std::to_string(i + 1) + ". " + level.title + " - " + level.description,
             PandaUI::Color(level.accentColor)
         );
-        button->setTextColor(PandaUI::Color(0x111827FF));
         button->setNumberOfLines(2);
         button->setOnClick([playLevel, i](PandaUI::Button &) {
             if (playLevel) {

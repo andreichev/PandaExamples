@@ -7,7 +7,6 @@ namespace ClawnDash {
 std::shared_ptr<PandaUI::Label>
 makeLabel(std::string text, float size, PandaUI::Color color, int lines) {
     auto label = std::make_shared<PandaUI::Label>(std::move(text));
-    label->setFontSize(size);
     label->setTextColor(color);
     label->setNumberOfLines(lines);
     label->layout().setWidth(PandaUI::Length::percent(100.f));
@@ -18,11 +17,6 @@ std::shared_ptr<PandaUI::Button> makeButton(std::string text, PandaUI::Color col
     auto button = std::make_shared<PandaUI::Button>(std::move(text));
     button->layout().setWidth(PandaUI::Length::percent(100.f));
     button->layout().setHeight(PandaUI::Length::points(46.f));
-    button->setNormalColor(color);
-    button->setHoveredColor(PandaUI::Color(0x4A92FFFF));
-    button->setPressedColor(PandaUI::Color(0x1C58BDFF));
-    button->setTextColor(PandaUI::Color(0xFFFFFFFF));
-    button->setFontSize(15.f);
     return button;
 }
 
