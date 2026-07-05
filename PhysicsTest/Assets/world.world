@@ -1,0 +1,630 @@
+{
+    "lightingSettings": {
+        "ambientColor": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0,
+            "w": 1.0
+        },
+        "ambientIntensity": 0.11999999731779099
+    },
+    "entities": [
+        {
+            "id": 1159948150,
+            "tagComponent": {
+                "tag": "Cube"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": [
+                    1981350786
+                ]
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 22.70781707763672,
+                    "z": 1.76583993434906
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "scriptListComponent": {
+                "scripts": []
+            },
+            "rigidbody3dComponent": {
+                "type": 1,
+                "fixedRotation": false
+            },
+            "boxCollider3dComponent": {
+                "isSensor": false,
+                "offset": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "size": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "density": 1.0,
+                "friction": 0.5,
+                "restitution": 0.0
+            }
+        },
+        {
+            "id": 1749509032,
+            "tagComponent": {
+                "tag": "Cube"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": [
+                    3557285785
+                ]
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 18.992212295532227,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "scriptListComponent": {
+                "scripts": []
+            },
+            "rigidbody3dComponent": {
+                "type": 1,
+                "fixedRotation": false
+            },
+            "boxCollider3dComponent": {
+                "isSensor": false,
+                "offset": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "size": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "density": 1.0,
+                "friction": 0.5,
+                "restitution": 0.0
+            }
+        },
+        {
+            "id": 2877996209,
+            "tagComponent": {
+                "tag": "Cube"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": [
+                    1571712789
+                ]
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.00011929981701541692,
+                    "y": 28.797473907470703,
+                    "z": 0.46178388595581055
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "scriptListComponent": {
+                "scripts": []
+            },
+            "rigidbody3dComponent": {
+                "type": 1,
+                "fixedRotation": false
+            },
+            "boxCollider3dComponent": {
+                "isSensor": false,
+                "offset": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "size": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "density": 1.0,
+                "friction": 0.5,
+                "restitution": 0.0
+            }
+        },
+        {
+            "id": 732211536,
+            "tagComponent": {
+                "tag": "Camera"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 9.421923637390137,
+                    "z": 7.317262172698975
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "cameraComponent": {
+                "isPrimary": true,
+                "camera": {
+                    "projectionType": 0,
+                    "fieldOfView": 70.0,
+                    "orthoSize": 1.0,
+                    "zNear": 0.10000000149011612,
+                    "zFar": 1000.0
+                }
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 81275708,
+            "tagComponent": {
+                "tag": "Capsule"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 3.941763162612915,
+                    "y": 23.3114070892334,
+                    "z": -2.202080726623535
+                },
+                "rotation": {
+                    "x": 0.008726535364985466,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 0.9999619126319885
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "scriptListComponent": {
+                "scripts": []
+            },
+            "rigidbody3dComponent": {
+                "type": 1,
+                "fixedRotation": false
+            },
+            "capsuleCollider3dComponent": {
+                "isSensor": false,
+                "offset": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "radius": 1.0,
+                "halfHeight": 0.5,
+                "density": 1.0,
+                "friction": 0.5,
+                "restitution": 0.30000001192092896
+            }
+        },
+        {
+            "id": 3532055883,
+            "tagComponent": {
+                "tag": "Character"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 12.786460876464844,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "scriptListComponent": {
+                "scripts": [
+                    {
+                        "name": "PlayerController",
+                        "scriptFields": [
+                            {
+                                "name": "speed",
+                                "fieldId": 564889385,
+                                "type": 1,
+                                "value": 5.0
+                            },
+                            {
+                                "name": "jumpSpeed",
+                                "fieldId": 3705032417,
+                                "type": 1,
+                                "value": 15.0
+                            },
+                            {
+                                "name": "gravity",
+                                "fieldId": 3583022444,
+                                "type": 1,
+                                "value": 9.0
+                            }
+                        ]
+                    }
+                ]
+            },
+            "rigidbody3dComponent": {
+                "type": 2,
+                "fixedRotation": true
+            },
+            "capsuleCollider3dComponent": {
+                "isSensor": false,
+                "offset": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "radius": 0.5,
+                "halfHeight": 0.5,
+                "density": 2.0,
+                "friction": 0.5,
+                "restitution": 0.0
+            }
+        },
+        {
+            "id": 4165951998,
+            "tagComponent": {
+                "tag": "Directional Light"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 7.364246368408203,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": -0.3303661346435547,
+                    "y": -0.24321043491363525,
+                    "z": -0.08852137625217438,
+                    "w": 0.9076733589172363
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0000001192092896
+                }
+            },
+            "directionalLightComponent": {
+                "color": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0,
+                    "w": 1.0
+                },
+                "intensity": 1.0,
+                "isEnabled": true
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 2499992683,
+            "tagComponent": {
+                "tag": "GameObject 1"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 7.364246368408203,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": -0.7071068286895752,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 0.7071067094802856
+                },
+                "scale": {
+                    "x": 40.0,
+                    "y": 40.0,
+                    "z": 0.9999954700469971
+                }
+            },
+            "spriteRendererComponent": {
+                "color": {
+                    "x": 0.14141340553760529,
+                    "y": 0.6815104484558105,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "cols": 1,
+                "rows": 1,
+                "index": 0,
+                "material": 0,
+                "texture": 0
+            },
+            "scriptListComponent": {
+                "scripts": []
+            },
+            "rigidbody3dComponent": {
+                "type": 0,
+                "fixedRotation": false
+            },
+            "boxCollider3dComponent": {
+                "isSensor": false,
+                "offset": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": -0.5
+                },
+                "size": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                },
+                "density": 1.0,
+                "friction": 0.5,
+                "restitution": 0.0
+            }
+        },
+        {
+            "id": 1898192272,
+            "tagComponent": {
+                "tag": "Sky"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "cubeMapComponent": {
+                "material": 0
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 2849540817,
+            "tagComponent": {
+                "tag": "Sphere"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": -0.32914644479751587,
+                    "y": 25.60273551940918,
+                    "z": -0.2977261245250702
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "scriptListComponent": {
+                "scripts": []
+            },
+            "rigidbody3dComponent": {
+                "type": 1,
+                "fixedRotation": false
+            },
+            "sphereCollider3dComponent": {
+                "isSensor": false,
+                "offset": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "radius": 1.0,
+                "density": 1.0,
+                "friction": 0.5,
+                "restitution": 0.0
+            }
+        },
+        {
+            "id": 1981350786,
+            "tagComponent": {
+                "tag": "primitive 0"
+            },
+            "relationshipComponent": {
+                "parent": 1159948150,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 2386102669,
+                "material": 3852475385,
+                "submeshIndex": 0,
+                "primitiveIndex": 0
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3557285785,
+            "tagComponent": {
+                "tag": "primitive 0"
+            },
+            "relationshipComponent": {
+                "parent": 1749509032,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 2386102669,
+                "material": 3852475385,
+                "submeshIndex": 0,
+                "primitiveIndex": 0
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 1571712789,
+            "tagComponent": {
+                "tag": "primitive 0"
+            },
+            "relationshipComponent": {
+                "parent": 2877996209,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 2386102669,
+                "material": 3852475385,
+                "submeshIndex": 0,
+                "primitiveIndex": 0
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        }
+    ]
+}

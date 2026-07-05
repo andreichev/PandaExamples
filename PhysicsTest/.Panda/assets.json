@@ -1,0 +1,73 @@
+{
+    "assets": [
+        {
+            "id": 2386102669,
+            "type": 6,
+            "meta": {
+                "gltfPath": "Assets/cube model/Cube.gltf",
+                "materials": [
+                    {
+                        "name": "Cube",
+                        "baseColorTexturePath": "Assets/cube model/Cube_BaseColor.png",
+                        "baseColorFactor": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0,
+                            "w": 1.0
+                        },
+                        "metallicRoughnessTexturePath": "",
+                        "metallicFactor": 0.0,
+                        "roughnessFactor": 0.07900000363588333,
+                        "normalTexturePath": "",
+                        "normalScale": 0.0,
+                        "occlusionTexturePath": "",
+                        "occlusionStrength": 0.0,
+                        "emissiveTexturePath": "",
+                        "emissiveFactor": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0,
+                            "w": 1.0
+                        },
+                        "alphaMode": 0,
+                        "alphaCutoff": 0.5,
+                        "doubleSided": false
+                    }
+                ],
+                "primitiveMaterials": [
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 0,
+                        "materialIndex": 0
+                    }
+                ]
+            }
+        },
+        {
+            "id": 2680253832,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "sourcePath": "Assets/cube model/Cube_BaseColor.png",
+                "cookedPath": ".Panda/Textures/Assets/cube model/Cube_BaseColor.ptex"
+            }
+        },
+        {
+            "id": 3852475385,
+            "type": 4,
+            "meta": {
+                "materialPath": "Assets/cube model/Cube_Cube_0.mat",
+                "shader": 0
+            }
+        },
+        {
+            "id": 4171084048,
+            "type": 7,
+            "meta": {
+                "worldPath": "Assets/world.world"
+            }
+        }
+    ]
+}
