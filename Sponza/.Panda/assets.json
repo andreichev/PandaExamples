@@ -5,7 +5,7 @@
             "type": 4,
             "meta": {
                 "materialPath": "Assets/models/Sponza_material_8_8.mat",
-                "shader": 0
+                "shader": 17
             }
         },
         {
@@ -42,6 +42,13 @@
             }
         },
         {
+            "id": 133713895,
+            "type": 8,
+            "meta": {
+                "dataPath": "Assets/bloom_postfx/bloom.postfx"
+            }
+        },
+        {
             "id": 160545236,
             "type": 1,
             "meta": {
@@ -57,7 +64,7 @@
             "type": 4,
             "meta": {
                 "materialPath": "Assets/models/Sponza_material_2_2.mat",
-                "shader": 0
+                "shader": 17
             }
         },
         {
@@ -65,7 +72,7 @@
             "type": 4,
             "meta": {
                 "materialPath": "Assets/models/Sponza_material_7_7.mat",
-                "shader": 0
+                "shader": 17
             }
         },
         {
@@ -106,7 +113,7 @@
             "type": 4,
             "meta": {
                 "materialPath": "Assets/models/Sponza_material_23_23.mat",
-                "shader": 0
+                "shader": 17
             }
         },
         {
@@ -125,7 +132,14 @@
             "type": 4,
             "meta": {
                 "materialPath": "Assets/models/Sponza_material_20_20.mat",
-                "shader": 0
+                "shader": 17
+            }
+        },
+        {
+            "id": 690289545,
+            "type": 8,
+            "meta": {
+                "dataPath": "Assets/bloom_postfx/Postprocessing.postfx"
             }
         },
         {
@@ -133,7 +147,7 @@
             "type": 4,
             "meta": {
                 "materialPath": "Assets/models/Sponza_material_22_22.mat",
-                "shader": 0
+                "shader": 17
             }
         },
         {
@@ -141,7 +155,7 @@
             "type": 4,
             "meta": {
                 "materialPath": "Assets/models/Sponza_material_3_3.mat",
-                "shader": 0
+                "shader": 17
             }
         },
         {
@@ -171,7 +185,7 @@
             "type": 4,
             "meta": {
                 "materialPath": "Assets/models/Sponza_material_9_9.mat",
-                "shader": 0
+                "shader": 17
             }
         },
         {
@@ -190,7 +204,7 @@
             "type": 4,
             "meta": {
                 "materialPath": "Assets/models/Sponza_material_17_17.mat",
-                "shader": 0
+                "shader": 17
             }
         },
         {
@@ -220,7 +234,7 @@
             "type": 4,
             "meta": {
                 "materialPath": "Assets/models/Sponza_material_0_0.mat",
-                "shader": 0
+                "shader": 17
             }
         },
         {
@@ -228,7 +242,7 @@
             "type": 4,
             "meta": {
                 "materialPath": "Assets/models/Sponza_material_4_4.mat",
-                "shader": 0
+                "shader": 17
             }
         },
         {
@@ -247,7 +261,7 @@
             "type": 4,
             "meta": {
                 "materialPath": "Assets/models/Sponza_material_11_11.mat",
-                "shader": 0
+                "shader": 17
             }
         },
         {
@@ -266,7 +280,7 @@
             "type": 4,
             "meta": {
                 "materialPath": "Assets/models/Sponza_material_14_14.mat",
-                "shader": 0
+                "shader": 17
             }
         },
         {
@@ -307,7 +321,7 @@
             "type": 4,
             "meta": {
                 "materialPath": "Assets/models/Sponza_material_10_10.mat",
-                "shader": 0
+                "shader": 17
             }
         },
         {
@@ -319,6 +333,14 @@
                 "numMips": 0,
                 "sourcePath": "Assets/models/2775690330959970771.jpg",
                 "cookedPath": ".Panda/Textures/Assets/models/2775690330959970771.ptex"
+            }
+        },
+        {
+            "id": 1362938364,
+            "type": 4,
+            "meta": {
+                "materialPath": "Assets/bloom_postfx/BloomBlurH.mat",
+                "shader": 18
             }
         },
         {
@@ -341,6 +363,13 @@
                 "numMips": 0,
                 "sourcePath": "Assets/models/4871783166746854860.jpg",
                 "cookedPath": ".Panda/Textures/Assets/models/4871783166746854860.ptex"
+            }
+        },
+        {
+            "id": 1619312013,
+            "type": 7,
+            "meta": {
+                "worldPath": "Assets/world.world"
             }
         },
         {
@@ -407,6 +436,14 @@
                 "numMips": 0,
                 "sourcePath": "Assets/models/13196865903111448057.jpg",
                 "cookedPath": ".Panda/Textures/Assets/models/13196865903111448057.ptex"
+            }
+        },
+        {
+            "id": 1761002139,
+            "type": 4,
+            "meta": {
+                "materialPath": "Assets/bloom_postfx/BloomBlurV.mat",
+                "shader": 19
             }
         },
         {
@@ -1637,7 +1674,7 @@
             "type": 4,
             "meta": {
                 "materialPath": "Assets/models/Sponza_material_18_18.mat",
-                "shader": 0
+                "shader": 17
             }
         },
         {
@@ -1645,7 +1682,7 @@
             "type": 4,
             "meta": {
                 "materialPath": "Assets/models/Sponza_material_6_6.mat",
-                "shader": 0
+                "shader": 17
             }
         },
         {
@@ -1708,7 +1745,7 @@
             "type": 4,
             "meta": {
                 "materialPath": "Assets/models/Sponza_material_19_19.mat",
-                "shader": 0
+                "shader": 17
             }
         },
         {
@@ -1727,7 +1764,7 @@
             "type": 4,
             "meta": {
                 "materialPath": "Assets/models/Sponza_material_5_5.mat",
-                "shader": 0
+                "shader": 17
             }
         },
         {
@@ -1735,7 +1772,7 @@
             "type": 4,
             "meta": {
                 "materialPath": "Assets/models/Sponza_material_16_16.mat",
-                "shader": 0
+                "shader": 17
             }
         },
         {
@@ -1747,6 +1784,14 @@
                 "numMips": 0,
                 "sourcePath": "Assets/models/11490520546946913238.jpg",
                 "cookedPath": ".Panda/Textures/Assets/models/11490520546946913238.ptex"
+            }
+        },
+        {
+            "id": 2360634015,
+            "type": 4,
+            "meta": {
+                "materialPath": "Assets/postfx/Material.mat",
+                "shader": 3966274814
             }
         },
         {
@@ -1831,7 +1876,7 @@
             "type": 4,
             "meta": {
                 "materialPath": "Assets/models/Sponza_material_15_15.mat",
-                "shader": 0
+                "shader": 17
             }
         },
         {
@@ -1843,6 +1888,14 @@
                 "numMips": 0,
                 "sourcePath": "Assets/models/9288698199695299068.jpg",
                 "cookedPath": ".Panda/Textures/Assets/models/9288698199695299068.ptex"
+            }
+        },
+        {
+            "id": 2890076831,
+            "type": 4,
+            "meta": {
+                "materialPath": "Assets/bloom_postfx/CompositeBloom.mat",
+                "shader": 20
             }
         },
         {
@@ -1872,7 +1925,7 @@
             "type": 4,
             "meta": {
                 "materialPath": "Assets/models/Sponza_material_24_24.mat",
-                "shader": 0
+                "shader": 17
             }
         },
         {
@@ -1884,6 +1937,14 @@
                 "numMips": 0,
                 "sourcePath": "Assets/models/8503262930880235456.jpg",
                 "cookedPath": ".Panda/Textures/Assets/models/8503262930880235456.ptex"
+            }
+        },
+        {
+            "id": 2986368463,
+            "type": 4,
+            "meta": {
+                "materialPath": "Assets/LightRect.mat",
+                "shader": 11
             }
         },
         {
@@ -1917,6 +1978,13 @@
                 "numMips": 0,
                 "sourcePath": "Assets/models/2299742237651021498.jpg",
                 "cookedPath": ".Panda/Textures/Assets/models/2299742237651021498.ptex"
+            }
+        },
+        {
+            "id": 3148267488,
+            "type": 8,
+            "meta": {
+                "dataPath": "Assets/postfx/Postprocessing.postfx"
             }
         },
         {
@@ -1968,7 +2036,7 @@
             "type": 4,
             "meta": {
                 "materialPath": "Assets/models/Sponza_material_1_1.mat",
-                "shader": 0
+                "shader": 17
             }
         },
         {
@@ -1976,7 +2044,7 @@
             "type": 4,
             "meta": {
                 "materialPath": "Assets/models/Sponza_material_13_13.mat",
-                "shader": 0
+                "shader": 17
             }
         },
         {
@@ -2028,7 +2096,7 @@
             "type": 4,
             "meta": {
                 "materialPath": "Assets/models/Sponza_material_21_21.mat",
-                "shader": 0
+                "shader": 17
             }
         },
         {
@@ -2131,11 +2199,19 @@
             }
         },
         {
+            "id": 3966274814,
+            "type": 3,
+            "meta": {
+                "vertexSourcePath": "Assets/postfx/PostprocessShader.vert.hlsl",
+                "fragmentSourcePath": "Assets/postfx/PostprocessShader.frag.hlsl"
+            }
+        },
+        {
             "id": 4038659422,
             "type": 4,
             "meta": {
                 "materialPath": "Assets/models/Sponza_material_12_12.mat",
-                "shader": 0
+                "shader": 17
             }
         },
         {

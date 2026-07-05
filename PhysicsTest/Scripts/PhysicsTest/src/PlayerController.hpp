@@ -10,14 +10,16 @@ using namespace Bamboo;
 // WASD — move in world XZ plane, SPACE — jump. Tune speed/jump/gravity in the Inspector.
 class PlayerController : public Script {
 public:
-    float speed = 4.f;     // run speed, m/s
-    float jumpSpeed = 6.f; // vertical takeoff speed, m/s
-    float gravity = 15.f;  // fall acceleration, m/s^2
+    float speed = 4.f;      // run speed, m/s
+    float jumpSpeed = 6.f;  // vertical takeoff speed, m/s
+    float gravity = 15.f;   // fall acceleration, m/s^2
+    float pushForce = 30.f; // newtons applied to dynamic bodies we press into (0 = no pushing)
 
     PANDA_FIELDS_BEGIN(PlayerController)
     PANDA_FIELD(speed)
     PANDA_FIELD(jumpSpeed)
     PANDA_FIELD(gravity)
+    PANDA_FIELD(pushForce)
     PANDA_FIELDS_END
 
     void update(float deltaTime) override;

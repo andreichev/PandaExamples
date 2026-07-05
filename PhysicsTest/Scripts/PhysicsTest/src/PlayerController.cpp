@@ -32,7 +32,7 @@ void PlayerController::update(float deltaTime) {
     step.x = m_velocity.x * deltaTime;
     step.y = m_velocity.y * deltaTime;
     step.z = m_velocity.z * deltaTime;
-    CharacterMoverAPI::MoveResult result = CharacterMoverAPI::move(getEntity(), step, m_velocity);
+    CharacterMoverAPI::MoveResult result = CharacterMoverAPI::move(getEntity(), step, m_velocity, pushForce);
     m_velocity = result.velocity; // clipped by walls/ground — no re-accumulation into obstacles
     m_grounded = result.grounded;
 }

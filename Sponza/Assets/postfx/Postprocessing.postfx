@@ -1,0 +1,12 @@
+{
+    "passes": [
+        {
+            "material": 2360634015,
+            "enabled": true
+        },
+        {
+            "material": 0,
+            "enabled": false
+        }
+    ]
+}

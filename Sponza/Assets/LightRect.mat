@@ -3,27 +3,27 @@
         {
             "name": "baseColorTexture",
             "type": 3,
-            "value": 2082840938
+            "value": 5
         },
         {
             "name": "baseColorFactor",
             "type": 2,
             "value": {
-                "x": 0.5879999995231628,
-                "y": 0.5879999995231628,
-                "z": 0.5879999995231628,
+                "x": 1.0,
+                "y": 0.9195312261581421,
+                "z": 0.0,
                 "w": 1.0
             }
         },
         {
             "name": "metallicRoughnessTexture",
             "type": 3,
-            "value": 0
+            "value": 5
         },
         {
             "name": "metallicFactor",
             "type": 0,
-            "value": 1.0
+            "value": 0.0
         },
         {
             "name": "roughnessFactor",
@@ -33,7 +33,7 @@
         {
             "name": "normalTexture",
             "type": 3,
-            "value": 1730374989
+            "value": 7
         },
         {
             "name": "normalScale",
@@ -43,12 +43,12 @@
         {
             "name": "occlusionTexture",
             "type": 3,
-            "value": 0
+            "value": 5
         },
         {
             "name": "occlusionStrength",
             "type": 0,
-            "value": 0.0
+            "value": 1.0
         },
         {
             "name": "emissiveTexture",
@@ -59,8 +59,8 @@
             "name": "emissiveFactor",
             "type": 2,
             "value": {
-                "x": 0.0,
-                "y": 0.0,
+                "x": 0.7935937643051147,
+                "y": 0.7618499994277954,
                 "z": 0.0,
                 "w": 1.0
             }
@@ -68,7 +68,7 @@
         {
             "name": "alphaMode",
             "type": 1,
-            "value": 1
+            "value": 0
         },
         {
             "name": "alphaCutoff",
@@ -78,7 +78,7 @@
         {
             "name": "doubleSided",
             "type": 1,
-            "value": 1
+            "value": 0
         }
     ]
 }

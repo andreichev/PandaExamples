@@ -1,0 +1,9 @@
+{
+    "inputs": [
+        {
+            "name": "blurStep",
+            "type": 0,
+            "value": 3.0
+        }
+    ]
+}

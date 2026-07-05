@@ -179,7 +179,9 @@
                     "orthoSize": 1.0,
                     "zNear": 0.10000000149011612,
                     "zFar": 1000.0
-                }
+                },
+                "postprocessing": 133713895,
+                "postprocessingEnabled": true
             },
             "scriptListComponent": {
                 "scripts": []
@@ -202,14 +204,14 @@
                 },
                 "rotation": {
                     "x": -0.41436561942100525,
-                    "y": -0.23379634320735931,
-                    "z": -0.1110299676656723,
+                    "y": -0.2337963730096817,
+                    "z": -0.1110299751162529,
                     "w": 0.8725323677062988
                 },
                 "scale": {
-                    "x": 0.9999994039535522,
+                    "x": 0.9999993443489075,
                     "y": 1.000002384185791,
-                    "z": 1.0000039339065552
+                    "z": 1.0000038146972656
                 }
             },
             "directionalLightComponent": {
@@ -237,9 +239,9 @@
             },
             "transformComponent": {
                 "position": {
-                    "x": 4.241155624389648,
-                    "y": 5.047245502471924,
-                    "z": 0.7087113261222839
+                    "x": 4.241215229034424,
+                    "y": 5.356210708618164,
+                    "z": 0.00031241774559020996
                 },
                 "rotation": {
                     "x": 0.0,
@@ -260,9 +262,53 @@
                     "z": 0.20827911794185638,
                     "w": 1.0
                 },
-                "intensity": 1.0,
+                "intensity": 3.0,
                 "radius": 10.0,
                 "isEnabled": true
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 2913530307,
+            "tagComponent": {
+                "tag": "LightRect"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 6.256797790527344,
+                    "y": 3.7465662956237793,
+                    "z": -0.7511827349662781
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.7071068286895752,
+                    "z": 0.0,
+                    "w": 0.7071067094802856
+                },
+                "scale": {
+                    "x": 0.9999867677688599,
+                    "y": 1.0,
+                    "z": 0.9999867677688599
+                }
+            },
+            "spriteRendererComponent": {
+                "color": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0,
+                    "w": 1.0
+                },
+                "cols": 1,
+                "rows": 1,
+                "index": 0,
+                "material": 2986368463,
+                "texture": 0
             },
             "scriptListComponent": {
                 "scripts": []
@@ -1942,7 +1988,7 @@
             "transformComponent": {
                 "position": {
                     "x": 0.0,
-                    "y": 0.0,
+                    "y": 2.3283062944301491e-7,
                     "z": 0.0
                 },
                 "rotation": {
