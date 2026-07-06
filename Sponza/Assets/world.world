@@ -10,6 +10,52 @@
     },
     "entities": [
         {
+            "id": 2913530307,
+            "tagComponent": {
+                "tag": "LightRect"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": [
+                    805859859
+                ]
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 6.8766961097717285,
+                    "y": 3.746563196182251,
+                    "z": -0.1766093522310257
+                },
+                "rotation": {
+                    "x": -0.7069846987724304,
+                    "y": -3.0903283487759836e-8,
+                    "z": 0.7072288393974304,
+                    "w": -3.091395583965095e-8
+                },
+                "scale": {
+                    "x": 0.9999762773513794,
+                    "y": 0.10000000149011612,
+                    "z": 0.9999762773513794
+                }
+            },
+            "spriteRendererComponent": {
+                "color": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0,
+                    "w": 1.0
+                },
+                "cols": 1,
+                "rows": 1,
+                "index": 0,
+                "material": 2986368463,
+                "texture": 0
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
             "id": 2961715692,
             "tagComponent": {
                 "tag": "Sponza.gltf"
@@ -155,20 +201,20 @@
             },
             "transformComponent": {
                 "position": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 4.0
+                    "x": 0.7323101758956909,
+                    "y": 2.521914005279541,
+                    "z": -0.005158158950507641
                 },
                 "rotation": {
                     "x": 0.0,
-                    "y": 0.0,
+                    "y": -0.7071068286895752,
                     "z": 0.0,
-                    "w": 1.0
+                    "w": 0.7071067094802856
                 },
                 "scale": {
-                    "x": 1.0,
+                    "x": 0.9999927878379822,
                     "y": 1.0,
-                    "z": 1.0
+                    "z": 0.9999927878379822
                 }
             },
             "cameraComponent": {
@@ -181,7 +227,10 @@
                     "zFar": 1000.0
                 },
                 "postprocessing": 133713895,
-                "postprocessingEnabled": true
+                "postprocessingEnabled": true,
+                "bloomEnabled": true,
+                "bloomIntensity": 5.0,
+                "bloomRadius": 3.0
             },
             "scriptListComponent": {
                 "scripts": []
@@ -234,81 +283,37 @@
                 "tag": "Light"
             },
             "relationshipComponent": {
-                "parent": 0,
+                "parent": 2913530307,
                 "children": []
             },
             "transformComponent": {
                 "position": {
-                    "x": 4.241215229034424,
-                    "y": 5.356210708618164,
-                    "z": 0.00031241774559020996
+                    "x": -6.854534149169922e-7,
+                    "y": 0.000469207763671875,
+                    "z": 0.22019386291503906
                 },
                 "rotation": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0,
-                    "w": 1.0
-                },
-                "scale": {
-                    "x": 1.0,
-                    "y": 1.0,
-                    "z": 1.0
-                }
-            },
-            "pointLightComponent": {
-                "color": {
-                    "x": 0.7379032373428345,
-                    "y": 0.5670567154884338,
-                    "z": 0.20827911794185638,
-                    "w": 1.0
-                },
-                "intensity": 3.0,
-                "radius": 10.0,
-                "isEnabled": true
-            },
-            "scriptListComponent": {
-                "scripts": []
-            }
-        },
-        {
-            "id": 2913530307,
-            "tagComponent": {
-                "tag": "LightRect"
-            },
-            "relationshipComponent": {
-                "parent": 0,
-                "children": []
-            },
-            "transformComponent": {
-                "position": {
-                    "x": 6.256797790527344,
-                    "y": 3.7465662956237793,
-                    "z": -0.7511827349662781
-                },
-                "rotation": {
-                    "x": 0.0,
-                    "y": 0.7071068286895752,
-                    "z": 0.0,
+                    "x": -3.4167449685512663e-13,
+                    "y": -0.7071068286895752,
+                    "z": 3.416775055161553e-13,
                     "w": 0.7071067094802856
                 },
                 "scale": {
-                    "x": 0.9999867677688599,
-                    "y": 1.0,
-                    "z": 0.9999867677688599
+                    "x": 0.9999530911445618,
+                    "y": 9.999482154846191,
+                    "z": 0.9999472498893738
                 }
             },
-            "spriteRendererComponent": {
+            "pointLightComponent": {
                 "color": {
                     "x": 1.0,
                     "y": 1.0,
                     "z": 1.0,
                     "w": 1.0
                 },
-                "cols": 1,
-                "rows": 1,
-                "index": 0,
-                "material": 2986368463,
-                "texture": 0
+                "intensity": 1.0,
+                "radius": 10.0,
+                "isEnabled": true
             },
             "scriptListComponent": {
                 "scripts": []
