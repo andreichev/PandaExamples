@@ -12,7 +12,9 @@ cbuffer PANDA_FIELDS : register(b1) {
     float time;
 };
 
+// Вход PS зеркалит выход VS вместе с SV_POSITION: DXBC связывает стадии по регистрам.
 struct PSInput {
+    float4 position : SV_POSITION;
     float3 direction : TEXCOORD0;
 };
 

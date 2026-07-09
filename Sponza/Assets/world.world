@@ -226,8 +226,8 @@
                     "zNear": 0.10000000149011612,
                     "zFar": 1000.0
                 },
-                "postprocessing": 133713895,
-                "postprocessingEnabled": true,
+                "postprocessing": 3148267488,
+                "postprocessingEnabled": false,
                 "bloomEnabled": true,
                 "bloomIntensity": 5.0,
                 "bloomRadius": 3.0
