@@ -15,6 +15,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": true,
                 "sourcePath": "Assets/models/6151467286084645207.jpg",
                 "cookedPath": ".Panda/Textures/Assets/models/6151467286084645207.ptex"
             }
@@ -26,6 +27,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": false,
                 "sourcePath": "Assets/models/8114461559286000061.jpg",
                 "cookedPath": ".Panda/Textures/Assets/models/8114461559286000061.ptex"
             }
@@ -37,6 +39,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": false,
                 "sourcePath": "Assets/models/11872827283454512094.jpg",
                 "cookedPath": ".Panda/Textures/Assets/models/11872827283454512094.ptex"
             }
@@ -48,6 +51,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": false,
                 "sourcePath": "Assets/models/8747919177698443163.jpg",
                 "cookedPath": ".Panda/Textures/Assets/models/8747919177698443163.ptex"
             }
@@ -75,6 +79,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": false,
                 "sourcePath": "Assets/models/8783994986360286082.jpg",
                 "cookedPath": ".Panda/Textures/Assets/models/8783994986360286082.ptex"
             }
@@ -86,6 +91,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": true,
                 "sourcePath": "Assets/models/15295713303328085182.jpg",
                 "cookedPath": ".Panda/Textures/Assets/models/15295713303328085182.ptex"
             }
@@ -97,6 +103,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": false,
                 "sourcePath": "Assets/models/9916269861720640319.jpg",
                 "cookedPath": ".Panda/Textures/Assets/models/9916269861720640319.ptex"
             }
@@ -116,6 +123,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": true,
                 "sourcePath": "Assets/models/6772804448157695701.jpg",
                 "cookedPath": ".Panda/Textures/Assets/models/6772804448157695701.ptex"
             }
@@ -151,6 +159,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": true,
                 "sourcePath": "Assets/models/2185409758123873465.jpg",
                 "cookedPath": ".Panda/Textures/Assets/models/2185409758123873465.ptex"
             }
@@ -162,6 +171,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": false,
                 "sourcePath": "Assets/models/3455394979645218238.jpg",
                 "cookedPath": ".Panda/Textures/Assets/models/3455394979645218238.ptex"
             }
@@ -181,6 +191,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": false,
                 "sourcePath": "Assets/models/13824894030729245199.jpg",
                 "cookedPath": ".Panda/Textures/Assets/models/13824894030729245199.ptex"
             }
@@ -200,6 +211,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": true,
                 "sourcePath": "Assets/models/4975155472559461469.jpg",
                 "cookedPath": ".Panda/Textures/Assets/models/4975155472559461469.ptex"
             }
@@ -211,6 +223,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": false,
                 "sourcePath": "Assets/models/2051777328469649772.jpg",
                 "cookedPath": ".Panda/Textures/Assets/models/2051777328469649772.ptex"
             }
@@ -238,6 +251,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": false,
                 "sourcePath": "Assets/models/2411100444841994089.jpg",
                 "cookedPath": ".Panda/Textures/Assets/models/2411100444841994089.ptex"
             }
@@ -257,6 +271,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": false,
                 "sourcePath": "Assets/models/14267839433702832875.jpg",
                 "cookedPath": ".Panda/Textures/Assets/models/14267839433702832875.ptex"
             }
@@ -276,6 +291,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": false,
                 "sourcePath": "Assets/models/3827035219084910048.jpg",
                 "cookedPath": ".Panda/Textures/Assets/models/3827035219084910048.ptex"
             }
@@ -287,6 +303,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": false,
                 "sourcePath": "Assets/models/15722799267630235092.jpg",
                 "cookedPath": ".Panda/Textures/Assets/models/15722799267630235092.ptex"
             }
@@ -298,6 +315,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": false,
                 "sourcePath": "Assets/models/7056944414013900257.jpg",
                 "cookedPath": ".Panda/Textures/Assets/models/7056944414013900257.ptex"
             }
@@ -317,6 +335,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": true,
                 "sourcePath": "Assets/models/2775690330959970771.jpg",
                 "cookedPath": ".Panda/Textures/Assets/models/2775690330959970771.ptex"
             }
@@ -328,6 +347,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": false,
                 "sourcePath": "Assets/models/6593109234861095314.jpg",
                 "cookedPath": ".Panda/Textures/Assets/models/6593109234861095314.ptex"
             }
@@ -339,6 +359,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": false,
                 "sourcePath": "Assets/models/4871783166746854860.jpg",
                 "cookedPath": ".Panda/Textures/Assets/models/4871783166746854860.ptex"
             }
@@ -357,6 +378,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": true,
                 "sourcePath": "Assets/models/7268504077753552595.jpg",
                 "cookedPath": ".Panda/Textures/Assets/models/7268504077753552595.ptex"
             }
@@ -368,6 +390,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": false,
                 "sourcePath": "Assets/models/466164707995436622.jpg",
                 "cookedPath": ".Panda/Textures/Assets/models/466164707995436622.ptex"
             }
@@ -379,6 +402,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": false,
                 "sourcePath": "Assets/models/715093869573992647.jpg",
                 "cookedPath": ".Panda/Textures/Assets/models/715093869573992647.ptex"
             }
@@ -390,6 +414,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": false,
                 "sourcePath": "Assets/models/14170708867020035030.jpg",
                 "cookedPath": ".Panda/Textures/Assets/models/14170708867020035030.ptex"
             }
@@ -401,6 +426,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": true,
                 "sourcePath": "Assets/models/5792855332885324923.jpg",
                 "cookedPath": ".Panda/Textures/Assets/models/5792855332885324923.ptex"
             }
@@ -412,6 +438,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": false,
                 "sourcePath": "Assets/models/13196865903111448057.jpg",
                 "cookedPath": ".Panda/Textures/Assets/models/13196865903111448057.ptex"
             }
@@ -423,6 +450,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": true,
                 "sourcePath": "Assets/models/8750083169368950601.jpg",
                 "cookedPath": ".Panda/Textures/Assets/models/8750083169368950601.ptex"
             }
@@ -434,6 +462,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": true,
                 "sourcePath": "Assets/models/14650633544276105767.jpg",
                 "cookedPath": ".Panda/Textures/Assets/models/14650633544276105767.ptex"
             }
@@ -1662,6 +1691,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": false,
                 "sourcePath": "Assets/models/10388182081421875623.jpg",
                 "cookedPath": ".Panda/Textures/Assets/models/10388182081421875623.ptex"
             }
@@ -1673,6 +1703,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": false,
                 "sourcePath": "Assets/models/4601176305987539675.jpg",
                 "cookedPath": ".Panda/Textures/Assets/models/4601176305987539675.ptex"
             }
@@ -1684,6 +1715,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": true,
                 "sourcePath": "Assets/models/1219024358953944284.jpg",
                 "cookedPath": ".Panda/Textures/Assets/models/1219024358953944284.ptex"
             }
@@ -1695,6 +1727,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": true,
                 "sourcePath": "Assets/models/white.png",
                 "cookedPath": ".Panda/Textures/Assets/models/white.ptex"
             }
@@ -1706,6 +1739,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": true,
                 "sourcePath": "Assets/models/16275776544635328252.png",
                 "cookedPath": ".Panda/Textures/Assets/models/16275776544635328252.ptex"
             }
@@ -1725,6 +1759,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": false,
                 "sourcePath": "Assets/models/4477655471536070370.jpg",
                 "cookedPath": ".Panda/Textures/Assets/models/4477655471536070370.ptex"
             }
@@ -1752,6 +1787,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": true,
                 "sourcePath": "Assets/models/11490520546946913238.jpg",
                 "cookedPath": ".Panda/Textures/Assets/models/11490520546946913238.ptex"
             }
@@ -1771,6 +1807,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": true,
                 "sourcePath": "Assets/models/2969916736137545357.jpg",
                 "cookedPath": ".Panda/Textures/Assets/models/2969916736137545357.ptex"
             }
@@ -1782,6 +1819,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": false,
                 "sourcePath": "Assets/models/2374361008830720677.jpg",
                 "cookedPath": ".Panda/Textures/Assets/models/2374361008830720677.ptex"
             }
@@ -1793,6 +1831,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": false,
                 "sourcePath": "Assets/models/11968150294050148237.jpg",
                 "cookedPath": ".Panda/Textures/Assets/models/11968150294050148237.ptex"
             }
@@ -1804,6 +1843,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": false,
                 "sourcePath": "Assets/models/10381718147657362067.jpg",
                 "cookedPath": ".Panda/Textures/Assets/models/10381718147657362067.ptex"
             }
@@ -1815,6 +1855,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": true,
                 "sourcePath": "Assets/models/755318871556304029.jpg",
                 "cookedPath": ".Panda/Textures/Assets/models/755318871556304029.ptex"
             }
@@ -1826,6 +1867,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": false,
                 "sourcePath": "Assets/models/3371964815757888145.jpg",
                 "cookedPath": ".Panda/Textures/Assets/models/3371964815757888145.ptex"
             }
@@ -1837,6 +1879,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": false,
                 "sourcePath": "Assets/models/3628158980083700836.jpg",
                 "cookedPath": ".Panda/Textures/Assets/models/3628158980083700836.ptex"
             }
@@ -1856,6 +1899,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": true,
                 "sourcePath": "Assets/models/9288698199695299068.jpg",
                 "cookedPath": ".Panda/Textures/Assets/models/9288698199695299068.ptex"
             }
@@ -1867,6 +1911,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": true,
                 "sourcePath": "Assets/models/5823059166183034438.jpg",
                 "cookedPath": ".Panda/Textures/Assets/models/5823059166183034438.ptex"
             }
@@ -1878,6 +1923,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": true,
                 "sourcePath": "Assets/models/6047387724914829168.jpg",
                 "cookedPath": ".Panda/Textures/Assets/models/6047387724914829168.ptex"
             }
@@ -1897,6 +1943,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": false,
                 "sourcePath": "Assets/models/8503262930880235456.jpg",
                 "cookedPath": ".Panda/Textures/Assets/models/8503262930880235456.ptex"
             }
@@ -1916,6 +1963,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": false,
                 "sourcePath": "Assets/models/12501374198249454378.jpg",
                 "cookedPath": ".Panda/Textures/Assets/models/12501374198249454378.ptex"
             }
@@ -1927,6 +1975,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": false,
                 "sourcePath": "Assets/models/8051790464816141987.jpg",
                 "cookedPath": ".Panda/Textures/Assets/models/8051790464816141987.ptex"
             }
@@ -1938,6 +1987,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": false,
                 "sourcePath": "Assets/models/2299742237651021498.jpg",
                 "cookedPath": ".Panda/Textures/Assets/models/2299742237651021498.ptex"
             }
@@ -1956,6 +2006,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": false,
                 "sourcePath": "Assets/models/7815564343179553343.jpg",
                 "cookedPath": ".Panda/Textures/Assets/models/7815564343179553343.ptex"
             }
@@ -1967,6 +2018,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": false,
                 "sourcePath": "Assets/models/13982482287905699490.jpg",
                 "cookedPath": ".Panda/Textures/Assets/models/13982482287905699490.ptex"
             }
@@ -1978,6 +2030,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": true,
                 "sourcePath": "Assets/models/4675343432951571524.jpg",
                 "cookedPath": ".Panda/Textures/Assets/models/4675343432951571524.ptex"
             }
@@ -1989,6 +2042,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": false,
                 "sourcePath": "Assets/models/8773302468495022225.jpg",
                 "cookedPath": ".Panda/Textures/Assets/models/8773302468495022225.ptex"
             }
@@ -2016,6 +2070,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": true,
                 "sourcePath": "Assets/models/8006627369776289000.png",
                 "cookedPath": ".Panda/Textures/Assets/models/8006627369776289000.ptex"
             }
@@ -2027,6 +2082,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": true,
                 "sourcePath": "Assets/models/11474523244911310074.jpg",
                 "cookedPath": ".Panda/Textures/Assets/models/11474523244911310074.ptex"
             }
@@ -2038,6 +2094,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": true,
                 "sourcePath": "Assets/models/5061699253647017043.png",
                 "cookedPath": ".Panda/Textures/Assets/models/5061699253647017043.ptex"
             }
@@ -2049,6 +2106,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": false,
                 "sourcePath": "Assets/models/4910669866631290573.jpg",
                 "cookedPath": ".Panda/Textures/Assets/models/4910669866631290573.ptex"
             }
@@ -2068,6 +2126,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": false,
                 "sourcePath": "Assets/models/332936164838540657.jpg",
                 "cookedPath": ".Panda/Textures/Assets/models/332936164838540657.ptex"
             }
@@ -2079,6 +2138,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": false,
                 "sourcePath": "Assets/models/6667038893015345571.jpg",
                 "cookedPath": ".Panda/Textures/Assets/models/6667038893015345571.ptex"
             }
@@ -2090,6 +2150,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": true,
                 "sourcePath": "Assets/models/7441062115984513793.jpg",
                 "cookedPath": ".Panda/Textures/Assets/models/7441062115984513793.ptex"
             }
@@ -2101,6 +2162,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": false,
                 "sourcePath": "Assets/models/14118779221266351425.jpg",
                 "cookedPath": ".Panda/Textures/Assets/models/14118779221266351425.ptex"
             }
@@ -2112,6 +2174,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": false,
                 "sourcePath": "Assets/models/759203620573749278.jpg",
                 "cookedPath": ".Panda/Textures/Assets/models/759203620573749278.ptex"
             }
@@ -2123,6 +2186,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": false,
                 "sourcePath": "Assets/models/16299174074766089871.jpg",
                 "cookedPath": ".Panda/Textures/Assets/models/16299174074766089871.ptex"
             }
@@ -2134,6 +2198,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": false,
                 "sourcePath": "Assets/models/7645212358685992005.jpg",
                 "cookedPath": ".Panda/Textures/Assets/models/7645212358685992005.ptex"
             }
@@ -2145,6 +2210,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": false,
                 "sourcePath": "Assets/models/16885566240357350108.jpg",
                 "cookedPath": ".Panda/Textures/Assets/models/16885566240357350108.ptex"
             }
@@ -2156,6 +2222,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": false,
                 "sourcePath": "Assets/models/17556969131407844942.jpg",
                 "cookedPath": ".Panda/Textures/Assets/models/17556969131407844942.ptex"
             }
@@ -2183,6 +2250,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": true,
                 "sourcePath": "Assets/models/17876391417123941155.jpg",
                 "cookedPath": ".Panda/Textures/Assets/models/17876391417123941155.ptex"
             }
@@ -2194,6 +2262,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": true,
                 "sourcePath": "Assets/models/8481240838833932244.jpg",
                 "cookedPath": ".Panda/Textures/Assets/models/8481240838833932244.ptex"
             }

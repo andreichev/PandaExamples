@@ -43,19 +43,19 @@ PandaUI::Color tileTextColor(int value) {
 
 std::shared_ptr<PandaUI::Label> makeLabel(std::string text, float fontSize, PandaUI::Color color) {
     auto label = std::make_shared<PandaUI::Label>(std::move(text));
-    label->setFontSize(fontSize);
+    label->setFont(PandaUI::Font(fontSize));
     label->setTextColor(color);
     label->setNumberOfLines(1);
     return label;
 }
 
 std::shared_ptr<PandaUI::Button> makeButton(std::string title, PandaUI::Color color) {
+    // Цвета кнопки теперь ведёт тема по семантическому стилю — поштучные сеттеры
+    // цветов из старого API удалены.
+    (void)color;
     auto button = std::make_shared<PandaUI::Button>(std::move(title));
-    button->setNormalColor(color);
-    button->setHoveredColor(PandaUI::Color(0x9F8C7DFF));
-    button->setPressedColor(PandaUI::Color(0x6F6259FF));
-    button->setTextColor(PandaUI::Color(0xFFFFFFFF));
-    button->setFontSize(16.f);
+    button->setStyle(PandaUI::ButtonStyle::Accent);
+    button->setFont(PandaUI::Font(16.f));
     return button;
 }
 

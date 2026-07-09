@@ -7,6 +7,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": true,
                 "sourcePath": "Assets/textures/spike.png",
                 "cookedPath": ".Panda/Textures/Assets/textures/spike.ptex"
             }
@@ -18,6 +19,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": true,
                 "sourcePath": "Assets/textures/block.png",
                 "cookedPath": ".Panda/Textures/Assets/textures/block.ptex"
             }

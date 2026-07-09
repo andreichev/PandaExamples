@@ -6,7 +6,7 @@ namespace HelloUI {
 
 std::shared_ptr<PandaUI::Label> makeLabel(std::string text, float fontSize, PandaUI::Color color) {
     auto label = std::make_shared<PandaUI::Label>(std::move(text));
-    label->setFontSize(fontSize);
+    label->setFont(PandaUI::Font(fontSize));
     label->setTextColor(color);
     label->layout().setWidth(PandaUI::Length::percent(100.f));
     return label;

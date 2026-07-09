@@ -1,5 +1,5 @@
 cbuffer MATERIAL_FIELDS : register(b0) {
-    float4 baseColorFactor;
+    float4 baseColorFactor; // @color
     float alphaCutoff;
 };
 

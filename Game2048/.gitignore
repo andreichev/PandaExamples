@@ -6,4 +6,6 @@ cmake-build-*
 .Panda/Shaders
 .Panda/Textures
 .Panda/Cooked
+.Panda/ScriptCache
 Export/build
+*.pdb

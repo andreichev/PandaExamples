@@ -22,6 +22,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": true,
                 "sourcePath": "Assets/textures/BlocksTile.png",
                 "cookedPath": ".Panda/Textures/Assets/textures/BlocksTile.ptex"
             }
@@ -33,6 +34,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": true,
                 "sourcePath": "Assets/models/Suzanne_MetallicRoughness.png",
                 "cookedPath": ".Panda/Textures/Assets/models/Suzanne_MetallicRoughness.ptex"
             }
@@ -52,6 +54,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": true,
                 "sourcePath": "Assets/models/Suzanne_BaseColor.png",
                 "cookedPath": ".Panda/Textures/Assets/models/Suzanne_BaseColor.ptex"
             }

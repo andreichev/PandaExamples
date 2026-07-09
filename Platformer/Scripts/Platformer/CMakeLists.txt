@@ -23,6 +23,19 @@ set_target_properties(Platformer
         RUNTIME_OUTPUT_DIRECTORY "${BIN_DIRECTORY}"
 )
 
+# Multi-config generators (Visual Studio, Xcode) append /<CONFIG> to the output
+# directories unless the per-config properties are set; the engine loads the
+# script library from bin/ directly.
+foreach(OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES})
+    string(TOUPPER ${OUTPUTCONFIG} OUTPUTCONFIG)
+    set_target_properties(Platformer
+            PROPERTIES
+            ARCHIVE_OUTPUT_DIRECTORY_${OUTPUTCONFIG} "${BIN_DIRECTORY}"
+            LIBRARY_OUTPUT_DIRECTORY_${OUTPUTCONFIG} "${BIN_DIRECTORY}"
+            RUNTIME_OUTPUT_DIRECTORY_${OUTPUTCONFIG} "${BIN_DIRECTORY}"
+    )
+endforeach()
+
 # add_custom_command(TARGET Platformer POST_BUILD
 #         COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:Platformer> ${BIN_DIRECTORY}
 # )

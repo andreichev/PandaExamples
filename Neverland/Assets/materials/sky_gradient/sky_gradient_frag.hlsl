@@ -1,9 +1,9 @@
 cbuffer MATERIAL_FIELDS : register(b0) {
-    float4 dayTopColor;
-    float4 dayHorizonColor;
-    float4 duskColor;
-    float4 nightTopColor;
-    float4 nightHorizonColor;
+    float4 dayTopColor;      // @color
+    float4 dayHorizonColor;  // @color
+    float4 duskColor;        // @color
+    float4 nightTopColor;    // @color
+    float4 nightHorizonColor; // @color
     float cycleSeconds;
     float nightBrightness;
 };

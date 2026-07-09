@@ -27,7 +27,7 @@ void TileView::setTile(int value, float cellSize, float scale) {
 
     const int digits = value >= 1000 ? 4 : value >= 100 ? 3 : value >= 10 ? 2 : 1;
     const float baseFontScale = digits >= 4 ? 0.25f : digits == 3 ? 0.30f : 0.36f;
-    m_label->setFontSize(std::max(12.f, cellSize * baseFontScale * scale));
+    m_label->setFont(PandaUI::Font(std::max(12.f, cellSize * baseFontScale * scale)));
     m_label->setTextColor(tileTextColor(value));
     setBackgroundColor(tileColor(value));
 }
