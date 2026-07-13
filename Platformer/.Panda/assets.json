@@ -1,6 +1,13 @@
 {
     "assets": [
         {
+            "id": 17979624,
+            "type": 7,
+            "meta": {
+                "worldPath": "Assets/Joints2D.world"
+            }
+        },
+        {
             "id": 52896095,
             "type": 7,
             "meta": {
@@ -14,6 +21,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": true,
                 "sourcePath": "Assets/Rest.png",
                 "cookedPath": ".Panda/Textures/Assets/Rest.ptex"
             }
@@ -40,6 +48,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": true,
                 "sourcePath": "Assets/Parallax/8.png",
                 "cookedPath": ".Panda/Textures/Assets/Parallax/8.ptex"
             }
@@ -51,6 +60,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": true,
                 "sourcePath": "Assets/ground.png",
                 "cookedPath": ".Panda/Textures/Assets/ground.ptex"
             }
@@ -62,6 +72,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": true,
                 "sourcePath": "Assets/Run.png",
                 "cookedPath": ".Panda/Textures/Assets/Run.ptex"
             }
@@ -73,6 +84,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": true,
                 "sourcePath": "Assets/Jump.png",
                 "cookedPath": ".Panda/Textures/Assets/Jump.ptex"
             }
@@ -84,6 +96,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": true,
                 "sourcePath": "Assets/Fire.png",
                 "cookedPath": ".Panda/Textures/Assets/Fire.ptex"
             }
@@ -95,6 +108,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": true,
                 "sourcePath": "Assets/Enemy1.png",
                 "cookedPath": ".Panda/Textures/Assets/Enemy1.ptex"
             }
@@ -106,6 +120,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": true,
                 "sourcePath": "Assets/Parallax/2.png",
                 "cookedPath": ".Panda/Textures/Assets/Parallax/2.ptex"
             }
@@ -117,6 +132,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": true,
                 "sourcePath": "Assets/Coin.png",
                 "cookedPath": ".Panda/Textures/Assets/Coin.ptex"
             }
@@ -128,6 +144,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": true,
                 "sourcePath": "Assets/Parallax/6.png",
                 "cookedPath": ".Panda/Textures/Assets/Parallax/6.ptex"
             }
@@ -139,6 +156,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": true,
                 "sourcePath": "Assets/Parallax/4.png",
                 "cookedPath": ".Panda/Textures/Assets/Parallax/4.ptex"
             }
@@ -150,6 +168,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": true,
                 "sourcePath": "Assets/Parallax/7.png",
                 "cookedPath": ".Panda/Textures/Assets/Parallax/7.ptex"
             }
@@ -161,6 +180,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": true,
                 "sourcePath": "Assets/Parallax/5.png",
                 "cookedPath": ".Panda/Textures/Assets/Parallax/5.ptex"
             }
@@ -172,6 +192,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": true,
                 "sourcePath": "Assets/Parallax/3.png",
                 "cookedPath": ".Panda/Textures/Assets/Parallax/3.ptex"
             }
@@ -183,6 +204,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": true,
                 "sourcePath": "Assets/Back.jpg",
                 "cookedPath": ".Panda/Textures/Assets/Back.ptex"
             }
@@ -194,6 +216,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": true,
                 "sourcePath": "Assets/cloud.png",
                 "cookedPath": ".Panda/Textures/Assets/cloud.ptex"
             }
@@ -205,6 +228,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": true,
                 "sourcePath": "Assets/Enemy2.png",
                 "cookedPath": ".Panda/Textures/Assets/Enemy2.ptex"
             }
@@ -216,6 +240,7 @@
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
+                "srgb": true,
                 "sourcePath": "Assets/Parallax/1.png",
                 "cookedPath": ".Panda/Textures/Assets/Parallax/1.ptex"
             }

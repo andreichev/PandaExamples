@@ -10,21 +10,21 @@
     },
     "entities": [
         {
-            "id": 2877996209,
+            "id": 1159948150,
             "tagComponent": {
                 "tag": "Cube"
             },
             "relationshipComponent": {
                 "parent": 0,
                 "children": [
-                    1571712789
+                    1981350786
                 ]
             },
             "transformComponent": {
                 "position": {
-                    "x": 0.00011929981701541692,
-                    "y": 28.797473907470703,
-                    "z": 0.46178388595581055
+                    "x": 0.0,
+                    "y": 22.70781707763672,
+                    "z": 1.76583993434906
                 },
                 "rotation": {
                     "x": 0.0,
@@ -116,21 +116,21 @@
             }
         },
         {
-            "id": 1159948150,
+            "id": 2877996209,
             "tagComponent": {
                 "tag": "Cube"
             },
             "relationshipComponent": {
                 "parent": 0,
                 "children": [
-                    1981350786
+                    1571712789
                 ]
             },
             "transformComponent": {
                 "position": {
-                    "x": 0.0,
-                    "y": 22.70781707763672,
-                    "z": 1.76583993434906
+                    "x": 0.00011929981701541692,
+                    "y": 28.797473907470703,
+                    "z": 0.46178388595581055
                 },
                 "rotation": {
                     "x": 0.0,
@@ -203,7 +203,12 @@
                     "orthoSize": 1.0,
                     "zNear": 0.10000000149011612,
                     "zFar": 1000.0
-                }
+                },
+                "postprocessing": 0,
+                "postprocessingEnabled": true,
+                "bloomEnabled": false,
+                "bloomIntensity": 1.0,
+                "bloomRadius": 1.0
             },
             "scriptListComponent": {
                 "scripts": []
@@ -522,12 +527,12 @@
             }
         },
         {
-            "id": 1571712789,
+            "id": 1981350786,
             "tagComponent": {
                 "tag": "primitive 0"
             },
             "relationshipComponent": {
-                "parent": 2877996209,
+                "parent": 1159948150,
                 "children": []
             },
             "transformComponent": {
@@ -596,19 +601,19 @@
             }
         },
         {
-            "id": 1981350786,
+            "id": 1571712789,
             "tagComponent": {
                 "tag": "primitive 0"
             },
             "relationshipComponent": {
-                "parent": 1159948150,
+                "parent": 2877996209,
                 "children": []
             },
             "transformComponent": {
                 "position": {
                     "x": 0.0,
                     "y": 0.0,
-                    "z": 0.0
+                    "z": 1.117369294166565
                 },
                 "rotation": {
                     "x": 0.0,

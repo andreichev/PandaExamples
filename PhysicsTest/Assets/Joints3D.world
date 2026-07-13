@@ -1,0 +1,1110 @@
+{
+    "lightingSettings": {
+        "ambientColor": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0,
+            "w": 1.0
+        },
+        "ambientIntensity": 0.11999999731779099
+    },
+    "entities": [
+        {
+            "id": 732211536,
+            "tagComponent": {
+                "tag": "Camera"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 9.421923637390137,
+                    "z": 7.317262172698975
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "cameraComponent": {
+                "isPrimary": true,
+                "camera": {
+                    "projectionType": 0,
+                    "fieldOfView": 70.0,
+                    "orthoSize": 1.0,
+                    "zNear": 0.10000000149011612,
+                    "zFar": 1000.0
+                },
+                "postprocessing": 0,
+                "postprocessingEnabled": true,
+                "bloomEnabled": false,
+                "bloomIntensity": 1.0,
+                "bloomRadius": 1.0
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 4165951998,
+            "tagComponent": {
+                "tag": "Directional Light"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 7.364246368408203,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": -0.3303661346435547,
+                    "y": -0.24321043491363525,
+                    "z": -0.08852137625217438,
+                    "w": 0.9076733589172363
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0000001192092896
+                }
+            },
+            "directionalLightComponent": {
+                "color": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0,
+                    "w": 1.0
+                },
+                "intensity": 1.0,
+                "isEnabled": true
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 910000002,
+            "tagComponent": {
+                "tag": "Ground"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": [
+                    910000003
+                ]
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": -0.5,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 24.0,
+                    "y": 1.0,
+                    "z": 24.0
+                }
+            },
+            "scriptListComponent": {
+                "scripts": []
+            },
+            "rigidbody3dComponent": {
+                "type": 0,
+                "fixedRotation": false
+            },
+            "boxCollider3dComponent": {
+                "isSensor": false,
+                "offset": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "size": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                },
+                "density": 1.0,
+                "friction": 0.5,
+                "restitution": 0.0
+            }
+        },
+        {
+            "id": 910000003,
+            "tagComponent": {
+                "tag": "mesh"
+            },
+            "relationshipComponent": {
+                "parent": 910000002,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 2386102669,
+                "material": 3852475385,
+                "submeshIndex": 0,
+                "primitiveIndex": 0
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 910000004,
+            "tagComponent": {
+                "tag": "Pendulum Mount"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": [
+                    910000005
+                ]
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 8.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 0.4,
+                    "y": 0.4,
+                    "z": 0.4
+                }
+            },
+            "scriptListComponent": {
+                "scripts": []
+            },
+            "rigidbody3dComponent": {
+                "type": 0,
+                "fixedRotation": false
+            },
+            "boxCollider3dComponent": {
+                "isSensor": false,
+                "offset": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "size": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                },
+                "density": 1.0,
+                "friction": 0.5,
+                "restitution": 0.0
+            }
+        },
+        {
+            "id": 910000005,
+            "tagComponent": {
+                "tag": "mesh"
+            },
+            "relationshipComponent": {
+                "parent": 910000004,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 2386102669,
+                "material": 3852475385,
+                "submeshIndex": 0,
+                "primitiveIndex": 0
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 910000006,
+            "tagComponent": {
+                "tag": "Pendulum"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": [
+                    910000007
+                ]
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 2.0,
+                    "y": 8.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 3.6,
+                    "y": 0.4,
+                    "z": 0.4
+                }
+            },
+            "scriptListComponent": {
+                "scripts": []
+            },
+            "rigidbody3dComponent": {
+                "type": 1,
+                "fixedRotation": false
+            },
+            "boxCollider3dComponent": {
+                "isSensor": false,
+                "offset": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "size": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                },
+                "density": 1.0,
+                "friction": 0.5,
+                "restitution": 0.0
+            },
+            "revoluteJoint3dComponent": {
+                "connectedEntity": 910000004,
+                "anchor": {
+                    "x": -0.556,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "axis": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 1.0
+                },
+                "enableLimit": false,
+                "lowerAngle": -45.0,
+                "upperAngle": 45.0,
+                "enableMotor": false,
+                "motorSpeed": 90.0,
+                "maxMotorTorque": 10.0
+            }
+        },
+        {
+            "id": 910000007,
+            "tagComponent": {
+                "tag": "mesh"
+            },
+            "relationshipComponent": {
+                "parent": 910000006,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 2386102669,
+                "material": 3852475385,
+                "submeshIndex": 0,
+                "primitiveIndex": 0
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 910000008,
+            "tagComponent": {
+                "tag": "Chain Mount"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": [
+                    910000009
+                ]
+            },
+            "transformComponent": {
+                "position": {
+                    "x": -5.0,
+                    "y": 9.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 0.4,
+                    "y": 0.4,
+                    "z": 0.4
+                }
+            },
+            "scriptListComponent": {
+                "scripts": []
+            },
+            "rigidbody3dComponent": {
+                "type": 0,
+                "fixedRotation": false
+            },
+            "boxCollider3dComponent": {
+                "isSensor": false,
+                "offset": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "size": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                },
+                "density": 1.0,
+                "friction": 0.5,
+                "restitution": 0.0
+            }
+        },
+        {
+            "id": 910000009,
+            "tagComponent": {
+                "tag": "mesh"
+            },
+            "relationshipComponent": {
+                "parent": 910000008,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 2386102669,
+                "material": 3852475385,
+                "submeshIndex": 0,
+                "primitiveIndex": 0
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 910000010,
+            "tagComponent": {
+                "tag": "Chain 1"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": [
+                    910000011
+                ]
+            },
+            "transformComponent": {
+                "position": {
+                    "x": -5.0,
+                    "y": 8.25,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 0.35,
+                    "y": 1.2,
+                    "z": 0.35
+                }
+            },
+            "scriptListComponent": {
+                "scripts": []
+            },
+            "rigidbody3dComponent": {
+                "type": 1,
+                "fixedRotation": false
+            },
+            "boxCollider3dComponent": {
+                "isSensor": false,
+                "offset": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "size": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                },
+                "density": 1.0,
+                "friction": 0.5,
+                "restitution": 0.0
+            },
+            "sphericalJoint3dComponent": {
+                "connectedEntity": 910000008,
+                "anchor": {
+                    "x": 0.0,
+                    "y": 0.542,
+                    "z": 0.0
+                },
+                "axis": {
+                    "x": 0.0,
+                    "y": -1.0,
+                    "z": 0.0
+                },
+                "enableConeLimit": true,
+                "coneAngle": 45.0,
+                "enableTwistLimit": true,
+                "lowerTwistAngle": -20.0,
+                "upperTwistAngle": 20.0
+            }
+        },
+        {
+            "id": 910000011,
+            "tagComponent": {
+                "tag": "mesh"
+            },
+            "relationshipComponent": {
+                "parent": 910000010,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 2386102669,
+                "material": 3852475385,
+                "submeshIndex": 0,
+                "primitiveIndex": 0
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 910000012,
+            "tagComponent": {
+                "tag": "Chain 2"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": [
+                    910000013
+                ]
+            },
+            "transformComponent": {
+                "position": {
+                    "x": -5.0,
+                    "y": 6.95,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 0.35,
+                    "y": 1.2,
+                    "z": 0.35
+                }
+            },
+            "scriptListComponent": {
+                "scripts": []
+            },
+            "rigidbody3dComponent": {
+                "type": 1,
+                "fixedRotation": false
+            },
+            "boxCollider3dComponent": {
+                "isSensor": false,
+                "offset": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "size": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                },
+                "density": 1.0,
+                "friction": 0.5,
+                "restitution": 0.0
+            },
+            "sphericalJoint3dComponent": {
+                "connectedEntity": 910000010,
+                "anchor": {
+                    "x": 0.0,
+                    "y": 0.542,
+                    "z": 0.0
+                },
+                "axis": {
+                    "x": 0.0,
+                    "y": -1.0,
+                    "z": 0.0
+                },
+                "enableConeLimit": true,
+                "coneAngle": 45.0,
+                "enableTwistLimit": true,
+                "lowerTwistAngle": -20.0,
+                "upperTwistAngle": 20.0
+            }
+        },
+        {
+            "id": 910000013,
+            "tagComponent": {
+                "tag": "mesh"
+            },
+            "relationshipComponent": {
+                "parent": 910000012,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 2386102669,
+                "material": 3852475385,
+                "submeshIndex": 0,
+                "primitiveIndex": 0
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 910000014,
+            "tagComponent": {
+                "tag": "Chain 3"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": [
+                    910000015
+                ]
+            },
+            "transformComponent": {
+                "position": {
+                    "x": -5.0,
+                    "y": 5.65,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 0.35,
+                    "y": 1.2,
+                    "z": 0.35
+                }
+            },
+            "scriptListComponent": {
+                "scripts": []
+            },
+            "rigidbody3dComponent": {
+                "type": 1,
+                "fixedRotation": false
+            },
+            "boxCollider3dComponent": {
+                "isSensor": false,
+                "offset": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "size": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                },
+                "density": 1.0,
+                "friction": 0.5,
+                "restitution": 0.0
+            },
+            "sphericalJoint3dComponent": {
+                "connectedEntity": 910000012,
+                "anchor": {
+                    "x": 0.0,
+                    "y": 0.542,
+                    "z": 0.0
+                },
+                "axis": {
+                    "x": 0.0,
+                    "y": -1.0,
+                    "z": 0.0
+                },
+                "enableConeLimit": true,
+                "coneAngle": 45.0,
+                "enableTwistLimit": true,
+                "lowerTwistAngle": -20.0,
+                "upperTwistAngle": 20.0
+            }
+        },
+        {
+            "id": 910000015,
+            "tagComponent": {
+                "tag": "mesh"
+            },
+            "relationshipComponent": {
+                "parent": 910000014,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 2386102669,
+                "material": 3852475385,
+                "submeshIndex": 0,
+                "primitiveIndex": 0
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 910000016,
+            "tagComponent": {
+                "tag": "Chain 4"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": [
+                    910000017
+                ]
+            },
+            "transformComponent": {
+                "position": {
+                    "x": -5.0,
+                    "y": 4.35,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 0.35,
+                    "y": 1.2,
+                    "z": 0.35
+                }
+            },
+            "scriptListComponent": {
+                "scripts": []
+            },
+            "rigidbody3dComponent": {
+                "type": 1,
+                "fixedRotation": false
+            },
+            "boxCollider3dComponent": {
+                "isSensor": false,
+                "offset": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "size": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                },
+                "density": 1.0,
+                "friction": 0.5,
+                "restitution": 0.0
+            },
+            "sphericalJoint3dComponent": {
+                "connectedEntity": 910000014,
+                "anchor": {
+                    "x": 0.0,
+                    "y": 0.542,
+                    "z": 0.0
+                },
+                "axis": {
+                    "x": 0.0,
+                    "y": -1.0,
+                    "z": 0.0
+                },
+                "enableConeLimit": true,
+                "coneAngle": 45.0,
+                "enableTwistLimit": true,
+                "lowerTwistAngle": -20.0,
+                "upperTwistAngle": 20.0
+            }
+        },
+        {
+            "id": 910000017,
+            "tagComponent": {
+                "tag": "mesh"
+            },
+            "relationshipComponent": {
+                "parent": 910000016,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 2386102669,
+                "material": 3852475385,
+                "submeshIndex": 0,
+                "primitiveIndex": 0
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 910000018,
+            "tagComponent": {
+                "tag": "Spinner Post"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": [
+                    910000019
+                ]
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 6.0,
+                    "y": 2.5,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 0.4,
+                    "y": 5.0,
+                    "z": 0.4
+                }
+            },
+            "scriptListComponent": {
+                "scripts": []
+            },
+            "rigidbody3dComponent": {
+                "type": 0,
+                "fixedRotation": false
+            },
+            "boxCollider3dComponent": {
+                "isSensor": false,
+                "offset": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "size": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                },
+                "density": 1.0,
+                "friction": 0.5,
+                "restitution": 0.0
+            }
+        },
+        {
+            "id": 910000019,
+            "tagComponent": {
+                "tag": "mesh"
+            },
+            "relationshipComponent": {
+                "parent": 910000018,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 2386102669,
+                "material": 3852475385,
+                "submeshIndex": 0,
+                "primitiveIndex": 0
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 910000020,
+            "tagComponent": {
+                "tag": "Spinner"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": [
+                    910000021
+                ]
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 6.0,
+                    "y": 5.2,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 4.0,
+                    "y": 0.3,
+                    "z": 0.3
+                }
+            },
+            "scriptListComponent": {
+                "scripts": []
+            },
+            "rigidbody3dComponent": {
+                "type": 1,
+                "fixedRotation": false
+            },
+            "boxCollider3dComponent": {
+                "isSensor": false,
+                "offset": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "size": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                },
+                "density": 1.0,
+                "friction": 0.5,
+                "restitution": 0.0
+            },
+            "revoluteJoint3dComponent": {
+                "connectedEntity": 910000018,
+                "anchor": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "axis": {
+                    "x": 0.0,
+                    "y": 1.0,
+                    "z": 0.0
+                },
+                "enableLimit": false,
+                "lowerAngle": -45.0,
+                "upperAngle": 45.0,
+                "enableMotor": true,
+                "motorSpeed": 120.0,
+                "maxMotorTorque": 200.0
+            }
+        },
+        {
+            "id": 910000021,
+            "tagComponent": {
+                "tag": "mesh"
+            },
+            "relationshipComponent": {
+                "parent": 910000020,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "importedSubmeshComponent": {
+                "importedMesh": 2386102669,
+                "material": 3852475385,
+                "submeshIndex": 0,
+                "primitiveIndex": 0
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        }
+    ]
+}

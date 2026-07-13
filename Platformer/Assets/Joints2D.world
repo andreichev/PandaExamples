@@ -1,0 +1,1116 @@
+{
+    "lightingSettings": {
+        "ambientColor": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0,
+            "w": 1.0
+        },
+        "ambientIntensity": 0.11999999731779099
+    },
+    "entities": [
+        {
+            "id": 2061710494,
+            "tagComponent": {
+                "tag": "Camera"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": -20.0,
+                    "y": 4.099999904632568,
+                    "z": 10.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "cameraComponent": {
+                "isPrimary": true,
+                "camera": {
+                    "projectionType": 1,
+                    "fieldOfView": 70.0,
+                    "orthoSize": 15.0,
+                    "zNear": 0.10000000149011612,
+                    "zFar": 1000.0
+                }
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 920000002,
+            "tagComponent": {
+                "tag": "Ground"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": -4.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 30.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "scriptListComponent": {
+                "scripts": []
+            },
+            "spriteRendererComponent": {
+                "color": {
+                    "x": 0.35,
+                    "y": 0.4,
+                    "z": 0.45,
+                    "w": 1.0
+                },
+                "cols": 1,
+                "rows": 1,
+                "index": 0,
+                "material": 0,
+                "texture": 0
+            },
+            "rigidbody2dComponent": {
+                "type": 0,
+                "fixedRotation": false
+            },
+            "boxCollider2dComponent": {
+                "isSensor": false,
+                "offset": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "size": {
+                    "x": 0.5,
+                    "y": 0.5
+                },
+                "density": 1.0,
+                "friction": 0.5,
+                "restitution": 0.0
+            }
+        },
+        {
+            "id": 920000003,
+            "tagComponent": {
+                "tag": "Pendulum Mount"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 4.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 0.4,
+                    "y": 0.4,
+                    "z": 1.0
+                }
+            },
+            "scriptListComponent": {
+                "scripts": []
+            },
+            "spriteRendererComponent": {
+                "color": {
+                    "x": 0.9,
+                    "y": 0.6,
+                    "z": 0.2,
+                    "w": 1.0
+                },
+                "cols": 1,
+                "rows": 1,
+                "index": 0,
+                "material": 0,
+                "texture": 0
+            },
+            "rigidbody2dComponent": {
+                "type": 0,
+                "fixedRotation": false
+            },
+            "boxCollider2dComponent": {
+                "isSensor": false,
+                "offset": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "size": {
+                    "x": 0.5,
+                    "y": 0.5
+                },
+                "density": 1.0,
+                "friction": 0.5,
+                "restitution": 0.0
+            }
+        },
+        {
+            "id": 920000004,
+            "tagComponent": {
+                "tag": "Pendulum"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 1.5,
+                    "y": 4.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 3.0,
+                    "y": 0.35,
+                    "z": 1.0
+                }
+            },
+            "scriptListComponent": {
+                "scripts": []
+            },
+            "spriteRendererComponent": {
+                "color": {
+                    "x": 0.9,
+                    "y": 0.3,
+                    "z": 0.3,
+                    "w": 1.0
+                },
+                "cols": 1,
+                "rows": 1,
+                "index": 0,
+                "material": 0,
+                "texture": 0
+            },
+            "rigidbody2dComponent": {
+                "type": 1,
+                "fixedRotation": false
+            },
+            "boxCollider2dComponent": {
+                "isSensor": false,
+                "offset": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "size": {
+                    "x": 0.5,
+                    "y": 0.5
+                },
+                "density": 1.0,
+                "friction": 0.5,
+                "restitution": 0.0
+            },
+            "revoluteJoint2dComponent": {
+                "connectedEntity": 920000003,
+                "anchor": {
+                    "x": -0.5,
+                    "y": 0.0
+                },
+                "enableLimit": false,
+                "lowerAngle": -60.0,
+                "upperAngle": 60.0,
+                "enableMotor": false,
+                "motorSpeed": 90.0,
+                "maxMotorTorque": 10.0
+            }
+        },
+        {
+            "id": 920000005,
+            "tagComponent": {
+                "tag": "Spring Mount"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": -6.0,
+                    "y": 5.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 0.4,
+                    "y": 0.4,
+                    "z": 1.0
+                }
+            },
+            "scriptListComponent": {
+                "scripts": []
+            },
+            "spriteRendererComponent": {
+                "color": {
+                    "x": 0.9,
+                    "y": 0.6,
+                    "z": 0.2,
+                    "w": 1.0
+                },
+                "cols": 1,
+                "rows": 1,
+                "index": 0,
+                "material": 0,
+                "texture": 0
+            },
+            "rigidbody2dComponent": {
+                "type": 0,
+                "fixedRotation": false
+            },
+            "boxCollider2dComponent": {
+                "isSensor": false,
+                "offset": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "size": {
+                    "x": 0.5,
+                    "y": 0.5
+                },
+                "density": 1.0,
+                "friction": 0.5,
+                "restitution": 0.0
+            }
+        },
+        {
+            "id": 920000006,
+            "tagComponent": {
+                "tag": "Spring Box"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": -6.0,
+                    "y": 2.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "scriptListComponent": {
+                "scripts": []
+            },
+            "spriteRendererComponent": {
+                "color": {
+                    "x": 0.3,
+                    "y": 0.7,
+                    "z": 0.9,
+                    "w": 1.0
+                },
+                "cols": 1,
+                "rows": 1,
+                "index": 0,
+                "material": 0,
+                "texture": 0
+            },
+            "rigidbody2dComponent": {
+                "type": 1,
+                "fixedRotation": false
+            },
+            "boxCollider2dComponent": {
+                "isSensor": false,
+                "offset": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "size": {
+                    "x": 0.5,
+                    "y": 0.5
+                },
+                "density": 1.0,
+                "friction": 0.5,
+                "restitution": 0.0
+            },
+            "distanceJoint2dComponent": {
+                "connectedEntity": 920000005,
+                "anchor": {
+                    "x": 0.0,
+                    "y": 0.5
+                },
+                "connectedAnchor": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "length": 0.0,
+                "enableSpring": true,
+                "hertz": 2.0,
+                "dampingRatio": 0.2
+            }
+        },
+        {
+            "id": 920000007,
+            "tagComponent": {
+                "tag": "Bridge Mount L"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 2.0,
+                    "y": 1.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 0.3,
+                    "y": 0.3,
+                    "z": 1.0
+                }
+            },
+            "scriptListComponent": {
+                "scripts": []
+            },
+            "spriteRendererComponent": {
+                "color": {
+                    "x": 0.9,
+                    "y": 0.6,
+                    "z": 0.2,
+                    "w": 1.0
+                },
+                "cols": 1,
+                "rows": 1,
+                "index": 0,
+                "material": 0,
+                "texture": 0
+            },
+            "rigidbody2dComponent": {
+                "type": 0,
+                "fixedRotation": false
+            },
+            "boxCollider2dComponent": {
+                "isSensor": false,
+                "offset": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "size": {
+                    "x": 0.5,
+                    "y": 0.5
+                },
+                "density": 1.0,
+                "friction": 0.5,
+                "restitution": 0.0
+            }
+        },
+        {
+            "id": 920000008,
+            "tagComponent": {
+                "tag": "Plank 1"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 2.8,
+                    "y": 1.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 0.25,
+                    "z": 1.0
+                }
+            },
+            "scriptListComponent": {
+                "scripts": []
+            },
+            "spriteRendererComponent": {
+                "color": {
+                    "x": 0.6,
+                    "y": 0.45,
+                    "z": 0.3,
+                    "w": 1.0
+                },
+                "cols": 1,
+                "rows": 1,
+                "index": 0,
+                "material": 0,
+                "texture": 0
+            },
+            "rigidbody2dComponent": {
+                "type": 1,
+                "fixedRotation": false
+            },
+            "boxCollider2dComponent": {
+                "isSensor": false,
+                "offset": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "size": {
+                    "x": 0.5,
+                    "y": 0.5
+                },
+                "density": 1.0,
+                "friction": 0.5,
+                "restitution": 0.0
+            },
+            "revoluteJoint2dComponent": {
+                "connectedEntity": 920000007,
+                "anchor": {
+                    "x": -0.55,
+                    "y": 0.0
+                },
+                "enableLimit": false,
+                "lowerAngle": -30.0,
+                "upperAngle": 30.0,
+                "enableMotor": false,
+                "motorSpeed": 0.0,
+                "maxMotorTorque": 5.0
+            }
+        },
+        {
+            "id": 920000009,
+            "tagComponent": {
+                "tag": "Plank 2"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 3.9,
+                    "y": 1.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 0.25,
+                    "z": 1.0
+                }
+            },
+            "scriptListComponent": {
+                "scripts": []
+            },
+            "spriteRendererComponent": {
+                "color": {
+                    "x": 0.6,
+                    "y": 0.45,
+                    "z": 0.3,
+                    "w": 1.0
+                },
+                "cols": 1,
+                "rows": 1,
+                "index": 0,
+                "material": 0,
+                "texture": 0
+            },
+            "rigidbody2dComponent": {
+                "type": 1,
+                "fixedRotation": false
+            },
+            "boxCollider2dComponent": {
+                "isSensor": false,
+                "offset": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "size": {
+                    "x": 0.5,
+                    "y": 0.5
+                },
+                "density": 1.0,
+                "friction": 0.5,
+                "restitution": 0.0
+            },
+            "revoluteJoint2dComponent": {
+                "connectedEntity": 920000008,
+                "anchor": {
+                    "x": -0.55,
+                    "y": 0.0
+                },
+                "enableLimit": false,
+                "lowerAngle": -30.0,
+                "upperAngle": 30.0,
+                "enableMotor": false,
+                "motorSpeed": 0.0,
+                "maxMotorTorque": 5.0
+            }
+        },
+        {
+            "id": 920000010,
+            "tagComponent": {
+                "tag": "Plank 3"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 5.0,
+                    "y": 1.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 0.25,
+                    "z": 1.0
+                }
+            },
+            "scriptListComponent": {
+                "scripts": []
+            },
+            "spriteRendererComponent": {
+                "color": {
+                    "x": 0.6,
+                    "y": 0.45,
+                    "z": 0.3,
+                    "w": 1.0
+                },
+                "cols": 1,
+                "rows": 1,
+                "index": 0,
+                "material": 0,
+                "texture": 0
+            },
+            "rigidbody2dComponent": {
+                "type": 1,
+                "fixedRotation": false
+            },
+            "boxCollider2dComponent": {
+                "isSensor": false,
+                "offset": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "size": {
+                    "x": 0.5,
+                    "y": 0.5
+                },
+                "density": 1.0,
+                "friction": 0.5,
+                "restitution": 0.0
+            },
+            "revoluteJoint2dComponent": {
+                "connectedEntity": 920000009,
+                "anchor": {
+                    "x": -0.55,
+                    "y": 0.0
+                },
+                "enableLimit": false,
+                "lowerAngle": -30.0,
+                "upperAngle": 30.0,
+                "enableMotor": false,
+                "motorSpeed": 0.0,
+                "maxMotorTorque": 5.0
+            }
+        },
+        {
+            "id": 920000011,
+            "tagComponent": {
+                "tag": "Plank 4"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 6.1,
+                    "y": 1.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 0.25,
+                    "z": 1.0
+                }
+            },
+            "scriptListComponent": {
+                "scripts": []
+            },
+            "spriteRendererComponent": {
+                "color": {
+                    "x": 0.6,
+                    "y": 0.45,
+                    "z": 0.3,
+                    "w": 1.0
+                },
+                "cols": 1,
+                "rows": 1,
+                "index": 0,
+                "material": 0,
+                "texture": 0
+            },
+            "rigidbody2dComponent": {
+                "type": 1,
+                "fixedRotation": false
+            },
+            "boxCollider2dComponent": {
+                "isSensor": false,
+                "offset": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "size": {
+                    "x": 0.5,
+                    "y": 0.5
+                },
+                "density": 1.0,
+                "friction": 0.5,
+                "restitution": 0.0
+            },
+            "revoluteJoint2dComponent": {
+                "connectedEntity": 920000010,
+                "anchor": {
+                    "x": -0.55,
+                    "y": 0.0
+                },
+                "enableLimit": false,
+                "lowerAngle": -30.0,
+                "upperAngle": 30.0,
+                "enableMotor": false,
+                "motorSpeed": 0.0,
+                "maxMotorTorque": 5.0
+            }
+        },
+        {
+            "id": 920000012,
+            "tagComponent": {
+                "tag": "Plank 5"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 7.2,
+                    "y": 1.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 0.25,
+                    "z": 1.0
+                }
+            },
+            "scriptListComponent": {
+                "scripts": []
+            },
+            "spriteRendererComponent": {
+                "color": {
+                    "x": 0.6,
+                    "y": 0.45,
+                    "z": 0.3,
+                    "w": 1.0
+                },
+                "cols": 1,
+                "rows": 1,
+                "index": 0,
+                "material": 0,
+                "texture": 0
+            },
+            "rigidbody2dComponent": {
+                "type": 1,
+                "fixedRotation": false
+            },
+            "boxCollider2dComponent": {
+                "isSensor": false,
+                "offset": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "size": {
+                    "x": 0.5,
+                    "y": 0.5
+                },
+                "density": 1.0,
+                "friction": 0.5,
+                "restitution": 0.0
+            },
+            "revoluteJoint2dComponent": {
+                "connectedEntity": 920000011,
+                "anchor": {
+                    "x": -0.55,
+                    "y": 0.0
+                },
+                "enableLimit": false,
+                "lowerAngle": -30.0,
+                "upperAngle": 30.0,
+                "enableMotor": false,
+                "motorSpeed": 0.0,
+                "maxMotorTorque": 5.0
+            }
+        },
+        {
+            "id": 920000013,
+            "tagComponent": {
+                "tag": "Plank 6"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 8.3,
+                    "y": 1.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 0.25,
+                    "z": 1.0
+                }
+            },
+            "scriptListComponent": {
+                "scripts": []
+            },
+            "spriteRendererComponent": {
+                "color": {
+                    "x": 0.6,
+                    "y": 0.45,
+                    "z": 0.3,
+                    "w": 1.0
+                },
+                "cols": 1,
+                "rows": 1,
+                "index": 0,
+                "material": 0,
+                "texture": 0
+            },
+            "rigidbody2dComponent": {
+                "type": 1,
+                "fixedRotation": false
+            },
+            "boxCollider2dComponent": {
+                "isSensor": false,
+                "offset": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "size": {
+                    "x": 0.5,
+                    "y": 0.5
+                },
+                "density": 1.0,
+                "friction": 0.5,
+                "restitution": 0.0
+            },
+            "revoluteJoint2dComponent": {
+                "connectedEntity": 920000012,
+                "anchor": {
+                    "x": -0.55,
+                    "y": 0.0
+                },
+                "enableLimit": false,
+                "lowerAngle": -30.0,
+                "upperAngle": 30.0,
+                "enableMotor": false,
+                "motorSpeed": 0.0,
+                "maxMotorTorque": 5.0
+            }
+        },
+        {
+            "id": 920000014,
+            "tagComponent": {
+                "tag": "Wheel Mount"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 8.0,
+                    "y": 3.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 0.3,
+                    "y": 0.3,
+                    "z": 1.0
+                }
+            },
+            "scriptListComponent": {
+                "scripts": []
+            },
+            "spriteRendererComponent": {
+                "color": {
+                    "x": 0.9,
+                    "y": 0.6,
+                    "z": 0.2,
+                    "w": 1.0
+                },
+                "cols": 1,
+                "rows": 1,
+                "index": 0,
+                "material": 0,
+                "texture": 0
+            },
+            "rigidbody2dComponent": {
+                "type": 0,
+                "fixedRotation": false
+            },
+            "boxCollider2dComponent": {
+                "isSensor": false,
+                "offset": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "size": {
+                    "x": 0.5,
+                    "y": 0.5
+                },
+                "density": 1.0,
+                "friction": 0.5,
+                "restitution": 0.0
+            }
+        },
+        {
+            "id": 920000015,
+            "tagComponent": {
+                "tag": "Motor Wheel"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 8.0,
+                    "y": 3.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 2.4,
+                    "y": 0.3,
+                    "z": 1.0
+                }
+            },
+            "scriptListComponent": {
+                "scripts": []
+            },
+            "spriteRendererComponent": {
+                "color": {
+                    "x": 0.4,
+                    "y": 0.8,
+                    "z": 0.4,
+                    "w": 1.0
+                },
+                "cols": 1,
+                "rows": 1,
+                "index": 0,
+                "material": 0,
+                "texture": 0
+            },
+            "rigidbody2dComponent": {
+                "type": 1,
+                "fixedRotation": false
+            },
+            "boxCollider2dComponent": {
+                "isSensor": false,
+                "offset": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "size": {
+                    "x": 0.5,
+                    "y": 0.5
+                },
+                "density": 1.0,
+                "friction": 0.5,
+                "restitution": 0.0
+            },
+            "revoluteJoint2dComponent": {
+                "connectedEntity": 920000014,
+                "anchor": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "enableLimit": false,
+                "lowerAngle": -60.0,
+                "upperAngle": 60.0,
+                "enableMotor": true,
+                "motorSpeed": 180.0,
+                "maxMotorTorque": 500.0
+            }
+        },
+        {
+            "id": 920000016,
+            "tagComponent": {
+                "tag": "Bridge Mount R"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 9.1,
+                    "y": 1.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 0.3,
+                    "y": 0.3,
+                    "z": 1.0
+                }
+            },
+            "scriptListComponent": {
+                "scripts": []
+            },
+            "spriteRendererComponent": {
+                "color": {
+                    "x": 0.9,
+                    "y": 0.6,
+                    "z": 0.2,
+                    "w": 1.0
+                },
+                "cols": 1,
+                "rows": 1,
+                "index": 0,
+                "material": 0,
+                "texture": 0
+            },
+            "rigidbody2dComponent": {
+                "type": 0,
+                "fixedRotation": false
+            },
+            "boxCollider2dComponent": {
+                "isSensor": false,
+                "offset": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "size": {
+                    "x": 0.5,
+                    "y": 0.5
+                },
+                "density": 1.0,
+                "friction": 0.5,
+                "restitution": 0.0
+            },
+            "revoluteJoint2dComponent": {
+                "connectedEntity": 920000013,
+                "anchor": {
+                    "x": -0.8333,
+                    "y": 0.0
+                },
+                "enableLimit": false,
+                "lowerAngle": -30.0,
+                "upperAngle": 30.0,
+                "enableMotor": false,
+                "motorSpeed": 0.0,
+                "maxMotorTorque": 5.0
+            }
+        }
+    ]
+}
