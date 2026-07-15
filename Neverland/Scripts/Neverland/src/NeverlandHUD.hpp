@@ -1,6 +1,7 @@
 #pragma once
 
 #include "BlocksCreation.hpp"
+#include "GameMenu.hpp"
 #include "NeverlandHUDLayout.hpp"
 
 #include <Bamboo/Bamboo.hpp>
@@ -33,8 +34,12 @@ private:
     void buildUI();
     void updateTouchControlSafeArea();
     void updateSelection();
+    void updateMenuInput();  // Esc: Playing ↔ Paused
+    void applyMenuState();   // видимость HUD/меню + идемпотентность по последнему состоянию
     void loadBlockPreviewTextures();
     void destroyBlockPreviewTextures();
+    std::shared_ptr<PandaUI::Panel> makeMainMenu();
+    std::shared_ptr<PandaUI::Panel> makePauseMenu();
     std::shared_ptr<PandaUI::Panel> makeCrosshair();
     std::shared_ptr<PandaUI::Panel> makeTouchControls();
     std::shared_ptr<PandaUI::Panel> makeMovePad();
@@ -60,6 +65,10 @@ private:
     PandaUI::Window m_window;
     Shared<BlocksCreation> m_blocksCreation;
     std::shared_ptr<PandaUI::Panel> m_root;
+    std::shared_ptr<PandaUI::Panel> m_hudLayer;  // игровой HUD (прицел/хотбар/тач) — скрыт в меню
+    std::shared_ptr<PandaUI::Panel> m_mainMenu;  // стартовый экран
+    std::shared_ptr<PandaUI::Panel> m_pauseMenu; // пауза (Esc)
+    GameMenuState m_appliedMenuState = GameMenuState::MainMenu;
     std::shared_ptr<PandaUI::Label> m_selectionLabel;
     std::array<std::shared_ptr<PandaUI::Button>, BLOCKS.size()> m_slots;
     std::array<PandaUI::TextureHandle, BLOCKS.size()> m_previewTextures;

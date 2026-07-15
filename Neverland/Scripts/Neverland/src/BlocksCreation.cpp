@@ -3,6 +3,7 @@
 //
 
 #include "BlocksCreation.hpp"
+#include "GameMenu.hpp"
 #include "Model/VoxelMeshGenerator.hpp"
 #include "Model/GameContext.hpp"
 #include "NeverlandTouchControls.hpp"
@@ -184,6 +185,7 @@ void BlocksCreation::updateTouchBlockInput(
 }
 
 void BlocksCreation::update(float deltaTime) {
+    if (!GameMenu::isGameplayActive()) { return; } // меню: выбор блока и копание выключены
     updateSelectedBlock();
     const bool moving = isMovingInput();
     m_heldItemView.update(getEntity(), m_selectedBlock, moving, isSprintingInput(moving), deltaTime);

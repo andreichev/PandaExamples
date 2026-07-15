@@ -29,6 +29,13 @@ constexpr float HotbarTouchHeight = HotbarBottomMargin + HotbarHeight + 20.0f;
 
 constexpr float TouchButtonSize = 58.0f;
 constexpr float TouchButtonGap = 8.0f;
+
+constexpr float MenuButtonWidth = 240.0f;
+constexpr float MenuButtonHeight = 52.0f;
+constexpr float MenuButtonGap = 14.0f;
+constexpr float MenuTitleFontSize = 52.0f;
+constexpr float MenuSubtitleFontSize = 20.0f;
+constexpr float MenuTitleGap = 42.0f;
 constexpr float MovePadLeftMargin = 0.0f;
 constexpr float MovePadBottom = HotbarHeight;
 constexpr float ActionControlsMargin = 24.0f;

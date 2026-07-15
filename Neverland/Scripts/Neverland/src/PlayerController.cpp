@@ -3,6 +3,7 @@
 //
 
 #include "PlayerController.hpp"
+#include "GameMenu.hpp"
 #include "Model/ChunksStorage.hpp"
 #include "NeverlandTouchControls.hpp"
 
@@ -56,6 +57,12 @@ void PlayerController::start() {
 }
 
 void PlayerController::update(float deltaTime) {
+    if (!GameMenu::isGameplayActive()) { // меню: игрок замирает, тач-трекеры сбрасываются
+        NeverlandTouchControls::reset();
+        m_moveTouch = {};
+        m_lookTouch = {};
+        return;
+    }
     updateTouchControls();
     updateLook();
     updateCharacter(deltaTime);
@@ -193,9 +200,7 @@ void PlayerController::updateLook() {
         m_pitch = glm::clamp(m_pitch, -maxPitch, maxPitch);
         syncRotationFromAngles();
     }
-    if (Input::isKeyJustPressed(Key::TAB)) {
-        ApplicationAPI::setCursorLocked(!ApplicationAPI::isCursorLocked());
-    }
+    // Захватом курсора владеет GameMenu (Esc — пауза/возврат), Tab-тоггла больше нет.
 }
 
 void PlayerController::updateCharacter(float deltaTime) {

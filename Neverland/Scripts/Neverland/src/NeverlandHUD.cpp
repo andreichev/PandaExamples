@@ -2,7 +2,9 @@
 #include "Model/VoxelTextureMapper.hpp"
 #include "NeverlandTouchControls.hpp"
 
+#include <Bamboo/ApplicationAPI.hpp>
 #include <Bamboo/EntityAPI.hpp>
+#include <Bamboo/Input.hpp>
 #include <Bamboo/Logger.hpp>
 #include <Bamboo/Assets/TextureAPI.hpp>
 #include <Bamboo/UI/TextureAPI.hpp>
@@ -295,30 +297,124 @@ makeTouchControlButton(const std::string &text, NeverlandTouchControls::Button b
     return view;
 }
 
+// Кнопка меню — стиль TouchControlButton, но крупнее и с текстом по центру.
+class MenuButton final : public PandaUI::Button {
+public:
+    explicit MenuButton(std::string text)
+        : PandaUI::Button(std::move(text)) {
+        setFocusable(false);
+        setFont(PandaUI::Font(20.f));
+        getTitleLabel()->setTextColor(PandaUI::Color(0xF4F7FFFF));
+        surface().setCornerRadius(14.f);
+        surface().setBorderWidth(1.5f);
+        layout().setWidth(PandaUI::Length::points(NeverlandHUDLayout::MenuButtonWidth));
+        layout().setHeight(PandaUI::Length::points(NeverlandHUDLayout::MenuButtonHeight));
+        layout().setPadding(0.f);
+        updateAppearance();
+    }
+
+private:
+    void controlStateChanged(PandaUI::ControlState, PandaUI::ControlState) override {
+        updateAppearance();
+    }
+
+    void themeChanged() override {
+        updateAppearance();
+    }
+
+    void updateAppearance() {
+        if (hasControlState(PandaUI::ControlState::Highlighted)) {
+            setBackgroundColor(PandaUI::Color(0xF4F7FFFF));
+            getTitleLabel()->setTextColor(PandaUI::Color(0x111722FF));
+            surface().setBorderColor(PandaUI::Color(0xFFFFFFFF));
+        } else if (hasControlState(PandaUI::ControlState::Hovered)) {
+            setBackgroundColor(PandaUI::Color(0x2A3342E6));
+            getTitleLabel()->setTextColor(PandaUI::Color(0xFFFFFFFF));
+            surface().setBorderColor(PandaUI::Color(0xFFFFFFAA));
+        } else {
+            setBackgroundColor(PandaUI::Color(0x151B26CC));
+            getTitleLabel()->setTextColor(PandaUI::Color(0xF4F7FFFF));
+            surface().setBorderColor(PandaUI::Color(0xFFFFFF66));
+        }
+        surface().setShadowColor(PandaUI::Color(0x00000038));
+    }
+};
+
+std::shared_ptr<MenuButton> makeMenuButton(const std::string &text, std::function<void()> action) {
+    auto button = std::make_shared<MenuButton>(text);
+    button->setOnClick([action = std::move(action)](PandaUI::Button &) {
+        if (action) { action(); }
+    });
+    return button;
+}
+
+// Полноэкранное затемнение с колонкой контента по центру (общий каркас обоих меню).
+std::shared_ptr<PandaUI::Panel> makeMenuOverlay(PandaUI::Color dim) {
+    auto overlay = std::make_shared<PandaUI::Panel>();
+    overlay->setBackgroundColor(dim);
+    overlay->layoutSetAbsolute();
+    overlay->layout().setPosition(PandaUI::Edge::Left, PandaUI::Length::points(0.f));
+    overlay->layout().setPosition(PandaUI::Edge::Top, PandaUI::Length::points(0.f));
+    overlay->layout().setWidth(PandaUI::Length::percent(100.f));
+    overlay->layout().setHeight(PandaUI::Length::percent(100.f));
+    overlay->layout().setFlexDirection(PandaUI::FlexDirection::Column);
+    overlay->layout().setJustifyContent(PandaUI::Justify::Center);
+    overlay->layout().setAlignItems(PandaUI::Align::Center);
+    overlay->layout().setGap(NeverlandHUDLayout::MenuButtonGap);
+    return overlay;
+}
+
 } // namespace
 
 void NeverlandHUD::start() {
     NeverlandTouchControls::reset();
+    GameMenu::reset(); // старт мира — главное меню, курсор свободен
     m_blocksCreation = EntityAPI::getScript<BlocksCreation>(getEntity());
     buildUI();
     updateTouchControlSafeArea();
     updateSelection();
+    m_appliedMenuState = GameMenuState::Playing; // форс первого applyMenuState (state = MainMenu)
+    applyMenuState();
 }
 
 void NeverlandHUD::update(float) {
     updateTouchControlSafeArea();
     updateSelection();
+    updateMenuInput();
+    applyMenuState();
 }
 
 void NeverlandHUD::shutdown() {
     NeverlandTouchControls::reset();
+    GameMenu::reset();
     if (m_window.isValid()) { m_window.setRootView(nullptr); }
     destroyBlockPreviewTextures();
     m_slots.fill(nullptr);
     m_selectionLabel.reset();
+    m_hudLayer.reset();
+    m_mainMenu.reset();
+    m_pauseMenu.reset();
     m_root.reset();
     m_blocksCreation.reset();
     m_displayedSelection = VoxelType::NOTHING;
+}
+
+void NeverlandHUD::updateMenuInput() {
+    if (!Input::isKeyJustPressed(Key::ESCAPE)) { return; }
+    if (GameMenu::state() == GameMenuState::Playing) {
+        GameMenu::setState(GameMenuState::Paused);
+    } else if (GameMenu::state() == GameMenuState::Paused) {
+        GameMenu::setState(GameMenuState::Playing);
+    }
+}
+
+void NeverlandHUD::applyMenuState() {
+    const GameMenuState state = GameMenu::state();
+    if (state == m_appliedMenuState) { return; }
+    m_appliedMenuState = state;
+    if (m_hudLayer) { m_hudLayer->setHidden(state != GameMenuState::Playing); }
+    if (m_mainMenu) { m_mainMenu->setHidden(state != GameMenuState::MainMenu); }
+    if (m_pauseMenu) { m_pauseMenu->setHidden(state != GameMenuState::Paused); }
 }
 
 void NeverlandHUD::buildUI() {
@@ -335,6 +431,13 @@ void NeverlandHUD::buildUI() {
     m_root->layout().setWidth(PandaUI::Length::percent(100.f));
     m_root->layout().setHeight(PandaUI::Length::percent(100.f));
 
+    // Игровой HUD — отдельный слой, прячется в меню.
+    m_hudLayer = std::make_shared<PandaUI::Panel>();
+    m_hudLayer->setBackgroundColor(transparent());
+    m_hudLayer->layout().setFlexDirection(PandaUI::FlexDirection::Column);
+    m_hudLayer->layout().setWidth(PandaUI::Length::percent(100.f));
+    m_hudLayer->layout().setHeight(PandaUI::Length::percent(100.f));
+
     auto safeArea = std::make_shared<PandaUI::SafeAreaView>();
     safeArea->setBackgroundColor(transparent());
     safeArea->layout().setFlexDirection(PandaUI::FlexDirection::Column);
@@ -343,10 +446,43 @@ void NeverlandHUD::buildUI() {
     safeArea->addSubview(makeSelectionPill());
     safeArea->addSubview(makeHotbar());
 
-    if (shouldShowCrosshair()) { m_root->addSubview(makeCrosshair()); }
-    m_root->addSubview(safeArea);
-    if (shouldShowTouchControls()) { m_root->addSubview(makeTouchControls()); }
+    if (shouldShowCrosshair()) { m_hudLayer->addSubview(makeCrosshair()); }
+    m_hudLayer->addSubview(safeArea);
+    if (shouldShowTouchControls()) { m_hudLayer->addSubview(makeTouchControls()); }
+
+    m_mainMenu = makeMainMenu();
+    m_pauseMenu = makePauseMenu();
+    m_root->addSubview(m_hudLayer);
+    m_root->addSubview(m_mainMenu);
+    m_root->addSubview(m_pauseMenu);
     m_window.setRootView(m_root);
+}
+
+std::shared_ptr<PandaUI::Panel> NeverlandHUD::makeMainMenu() {
+    auto overlay = makeMenuOverlay(PandaUI::Color(0x0B101AC8));
+
+    auto title = makeLabel("NEVERLAND", NeverlandHUDLayout::MenuTitleFontSize, PandaUI::Color(0xF4F7FFFF));
+    auto subtitle =
+        makeLabel("Voxel sandbox on Panda", NeverlandHUDLayout::MenuSubtitleFontSize, PandaUI::Color(0xB8C2D4FF));
+    subtitle->layout().setMargin(PandaUI::Edge::Bottom, NeverlandHUDLayout::MenuTitleGap);
+
+    overlay->addSubview(title);
+    overlay->addSubview(subtitle);
+    overlay->addSubview(makeMenuButton("Play", [] { GameMenu::setState(GameMenuState::Playing); }));
+    overlay->addSubview(makeMenuButton("Quit", [] { ApplicationAPI::quit(); }));
+    return overlay;
+}
+
+std::shared_ptr<PandaUI::Panel> NeverlandHUD::makePauseMenu() {
+    auto overlay = makeMenuOverlay(PandaUI::Color(0x0B101A90));
+
+    auto title = makeLabel("Paused", 34.f, PandaUI::Color(0xF4F7FFFF));
+    title->layout().setMargin(PandaUI::Edge::Bottom, NeverlandHUDLayout::MenuTitleGap);
+
+    overlay->addSubview(title);
+    overlay->addSubview(makeMenuButton("Resume", [] { GameMenu::setState(GameMenuState::Playing); }));
+    overlay->addSubview(makeMenuButton("Quit", [] { ApplicationAPI::quit(); }));
+    return overlay;
 }
 
 void NeverlandHUD::loadBlockPreviewTextures() {
