@@ -6,6 +6,8 @@
 #include "GameMenu.hpp"
 #include "Model/TerrainMeshGenerator.hpp"
 #include "Model/GameContext.hpp"
+
+#include <unordered_set>
 #include "NeverlandTouchControls.hpp"
 
 #include <Bamboo/Input.hpp>
@@ -105,12 +107,54 @@ void BlocksCreation::setVoxel(int x, int y, int z, VoxelType type) {
 
     updateChunk(coord);
 
-    if (localX == 0) { updateChunk({coord.x - 1, coord.y, coord.z}); }
-    if (localX == Chunk::SIZE_X - 1) { updateChunk({coord.x + 1, coord.y, coord.z}); }
-    if (localZ == 0) { updateChunk({coord.x, coord.y, coord.z - 1}); }
-    if (localZ == Chunk::SIZE_Z - 1) { updateChunk({coord.x, coord.y, coord.z + 1}); }
-    if (localY == 0) { updateChunk({coord.x, coord.y - 1, coord.z}); }
-    if (localY == Chunk::SIZE_Y - 1) { updateChunk({coord.x, coord.y + 1, coord.z}); }
+    // Воксель в ≤2 клетках от границы влияет на узлы/градиенты соседнего чанка (PADDING = 2).
+    if (localX <= 1) { updateChunk({coord.x - 1, coord.y, coord.z}); }
+    if (localX >= Chunk::SIZE_X - 2) { updateChunk({coord.x + 1, coord.y, coord.z}); }
+    if (localZ <= 1) { updateChunk({coord.x, coord.y, coord.z - 1}); }
+    if (localZ >= Chunk::SIZE_Z - 2) { updateChunk({coord.x, coord.y, coord.z + 1}); }
+    if (localY <= 1) { updateChunk({coord.x, coord.y - 1, coord.z}); }
+    if (localY >= Chunk::SIZE_Y - 2) { updateChunk({coord.x, coord.y + 1, coord.z}); }
+}
+
+void BlocksCreation::applyTerraformBrush(int centerX, int centerY, int centerZ, VoxelType type) {
+    constexpr float BRUSH_RADIUS = 1.6f;
+    constexpr int BRUSH_EXTENT = 2; // ceil(1.6)
+
+    const bool digging = type == VoxelType::NOTHING;
+    std::unordered_set<ChunkCoord, ChunkCoordHash> affected;
+    for (int dy = -BRUSH_EXTENT; dy <= BRUSH_EXTENT; dy++) {
+        for (int dx = -BRUSH_EXTENT; dx <= BRUSH_EXTENT; dx++) {
+            for (int dz = -BRUSH_EXTENT; dz <= BRUSH_EXTENT; dz++) {
+                if (dx * dx + dy * dy + dz * dz > BRUSH_RADIUS * BRUSH_RADIUS) { continue; }
+                const int x = centerX + dx;
+                const int y = centerY + dy;
+                const int z = centerZ + dz;
+                if (!ChunksStorage::isWorldCoordInBounds(x, y, z)) { continue; }
+                const Voxel *voxel = GameContext::s_chunkStorage->getVoxel(x, y, z);
+                if (voxel == nullptr) { continue; }
+                if (digging) {
+                    // Копаем только природный рельеф; постройки кисть не трогает.
+                    if (!TerrainMeshGenerator::isNaturalType(voxel->type)) { continue; }
+                } else {
+                    if (!voxel->isAir()) { continue; } // насыпаем только в воздух
+                }
+                if (!GameContext::s_chunkStorage->setVoxel(x, y, z, type)) { continue; }
+
+                const ChunkCoord coord = ChunksStorage::worldToChunkCoord(x, y, z);
+                const int localX = ChunksStorage::worldToLocalX(x);
+                const int localY = ChunksStorage::worldToLocalY(y);
+                const int localZ = ChunksStorage::worldToLocalZ(z);
+                affected.insert(coord);
+                if (localX <= 1) { affected.insert({coord.x - 1, coord.y, coord.z}); }
+                if (localX >= Chunk::SIZE_X - 2) { affected.insert({coord.x + 1, coord.y, coord.z}); }
+                if (localZ <= 1) { affected.insert({coord.x, coord.y, coord.z - 1}); }
+                if (localZ >= Chunk::SIZE_Z - 2) { affected.insert({coord.x, coord.y, coord.z + 1}); }
+                if (localY <= 1) { affected.insert({coord.x, coord.y - 1, coord.z}); }
+                if (localY >= Chunk::SIZE_Y - 2) { affected.insert({coord.x, coord.y + 1, coord.z}); }
+            }
+        }
+    }
+    for (const ChunkCoord &coord : affected) { updateChunk(coord); }
 }
 
 void BlocksCreation::updateTouchBlockInput(
@@ -214,12 +258,21 @@ void BlocksCreation::update(float deltaTime) {
             int x = v->end.x + v->normal.x;
             int y = v->end.y + v->normal.y;
             int z = v->end.z + v->normal.z;
-            setVoxel(x, y, z, m_selectedBlock);
+            if (TerrainMeshGenerator::isNaturalType(m_selectedBlock)) {
+                // Терраформинг: одиночный воксель почти невидим после сглаживания — насыпаем кистью.
+                applyTerraformBrush(x, y, z, m_selectedBlock);
+            } else {
+                setVoxel(x, y, z, m_selectedBlock);
+            }
         } else if (breakPressed) {
             int x = v->end.x;
             int y = v->end.y;
             int z = v->end.z;
-            setVoxel(x, y, z, VoxelType::NOTHING);
+            if (v->voxel != nullptr && TerrainMeshGenerator::isNaturalType(v->voxel->type)) {
+                applyTerraformBrush(x, y, z, VoxelType::NOTHING); // копаем рельеф вмятиной
+            } else {
+                setVoxel(x, y, z, VoxelType::NOTHING);
+            }
         }
     }
 }

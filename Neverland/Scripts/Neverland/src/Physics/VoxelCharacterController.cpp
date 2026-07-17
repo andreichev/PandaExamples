@@ -2,20 +2,28 @@
 
 #include "Model/ChunksStorage.hpp"
 #include "Model/GameContext.hpp"
+#include "Model/TerrainMeshGenerator.hpp"
 
 #include <algorithm>
 #include <cmath>
 
+// Физика ходит по ВИДИМОЙ геометрии: природный рельеф — изоповерхность того же density-поля,
+// что строит marching cubes (трилинейный семпл узловой плотности, iso 0.5), рукотворные блоки —
+// кубы (swept AABB, их видимая геометрия и есть кубы). Раньше рельеф коллизился кубами вокселей —
+// игрок проваливался там, где сглаженная поверхность не совпадает с воксельными ступенями.
+
 namespace {
 
 constexpr float COLLISION_EPSILON = 0.001f;
+constexpr float FIELD_ISO = 0.5f;
+constexpr float FIELD_SCAN_STEP = 0.25f; // шаг сканирования столбца при поиске поверхности
 
 struct Aabb {
     glm::vec3 min;
     glm::vec3 max;
 };
 
-bool isSolidVoxel(int x, int y, int z) {
+bool isSolidAt(int x, int y, int z) {
     if (!ChunksStorage::isWorldCoordInBounds(x, y, z)) { return true; }
     if (GameContext::s_chunkStorage == nullptr) { return false; }
 
@@ -26,6 +34,119 @@ bool isSolidVoxel(int x, int y, int z) {
         return y <= ChunksStorage::terrainHeight(x, z);
     }
     return voxel->isSolid();
+}
+
+// Рукотворный куб (только они коллизятся как кубы; рельеф — полем).
+bool isConstructedVoxel(int x, int y, int z) {
+    if (!ChunksStorage::isWorldCoordInBounds(x, y, z)) { return false; }
+    if (GameContext::s_chunkStorage == nullptr) { return false; }
+    const Voxel *voxel = GameContext::s_chunkStorage->getVoxel(x, y, z);
+    if (voxel == nullptr) { return false; }
+    return voxel->isSolid() && !TerrainMeshGenerator::isNaturalType(voxel->type);
+}
+
+// Плотность узла решётки (угол воксела) — как NodeField в TerrainMeshGenerator: доля твёрдых
+// среди 8 смежных вокселей. Рукотворные участвуют: поверхность земли прилегает к постройкам.
+float nodeDensity(int nx, int ny, int nz) {
+    int solid = 0;
+    for (int dy = -1; dy <= 0; dy++) {
+        for (int dx = -1; dx <= 0; dx++) {
+            for (int dz = -1; dz <= 0; dz++) {
+                if (isSolidAt(nx + dx, ny + dy, nz + dz)) { solid++; }
+            }
+        }
+    }
+    return solid / 8.f;
+}
+
+// Трилинейный семпл density в мировой точке — гладкая версия поверхности marching cubes.
+float sampleDensity(const glm::vec3 &point) {
+    const int baseX = static_cast<int>(std::floor(point.x));
+    const int baseY = static_cast<int>(std::floor(point.y));
+    const int baseZ = static_cast<int>(std::floor(point.z));
+    const float fx = point.x - baseX;
+    const float fy = point.y - baseY;
+    const float fz = point.z - baseZ;
+
+    float corners[2][2][2];
+    for (int dx = 0; dx <= 1; dx++) {
+        for (int dy = 0; dy <= 1; dy++) {
+            for (int dz = 0; dz <= 1; dz++) {
+                corners[dx][dy][dz] = nodeDensity(baseX + dx, baseY + dy, baseZ + dz);
+            }
+        }
+    }
+    const float x00 = corners[0][0][0] + (corners[1][0][0] - corners[0][0][0]) * fx;
+    const float x01 = corners[0][0][1] + (corners[1][0][1] - corners[0][0][1]) * fx;
+    const float x10 = corners[0][1][0] + (corners[1][1][0] - corners[0][1][0]) * fx;
+    const float x11 = corners[0][1][1] + (corners[1][1][1] - corners[0][1][1]) * fx;
+    const float y0 = x00 + (x10 - x00) * fy;
+    const float y1 = x01 + (x11 - x01) * fy;
+    return y0 + (y1 - y0) * fz;
+}
+
+bool fieldSolidAt(const glm::vec3 &point) {
+    return sampleDensity(point) > FIELD_ISO;
+}
+
+// Высота поверхности поля в столбе (x, z): наибольший переход воздух→земля в [yBottom, yTop].
+// Возвращает true и y поверхности, если найден.
+bool fieldSurfaceY(float x, float z, float yTop, float yBottom, float &outSurfaceY) {
+    if (yTop <= yBottom) { return false; }
+    float previousY = yTop;
+    float previousDensity = sampleDensity(glm::vec3(x, yTop, z));
+    if (previousDensity > FIELD_ISO) {
+        return false; // старт уже в земле — это стена/внутренность, не опора
+    }
+    for (float y = yTop - FIELD_SCAN_STEP;; y -= FIELD_SCAN_STEP) {
+        const float clampedY = std::max(y, yBottom);
+        const float density = sampleDensity(glm::vec3(x, clampedY, z));
+        if (density > FIELD_ISO) {
+            // Переход между previousY (воздух) и clampedY (земля) — уточняем бисекцией.
+            float airY = previousY;
+            float groundY = clampedY;
+            for (int i = 0; i < 6; i++) {
+                const float midY = (airY + groundY) * 0.5f;
+                if (sampleDensity(glm::vec3(x, midY, z)) > FIELD_ISO) { groundY = midY; }
+                else {
+                    airY = midY;
+                }
+            }
+            outSurfaceY = (airY + groundY) * 0.5f;
+            return true;
+        }
+        previousY = clampedY;
+        previousDensity = density;
+        if (clampedY <= yBottom) { break; }
+    }
+    return false;
+}
+
+// Пол поля под основанием капсулы: max по центру и 4 точкам радиуса.
+bool fieldFloorUnder(
+    const glm::vec3 &eyePosition, const VoxelCharacterConfig &config, float yTop, float yBottom, float &outFloorY
+) {
+    const float feetX = eyePosition.x;
+    const float feetZ = eyePosition.z;
+    const float supportRadius = config.radius * 0.7f;
+    const float offsets[5][2] = {
+        {0.f, 0.f},
+        {supportRadius, 0.f},
+        {-supportRadius, 0.f},
+        {0.f, supportRadius},
+        {0.f, -supportRadius},
+    };
+    bool found = false;
+    float best = 0.f;
+    for (const auto &offset : offsets) {
+        float surfaceY;
+        if (fieldSurfaceY(feetX + offset[0], feetZ + offset[1], yTop, yBottom, surfaceY)) {
+            if (!found || surfaceY > best) { best = surfaceY; }
+            found = true;
+        }
+    }
+    if (found) { outFloorY = best; }
+    return found;
 }
 
 Aabb makeBodyAabb(const glm::vec3 &eyePosition, const VoxelCharacterConfig &config) {
@@ -44,7 +165,7 @@ Aabb makeBodyAabb(const glm::vec3 &eyePosition, const VoxelCharacterConfig &conf
 }
 
 template <typename Callback>
-bool forEachSolidVoxel(const Aabb &aabb, Callback callback) {
+bool forEachConstructedVoxel(const Aabb &aabb, Callback callback) {
     const int minX = static_cast<int>(std::floor(aabb.min.x + COLLISION_EPSILON));
     const int minY = static_cast<int>(std::floor(aabb.min.y + COLLISION_EPSILON));
     const int minZ = static_cast<int>(std::floor(aabb.min.z + COLLISION_EPSILON));
@@ -56,7 +177,7 @@ bool forEachSolidVoxel(const Aabb &aabb, Callback callback) {
     for (int x = minX; x <= maxX; x++) {
         for (int y = minY; y <= maxY; y++) {
             for (int z = minZ; z <= maxZ; z++) {
-                if (!isSolidVoxel(x, y, z)) { continue; }
+                if (!isConstructedVoxel(x, y, z)) { continue; }
                 found = true;
                 callback(x, y, z);
             }
@@ -100,6 +221,7 @@ void VoxelCharacterController::move(
 
     bool jumpPending = input.jumpPressed;
     for (int step = 0; step < substeps; step++) {
+        pushOutOfField(eyePosition, state, config);
         const glm::vec3 horizontalTranslation =
             input.horizontalDirection * input.horizontalSpeed * substepDeltaTime;
         moveHorizontalWithStep(eyePosition, state, config, horizontalTranslation);
@@ -120,28 +242,7 @@ void VoxelCharacterController::move(
         state.verticalVelocity -= config.gravity * substepDeltaTime;
         state.verticalVelocity = std::max(state.verticalVelocity, -config.maxFallSpeed);
 
-        bool hitGround = false;
-        bool hitCeiling = false;
-        const bool verticalHit = moveAxis(
-            eyePosition,
-            config,
-            1,
-            state.verticalVelocity * substepDeltaTime,
-            hitGround,
-            hitCeiling
-        );
-        if (verticalHit) {
-            if (hitGround) {
-                state.grounded = true;
-                state.coyoteTimer = std::max(config.coyoteTime, 0.0f);
-            }
-            if ((hitGround && state.verticalVelocity < 0.0f) ||
-                (hitCeiling && state.verticalVelocity > 0.0f)) {
-                state.verticalVelocity = 0.0f;
-            }
-        } else {
-            state.grounded = false;
-        }
+        moveVertical(eyePosition, state, config, state.verticalVelocity * substepDeltaTime);
 
         if (!state.grounded && state.verticalVelocity <= 0.0f &&
             snapToGround(eyePosition, config, config.groundSnapDistance)) {
@@ -150,6 +251,78 @@ void VoxelCharacterController::move(
             state.verticalVelocity = 0.0f;
         }
     }
+}
+
+// Ноги оказались внутри поля (насыпали кистью под собой) — мягко поднять на поверхность.
+void VoxelCharacterController::pushOutOfField(
+    glm::vec3 &eyePosition, VoxelCharacterState &state, const VoxelCharacterConfig &config
+) {
+    const float feetY = eyePosition.y - config.eyeHeight;
+    if (!fieldSolidAt(glm::vec3(eyePosition.x, feetY + 0.05f, eyePosition.z))) { return; }
+
+    constexpr float MAX_PUSH_UP = 3.f;
+    for (float y = feetY + FIELD_SCAN_STEP; y <= feetY + MAX_PUSH_UP; y += FIELD_SCAN_STEP) {
+        if (sampleDensity(glm::vec3(eyePosition.x, y, eyePosition.z)) <= FIELD_ISO) {
+            // Первый воздух над ногами: уточняем границу бисекцией и встаём на неё.
+            float groundY = y - FIELD_SCAN_STEP;
+            float airY = y;
+            for (int i = 0; i < 6; i++) {
+                const float midY = (airY + groundY) * 0.5f;
+                if (sampleDensity(glm::vec3(eyePosition.x, midY, eyePosition.z)) > FIELD_ISO) {
+                    groundY = midY;
+                } else {
+                    airY = midY;
+                }
+            }
+            eyePosition.y = (airY + groundY) * 0.5f + config.eyeHeight;
+            state.grounded = true;
+            if (state.verticalVelocity < 0.0f) { state.verticalVelocity = 0.0f; }
+            return;
+        }
+    }
+}
+
+// Вертикаль: кубовый свип + пол/потолок density-поля.
+void VoxelCharacterController::moveVertical(
+    glm::vec3 &eyePosition,
+    VoxelCharacterState &state,
+    const VoxelCharacterConfig &config,
+    float translation
+) {
+    const float feetBefore = eyePosition.y - config.eyeHeight;
+
+    bool hitGround = false;
+    bool hitCeiling = false;
+    moveAxis(eyePosition, config, 1, translation, hitGround, hitCeiling);
+
+    if (translation <= 0.0f) {
+        // Падение/опора: пол поля между прежним положением ног и новым.
+        const float feetAfter = eyePosition.y - config.eyeHeight;
+        float fieldFloor;
+        if (fieldFloorUnder(eyePosition, config, feetBefore + 0.5f, feetAfter - 0.05f, fieldFloor) &&
+            fieldFloor > feetAfter) {
+            eyePosition.y = fieldFloor + config.eyeHeight;
+            hitGround = true;
+        }
+    } else {
+        // Подъём: потолок поля у макушки (свод пещеры/навес рельефа).
+        const glm::vec3 head(
+            eyePosition.x, eyePosition.y - config.eyeHeight + config.height, eyePosition.z
+        );
+        if (fieldSolidAt(head)) {
+            eyePosition.y = feetBefore + config.eyeHeight; // откат подъёма
+            hitCeiling = true;
+        }
+    }
+
+    if (hitGround) {
+        state.grounded = true;
+        state.coyoteTimer = std::max(config.coyoteTime, 0.0f);
+        if (state.verticalVelocity < 0.0f) { state.verticalVelocity = 0.0f; }
+    } else {
+        state.grounded = false;
+    }
+    if (hitCeiling && state.verticalVelocity > 0.0f) { state.verticalVelocity = 0.0f; }
 }
 
 bool VoxelCharacterController::moveHorizontalWithStep(
@@ -166,8 +339,28 @@ bool VoxelCharacterController::moveHorizontalWithStep(
     bool collided = false;
     collided |= moveAxis(eyePosition, config, 0, translation.x, hitNegative, hitPositive);
     collided |= moveAxis(eyePosition, config, 2, translation.z, hitNegative, hitPositive);
+
+    // Гард поля: слишком крутой подъём поверхности = стена — откат горизонтали.
+    // Проходимый подъём за подшаг: stepHeight на земле, небольшой зазор в воздухе.
+    const float allowedRise = state.grounded ? config.stepHeight : 0.25f;
+    const float feetY = eyePosition.y - config.eyeHeight;
+    const glm::vec3 riseProbe(eyePosition.x, feetY + allowedRise, eyePosition.z);
+    if (fieldSolidAt(riseProbe)) {
+        eyePosition.x = originalPosition.x;
+        eyePosition.z = originalPosition.z;
+        return true;
+    }
+    // Плавный подъём по склону: ноги ниже поверхности поля → встать на неё (в пределах allowedRise).
+    float fieldFloor;
+    if (fieldFloorUnder(eyePosition, config, feetY + allowedRise, feetY, fieldFloor) &&
+        fieldFloor > feetY + COLLISION_EPSILON) {
+        eyePosition.y = fieldFloor + config.eyeHeight;
+        if (state.grounded) { state.verticalVelocity = 0.0f; }
+    }
+
     if (!collided || !state.grounded) { return collided; }
 
+    // Step-механика рукотворных кубов (подъём на блок высотой до stepHeight).
     glm::vec3 steppedPosition = originalPosition;
     bool hitGround = false;
     bool hitCeiling = false;
@@ -204,47 +397,48 @@ bool VoxelCharacterController::moveAxis(
     if (std::abs(translation) < 0.000001f) { return false; }
 
     eyePosition[axis] += translation;
-    const bool collided = forEachSolidVoxel(makeBodyAabb(eyePosition, config), [&](int x, int y, int z) {
-        if (axis == 0) {
-            if (translation > 0.0f) {
-                eyePosition.x =
-                    std::min(eyePosition.x, static_cast<float>(x) - config.radius - COLLISION_EPSILON);
-                hitPositive = true;
+    const bool collided =
+        forEachConstructedVoxel(makeBodyAabb(eyePosition, config), [&](int x, int y, int z) {
+            if (axis == 0) {
+                if (translation > 0.0f) {
+                    eyePosition.x =
+                        std::min(eyePosition.x, static_cast<float>(x) - config.radius - COLLISION_EPSILON);
+                    hitPositive = true;
+                } else {
+                    eyePosition.x = std::max(
+                        eyePosition.x,
+                        static_cast<float>(x + 1) + config.radius + COLLISION_EPSILON
+                    );
+                    hitNegative = true;
+                }
+            } else if (axis == 1) {
+                if (translation > 0.0f) {
+                    eyePosition.y = std::min(
+                        eyePosition.y,
+                        static_cast<float>(y) - config.height + config.eyeHeight - COLLISION_EPSILON
+                    );
+                    hitPositive = true;
+                } else {
+                    eyePosition.y = std::max(
+                        eyePosition.y,
+                        static_cast<float>(y + 1) + config.eyeHeight + COLLISION_EPSILON
+                    );
+                    hitNegative = true;
+                }
             } else {
-                eyePosition.x = std::max(
-                    eyePosition.x,
-                    static_cast<float>(x + 1) + config.radius + COLLISION_EPSILON
-                );
-                hitNegative = true;
+                if (translation > 0.0f) {
+                    eyePosition.z =
+                        std::min(eyePosition.z, static_cast<float>(z) - config.radius - COLLISION_EPSILON);
+                    hitPositive = true;
+                } else {
+                    eyePosition.z = std::max(
+                        eyePosition.z,
+                        static_cast<float>(z + 1) + config.radius + COLLISION_EPSILON
+                    );
+                    hitNegative = true;
+                }
             }
-        } else if (axis == 1) {
-            if (translation > 0.0f) {
-                eyePosition.y = std::min(
-                    eyePosition.y,
-                    static_cast<float>(y) - config.height + config.eyeHeight - COLLISION_EPSILON
-                );
-                hitPositive = true;
-            } else {
-                eyePosition.y = std::max(
-                    eyePosition.y,
-                    static_cast<float>(y + 1) + config.eyeHeight + COLLISION_EPSILON
-                );
-                hitNegative = true;
-            }
-        } else {
-            if (translation > 0.0f) {
-                eyePosition.z =
-                    std::min(eyePosition.z, static_cast<float>(z) - config.radius - COLLISION_EPSILON);
-                hitPositive = true;
-            } else {
-                eyePosition.z = std::max(
-                    eyePosition.z,
-                    static_cast<float>(z + 1) + config.radius + COLLISION_EPSILON
-                );
-                hitNegative = true;
-            }
-        }
-    });
+        });
     return collided;
 }
 
@@ -252,6 +446,13 @@ bool VoxelCharacterController::snapToGround(
     glm::vec3 &eyePosition, const VoxelCharacterConfig &config, float maxDistance
 ) {
     if (maxDistance <= 0.0f) { return false; }
+
+    const float feetY = eyePosition.y - config.eyeHeight;
+    float fieldFloor;
+    if (fieldFloorUnder(eyePosition, config, feetY + COLLISION_EPSILON, feetY - maxDistance, fieldFloor)) {
+        eyePosition.y = fieldFloor + config.eyeHeight;
+        return true;
+    }
 
     const glm::vec3 originalPosition = eyePosition;
     bool hitGround = false;

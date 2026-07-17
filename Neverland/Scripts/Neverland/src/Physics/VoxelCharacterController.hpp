@@ -47,6 +47,15 @@ private:
         const VoxelCharacterConfig &config,
         const glm::vec3 &translation
     );
+    static void pushOutOfField(
+        glm::vec3 &eyePosition, VoxelCharacterState &state, const VoxelCharacterConfig &config
+    );
+    static void moveVertical(
+        glm::vec3 &eyePosition,
+        VoxelCharacterState &state,
+        const VoxelCharacterConfig &config,
+        float translation
+    );
     static bool moveAxis(
         glm::vec3 &eyePosition,
         const VoxelCharacterConfig &config,

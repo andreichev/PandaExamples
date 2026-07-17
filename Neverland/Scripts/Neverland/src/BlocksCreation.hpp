@@ -25,6 +25,9 @@ public:
 private:
     Vec3 getPosition();
     void setVoxel(int x, int y, int z, VoxelType type);
+    // Терраформ-кисть: сфера вокруг точки. place — заполняет воздух природным типом,
+    // копание (type == NOTHING) — убирает только природные воксели (кубы ломаются одиночно).
+    void applyTerraformBrush(int centerX, int centerY, int centerZ, VoxelType type);
     void updateChunk(const ChunkCoord &coord);
     void updateSelectedBlock();
     void updateTouchBlockInput(
