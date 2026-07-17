@@ -1,4 +1,5 @@
 #include "NeverlandHUD.hpp"
+#include "Model/TerrainMeshGenerator.hpp"
 #include "Model/VoxelTextureMapper.hpp"
 #include "NeverlandTouchControls.hpp"
 
@@ -60,15 +61,19 @@ Rgba multiplyColor(Rgba color, uint32_t tintHex) {
     return color;
 }
 
-Rgba sampleTile(const TexturePixels &atlas, uint8_t tileIndex, uint32_t x, uint32_t y, uint32_t tintHex) {
-    constexpr uint32_t TILE_COUNT = 16;
-    const uint32_t tileSize = atlas.width / TILE_COUNT;
-    if (tileSize == 0 || atlas.height < tileSize) { return {}; }
+Rgba sampleTile(
+    const TexturePixels &atlas, int atlasGrid, uint8_t tileIndex, uint32_t x, uint32_t y, uint32_t tintHex
+) {
+    // Тайл может быть нецелым в пикселях (1254 / 7) — считаем координаты во float.
+    const float tileSize = static_cast<float>(atlas.width) / atlasGrid;
+    if (tileSize < 1.f || atlas.height < static_cast<uint32_t>(tileSize)) { return {}; }
 
-    const uint32_t tileX = static_cast<uint32_t>(tileIndex % TILE_COUNT) * tileSize;
-    const uint32_t tileY = static_cast<uint32_t>(tileIndex / TILE_COUNT) * tileSize;
-    const uint32_t sourceX = std::min(tileX + x * tileSize / PREVIEW_SIZE, atlas.width - 1);
-    const uint32_t sourceY = std::min(tileY + y * tileSize / PREVIEW_SIZE, atlas.height - 1);
+    const float tileX = static_cast<float>(tileIndex % atlasGrid) * tileSize;
+    const float tileY = static_cast<float>(tileIndex / atlasGrid) * tileSize;
+    const uint32_t sourceX =
+        std::min(static_cast<uint32_t>(tileX + x * tileSize / PREVIEW_SIZE), atlas.width - 1);
+    const uint32_t sourceY =
+        std::min(static_cast<uint32_t>(tileY + y * tileSize / PREVIEW_SIZE), atlas.height - 1);
     const size_t index = (static_cast<size_t>(sourceY) * atlas.width + sourceX) * 4;
     if (index + 3 >= atlas.pixels.size()) { return {}; }
 
@@ -87,7 +92,7 @@ PreviewTile getPreviewTile(VoxelType type, const VoxelTextureData &texture) {
     return {texture.sideTileIndex, texture.sideColor};
 }
 
-PandaUI::TextureHandle makeTexturePreview(const TexturePixels &atlas, VoxelType type) {
+PandaUI::TextureHandle makeTexturePreview(const TexturePixels &atlas, int atlasGrid, VoxelType type) {
     Voxel voxel(type);
     const VoxelTextureData &texture = VoxelTextureMapper::getTextureData(&voxel);
     const PreviewTile previewTile = getPreviewTile(type, texture);
@@ -95,7 +100,7 @@ PandaUI::TextureHandle makeTexturePreview(const TexturePixels &atlas, VoxelType 
 
     for (uint32_t y = 0; y < PREVIEW_SIZE; ++y) {
         for (uint32_t x = 0; x < PREVIEW_SIZE; ++x) {
-            const Rgba color = sampleTile(atlas, previewTile.index, x, y, previewTile.tint);
+            const Rgba color = sampleTile(atlas, atlasGrid, previewTile.index, x, y, previewTile.tint);
             const size_t index = (static_cast<size_t>(y) * PREVIEW_SIZE + x) * 4;
             pixels[index] = color.r;
             pixels[index + 1] = color.g;
@@ -488,19 +493,28 @@ std::shared_ptr<PandaUI::Panel> NeverlandHUD::makePauseMenu() {
 void NeverlandHUD::loadBlockPreviewTextures() {
     destroyBlockPreviewTextures();
 
-    const Bamboo::TextureAPI::TexturePixelsRGBA8 texture = Bamboo::TextureAPI::readPixelsRGBA8(blocksTileTexture);
-    if (!texture) {
-        LOG_ERROR("NeverlandHUD: failed to read block preview texture asset %u", blocksTileTexture.id);
-        return;
-    }
-
-    TexturePixels atlas;
-    atlas.width = texture.width;
-    atlas.height = texture.height;
-    atlas.pixels = texture.pixels;
+    // Два атласа: природные превью — из ground (6×6), рукотворные — из materials (7×7).
+    auto readAtlas = [](TextureHandle handle, TexturePixels &out) {
+        const Bamboo::TextureAPI::TexturePixelsRGBA8 texture = Bamboo::TextureAPI::readPixelsRGBA8(handle);
+        if (!texture) {
+            LOG_ERROR("NeverlandHUD: failed to read preview texture asset %u", handle.id);
+            return false;
+        }
+        out.width = texture.width;
+        out.height = texture.height;
+        out.pixels = texture.pixels;
+        return true;
+    };
+    TexturePixels blocksAtlas, groundAtlas;
+    const bool hasBlocks = readAtlas(blocksTileTexture, blocksAtlas);
+    const bool hasGround = readAtlas(groundTileTexture, groundAtlas);
 
     for (size_t i = 0; i < BLOCKS.size(); ++i) {
-        m_previewTextures[i] = makeTexturePreview(atlas, BLOCKS[i].type);
+        if (TerrainMeshGenerator::isNaturalType(BLOCKS[i].type)) {
+            if (hasGround) { m_previewTextures[i] = makeTexturePreview(groundAtlas, 6, BLOCKS[i].type); }
+        } else if (hasBlocks) {
+            m_previewTextures[i] = makeTexturePreview(blocksAtlas, 7, BLOCKS[i].type);
+        }
     }
 }
 

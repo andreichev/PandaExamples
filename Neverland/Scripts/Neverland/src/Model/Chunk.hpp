@@ -48,9 +48,15 @@ struct ChunkData {
     static int index(int x, int y, int z);
 };
 
-struct ChunkView {
+// Пара сущность+меш одного слоя чанка (terrain / blocks); создаётся лениво при непустом меше.
+struct ChunkLayerView {
     EntityHandle entity = 0;
     MeshHandle mesh = 0;
+};
+
+struct ChunkView {
+    ChunkLayerView terrain; // гладкий рельеф (материал terrain)
+    ChunkLayerView blocks;  // рукотворные кубы (материал blocks)
 };
 
 class Chunk {
@@ -66,12 +72,12 @@ public:
     Chunk(const Chunk &) = delete;
     Chunk &operator=(const Chunk &) = delete;
 
-    MeshHandle getMesh() const;
-    EntityHandle getEntity() const;
     const ChunkCoord &getCoord() const;
     void setCoord(const ChunkCoord &coord);
     uint32_t getVersion() const;
     bool hasView() const;
+    // Назначить материалы слоям (после загрузки меша или смены материалов).
+    void applyMaterials(MaterialHandle terrainMaterial, MaterialHandle blocksMaterial);
     std::size_t getVertexCount() const;
     std::size_t getIndexCount() const;
     bool needsRemesh() const;
@@ -79,7 +85,7 @@ public:
     bool isMeshBuildQueued() const;
     void setMeshBuildQueued(bool queued);
     void clearNeedsRemesh();
-    void updateMesh(const MeshData &meshData);
+    void updateMeshes(const MeshData &terrainMesh, const MeshData &blocksMesh);
     void clearMesh();
 
     bool set(int x, int y, int z, VoxelType type);
@@ -91,7 +97,6 @@ public:
     const ChunkView &view() const;
 
 private:
-    void ensureView();
     void destroyView();
 
     ChunkData m_data;

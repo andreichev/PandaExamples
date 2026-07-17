@@ -70,6 +70,12 @@
                                 "fieldId": 2839420306,
                                 "type": 0,
                                 "value": 0
+                            },
+                            {
+                                "name": "terrainMaterial",
+                                "fieldId": 3276713093,
+                                "type": 4,
+                                "value": 917000202
                             }
                         ]
                     }
@@ -239,7 +245,13 @@
                                 "name": "blocksTileTexture",
                                 "fieldId": 4101554634,
                                 "type": 3,
-                                "value": 793448300
+                                "value": 1842935031
+                            },
+                            {
+                                "name": "groundTileTexture",
+                                "fieldId": 3893328361,
+                                "type": 3,
+                                "value": 917000201
                             }
                         ]
                     }
@@ -291,9 +303,9 @@
             },
             "transformComponent": {
                 "position": {
-                    "x": 2.1094456315040588e-7,
+                    "x": 2.1094456315040588e-07,
                     "y": 1.1215732097625732,
-                    "z": 0.0000010887160897254944
+                    "z": 1.0887160897254944e-06
                 },
                 "rotation": {
                     "x": -0.03186526522040367,

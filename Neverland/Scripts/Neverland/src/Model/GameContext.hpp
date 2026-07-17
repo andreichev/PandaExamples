@@ -13,7 +13,8 @@ public:
     // Chunk mesh jobs still in flight (touched only on the main thread).
     static int s_pendingChunkJobs;
     static int s_pendingRegionJobs;
-    static MaterialHandle s_chunkMaterial;
+    static MaterialHandle s_terrainMaterial; // гладкий рельеф (base_ground_1)
+    static MaterialHandle s_blocksMaterial;  // рукотворные блоки/стены (base_materials_1)
 
     static void init();
     static void deinit();

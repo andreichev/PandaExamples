@@ -10,16 +10,17 @@
 
 namespace {
 
-constexpr uint8_t GRASS_SIDE_TILE = 2;
-constexpr uint8_t GRASS_TOP_TILE = 3;
+// Дальний рельеф — единая трава ground-атласа (6×6), как ближний marching cubes.
+constexpr uint8_t GRASS_SIDE_TILE = 0;
+constexpr uint8_t GRASS_TOP_TILE = 0;
 constexpr uint32_t GRASS_SIDE_COLOR = 0xFFFFFFFF;
-constexpr uint32_t GRASS_TOP_COLOR = 0x9EEA6CFF;
+constexpr uint32_t GRASS_TOP_COLOR = 0xFFFFFFFF;
 constexpr float LIGHT_TOP = 0.95f;
 constexpr float LIGHT_FRONT_Z_POSITIVE = 1.0f;
 constexpr float LIGHT_BACK_Z_NEGATIVE = 0.75f;
 constexpr float LIGHT_X_NEGATIVE = 0.9f;
 constexpr float LIGHT_X_POSITIVE = 0.8f;
-constexpr float ATLAS_TILE_SIZE = 1.f / 16.f;
+constexpr float ATLAS_TILE_SIZE = 1.f / 6.f;
 constexpr float ATLAS_UV_INSET = 0.0005f;
 constexpr float ATLAS_UV_SIZE = ATLAS_TILE_SIZE - ATLAS_UV_INSET * 2.f;
 
@@ -77,8 +78,8 @@ int cellHeight(int worldX, int worldZ, int step) {
 }
 
 Vec2 getTileUV(uint8_t tileIndex, float u, float v) {
-    const float baseU = static_cast<float>(tileIndex % 16) * ATLAS_TILE_SIZE + ATLAS_UV_INSET;
-    const float baseV = static_cast<float>(tileIndex / 16) * ATLAS_TILE_SIZE + ATLAS_UV_INSET;
+    const float baseU = static_cast<float>(tileIndex % 6) * ATLAS_TILE_SIZE + ATLAS_UV_INSET;
+    const float baseV = static_cast<float>(tileIndex / 6) * ATLAS_TILE_SIZE + ATLAS_UV_INSET;
     return Vec2(baseU + u * ATLAS_UV_SIZE, baseV + v * ATLAS_UV_SIZE);
 }
 

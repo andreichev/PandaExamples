@@ -16,7 +16,8 @@ public:
     int renderDistance = 5;
     int nearChunkDistance = 8;
     int lodHandoffChunks = 2;
-    MaterialHandle material;
+    MaterialHandle material;        // рукотворные блоки/стены (base_materials_1)
+    MaterialHandle terrainMaterial; // гладкий рельеф (base_ground_1)
 
     PANDA_FIELDS_BEGIN(BaseScript)
     PANDA_FIELD(var)
@@ -24,6 +25,7 @@ public:
     PANDA_FIELD(nearChunkDistance)
     PANDA_FIELD(lodHandoffChunks)
     PANDA_FIELD(material)
+    PANDA_FIELD(terrainMaterial)
     PANDA_FIELDS_END
 
     void start() override;
@@ -62,10 +64,10 @@ private:
     void updateStreaming();
     void logStreamingStats(float deltaTime);
     bool loadNextChunk();
-    bool scheduleNextChunkMesh(MaterialHandle chunkMaterial);
-    bool scheduleChunkMesh(const ChunkCoord &coord, MaterialHandle chunkMaterial);
-    bool scheduleNextRegionMesh(MaterialHandle chunkMaterial);
-    bool scheduleRegionMesh(const RegionMeshBuildRequest &request, MaterialHandle chunkMaterial);
+    bool scheduleNextChunkMesh();
+    bool scheduleChunkMesh(const ChunkCoord &coord);
+    bool scheduleNextRegionMesh();
+    bool scheduleRegionMesh(const RegionMeshBuildRequest &request);
 
     EntityHandle m_streamingTarget;
     ChunkCoord m_streamingCenter;

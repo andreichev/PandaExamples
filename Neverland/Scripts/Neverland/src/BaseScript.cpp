@@ -167,7 +167,8 @@ bool hasNeighborhoodInsideDataDistance(
 
 void BaseScript::start() {
     GameContext::init();
-    GameContext::s_chunkMaterial = material;
+    GameContext::s_blocksMaterial = material;
+    GameContext::s_terrainMaterial = terrainMaterial;
     m_streamingTarget = WorldAPI::findByTag("Camera");
     if (!m_streamingTarget.isValid()) {
         LOG_WARN(
@@ -435,12 +436,12 @@ void BaseScript::updateStreaming() {
     for (int i = 0; i < MESH_SCHEDULE_BUDGET_PER_FRAME &&
                     GameContext::s_pendingChunkJobs < MAX_PENDING_MESH_JOBS;
          i++) {
-        if (!scheduleNextChunkMesh(material)) { break; }
+        if (!scheduleNextChunkMesh()) { break; }
     }
     for (int i = 0; i < REGION_MESH_SCHEDULE_BUDGET_PER_FRAME &&
                     GameContext::s_pendingRegionJobs < MAX_PENDING_REGION_JOBS;
          i++) {
-        if (!scheduleNextRegionMesh(material)) { break; }
+        if (!scheduleNextRegionMesh()) { break; }
     }
 
     cleanupStreamingViews(
@@ -459,7 +460,7 @@ bool BaseScript::loadNextChunk() {
     return false;
 }
 
-bool BaseScript::scheduleNextChunkMesh(MaterialHandle chunkMaterial) {
+bool BaseScript::scheduleNextChunkMesh() {
     int attempts = 0;
     while (!m_meshBuildQueue.empty() && attempts < MESH_SCHEDULE_ATTEMPT_BUDGET_PER_FRAME) {
         attempts++;
@@ -476,13 +477,13 @@ bool BaseScript::scheduleNextChunkMesh(MaterialHandle chunkMaterial) {
             m_meshBuildQueue.emplace_back(coord);
             continue;
         }
-        if (scheduleChunkMesh(coord, chunkMaterial)) { return true; }
+        if (scheduleChunkMesh(coord)) { return true; }
         m_meshBuildQueue.emplace_back(coord);
     }
     return false;
 }
 
-bool BaseScript::scheduleChunkMesh(const ChunkCoord &coord, MaterialHandle chunkMaterial) {
+bool BaseScript::scheduleChunkMesh(const ChunkCoord &coord) {
     Chunk *chunk = GameContext::s_chunkStorage->getChunk(coord);
     if (chunk == nullptr || !chunk->needsRemesh() || chunk->isMeshBuildQueued()) { return false; }
 
@@ -496,21 +497,15 @@ bool BaseScript::scheduleChunkMesh(const ChunkCoord &coord, MaterialHandle chunk
         [snapshot](PandaAsync::Context &) -> ChunkMeshBuildResult {
             return TerrainMeshGenerator::makeOneChunkMesh(snapshot, true);
         },
-        [chunkMaterial](ChunkMeshBuildResult &&result) {
+        [](ChunkMeshBuildResult &&result) {
             Chunk *chunk = GameContext::s_chunkStorage != nullptr
                                ? GameContext::s_chunkStorage->getChunk(result.coord)
                                : nullptr;
             if (chunk != nullptr) {
                 chunk->setMeshBuildQueued(false);
                 if (chunk->getVersion() == result.version) {
-                    chunk->updateMesh(result.meshData);
-                    if (chunk->hasView()) {
-                        MeshComponentAPI::setMaterial(
-                            chunk->getEntity(),
-                            chunkMaterial.id != BAMBOO_INVALID_HANDLE ? chunkMaterial
-                                                                      : GameContext::s_chunkMaterial
-                        );
-                    }
+                    chunk->updateMeshes(result.terrainMesh, result.blocksMesh);
+                    chunk->applyMaterials(GameContext::s_terrainMaterial, GameContext::s_blocksMaterial);
                     chunk->clearNeedsRemesh();
                 }
             }
@@ -520,7 +515,7 @@ bool BaseScript::scheduleChunkMesh(const ChunkCoord &coord, MaterialHandle chunk
     return true;
 }
 
-bool BaseScript::scheduleNextRegionMesh(MaterialHandle chunkMaterial) {
+bool BaseScript::scheduleNextRegionMesh() {
     int attempts = 0;
     while (!m_regionMeshBuildQueue.empty() && attempts < REGION_MESH_SCHEDULE_ATTEMPT_BUDGET_PER_FRAME) {
         attempts++;
@@ -535,13 +530,13 @@ bool BaseScript::scheduleNextRegionMesh(MaterialHandle chunkMaterial) {
             m_regionMeshBuildQueue.emplace_back(request);
             continue;
         }
-        if (scheduleRegionMesh(request, chunkMaterial)) { return true; }
+        if (scheduleRegionMesh(request)) { return true; }
         m_regionMeshBuildQueue.emplace_back(request);
     }
     return false;
 }
 
-bool BaseScript::scheduleRegionMesh(const RegionMeshBuildRequest &request, MaterialHandle chunkMaterial) {
+bool BaseScript::scheduleRegionMesh(const RegionMeshBuildRequest &request) {
     RegionMesh *region = GameContext::s_chunkStorage->getRegion(request.key);
     if (region == nullptr || !region->needsRemesh() || region->isMeshBuildQueued()) { return false; }
     if (region->getRequestId() != request.requestId) { return false; }
@@ -553,7 +548,7 @@ bool BaseScript::scheduleRegionMesh(const RegionMeshBuildRequest &request, Mater
         [request](PandaAsync::Context &) -> RegionMeshBuildResult {
             return RegionMeshGenerator::makeRegionMesh(request);
         },
-        [chunkMaterial](RegionMeshBuildResult &&result) {
+        [](RegionMeshBuildResult &&result) {
             RegionMesh *region = GameContext::s_chunkStorage != nullptr
                                      ? GameContext::s_chunkStorage->getRegion(result.key)
                                      : nullptr;
@@ -562,11 +557,8 @@ bool BaseScript::scheduleRegionMesh(const RegionMeshBuildRequest &request, Mater
                 if (region->getRequestId() == result.requestId) {
                     region->updateMesh(result.meshData);
                     if (region->hasView()) {
-                        MeshComponentAPI::setMaterial(
-                            region->getEntity(),
-                            chunkMaterial.id != BAMBOO_INVALID_HANDLE ? chunkMaterial
-                                                                      : GameContext::s_chunkMaterial
-                        );
+                        // LOD-регионы — дальний рельеф: материал terrain.
+                        MeshComponentAPI::setMaterial(region->getEntity(), GameContext::s_terrainMaterial);
                     }
                     region->clearNeedsRemesh();
                 }

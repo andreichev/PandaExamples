@@ -16,15 +16,23 @@
             }
         },
         {
-            "id": 793448300,
+            "id": 917000201,
             "type": 1,
             "meta": {
                 "minFiltering": 0,
                 "magFiltering": 0,
                 "numMips": 0,
                 "srgb": true,
-                "sourcePath": "Assets/textures/BlocksTile.png",
-                "cookedPath": ".Panda/Textures/Assets/textures/BlocksTile.ptex"
+                "sourcePath": "Assets/textures/base_ground_1.png",
+                "cookedPath": ".Panda/Textures/Assets/textures/base_ground_1.ptex"
+            }
+        },
+        {
+            "id": 917000202,
+            "type": 4,
+            "meta": {
+                "materialPath": "Assets/materials/terrain_ground/terrain_ground.mat",
+                "shader": 1302887341
             }
         },
         {

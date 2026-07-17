@@ -23,7 +23,8 @@ private:
     MeshHandle m_blockMesh;
     MeshHandle m_handMesh;
     VoxelType m_displayedBlock = VoxelType::NOTHING;
-    uint32_t m_appliedMaterialId = BAMBOO_INVALID_HANDLE;
+    uint32_t m_appliedMaterialId = BAMBOO_INVALID_HANDLE;     // материал блока (по типу)
+    uint32_t m_appliedHandMaterialId = BAMBOO_INVALID_HANDLE; // материал руки (terrain)
     float m_time = 0.0f;
     float m_motionBlend = 0.0f;
     float m_sprintBlend = 0.0f;

@@ -19,10 +19,12 @@ public:
     void update(float deltaTime) override;
     void shutdown() override;
 
-    TextureHandle blocksTileTexture;
+    TextureHandle blocksTileTexture; // base_materials_1 (7×7) — рукотворные блоки
+    TextureHandle groundTileTexture; // base_ground_1 (6×6) — природные (терраформинг)
 
     PANDA_FIELDS_BEGIN(NeverlandHUD)
     PANDA_FIELD(blocksTileTexture)
+    PANDA_FIELD(groundTileTexture)
     PANDA_FIELDS_END
 
 private:
@@ -49,17 +51,15 @@ private:
     std::shared_ptr<PandaUI::Button> makeSlot(const BlockSlot &slot, int index);
     void applySlotStyle(size_t index, bool selected);
 
+    // Терраформинг (природные, гладкий рельеф) + стройка (кубы из materials-атласа).
     static constexpr std::array<BlockSlot, NeverlandHUDLayout::HotbarSlotCount> BLOCKS = {
         BlockSlot{VoxelType::GRASS, "Grass"},
         BlockSlot{VoxelType::GROUND, "Dirt"},
-        BlockSlot{VoxelType::TREE, "Wood"},
-        BlockSlot{VoxelType::BOARDS, "Boards"},
         BlockSlot{VoxelType::STONE, "Stone"},
-        BlockSlot{VoxelType::STONE_BRICKS, "Bricks"},
-        BlockSlot{VoxelType::SAND_STONE, "Sandstone"},
         BlockSlot{VoxelType::SAND, "Sand"},
-        BlockSlot{VoxelType::BIRCH_LOG, "Birch"},
-        BlockSlot{VoxelType::TALL_GRASS, "Tall Grass"},
+        BlockSlot{VoxelType::BOARDS, "Plaster"},
+        BlockSlot{VoxelType::STONE_BRICKS, "Bricks"},
+        BlockSlot{VoxelType::SAND_STONE, "Stone Block"},
     };
 
     PandaUI::Window m_window;

@@ -32,23 +32,38 @@ Chunk::~Chunk() {
 
 Chunk::Chunk() = default;
 
-void Chunk::ensureView() {
-    if (hasView()) { return; }
-    m_view.mesh = AssetManagerAPI::createMesh();
-    m_view.entity = WorldAPI::createEntity("Chunk");
-    EntityAPI::addComponent(m_view.entity, ComponentType::MESH_COMPONENT);
-    MeshComponentAPI::setMesh(m_view.entity, m_view.mesh);
+namespace {
+
+void destroyLayer(ChunkLayerView &layer) {
+    if (layer.mesh.isValid()) {
+        AssetManagerAPI::deleteMesh(layer.mesh);
+        layer.mesh = {};
+    }
+    if (layer.entity.isValid()) {
+        WorldAPI::destroyEntity(layer.entity);
+        layer.entity = {};
+    }
 }
 
+void updateLayer(ChunkLayerView &layer, const MeshData &meshData, const char *entityName) {
+    if (meshData.vertices.empty() || meshData.indices.empty()) {
+        destroyLayer(layer);
+        return;
+    }
+    if (!layer.mesh.isValid()) {
+        layer.mesh = AssetManagerAPI::createMesh();
+        layer.entity = WorldAPI::createEntity(entityName);
+        EntityAPI::addComponent(layer.entity, ComponentType::MESH_COMPONENT);
+        MeshComponentAPI::setMesh(layer.entity, layer.mesh);
+    }
+    MeshAPI::update(layer.mesh, meshData);
+}
+
+} // namespace
+
 void Chunk::destroyView() {
-    if (m_view.mesh.isValid()) {
-        AssetManagerAPI::deleteMesh(m_view.mesh);
-        m_view.mesh = {};
-    }
-    if (m_view.entity.isValid()) {
-        WorldAPI::destroyEntity(m_view.entity);
-        m_view.entity = {};
-    }
+    destroyLayer(m_view.terrain);
+    destroyLayer(m_view.blocks);
     m_data.meshUploaded = false;
     m_data.vertexCount = 0;
     m_data.indexCount = 0;
@@ -75,14 +90,6 @@ const Voxel *Chunk::get(int x, int y, int z) const {
     return &m_data.voxels[ChunkData::index(x, y, z)];
 }
 
-MeshHandle Chunk::getMesh() const {
-    return m_view.mesh;
-}
-
-EntityHandle Chunk::getEntity() const {
-    return m_view.entity;
-}
-
 const ChunkCoord &Chunk::getCoord() const {
     return m_data.coord;
 }
@@ -96,7 +103,16 @@ uint32_t Chunk::getVersion() const {
 }
 
 bool Chunk::hasView() const {
-    return m_view.entity.id != BAMBOO_INVALID_HANDLE && m_view.mesh.id != BAMBOO_INVALID_HANDLE;
+    return m_view.terrain.mesh.id != BAMBOO_INVALID_HANDLE || m_view.blocks.mesh.id != BAMBOO_INVALID_HANDLE;
+}
+
+void Chunk::applyMaterials(MaterialHandle terrainMaterial, MaterialHandle blocksMaterial) {
+    if (m_view.terrain.entity.isValid() && terrainMaterial.isValid()) {
+        MeshComponentAPI::setMaterial(m_view.terrain.entity, terrainMaterial);
+    }
+    if (m_view.blocks.entity.isValid() && blocksMaterial.isValid()) {
+        MeshComponentAPI::setMaterial(m_view.blocks.entity, blocksMaterial);
+    }
 }
 
 std::size_t Chunk::getVertexCount() const {
@@ -127,16 +143,12 @@ void Chunk::clearNeedsRemesh() {
     m_data.needsRemesh = false;
 }
 
-void Chunk::updateMesh(const MeshData &meshData) {
-    if (meshData.vertices.empty() || meshData.indices.empty()) {
-        clearMesh();
-        return;
-    }
-    ensureView();
-    MeshAPI::update(m_view.mesh, meshData);
-    m_data.meshUploaded = true;
-    m_data.vertexCount = meshData.vertices.size();
-    m_data.indexCount = meshData.indices.size();
+void Chunk::updateMeshes(const MeshData &terrainMesh, const MeshData &blocksMesh) {
+    updateLayer(m_view.terrain, terrainMesh, "Chunk Terrain");
+    updateLayer(m_view.blocks, blocksMesh, "Chunk Blocks");
+    m_data.meshUploaded = hasView();
+    m_data.vertexCount = terrainMesh.vertices.size() + blocksMesh.vertices.size();
+    m_data.indexCount = terrainMesh.indices.size() + blocksMesh.indices.size();
 }
 
 void Chunk::clearMesh() {

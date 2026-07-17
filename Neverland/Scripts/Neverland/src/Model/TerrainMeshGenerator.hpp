@@ -11,7 +11,8 @@
 struct ChunkMeshBuildResult {
     ChunkCoord coord;
     uint32_t version = 0;
-    MeshData meshData;
+    MeshData terrainMesh; // гладкий рельеф (атлас base_ground_1, 6×6)
+    MeshData blocksMesh;  // рукотворные кубы (атлас base_materials_1, 7×7)
 };
 
 // Генератор меша чанка. Природные воксели (земля/камень/песок) рендерятся гладкой

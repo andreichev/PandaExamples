@@ -84,96 +84,6 @@ float ridged(float noise) {
     return 1.0f - std::abs(noise * 2.0f - 1.0f);
 }
 
-int slopeAround(int x, int z) {
-    const int center = ChunksStorage::terrainHeight(x, z);
-    const int dx = std::abs(ChunksStorage::terrainHeight(x + 1, z) - center);
-    const int dz = std::abs(ChunksStorage::terrainHeight(x, z + 1) - center);
-    return std::max(dx, dz);
-}
-
-bool isFlatEnoughForDecoration(int x, int z) {
-    return slopeAround(x, z) <= 2;
-}
-
-bool shouldPlaceTallGrass(int x, int z, int height) {
-    if (height + 1 >= ChunksStorage::WORLD_MAX_Y) { return false; }
-    if (!isFlatEnoughForDecoration(x, z)) { return false; }
-
-    const float coverage = valueNoise(x + 17'431, z - 4'211, 48);
-    if (coverage < 0.42f) { return false; }
-    return hashNoiseSalted(x, z, 31) > 0.74f;
-}
-
-bool isBirchTreeBase(int x, int z, int height) {
-    if (height + 8 >= ChunksStorage::WORLD_MAX_Y) { return false; }
-    if (!isFlatEnoughForDecoration(x, z)) { return false; }
-
-    constexpr int TREE_CELL_SIZE = 14;
-    const int cellX = localFloorDiv(x, TREE_CELL_SIZE);
-    const int cellZ = localFloorDiv(z, TREE_CELL_SIZE);
-    if (hashNoiseSalted(cellX, cellZ, 43) < 0.57f) { return false; }
-
-    const int jitterX = static_cast<int>(std::round((hashNoiseSalted(cellX, cellZ, 47) - 0.5f) * 6.0f));
-    const int jitterZ = static_cast<int>(std::round((hashNoiseSalted(cellX, cellZ, 53) - 0.5f) * 6.0f));
-    const int anchorX = cellX * TREE_CELL_SIZE + TREE_CELL_SIZE / 2 + jitterX;
-    const int anchorZ = cellZ * TREE_CELL_SIZE + TREE_CELL_SIZE / 2 + jitterZ;
-    return x == anchorX && z == anchorZ;
-}
-
-void setGeneratedVoxel(
-    Chunk &chunk,
-    int originX,
-    int originY,
-    int originZ,
-    int worldX,
-    int worldY,
-    int worldZ,
-    VoxelType type
-) {
-    if (worldX < originX || worldX >= originX + Chunk::SIZE_X) { return; }
-    if (worldY < originY || worldY >= originY + Chunk::SIZE_Y) { return; }
-    if (worldZ < originZ || worldZ >= originZ + Chunk::SIZE_Z) { return; }
-    if (!ChunksStorage::isWorldCoordInBounds(worldX, worldY, worldZ)) { return; }
-
-    const int localX = worldX - originX;
-    const int localY = worldY - originY;
-    const int localZ = worldZ - originZ;
-    chunk.data().voxels[ChunkData::index(localX, localY, localZ)].type = type;
-}
-
-void placeBirchTree(
-    Chunk &chunk, int originX, int originY, int originZ, int baseX, int baseY, int baseZ
-) {
-    const int trunkHeight = 5 + static_cast<int>(hashNoiseSalted(baseX, baseZ, 59) * 3.0f);
-    for (int y = baseY; y < baseY + trunkHeight; y++) {
-        setGeneratedVoxel(chunk, originX, originY, originZ, baseX, y, baseZ, VoxelType::BIRCH_LOG);
-    }
-
-    const int leafCenterY = baseY + trunkHeight;
-    for (int dy = -2; dy <= 2; dy++) {
-        const int radius = dy <= 0 ? 2 : 1;
-        for (int dx = -radius; dx <= radius; dx++) {
-            for (int dz = -radius; dz <= radius; dz++) {
-                if (dx == 0 && dz == 0 && dy <= 0) { continue; }
-                if (std::abs(dx) == radius && std::abs(dz) == radius &&
-                    hashNoiseSalted(baseX + dx, baseZ + dz, leafCenterY + dy) < 0.35f) {
-                    continue;
-                }
-                setGeneratedVoxel(
-                    chunk,
-                    originX,
-                    originY,
-                    originZ,
-                    baseX + dx,
-                    leafCenterY + dy,
-                    baseZ + dz,
-                    VoxelType::BIRCH_LEAVES
-                );
-            }
-        }
-    }
-}
-
 } // namespace
 
 ChunksStorage::ChunksStorage() {
@@ -203,17 +113,6 @@ void ChunksStorage::generateChunkData(Chunk &chunk) {
                     voxelType = VoxelType::GRASS;
                 }
                 chunk.data().voxels[ChunkData::index(localX, localY, localZ)].type = voxelType;
-            }
-
-            if (shouldPlaceTallGrass(worldX, worldZ, height)) {
-                setGeneratedVoxel(
-                    chunk, originX, originY, originZ, worldX, height + 1, worldZ, VoxelType::TALL_GRASS
-                );
-            }
-
-            if (localX > 3 && localX < Chunk::SIZE_X - 4 && localZ > 3 &&
-                localZ < Chunk::SIZE_Z - 4 && isBirchTreeBase(worldX, worldZ, height)) {
-                placeBirchTree(chunk, originX, originY, originZ, worldX, height + 1, worldZ);
             }
         }
     }

@@ -18,13 +18,13 @@
 
 namespace {
 
-constexpr float ATLAS_TILE_COUNT = 16.0f;
-const Vec2 SOLID_WHITE_UV(0.969f, 0.031f);
+// Рука рисуется однотонной: сэмплим центр снежного (почти белого) тайла ground-атласа.
+const Vec2 SOLID_WHITE_UV(0.5f / 6.f, 5.5f / 6.f);
 
-Vec2 getAtlasUV(uint8_t tileIndex) {
-    const float uvSize = 1.0f / ATLAS_TILE_COUNT;
-    float u = static_cast<float>(tileIndex % 16) * uvSize;
-    float v = static_cast<float>(tileIndex / 16) * uvSize;
+Vec2 getAtlasUV(uint8_t tileIndex, int atlasGrid) {
+    const float uvSize = 1.0f / atlasGrid;
+    float u = static_cast<float>(tileIndex % atlasGrid) * uvSize;
+    float v = static_cast<float>(tileIndex / atlasGrid) * uvSize;
     u += 0.0005f;
     v += 0.0005f;
     return {u, v};
@@ -67,9 +67,9 @@ void addQuad(
     const Vec3 &normal,
     const Vec2 &uv,
     Color color,
-    float light
+    float light,
+    float uvSize
 ) {
-    constexpr float uvSize = 1.0f / ATLAS_TILE_COUNT - 0.001f;
     TerrainMeshGenerator::addFaceIndices(static_cast<uint32_t>(vertices.size()), indices);
     vertices.emplace_back(Vertex(p0, Vec2(uv.x, uv.y + uvSize), normal, color, light));
     vertices.emplace_back(Vertex(p1, Vec2(uv.x + uvSize, uv.y + uvSize), normal, color, light));
@@ -100,11 +100,13 @@ void addTexturedCuboid(
     std::vector<uint32_t> &indices,
     const glm::vec3 &min,
     const glm::vec3 &max,
-    const VoxelTextureData &texture
+    const VoxelTextureData &texture,
+    int atlasGrid
 ) {
-    const Vec2 sideUV = getAtlasUV(texture.sideTileIndex);
-    const Vec2 topUV = getAtlasUV(texture.topTileIndex);
-    const Vec2 bottomUV = getAtlasUV(texture.bottomTileIndex);
+    const float uvSize = 1.0f / atlasGrid - 0.001f;
+    const Vec2 sideUV = getAtlasUV(texture.sideTileIndex, atlasGrid);
+    const Vec2 topUV = getAtlasUV(texture.topTileIndex, atlasGrid);
+    const Vec2 bottomUV = getAtlasUV(texture.bottomTileIndex, atlasGrid);
     const Color sideColor = toColor(texture.sideColor);
     const Color topColor = toColor(texture.topColor);
     const Color bottomColor = toColor(texture.bottomColor);
@@ -119,7 +121,8 @@ void addTexturedCuboid(
         Vec3(0.0f, 0.0f, 1.0f),
         sideUV,
         sideColor,
-        1.0f
+        1.0f,
+        uvSize
     );
     addQuad(
         vertices,
@@ -131,7 +134,8 @@ void addTexturedCuboid(
         Vec3(0.0f, 0.0f, -1.0f),
         sideUV,
         sideColor,
-        0.75f
+        0.75f,
+        uvSize
     );
     addQuad(
         vertices,
@@ -143,7 +147,8 @@ void addTexturedCuboid(
         Vec3(0.0f, 1.0f, 0.0f),
         topUV,
         topColor,
-        0.95f
+        0.95f,
+        uvSize
     );
     addQuad(
         vertices,
@@ -155,7 +160,8 @@ void addTexturedCuboid(
         Vec3(0.0f, -1.0f, 0.0f),
         bottomUV,
         bottomColor,
-        0.85f
+        0.85f,
+        uvSize
     );
     addQuad(
         vertices,
@@ -167,7 +173,8 @@ void addTexturedCuboid(
         Vec3(-1.0f, 0.0f, 0.0f),
         sideUV,
         sideColor,
-        0.9f
+        0.9f,
+        uvSize
     );
     addQuad(
         vertices,
@@ -179,7 +186,8 @@ void addTexturedCuboid(
         Vec3(1.0f, 0.0f, 0.0f),
         sideUV,
         sideColor,
-        0.8f
+        0.8f,
+        uvSize
     );
 }
 
@@ -258,51 +266,13 @@ void addSolidCuboid(
     );
 }
 
-void addDoubleSidedPlantQuad(
-    std::vector<Vertex> &vertices,
-    std::vector<uint32_t> &indices,
-    const Vec3 &p0,
-    const Vec3 &p1,
-    const Vec3 &p2,
-    const Vec3 &p3,
-    const Vec2 &uv,
-    Color color
-) {
-    addQuad(vertices, indices, p0, p1, p2, p3, Vec3(0.0f, 1.0f, 0.0f), uv, color, 1.0f);
-    addQuad(vertices, indices, p3, p2, p1, p0, Vec3(0.0f, -1.0f, 0.0f), uv, color, 1.0f);
-}
-
 MeshData makeHeldBlockMesh(VoxelType type) {
     Voxel voxel(type);
     VoxelTextureData &texture = VoxelTextureMapper::getTextureData(&voxel);
     MeshData data;
-    if (type == VoxelType::TALL_GRASS) {
-        const Vec2 uv = getAtlasUV(texture.sideTileIndex);
-        const Color color = toColor(texture.sideColor);
-        addDoubleSidedPlantQuad(
-            data.vertices,
-            data.indices,
-            Vec3(-0.42f, -0.5f, -0.42f),
-            Vec3(0.42f, -0.5f, 0.42f),
-            Vec3(0.42f, 0.45f, 0.42f),
-            Vec3(-0.42f, 0.45f, -0.42f),
-            uv,
-            color
-        );
-        addDoubleSidedPlantQuad(
-            data.vertices,
-            data.indices,
-            Vec3(0.42f, -0.5f, -0.42f),
-            Vec3(-0.42f, -0.5f, 0.42f),
-            Vec3(-0.42f, 0.45f, 0.42f),
-            Vec3(0.42f, 0.45f, -0.42f),
-            uv,
-            color
-        );
-        return data;
-    }
-
-    addTexturedCuboid(data.vertices, data.indices, glm::vec3(-0.5f), glm::vec3(0.5f), texture);
+    // Природные — из ground-атласа (6×6), рукотворные — из materials (7×7).
+    const int atlasGrid = TerrainMeshGenerator::isNaturalType(type) ? 6 : 7;
+    addTexturedCuboid(data.vertices, data.indices, glm::vec3(-0.5f), glm::vec3(0.5f), texture, atlasGrid);
     return data;
 }
 
@@ -340,6 +310,20 @@ void HeldItemView::update(
     if (!m_blockEntity.isValid() || !m_handEntity.isValid()) { return; }
 
     if (m_displayedBlock != selectedBlock) { updateMesh(selectedBlock); }
+
+    // Блок в руке — материал своего атласа (терраформ/стройка), рука — terrain (белый снежный тайл).
+    MaterialHandle blockMaterial = TerrainMeshGenerator::isNaturalType(selectedBlock)
+                                             ? GameContext::s_terrainMaterial
+                                             : GameContext::s_blocksMaterial;
+    if (blockMaterial.isValid() && m_appliedMaterialId != blockMaterial.id) {
+        MeshComponentAPI::setMaterial(m_blockEntity, blockMaterial);
+        m_appliedMaterialId = blockMaterial.id;
+    }
+    if (GameContext::s_terrainMaterial.isValid() &&
+        m_appliedHandMaterialId != GameContext::s_terrainMaterial.id) {
+        MeshComponentAPI::setMaterial(m_handEntity, GameContext::s_terrainMaterial);
+        m_appliedHandMaterialId = GameContext::s_terrainMaterial.id;
+    }
     syncTransform(cameraEntity, moving, sprinting, deltaTime);
 }
 
@@ -362,6 +346,7 @@ void HeldItemView::shutdown() {
     }
     m_displayedBlock = VoxelType::NOTHING;
     m_appliedMaterialId = BAMBOO_INVALID_HANDLE;
+    m_appliedHandMaterialId = BAMBOO_INVALID_HANDLE;
 }
 
 void HeldItemView::ensureView() {
@@ -379,16 +364,6 @@ void HeldItemView::ensureView() {
         MeshComponentAPI::setMesh(m_handEntity, m_handMesh);
     }
 
-    if (GameContext::s_chunkMaterial.isValid() &&
-        m_appliedMaterialId != GameContext::s_chunkMaterial.id) {
-        if (m_blockEntity.isValid()) {
-            MeshComponentAPI::setMaterial(m_blockEntity, GameContext::s_chunkMaterial);
-        }
-        if (m_handEntity.isValid()) {
-            MeshComponentAPI::setMaterial(m_handEntity, GameContext::s_chunkMaterial);
-        }
-        m_appliedMaterialId = GameContext::s_chunkMaterial.id;
-    }
 }
 
 void HeldItemView::updateMesh(VoxelType selectedBlock) {

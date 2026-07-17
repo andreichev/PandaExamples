@@ -8,11 +8,15 @@
 
 #include <cmath>
 
-Vec2 getUV(uint8_t tileIndex) {
-    // Размер одной текстуры на карте uv
-    float uvSize = 1.f / 16.f;
-    float u = tileIndex % 16 * uvSize;
-    float v = tileIndex / 16 * uvSize;
+// Атласы: base_ground_1 — 6×6 (рельеф), base_materials_1 — 7×7 (кубы). Индекс тайла = row * grid + col.
+constexpr int GROUND_ATLAS_GRID = 6;
+constexpr int BLOCKS_ATLAS_GRID = 7;
+constexpr uint8_t GRASS_GROUND_TILE = 0; // единая трава всей поверхности рельефа
+
+Vec2 getUV(uint8_t tileIndex, int atlasGrid) {
+    const float uvSize = 1.f / atlasGrid;
+    float u = tileIndex % atlasGrid * uvSize;
+    float v = tileIndex / atlasGrid * uvSize;
     // Небольшой сдвиг от краев текстуры для того,
     // чтобы при mipmapping не было сливания с соседними текстурами
     u += 0.0005f;
@@ -33,82 +37,12 @@ Color toColor(uint32_t hex) {
     return color;
 }
 
-void addDoubleSidedQuad(
-    std::vector<Vertex> &vertices,
-    std::vector<uint32_t> &indices,
-    const Vec3 &p0,
-    const Vec3 &p1,
-    const Vec3 &p2,
-    const Vec3 &p3,
-    const Vec2 &uv,
-    float uvSize,
-    Color color,
-    float light
-) {
-    const Vec3 normal(0.f, 1.f, 0.f);
-    TerrainMeshGenerator::addFaceIndices(static_cast<uint32_t>(vertices.size()), indices);
-    vertices.emplace_back(Vertex(p0, Vec2(uv.x, uv.y + uvSize), normal, color, light));
-    vertices.emplace_back(Vertex(p1, Vec2(uv.x + uvSize, uv.y + uvSize), normal, color, light));
-    vertices.emplace_back(Vertex(p2, Vec2(uv.x + uvSize, uv.y), normal, color, light));
-    vertices.emplace_back(Vertex(p3, Vec2(uv.x, uv.y), normal, color, light));
-
-    TerrainMeshGenerator::addFaceIndices(static_cast<uint32_t>(vertices.size()), indices);
-    const Vec3 backNormal(0.f, -1.f, 0.f);
-    vertices.emplace_back(Vertex(p3, Vec2(uv.x, uv.y), backNormal, color, light));
-    vertices.emplace_back(Vertex(p2, Vec2(uv.x + uvSize, uv.y), backNormal, color, light));
-    vertices.emplace_back(Vertex(p1, Vec2(uv.x + uvSize, uv.y + uvSize), backNormal, color, light));
-    vertices.emplace_back(Vertex(p0, Vec2(uv.x, uv.y + uvSize), backNormal, color, light));
-}
-
-void addTallGrassMesh(
-    std::vector<Vertex> &vertices,
-    std::vector<uint32_t> &indices,
-    int x,
-    int y,
-    int z,
-    VoxelTextureData &textureData,
-    float uvSize
-) {
-    const Vec2 uv = getUV(textureData.sideTileIndex);
-    const Color color = toColor(textureData.sideColor);
-    const float light = 0.98f;
-    const float minX = static_cast<float>(x) + 0.08f;
-    const float maxX = static_cast<float>(x) + 0.92f;
-    const float minZ = static_cast<float>(z) + 0.08f;
-    const float maxZ = static_cast<float>(z) + 0.92f;
-    const float bottomY = static_cast<float>(y);
-    const float topY = static_cast<float>(y) + 0.92f;
-
-    addDoubleSidedQuad(
-        vertices,
-        indices,
-        Vec3(minX, bottomY, minZ),
-        Vec3(maxX, bottomY, maxZ),
-        Vec3(maxX, topY, maxZ),
-        Vec3(minX, topY, minZ),
-        uv,
-        uvSize,
-        color,
-        light
-    );
-    addDoubleSidedQuad(
-        vertices,
-        indices,
-        Vec3(maxX, bottomY, minZ),
-        Vec3(minX, bottomY, maxZ),
-        Vec3(minX, topY, maxZ),
-        Vec3(maxX, topY, minZ),
-        uv,
-        uvSize,
-        color,
-        light
-    );
-}
-
 ChunkMeshBuildResult
 TerrainMeshGenerator::makeOneChunkMesh(const ChunkMeshSnapshot &snapshot, bool ambientOcclusion) {
-    std::vector<Vertex> vertices;
+    std::vector<Vertex> vertices; // рукотворные кубы (blocksMesh)
     std::vector<uint32_t> indices;
+    std::vector<Vertex> terrainVertices;
+    std::vector<uint32_t> terrainIndices;
     for (int voxelIndexX = 0; voxelIndexX < Chunk::SIZE_X; voxelIndexX++) {
         for (int voxelIndexY = 0; voxelIndexY < Chunk::SIZE_Y; voxelIndexY++) {
             for (int voxelIndexZ = 0; voxelIndexZ < Chunk::SIZE_Z; voxelIndexZ++) {
@@ -124,12 +58,11 @@ TerrainMeshGenerator::makeOneChunkMesh(const ChunkMeshSnapshot &snapshot, bool a
                 if (currentVoxel == nullptr || currentVoxel->isAir()) { continue; }
                 VoxelTextureData &textureData = VoxelTextureMapper::getTextureData(currentVoxel);
 
-                float uvSize = 1.f / 16.f;
+                float uvSize = 1.f / BLOCKS_ATLAS_GRID;
                 uvSize -= 0.001f;
 
                 if (currentVoxel->type == VoxelType::TALL_GRASS) {
-                    addTallGrassMesh(vertices, indices, x, y, z, textureData, uvSize);
-                    continue;
+                    continue; // декор старого атласа удалён
                 }
                 if (TerrainMeshGenerator::isNaturalType(currentVoxel->type)) {
                     continue; // природный рельеф строится гладкой поверхностью (см. addMarchingCubesMesh)
@@ -169,7 +102,7 @@ TerrainMeshGenerator::makeOneChunkMesh(const ChunkMeshSnapshot &snapshot, bool a
                         h = (isAir(x - 1, y - 1, z + 1, snapshot) ? 0.0f : 1.0f) *
                             ambientOcclusionFactor;
                     }
-                    Vec2 uv = getUV(textureData.sideTileIndex);
+                    Vec2 uv = getUV(textureData.sideTileIndex, BLOCKS_ATLAS_GRID);
                     vertices.emplace_back(Vertex(
                         Vec3(x, y, z + 1.0f),
                         Vec2(uv.x, uv.y + uvSize),
@@ -230,7 +163,7 @@ TerrainMeshGenerator::makeOneChunkMesh(const ChunkMeshSnapshot &snapshot, bool a
                         h = (isAir(x + 1, y - 1, z - 1, snapshot) ? 0.0f : 1.0f) *
                             ambientOcclusionFactor;
                     }
-                    Vec2 uv = getUV(textureData.sideTileIndex);
+                    Vec2 uv = getUV(textureData.sideTileIndex, BLOCKS_ATLAS_GRID);
                     vertices.emplace_back(Vertex(
                         Vec3(x, y, z),
                         Vec2(uv.x + uvSize, uv.y + uvSize),
@@ -291,7 +224,7 @@ TerrainMeshGenerator::makeOneChunkMesh(const ChunkMeshSnapshot &snapshot, bool a
                         h = (isAir(x - 1, y + 1, z - 1, snapshot) ? 0.0f : 1.0f) *
                             ambientOcclusionFactor;
                     }
-                    Vec2 uv = getUV(textureData.topTileIndex);
+                    Vec2 uv = getUV(textureData.topTileIndex, BLOCKS_ATLAS_GRID);
                     vertices.emplace_back(Vertex(
                         Vec3(x, y + 1.0f, z),
                         Vec2(uv.x, uv.y + uvSize),
@@ -352,7 +285,7 @@ TerrainMeshGenerator::makeOneChunkMesh(const ChunkMeshSnapshot &snapshot, bool a
                         h = (isAir(x - 1, y - 1, z - 1, snapshot) ? 0.0f : 1.0f) *
                             ambientOcclusionFactor;
                     }
-                    Vec2 uv = getUV(textureData.bottomTileIndex);
+                    Vec2 uv = getUV(textureData.bottomTileIndex, BLOCKS_ATLAS_GRID);
                     vertices.emplace_back(Vertex(
                         Vec3(x, y, z),
                         Vec2(uv.x, uv.y + uvSize),
@@ -413,7 +346,7 @@ TerrainMeshGenerator::makeOneChunkMesh(const ChunkMeshSnapshot &snapshot, bool a
                         h = (isAir(x - 1, y - 1, z - 1, snapshot) ? 0.0f : 1.0f) *
                             ambientOcclusionFactor;
                     }
-                    Vec2 uv = getUV(textureData.sideTileIndex);
+                    Vec2 uv = getUV(textureData.sideTileIndex, BLOCKS_ATLAS_GRID);
                     vertices.emplace_back(Vertex(
                         Vec3(x, y, z),
                         Vec2(uv.x, uv.y + uvSize),
@@ -474,7 +407,7 @@ TerrainMeshGenerator::makeOneChunkMesh(const ChunkMeshSnapshot &snapshot, bool a
                         h = (isAir(x + 1, y - 1, z - 1, snapshot) ? 0.0f : 1.0f) *
                             ambientOcclusionFactor;
                     }
-                    Vec2 uv = getUV(textureData.sideTileIndex);
+                    Vec2 uv = getUV(textureData.sideTileIndex, BLOCKS_ATLAS_GRID);
                     vertices.emplace_back(Vertex(
                         Vec3(x + 1.0f, y, z),
                         Vec2(uv.x + uvSize, uv.y + uvSize),
@@ -507,8 +440,10 @@ TerrainMeshGenerator::makeOneChunkMesh(const ChunkMeshSnapshot &snapshot, bool a
             }
         }
     }
-    addMarchingCubesMesh(snapshot, vertices, indices);
-    return ChunkMeshBuildResult{snapshot.coord, snapshot.version, MeshData(vertices, indices)};
+    addMarchingCubesMesh(snapshot, terrainVertices, terrainIndices);
+    return ChunkMeshBuildResult{
+        snapshot.coord, snapshot.version, MeshData(terrainVertices, terrainIndices), MeshData(vertices, indices)
+    };
 }
 
 bool TerrainMeshGenerator::isNaturalType(VoxelType type) {
@@ -516,8 +451,7 @@ bool TerrainMeshGenerator::isNaturalType(VoxelType type) {
         case VoxelType::GRASS:
         case VoxelType::GROUND:
         case VoxelType::STONE:
-        case VoxelType::SAND:
-        case VoxelType::SAND_STONE: return true;
+        case VoxelType::SAND: return true;
         default: return false;
     }
 }
@@ -601,34 +535,6 @@ float mirrorWave(float value) {
     return f <= 1.f ? f : 2.f - f;
 }
 
-// Доминантный природный тип вокруг воксела ячейки — источник тайла поверхности.
-VoxelType dominantNaturalType(const ChunkMeshSnapshot &snapshot, int x, int y, int z) {
-    int counts[static_cast<int>(VoxelType::COUNT)] = {};
-    for (int dy = -1; dy <= 1; dy++) {
-        for (int dx = -1; dx <= 1; dx++) {
-            for (int dz = -1; dz <= 1; dz++) {
-                const Voxel *voxel = snapshot.getPadded(
-                    x + dx + ChunkMeshSnapshot::PADDING,
-                    y + dy + ChunkMeshSnapshot::PADDING,
-                    z + dz + ChunkMeshSnapshot::PADDING
-                );
-                if (voxel != nullptr && TerrainMeshGenerator::isNaturalType(voxel->type)) {
-                    counts[static_cast<int>(voxel->type)]++;
-                }
-            }
-        }
-    }
-    VoxelType best = VoxelType::GRASS;
-    int bestCount = 0;
-    for (int t = 0; t < static_cast<int>(VoxelType::COUNT); t++) {
-        if (counts[t] > bestCount) {
-            bestCount = counts[t];
-            best = static_cast<VoxelType>(t);
-        }
-    }
-    return best;
-}
-
 } // namespace
 
 void TerrainMeshGenerator::addMarchingCubesMesh(
@@ -641,7 +547,11 @@ void TerrainMeshGenerator::addMarchingCubesMesh(
     const float originY = static_cast<float>(snapshot.coord.y * Chunk::SIZE_Y);
     const float originZ = static_cast<float>(snapshot.coord.z * Chunk::SIZE_Z);
     constexpr float ISO = 0.5f;
-    float uvSize = 1.f / 16.f;
+    // Вся поверхность — единая трава (задача этапа: без грубых границ между материалами;
+    // блендинг нескольких природных материалов — следующий шаг).
+    const Vec2 uvBase = getUV(GRASS_GROUND_TILE, GROUND_ATLAS_GRID);
+    const Color color = toColor(0xFFFFFFFF);
+    float uvSize = 1.f / GROUND_ATLAS_GRID;
     uvSize -= 0.001f;
 
     for (int y = 0; y < Chunk::SIZE_Y; y++) {
@@ -659,10 +569,6 @@ void TerrainMeshGenerator::addMarchingCubesMesh(
                     anyNatural = anyNatural || field.natural(i, j, k);
                 }
                 if (config == 0 || config == 255 || !anyNatural) { continue; }
-
-                const VoxelType surfaceType = dominantNaturalType(snapshot, x, y, z);
-                Voxel surfaceVoxel(surfaceType);
-                VoxelTextureData &textureData = VoxelTextureMapper::getTextureData(&surfaceVoxel);
 
                 const int8_t *tri = MarchingCubes::TRI_TABLE[config];
                 for (int t = 0; tri[t] != -1; t += 3) {
@@ -726,23 +632,12 @@ void TerrainMeshGenerator::addMarchingCubesMesh(
                                               crossProduct.z * crossProduct.z;
                     if (areaSquared < 1e-10f) { continue; }
 
-                    // Тайл и проекция UV — по средней нормали треугольника (top/side/bottom как у кубов).
+                    // Проекция UV — по доминантной оси средней нормали треугольника.
                     const Vec3 avgNormal(
                         (normals[0].x + normals[1].x + normals[2].x) / 3.f,
                         (normals[0].y + normals[1].y + normals[2].y) / 3.f,
                         (normals[0].z + normals[1].z + normals[2].z) / 3.f
                     );
-                    uint8_t tileIndex = textureData.sideTileIndex;
-                    uint32_t tileColor = textureData.sideColor;
-                    if (avgNormal.y > 0.4f) {
-                        tileIndex = textureData.topTileIndex;
-                        tileColor = textureData.topColor;
-                    } else if (avgNormal.y < -0.4f) {
-                        tileIndex = textureData.bottomTileIndex;
-                        tileColor = textureData.bottomColor;
-                    }
-                    const Vec2 uvBase = getUV(tileIndex);
-                    const Color color = toColor(tileColor);
                     const float absX = std::abs(avgNormal.x);
                     const float absY = std::abs(avgNormal.y);
                     const float absZ = std::abs(avgNormal.z);

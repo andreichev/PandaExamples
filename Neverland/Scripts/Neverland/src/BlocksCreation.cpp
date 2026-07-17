@@ -71,14 +71,11 @@ void BlocksCreation::setSelectedBlock(VoxelType type) {
 void BlocksCreation::updateSelectedBlock() {
     if (Input::isKeyJustPressed(Key::KEY_1)) { setSelectedBlock(VoxelType::GRASS); }
     if (Input::isKeyJustPressed(Key::KEY_2)) { setSelectedBlock(VoxelType::GROUND); }
-    if (Input::isKeyJustPressed(Key::KEY_3)) { setSelectedBlock(VoxelType::TREE); }
-    if (Input::isKeyJustPressed(Key::KEY_4)) { setSelectedBlock(VoxelType::BOARDS); }
-    if (Input::isKeyJustPressed(Key::KEY_5)) { setSelectedBlock(VoxelType::STONE); }
+    if (Input::isKeyJustPressed(Key::KEY_3)) { setSelectedBlock(VoxelType::STONE); }
+    if (Input::isKeyJustPressed(Key::KEY_4)) { setSelectedBlock(VoxelType::SAND); }
+    if (Input::isKeyJustPressed(Key::KEY_5)) { setSelectedBlock(VoxelType::BOARDS); }
     if (Input::isKeyJustPressed(Key::KEY_6)) { setSelectedBlock(VoxelType::STONE_BRICKS); }
     if (Input::isKeyJustPressed(Key::KEY_7)) { setSelectedBlock(VoxelType::SAND_STONE); }
-    if (Input::isKeyJustPressed(Key::KEY_8)) { setSelectedBlock(VoxelType::SAND); }
-    if (Input::isKeyJustPressed(Key::KEY_9)) { setSelectedBlock(VoxelType::BIRCH_LOG); }
-    if (Input::isKeyJustPressed(Key::KEY_0)) { setSelectedBlock(VoxelType::TALL_GRASS); }
 }
 
 void BlocksCreation::updateChunk(const ChunkCoord &coord) {
@@ -92,10 +89,8 @@ void BlocksCreation::updateChunk(const ChunkCoord &coord) {
     Chunk *chunk = GameContext::s_chunkStorage->getChunk(result.coord);
     if (chunk == nullptr || chunk->getVersion() != result.version) { return; }
 
-    chunk->updateMesh(result.meshData);
-    if (chunk->hasView() && GameContext::s_chunkMaterial.id != BAMBOO_INVALID_HANDLE) {
-        MeshComponentAPI::setMaterial(chunk->getEntity(), GameContext::s_chunkMaterial);
-    }
+    chunk->updateMeshes(result.terrainMesh, result.blocksMesh);
+    chunk->applyMaterials(GameContext::s_terrainMaterial, GameContext::s_blocksMaterial);
     chunk->clearNeedsRemesh();
 }
 

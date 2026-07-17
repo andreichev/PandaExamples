@@ -20,7 +20,7 @@ constexpr float HotbarPaddingHorizontal = 8.0f;
 constexpr float HotbarPaddingVertical = 7.0f;
 constexpr float HotbarGap = 6.0f;
 constexpr float HotbarBottomMargin = 0.0f;
-constexpr int HotbarSlotCount = 10;
+constexpr int HotbarSlotCount = 7;
 
 constexpr float HotbarWidth =
     HotbarPaddingHorizontal * 2.0f + HotbarSlotWidth * HotbarSlotCount + HotbarGap * (HotbarSlotCount - 1);

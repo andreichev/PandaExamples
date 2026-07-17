@@ -4,7 +4,8 @@ ChunksStorage *GameContext::s_chunkStorage = nullptr;
 PandaAsync::Scheduler *GameContext::s_scheduler = nullptr;
 int GameContext::s_pendingChunkJobs = 0;
 int GameContext::s_pendingRegionJobs = 0;
-MaterialHandle GameContext::s_chunkMaterial = {};
+MaterialHandle GameContext::s_terrainMaterial = {};
+MaterialHandle GameContext::s_blocksMaterial = {};
 
 void GameContext::init() {
     s_chunkStorage = new ChunksStorage();
@@ -26,7 +27,8 @@ void GameContext::deinit() {
     s_chunkStorage = nullptr;
     s_pendingChunkJobs = 0;
     s_pendingRegionJobs = 0;
-    s_chunkMaterial = {};
+    s_terrainMaterial = {};
+    s_blocksMaterial = {};
 }
 
 bool GameContext::isWorldLoaded() {
