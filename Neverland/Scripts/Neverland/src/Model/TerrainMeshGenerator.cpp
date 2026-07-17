@@ -2,8 +2,11 @@
 // Created by Admin on 12.02.2022.
 //
 
-#include "VoxelMeshGenerator.hpp"
+#include "TerrainMeshGenerator.hpp"
+#include "MarchingCubesTables.hpp"
 #include "VoxelTextureMapper.hpp"
+
+#include <cmath>
 
 Vec2 getUV(uint8_t tileIndex) {
     // Размер одной текстуры на карте uv
@@ -43,13 +46,13 @@ void addDoubleSidedQuad(
     float light
 ) {
     const Vec3 normal(0.f, 1.f, 0.f);
-    VoxelMeshGenerator::addFaceIndices(static_cast<uint32_t>(vertices.size()), indices);
+    TerrainMeshGenerator::addFaceIndices(static_cast<uint32_t>(vertices.size()), indices);
     vertices.emplace_back(Vertex(p0, Vec2(uv.x, uv.y + uvSize), normal, color, light));
     vertices.emplace_back(Vertex(p1, Vec2(uv.x + uvSize, uv.y + uvSize), normal, color, light));
     vertices.emplace_back(Vertex(p2, Vec2(uv.x + uvSize, uv.y), normal, color, light));
     vertices.emplace_back(Vertex(p3, Vec2(uv.x, uv.y), normal, color, light));
 
-    VoxelMeshGenerator::addFaceIndices(static_cast<uint32_t>(vertices.size()), indices);
+    TerrainMeshGenerator::addFaceIndices(static_cast<uint32_t>(vertices.size()), indices);
     const Vec3 backNormal(0.f, -1.f, 0.f);
     vertices.emplace_back(Vertex(p3, Vec2(uv.x, uv.y), backNormal, color, light));
     vertices.emplace_back(Vertex(p2, Vec2(uv.x + uvSize, uv.y), backNormal, color, light));
@@ -103,7 +106,7 @@ void addTallGrassMesh(
 }
 
 ChunkMeshBuildResult
-VoxelMeshGenerator::makeOneChunkMesh(const ChunkMeshSnapshot &snapshot, bool ambientOcclusion) {
+TerrainMeshGenerator::makeOneChunkMesh(const ChunkMeshSnapshot &snapshot, bool ambientOcclusion) {
     std::vector<Vertex> vertices;
     std::vector<uint32_t> indices;
     for (int voxelIndexX = 0; voxelIndexX < Chunk::SIZE_X; voxelIndexX++) {
@@ -127,6 +130,9 @@ VoxelMeshGenerator::makeOneChunkMesh(const ChunkMeshSnapshot &snapshot, bool amb
                 if (currentVoxel->type == VoxelType::TALL_GRASS) {
                     addTallGrassMesh(vertices, indices, x, y, z, textureData, uvSize);
                     continue;
+                }
+                if (TerrainMeshGenerator::isNaturalType(currentVoxel->type)) {
+                    continue; // природный рельеф строится гладкой поверхностью (см. addMarchingCubesMesh)
                 }
 
                 float light;
@@ -501,10 +507,272 @@ VoxelMeshGenerator::makeOneChunkMesh(const ChunkMeshSnapshot &snapshot, bool amb
             }
         }
     }
+    addMarchingCubesMesh(snapshot, vertices, indices);
     return ChunkMeshBuildResult{snapshot.coord, snapshot.version, MeshData(vertices, indices)};
 }
 
-void VoxelMeshGenerator::addFaceIndices(uint32_t offset, std::vector<uint32_t> &indices) {
+bool TerrainMeshGenerator::isNaturalType(VoxelType type) {
+    switch (type) {
+        case VoxelType::GRASS:
+        case VoxelType::GROUND:
+        case VoxelType::STONE:
+        case VoxelType::SAND:
+        case VoxelType::SAND_STONE: return true;
+        default: return false;
+    }
+}
+
+namespace {
+
+// Узловое поле marching cubes: узел (i,j,k) — угол воксела (i,j,k). density — доля твёрдых
+// вокселей среди 8 смежных (рукотворные участвуют, чтобы земля прилегала к постройкам без
+// щелей), naturalNear — есть ли среди них природный: ячейки без природного вклада
+// пропускаются, иначе гладкая «кожа» накрывала бы дома из блоков.
+struct NodeField {
+    static constexpr int MARGIN = 1; // узлы за границей чанка — для градиентов на границе
+    static constexpr int NX = Chunk::SIZE_X + 1 + MARGIN * 2;
+    static constexpr int NY = Chunk::SIZE_Y + 1 + MARGIN * 2;
+    static constexpr int NZ = Chunk::SIZE_Z + 1 + MARGIN * 2;
+
+    std::vector<float> density;
+    std::vector<uint8_t> naturalNear;
+
+    static int index(int i, int j, int k) {
+        return ((j + MARGIN) * NX + (i + MARGIN)) * NZ + (k + MARGIN);
+    }
+
+    float d(int i, int j, int k) const {
+        return density[index(i, j, k)];
+    }
+
+    bool natural(int i, int j, int k) const {
+        return naturalNear[index(i, j, k)] != 0;
+    }
+
+    Vec3 gradient(int i, int j, int k) const {
+        return Vec3(
+            (d(i + 1, j, k) - d(i - 1, j, k)) * 0.5f,
+            (d(i, j + 1, k) - d(i, j - 1, k)) * 0.5f,
+            (d(i, j, k + 1) - d(i, j, k - 1)) * 0.5f
+        );
+    }
+
+    void fill(const ChunkMeshSnapshot &snapshot) {
+        density.assign(NX * NY * NZ, 0.f);
+        naturalNear.assign(NX * NY * NZ, 0);
+        for (int j = -MARGIN; j <= Chunk::SIZE_Y + MARGIN; j++) {
+            for (int i = -MARGIN; i <= Chunk::SIZE_X + MARGIN; i++) {
+                for (int k = -MARGIN; k <= Chunk::SIZE_Z + MARGIN; k++) {
+                    int solid = 0;
+                    bool nat = false;
+                    for (int dy = -1; dy <= 0; dy++) {
+                        for (int dx = -1; dx <= 0; dx++) {
+                            for (int dz = -1; dz <= 0; dz++) {
+                                const Voxel *voxel = snapshot.getPadded(
+                                    i + dx + ChunkMeshSnapshot::PADDING,
+                                    j + dy + ChunkMeshSnapshot::PADDING,
+                                    k + dz + ChunkMeshSnapshot::PADDING
+                                );
+                                if (voxel == nullptr) { continue; }
+                                if (voxel->isSolid()) { solid++; }
+                                if (TerrainMeshGenerator::isNaturalType(voxel->type)) { nat = true; }
+                            }
+                        }
+                    }
+                    density[index(i, j, k)] = solid / 8.f;
+                    if (nat) { naturalNear[index(i, j, k)] = 1; }
+                }
+            }
+        }
+    }
+};
+
+void addFaceTriangleIndices(uint32_t offset, std::vector<uint32_t> &indices) {
+    indices.emplace_back(offset);
+    indices.emplace_back(offset + 1);
+    indices.emplace_back(offset + 2);
+}
+
+// Зеркальный повтор координаты внутри тайла атласа: непрерывен (нет wrap-скачков UV на
+// границах метра), не выходит за тайл (нет bleeding в соседние тайлы).
+float mirrorWave(float value) {
+    float f = std::fmod(value, 2.f);
+    if (f < 0.f) { f += 2.f; }
+    return f <= 1.f ? f : 2.f - f;
+}
+
+// Доминантный природный тип вокруг воксела ячейки — источник тайла поверхности.
+VoxelType dominantNaturalType(const ChunkMeshSnapshot &snapshot, int x, int y, int z) {
+    int counts[static_cast<int>(VoxelType::COUNT)] = {};
+    for (int dy = -1; dy <= 1; dy++) {
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dz = -1; dz <= 1; dz++) {
+                const Voxel *voxel = snapshot.getPadded(
+                    x + dx + ChunkMeshSnapshot::PADDING,
+                    y + dy + ChunkMeshSnapshot::PADDING,
+                    z + dz + ChunkMeshSnapshot::PADDING
+                );
+                if (voxel != nullptr && TerrainMeshGenerator::isNaturalType(voxel->type)) {
+                    counts[static_cast<int>(voxel->type)]++;
+                }
+            }
+        }
+    }
+    VoxelType best = VoxelType::GRASS;
+    int bestCount = 0;
+    for (int t = 0; t < static_cast<int>(VoxelType::COUNT); t++) {
+        if (counts[t] > bestCount) {
+            bestCount = counts[t];
+            best = static_cast<VoxelType>(t);
+        }
+    }
+    return best;
+}
+
+} // namespace
+
+void TerrainMeshGenerator::addMarchingCubesMesh(
+    const ChunkMeshSnapshot &snapshot, std::vector<Vertex> &vertices, std::vector<uint32_t> &indices
+) {
+    static thread_local NodeField field;
+    field.fill(snapshot);
+
+    const float originX = static_cast<float>(snapshot.coord.x * Chunk::SIZE_X);
+    const float originY = static_cast<float>(snapshot.coord.y * Chunk::SIZE_Y);
+    const float originZ = static_cast<float>(snapshot.coord.z * Chunk::SIZE_Z);
+    constexpr float ISO = 0.5f;
+    float uvSize = 1.f / 16.f;
+    uvSize -= 0.001f;
+
+    for (int y = 0; y < Chunk::SIZE_Y; y++) {
+        for (int x = 0; x < Chunk::SIZE_X; x++) {
+            for (int z = 0; z < Chunk::SIZE_Z; z++) {
+                float cornerDensity[8];
+                bool anyNatural = false;
+                int config = 0;
+                for (int corner = 0; corner < 8; corner++) {
+                    const int i = x + MarchingCubes::CORNER_OFFSETS[corner][0];
+                    const int j = y + MarchingCubes::CORNER_OFFSETS[corner][1];
+                    const int k = z + MarchingCubes::CORNER_OFFSETS[corner][2];
+                    cornerDensity[corner] = field.d(i, j, k);
+                    if (cornerDensity[corner] > ISO) { config |= 1 << corner; }
+                    anyNatural = anyNatural || field.natural(i, j, k);
+                }
+                if (config == 0 || config == 255 || !anyNatural) { continue; }
+
+                const VoxelType surfaceType = dominantNaturalType(snapshot, x, y, z);
+                Voxel surfaceVoxel(surfaceType);
+                VoxelTextureData &textureData = VoxelTextureMapper::getTextureData(&surfaceVoxel);
+
+                const int8_t *tri = MarchingCubes::TRI_TABLE[config];
+                for (int t = 0; tri[t] != -1; t += 3) {
+                    Vec3 positions[3];
+                    Vec3 normals[3];
+                    for (int vert = 0; vert < 3; vert++) {
+                        const int edge = tri[t + vert];
+                        const int c0 = MarchingCubes::EDGE_CORNERS[edge][0];
+                        const int c1 = MarchingCubes::EDGE_CORNERS[edge][1];
+                        const int i0 = x + MarchingCubes::CORNER_OFFSETS[c0][0];
+                        const int j0 = y + MarchingCubes::CORNER_OFFSETS[c0][1];
+                        const int k0 = z + MarchingCubes::CORNER_OFFSETS[c0][2];
+                        const int i1 = x + MarchingCubes::CORNER_OFFSETS[c1][0];
+                        const int j1 = y + MarchingCubes::CORNER_OFFSETS[c1][1];
+                        const int k1 = z + MarchingCubes::CORNER_OFFSETS[c1][2];
+                        const float d0 = cornerDensity[c0];
+                        const float d1 = cornerDensity[c1];
+                        float lerp = (ISO - d0) / (d1 - d0);
+                        lerp = lerp < 0.f ? 0.f : (lerp > 1.f ? 1.f : lerp);
+                        positions[vert] = Vec3(
+                            originX + i0 + (i1 - i0) * lerp,
+                            originY + j0 + (j1 - j0) * lerp,
+                            originZ + k0 + (k1 - k0) * lerp
+                        );
+                        const Vec3 g0 = field.gradient(i0, j0, k0);
+                        const Vec3 g1 = field.gradient(i1, j1, k1);
+                        Vec3 normal(
+                            -(g0.x + (g1.x - g0.x) * lerp),
+                            -(g0.y + (g1.y - g0.y) * lerp),
+                            -(g0.z + (g1.z - g0.z) * lerp)
+                        );
+                        const float length = std::sqrt(
+                            normal.x * normal.x + normal.y * normal.y + normal.z * normal.z
+                        );
+                        if (length > 0.0001f) {
+                            normal.x /= length;
+                            normal.y /= length;
+                            normal.z /= length;
+                        } else {
+                            normal = Vec3(0.f, 1.f, 0.f);
+                        }
+                        normals[vert] = normal;
+                    }
+
+                    // Вырожденные треугольники (вершины рёбер схлопнулись в общий узел при
+                    // density ровно на изоуровне) — пропускаем.
+                    const Vec3 edge1(
+                        positions[1].x - positions[0].x, positions[1].y - positions[0].y,
+                        positions[1].z - positions[0].z
+                    );
+                    const Vec3 edge2(
+                        positions[2].x - positions[0].x, positions[2].y - positions[0].y,
+                        positions[2].z - positions[0].z
+                    );
+                    const Vec3 crossProduct(
+                        edge1.y * edge2.z - edge1.z * edge2.y, edge1.z * edge2.x - edge1.x * edge2.z,
+                        edge1.x * edge2.y - edge1.y * edge2.x
+                    );
+                    const float areaSquared = crossProduct.x * crossProduct.x +
+                                              crossProduct.y * crossProduct.y +
+                                              crossProduct.z * crossProduct.z;
+                    if (areaSquared < 1e-10f) { continue; }
+
+                    // Тайл и проекция UV — по средней нормали треугольника (top/side/bottom как у кубов).
+                    const Vec3 avgNormal(
+                        (normals[0].x + normals[1].x + normals[2].x) / 3.f,
+                        (normals[0].y + normals[1].y + normals[2].y) / 3.f,
+                        (normals[0].z + normals[1].z + normals[2].z) / 3.f
+                    );
+                    uint8_t tileIndex = textureData.sideTileIndex;
+                    uint32_t tileColor = textureData.sideColor;
+                    if (avgNormal.y > 0.4f) {
+                        tileIndex = textureData.topTileIndex;
+                        tileColor = textureData.topColor;
+                    } else if (avgNormal.y < -0.4f) {
+                        tileIndex = textureData.bottomTileIndex;
+                        tileColor = textureData.bottomColor;
+                    }
+                    const Vec2 uvBase = getUV(tileIndex);
+                    const Color color = toColor(tileColor);
+                    const float absX = std::abs(avgNormal.x);
+                    const float absY = std::abs(avgNormal.y);
+                    const float absZ = std::abs(avgNormal.z);
+
+                    addFaceTriangleIndices(static_cast<uint32_t>(vertices.size()), indices);
+                    for (int vert = 0; vert < 3; vert++) {
+                        const Vec3 &pos = positions[vert];
+                        float u, v;
+                        if (absY >= absX && absY >= absZ) {
+                            u = pos.x;
+                            v = pos.z;
+                        } else if (absX >= absZ) {
+                            u = pos.z;
+                            v = pos.y;
+                        } else {
+                            u = pos.x;
+                            v = pos.y;
+                        }
+                        const Vec2 uv(
+                            uvBase.x + mirrorWave(u) * uvSize, uvBase.y + mirrorWave(v) * uvSize
+                        );
+                        vertices.emplace_back(Vertex(pos, uv, normals[vert], color, 1.f));
+                    }
+                }
+            }
+        }
+    }
+}
+
+void TerrainMeshGenerator::addFaceIndices(uint32_t offset, std::vector<uint32_t> &indices) {
     indices.emplace_back(offset);
     indices.emplace_back(offset + 1);
     indices.emplace_back(offset + 2);
@@ -513,6 +781,6 @@ void VoxelMeshGenerator::addFaceIndices(uint32_t offset, std::vector<uint32_t> &
     indices.emplace_back(offset);
 }
 
-bool VoxelMeshGenerator::isAir(int x, int y, int z, const ChunkMeshSnapshot &snapshot) {
+bool TerrainMeshGenerator::isAir(int x, int y, int z, const ChunkMeshSnapshot &snapshot) {
     return snapshot.isAirWorld(x, y, z);
 }

@@ -48,6 +48,18 @@
             }
         },
         {
+            "id": 1842935031,
+            "type": 1,
+            "meta": {
+                "minFiltering": 0,
+                "magFiltering": 0,
+                "numMips": 0,
+                "srgb": true,
+                "sourcePath": "Assets/textures/base_materials_1.png",
+                "cookedPath": ".Panda/Textures/Assets/textures/base_materials_1.ptex"
+            }
+        },
+        {
             "id": 1976717612,
             "type": 1,
             "meta": {

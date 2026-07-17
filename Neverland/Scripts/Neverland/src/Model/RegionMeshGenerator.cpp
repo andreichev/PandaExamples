@@ -2,7 +2,7 @@
 
 #include "Chunk.hpp"
 #include "ChunksStorage.hpp"
-#include "VoxelMeshGenerator.hpp"
+#include "TerrainMeshGenerator.hpp"
 
 #include <algorithm>
 #include <cmath>
@@ -94,7 +94,7 @@ void addQuad(
     uint8_t tileIndex,
     float light
 ) {
-    VoxelMeshGenerator::addFaceIndices(static_cast<uint32_t>(vertices.size()), indices);
+    TerrainMeshGenerator::addFaceIndices(static_cast<uint32_t>(vertices.size()), indices);
     vertices.emplace_back(Vertex(p0, getTileUV(tileIndex, 0.f, 1.f), normal, color, light));
     vertices.emplace_back(Vertex(p1, getTileUV(tileIndex, 1.f, 1.f), normal, color, light));
     vertices.emplace_back(Vertex(p2, getTileUV(tileIndex, 1.f, 0.f), normal, color, light));
@@ -117,7 +117,7 @@ void addQuadWithUv(
     const Vec2 &uv2,
     const Vec2 &uv3
 ) {
-    VoxelMeshGenerator::addFaceIndices(static_cast<uint32_t>(vertices.size()), indices);
+    TerrainMeshGenerator::addFaceIndices(static_cast<uint32_t>(vertices.size()), indices);
     vertices.emplace_back(Vertex(p0, getTileUV(tileIndex, uv0.x, uv0.y), normal, color, light));
     vertices.emplace_back(Vertex(p1, getTileUV(tileIndex, uv1.x, uv1.y), normal, color, light));
     vertices.emplace_back(Vertex(p2, getTileUV(tileIndex, uv2.x, uv2.y), normal, color, light));

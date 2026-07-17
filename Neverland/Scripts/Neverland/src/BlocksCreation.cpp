@@ -4,7 +4,7 @@
 
 #include "BlocksCreation.hpp"
 #include "GameMenu.hpp"
-#include "Model/VoxelMeshGenerator.hpp"
+#include "Model/TerrainMeshGenerator.hpp"
 #include "Model/GameContext.hpp"
 #include "NeverlandTouchControls.hpp"
 
@@ -88,7 +88,7 @@ void BlocksCreation::updateChunk(const ChunkCoord &coord) {
     ChunkMeshSnapshot snapshot;
     if (!GameContext::s_chunkStorage->makeMeshSnapshot(coord, snapshot)) { return; }
 
-    ChunkMeshBuildResult result = VoxelMeshGenerator::makeOneChunkMesh(snapshot, true);
+    ChunkMeshBuildResult result = TerrainMeshGenerator::makeOneChunkMesh(snapshot, true);
     Chunk *chunk = GameContext::s_chunkStorage->getChunk(result.coord);
     if (chunk == nullptr || chunk->getVersion() != result.version) { return; }
 

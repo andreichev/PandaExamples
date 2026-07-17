@@ -6,7 +6,9 @@
 #include <cstdint>
 
 struct ChunkMeshSnapshot {
-    static constexpr int PADDING = 1;
+    // 2: marching cubes считает нормали градиентом density-поля — узлам на границе чанка
+    // нужны соседние узлы, а тем — воксели на 2 позиции за пределами чанка.
+    static constexpr int PADDING = 2;
     static constexpr int SIZE_X = Chunk::SIZE_X + PADDING * 2;
     static constexpr int SIZE_Y = Chunk::SIZE_Y + PADDING * 2;
     static constexpr int SIZE_Z = Chunk::SIZE_Z + PADDING * 2;

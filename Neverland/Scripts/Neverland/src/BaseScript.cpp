@@ -1,5 +1,5 @@
 #include "BaseScript.hpp"
-#include "Model/VoxelMeshGenerator.hpp"
+#include "Model/TerrainMeshGenerator.hpp"
 #include "Model/RegionMeshGenerator.hpp"
 #include "Model/GameContext.hpp"
 
@@ -494,7 +494,7 @@ bool BaseScript::scheduleChunkMesh(const ChunkCoord &coord, MaterialHandle chunk
     GameContext::s_scheduler->submit<ChunkMeshBuildResult>(
         PandaAsync::JobDesc{"chunk-mesh"},
         [snapshot](PandaAsync::Context &) -> ChunkMeshBuildResult {
-            return VoxelMeshGenerator::makeOneChunkMesh(snapshot, true);
+            return TerrainMeshGenerator::makeOneChunkMesh(snapshot, true);
         },
         [chunkMaterial](ChunkMeshBuildResult &&result) {
             Chunk *chunk = GameContext::s_chunkStorage != nullptr

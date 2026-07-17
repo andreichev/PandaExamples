@@ -1,7 +1,7 @@
 #include "HeldItemView.hpp"
 
 #include "Model/GameContext.hpp"
-#include "Model/VoxelMeshGenerator.hpp"
+#include "Model/TerrainMeshGenerator.hpp"
 #include "Model/VoxelTextureMapper.hpp"
 
 #include <Bamboo/Assets/AssetManagerAPI.hpp>
@@ -70,7 +70,7 @@ void addQuad(
     float light
 ) {
     constexpr float uvSize = 1.0f / ATLAS_TILE_COUNT - 0.001f;
-    VoxelMeshGenerator::addFaceIndices(static_cast<uint32_t>(vertices.size()), indices);
+    TerrainMeshGenerator::addFaceIndices(static_cast<uint32_t>(vertices.size()), indices);
     vertices.emplace_back(Vertex(p0, Vec2(uv.x, uv.y + uvSize), normal, color, light));
     vertices.emplace_back(Vertex(p1, Vec2(uv.x + uvSize, uv.y + uvSize), normal, color, light));
     vertices.emplace_back(Vertex(p2, Vec2(uv.x + uvSize, uv.y), normal, color, light));
@@ -88,7 +88,7 @@ void addSolidQuad(
     Color color,
     float light
 ) {
-    VoxelMeshGenerator::addFaceIndices(static_cast<uint32_t>(vertices.size()), indices);
+    TerrainMeshGenerator::addFaceIndices(static_cast<uint32_t>(vertices.size()), indices);
     vertices.emplace_back(Vertex(p0, SOLID_WHITE_UV, normal, color, light));
     vertices.emplace_back(Vertex(p1, SOLID_WHITE_UV, normal, color, light));
     vertices.emplace_back(Vertex(p2, SOLID_WHITE_UV, normal, color, light));
