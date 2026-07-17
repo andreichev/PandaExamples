@@ -6,6 +6,7 @@
 #include "GameMenu.hpp"
 #include "Model/TerrainMeshGenerator.hpp"
 #include "Model/GameContext.hpp"
+#include "Model/WorldSave.hpp"
 
 #include <unordered_set>
 #include "NeverlandTouchControls.hpp"
@@ -56,6 +57,11 @@ bool isSprintingInput(bool moving) {
 
 void BlocksCreation::start() {
     m_selectedBlock = VoxelType::GROUND;
+    if (const WorldSave *save = GameContext::s_worldSave;
+        save != nullptr && save->player.valid && save->player.selectedBlock < static_cast<uint8_t>(VoxelType::COUNT)) {
+        const VoxelType saved = static_cast<VoxelType>(save->player.selectedBlock);
+        if (saved != VoxelType::NOTHING) { m_selectedBlock = saved; }
+    }
     m_playerController = EntityAPI::getScript<PlayerController>(getEntity());
 }
 
@@ -68,6 +74,9 @@ void BlocksCreation::shutdown() {
 void BlocksCreation::setSelectedBlock(VoxelType type) {
     if (type == VoxelType::NOTHING || type == VoxelType::COUNT) { return; }
     m_selectedBlock = type;
+    if (WorldSave *save = GameContext::s_worldSave) {
+        save->player.selectedBlock = static_cast<uint8_t>(type);
+    }
 }
 
 void BlocksCreation::updateSelectedBlock() {

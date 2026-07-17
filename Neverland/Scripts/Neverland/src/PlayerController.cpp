@@ -5,6 +5,8 @@
 #include "PlayerController.hpp"
 #include "GameMenu.hpp"
 #include "Model/ChunksStorage.hpp"
+#include "Model/GameContext.hpp"
+#include "Model/WorldSave.hpp"
 #include "NeverlandTouchControls.hpp"
 
 #include <Bamboo/Math.hpp>
@@ -45,6 +47,18 @@ void PlayerController::start() {
     if (std::abs(sprintMultiplier - LEGACY_SPRINT_MULTIPLIER) < 0.01f) {
         sprintMultiplier = UPDATED_SPRINT_MULTIPLIER;
     }
+    const WorldSave *save = GameContext::s_worldSave;
+    if (save != nullptr && save->player.valid) {
+        // Продолжение сохранённой игры: позиция и взгляд из сейва.
+        m_physicsEyePosition = glm::vec3(save->player.x, save->player.y, save->player.z);
+        m_visualYOffset = 0.0f;
+        m_hasPhysicsEyePosition = true;
+        setEyePosition(m_physicsEyePosition);
+        m_pitch = save->player.pitch;
+        m_yaw = save->player.yaw;
+        syncRotationFromAngles();
+        return;
+    }
     const int groundHeight = ChunksStorage::terrainHeight(0, 0);
     m_physicsEyePosition = glm::vec3(0.0f, groundHeight + 1.0f + eyeHeight + 1.0f, 0.0f);
     m_visualYOffset = 0.0f;
@@ -66,6 +80,17 @@ void PlayerController::update(float deltaTime) {
     updateTouchControls();
     updateLook();
     updateCharacter(deltaTime);
+
+    // Поза игрока в сейв каждый кадр: порядок shutdown скриптов не гарантирован,
+    // а BaseScript пишет файл в своём shutdown.
+    if (WorldSave *save = GameContext::s_worldSave) {
+        save->player.valid = true;
+        save->player.x = m_physicsEyePosition.x;
+        save->player.y = m_physicsEyePosition.y;
+        save->player.z = m_physicsEyePosition.z;
+        save->player.pitch = m_pitch;
+        save->player.yaw = m_yaw;
+    }
 }
 
 void PlayerController::shutdown() {

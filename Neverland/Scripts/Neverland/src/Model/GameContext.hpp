@@ -4,9 +4,14 @@
 
 #include <PandaAsync/PandaAsync.hpp>
 
+class WorldSave;
+
 class GameContext final {
 public:
     static ChunksStorage *s_chunkStorage;
+    // Сейв мира: дельты правленых чанков + игрок. Живёт от init до deinit; грузится до
+    // генерации первых чанков (дельты накладываются в ensureChunk).
+    static WorldSave *s_worldSave;
     // Owns the chunk-mesh background jobs. Lives for the world's lifetime and is
     // torn down in deinit() before the script module is unloaded.
     static PandaAsync::Scheduler *s_scheduler;

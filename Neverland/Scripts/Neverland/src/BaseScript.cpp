@@ -2,6 +2,7 @@
 #include "Model/TerrainMeshGenerator.hpp"
 #include "Model/RegionMeshGenerator.hpp"
 #include "Model/GameContext.hpp"
+#include "Model/WorldSave.hpp"
 
 #include <Bamboo/Input.hpp>
 #include <Bamboo/Math.hpp>
@@ -620,9 +621,25 @@ void BaseScript::update(float dt) {
     }
     updateStreaming();
     logStreamingStats(dt);
+    updateAutosave(dt);
     if (Input::isKeyPressed(Key::L)) { LOG_INFO("Hello Panda! var: %d", var); }
 }
 
+void BaseScript::updateAutosave(float dt) {
+    constexpr float AUTOSAVE_INTERVAL_SECONDS = 30.0f;
+    m_autosaveTimer += dt;
+    if (m_autosaveTimer < AUTOSAVE_INTERVAL_SECONDS) { return; }
+    m_autosaveTimer = 0.0f;
+    saveWorld();
+}
+
+void BaseScript::saveWorld() {
+    if (GameContext::s_worldSave == nullptr || GameContext::s_chunkStorage == nullptr) { return; }
+    GameContext::s_chunkStorage->captureModifiedChunks(*GameContext::s_worldSave);
+    GameContext::s_worldSave->saveToDisk();
+}
+
 void BaseScript::shutdown() {
+    saveWorld();
     GameContext::deinit();
 }

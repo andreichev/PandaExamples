@@ -64,6 +64,8 @@ private:
     void updateStreaming();
     void logStreamingStats(float deltaTime);
     bool loadNextChunk();
+    void updateAutosave(float dt);
+    void saveWorld(); // дельты правленых чанков + игрок → world.sav
     bool scheduleNextChunkMesh();
     bool scheduleChunkMesh(const ChunkCoord &coord);
     bool scheduleNextRegionMesh();
@@ -75,6 +77,7 @@ private:
     int m_streamingNearDistance = -1;
     int m_streamingExactBuildDistance = -1;
     float m_statsLogTimer = 0.0f;
+    float m_autosaveTimer = 0.0f;
     bool m_hasStreamingCenter = false;
     bool m_hasRegionLodCenter = false;
     bool m_warnedRenderDistanceClamp = false;

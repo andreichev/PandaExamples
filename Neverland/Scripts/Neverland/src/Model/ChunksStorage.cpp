@@ -3,6 +3,8 @@
 //
 
 #include "ChunksStorage.hpp"
+#include "GameContext.hpp"
+#include "WorldSave.hpp"
 #include "Voxel.hpp"
 
 #include <Bamboo/Logger.hpp>
@@ -232,6 +234,7 @@ Chunk *ChunksStorage::ensureChunk(const ChunkCoord &coord) {
     auto chunk = std::make_unique<Chunk>();
     chunk->setCoord(coord);
     generateChunkData(*chunk);
+    if (GameContext::s_worldSave != nullptr) { GameContext::s_worldSave->applyToChunk(*chunk); }
     Chunk *result = chunk.get();
     m_chunks.emplace(coord, std::move(chunk));
     return result;
@@ -252,6 +255,12 @@ void ChunksStorage::ensureChunksAround(const ChunkCoord &center, int horizontalD
                 ensureChunk(coord);
             }
         }
+    }
+}
+
+void ChunksStorage::captureModifiedChunks(WorldSave &save) const {
+    for (const auto &[coord, chunk] : m_chunks) {
+        if (chunk->isModifiedByPlayer()) { save.captureChunk(*chunk); }
     }
 }
 

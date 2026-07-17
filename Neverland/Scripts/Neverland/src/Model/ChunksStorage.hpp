@@ -84,6 +84,10 @@ public:
     std::optional<VoxelRaycastData>
     bresenham3D(float x1, float y1, float z1, float x2, float y2, float z2, int maximumDistance);
 
+    static void generateChunkData(Chunk &chunk); // детерминированная генерация (без дельт сейва)
+    // Снять дельты всех правленых игроком чанков в сейв (перед записью на диск).
+    void captureModifiedChunks(class WorldSave &save) const;
+
 private:
     static int floorDiv(int value, int divisor);
     static int floorMod(int value, int divisor);
@@ -91,8 +95,6 @@ private:
     static bool isInsideHorizontalDistance(
         const ChunkCoord &coord, const ChunkCoord &center, int horizontalDistance
     );
-    void generateChunkData(Chunk &chunk);
-
     std::unordered_map<ChunkCoord, std::unique_ptr<Chunk>, ChunkCoordHash> m_chunks;
     std::unordered_map<RegionMeshKey, std::unique_ptr<RegionMesh>, RegionMeshKeyHash> m_regions;
 };
