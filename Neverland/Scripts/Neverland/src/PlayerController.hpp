@@ -17,6 +17,7 @@ public:
     float mouseSpeed = 0.2f;
     float moveSpeed = 6.0f;
     float sprintMultiplier = 2.1f;
+    float flySpeed = 24.0f; // скорость в режиме полёта (горизонталь и вертикаль)
     float gravity = 28.0f;
     float jumpSpeed = 8.5f;
     float maxFallSpeed = 48.0f;
@@ -37,6 +38,7 @@ public:
     PANDA_FIELD(mouseSpeed)
     PANDA_FIELD(moveSpeed)
     PANDA_FIELD(sprintMultiplier)
+    PANDA_FIELD(flySpeed)
     PANDA_FIELD(gravity)
     PANDA_FIELD(jumpSpeed)
     PANDA_FIELD(maxFallSpeed)

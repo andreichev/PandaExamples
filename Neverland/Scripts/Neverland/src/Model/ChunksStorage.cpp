@@ -105,11 +105,11 @@ void ChunksStorage::generateChunkData(Chunk &chunk) {
             for (int localY = 0; localY < Chunk::SIZE_Y; localY++) {
                 const int worldY = originY + localY;
                 VoxelType voxelType = VoxelType::NOTHING;
-                if (worldY < height - 4) {
+                if (worldY < height - 10) {
                     voxelType = VoxelType::STONE;
-                } else if (worldY < height) {
+                } else if (worldY < height - 4) {
                     voxelType = VoxelType::GROUND;
-                } else if (worldY == height) {
+                } else if (worldY <= height) {
                     voxelType = VoxelType::GRASS;
                 }
                 chunk.data().voxels[ChunkData::index(localX, localY, localZ)].type = voxelType;

@@ -222,8 +222,9 @@ void PlayerController::updateCharacter(float deltaTime) {
     const bool jumpPressed = Input::isKeyJustPressed(Key::SPACE) || m_touchJumpPressed;
     const bool gameplayJumpPressed = updateJumpModeToggle(jumpPressed, deltaTime);
     const bool isFlyMode = flyMode != 0;
-    const float speed =
-        moveSpeed * (!isFlyMode && Input::isKeyPressed(Key::LEFT_SHIFT) ? sprintMultiplier : 1.0f);
+    const float speed = isFlyMode
+                            ? std::max(flySpeed, 0.0f)
+                            : moveSpeed * (Input::isKeyPressed(Key::LEFT_SHIFT) ? sprintMultiplier : 1.0f);
 
     VoxelCharacterConfig config;
     config.radius = playerRadius;
