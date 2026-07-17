@@ -10,11 +10,12 @@
 
 namespace {
 
-// Дальний рельеф — единая трава ground-атласа (6×6), как ближний marching cubes.
+// Дальний рельеф на terrain-шейдере: UV нормализованный (0..1 внутри тайла), цвет — веса
+// материалов (r=трава). Дальним регионам хватает чистой травы.
 constexpr uint8_t GRASS_SIDE_TILE = 0;
 constexpr uint8_t GRASS_TOP_TILE = 0;
-constexpr uint32_t GRASS_SIDE_COLOR = 0xFFFFFFFF;
-constexpr uint32_t GRASS_TOP_COLOR = 0xFFFFFFFF;
+constexpr uint32_t GRASS_SIDE_COLOR = 0xFF000000; // вес травы = 1
+constexpr uint32_t GRASS_TOP_COLOR = 0xFF000000;
 constexpr float LIGHT_TOP = 0.95f;
 constexpr float LIGHT_FRONT_Z_POSITIVE = 1.0f;
 constexpr float LIGHT_BACK_Z_NEGATIVE = 0.75f;
@@ -77,10 +78,8 @@ int cellHeight(int worldX, int worldZ, int step) {
     return std::clamp(quantizedHeight, ChunksStorage::WORLD_MIN_Y + 1, ChunksStorage::WORLD_MAX_Y - 2);
 }
 
-Vec2 getTileUV(uint8_t tileIndex, float u, float v) {
-    const float baseU = static_cast<float>(tileIndex % 6) * ATLAS_TILE_SIZE + ATLAS_UV_INSET;
-    const float baseV = static_cast<float>(tileIndex / 6) * ATLAS_TILE_SIZE + ATLAS_UV_INSET;
-    return Vec2(baseU + u * ATLAS_UV_SIZE, baseV + v * ATLAS_UV_SIZE);
+Vec2 getTileUV(uint8_t, float u, float v) {
+    return Vec2(u, v); // terrain-шейдер сам строит атласные координаты из нормализованного UV
 }
 
 void addQuad(

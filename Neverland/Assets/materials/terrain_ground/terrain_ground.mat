@@ -1,11 +1,6 @@
 {
     "inputs": [
         {
-            "name": "texture1",
-            "type": 3,
-            "value": 917000201
-        },
-        {
             "name": "baseColorFactor",
             "type": 2,
             "value": {

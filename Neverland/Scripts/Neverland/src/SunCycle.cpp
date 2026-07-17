@@ -1,6 +1,7 @@
 #include "SunCycle.hpp"
 
 #include <Bamboo/ApplicationAPI.hpp>
+#include <Bamboo/Assets/MaterialAPI.hpp>
 #include <Bamboo/Components/DirectionalLightComponentAPI.hpp>
 #include <Bamboo/Components/TransformComponentAPI.hpp>
 #include <Bamboo/WorldLightingAPI.hpp>
@@ -58,14 +59,29 @@ void SunCycle::update(float) {
     syncLighting();
 }
 
+void SunCycle::syncSky(const glm::vec3 &sunDirection, float dayAmount, float duskAmount) {
+    // Небо больше не крутит собственный цикл в шейдере — состояние дня пишет скрипт.
+    if (!skyMaterial.isValid()) { return; }
+    MaterialAPI::setColor(
+        skyMaterial, "sunDirectionDay", Color(sunDirection.x, sunDirection.y, sunDirection.z, dayAmount)
+    );
+    MaterialAPI::setFloat(skyMaterial, "duskAmount", duskAmount);
+}
+
 void SunCycle::syncLighting() {
     const EntityHandle sun = getEntity();
+    DirectionalLightComponentAPI::setEnabled(sun, true);
     if (enabled == 0) {
-        DirectionalLightComponentAPI::setEnabled(sun, false);
+        // Цикл выключен — фиксированный день (удобно тестировать; полноценный свет по вокселям — отдельный этап).
+        const glm::vec3 sunDirection = glm::normalize(glm::vec3(0.35f, 0.9f, -0.25f));
+        TransformComponentAPI::setRotation(sun, toBambooQuat(rotationForLightDirection(sunDirection)));
+        DirectionalLightComponentAPI::setColor(sun, Color(1.0f, 0.94f, 0.84f, 1.0f));
+        DirectionalLightComponentAPI::setIntensity(sun, std::max(maxSunIntensity, 0.0f));
+        WorldLightingAPI::setAmbientColor(Color(0.78f, 0.88f, 1.0f, 1.0f));
+        WorldLightingAPI::setAmbientIntensity(std::max(maxAmbientIntensity, 0.0f));
+        syncSky(sunDirection, 1.0f, 0.0f);
         return;
     }
-
-    DirectionalLightComponentAPI::setEnabled(sun, true);
 
     const float safeCycleSeconds = std::max(cycleSeconds, 1.0f);
     const float phase = ApplicationAPI::getTime() / safeCycleSeconds * PI2;
@@ -75,6 +91,7 @@ void SunCycle::syncLighting() {
 
     const glm::vec3 sunDirection = glm::normalize(glm::vec3(std::cos(phase), std::sin(phase), SUN_DISK_Z));
     TransformComponentAPI::setRotation(sun, toBambooQuat(rotationForLightDirection(sunDirection)));
+    syncSky(sunDirection, dayAmount, duskAmount);
 
     const Color dayLightColor(1.0f, 0.94f, 0.84f, 1.0f);
     const Color nightLightColor(0.18f, 0.24f, 0.42f, 1.0f);

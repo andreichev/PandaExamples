@@ -32,7 +32,15 @@
             "type": 4,
             "meta": {
                 "materialPath": "Assets/materials/terrain_ground/terrain_ground.mat",
-                "shader": 1302887341
+                "shader": 917000203
+            }
+        },
+        {
+            "id": 917000203,
+            "type": 3,
+            "meta": {
+                "vertexSourcePath": "Assets/materials/base_material/base_vert.hlsl",
+                "fragmentSourcePath": "Assets/materials/terrain_ground/terrain_frag.hlsl"
             }
         },
         {

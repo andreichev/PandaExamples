@@ -266,13 +266,45 @@ void addSolidCuboid(
     );
 }
 
+// Куб рельефного блока на terrain-шейдере: нормализованный UV грани + веса материала в цвете.
+void addWeightedCuboid(
+    std::vector<Vertex> &vertices,
+    std::vector<uint32_t> &indices,
+    const glm::vec3 &min,
+    const glm::vec3 &max,
+    Color weights
+) {
+    const Vec2 uvBase(0.01f, 0.01f);
+    const float uvSize = 0.98f;
+    const Vec3 corners[8] = {
+        Vec3(min.x, min.y, min.z), Vec3(max.x, min.y, min.z), Vec3(max.x, max.y, min.z),
+        Vec3(min.x, max.y, min.z), Vec3(min.x, min.y, max.z), Vec3(max.x, min.y, max.z),
+        Vec3(max.x, max.y, max.z), Vec3(min.x, max.y, max.z),
+    };
+    addQuad(vertices, indices, corners[4], corners[5], corners[6], corners[7], Vec3(0.f, 0.f, 1.f), uvBase, weights, 1.0f, uvSize);
+    addQuad(vertices, indices, corners[0], corners[3], corners[2], corners[1], Vec3(0.f, 0.f, -1.f), uvBase, weights, 0.75f, uvSize);
+    addQuad(vertices, indices, corners[3], corners[7], corners[6], corners[2], Vec3(0.f, 1.f, 0.f), uvBase, weights, 0.95f, uvSize);
+    addQuad(vertices, indices, corners[0], corners[1], corners[5], corners[4], Vec3(0.f, -1.f, 0.f), uvBase, weights, 0.85f, uvSize);
+    addQuad(vertices, indices, corners[1], corners[2], corners[6], corners[5], Vec3(1.f, 0.f, 0.f), uvBase, weights, 0.8f, uvSize);
+    addQuad(vertices, indices, corners[0], corners[4], corners[7], corners[3], Vec3(-1.f, 0.f, 0.f), uvBase, weights, 0.9f, uvSize);
+}
+
 MeshData makeHeldBlockMesh(VoxelType type) {
     Voxel voxel(type);
     VoxelTextureData &texture = VoxelTextureMapper::getTextureData(&voxel);
     MeshData data;
-    // Природные — из ground-атласа (6×6), рукотворные — из materials (7×7).
-    const int atlasGrid = TerrainMeshGenerator::isNaturalType(type) ? 6 : 7;
-    addTexturedCuboid(data.vertices, data.indices, glm::vec3(-0.5f), glm::vec3(0.5f), texture, atlasGrid);
+    if (TerrainMeshGenerator::isNaturalType(type)) {
+        Color weights(0.f, 0.f, 0.f, 0.f);
+        switch (type) {
+            case VoxelType::GRASS: weights.r = 1.f; break;
+            case VoxelType::GROUND: weights.g = 1.f; break;
+            case VoxelType::STONE: weights.b = 1.f; break;
+            default: weights.a = 1.f; break; // SAND
+        }
+        addWeightedCuboid(data.vertices, data.indices, glm::vec3(-0.5f), glm::vec3(0.5f), weights);
+        return data;
+    }
+    addTexturedCuboid(data.vertices, data.indices, glm::vec3(-0.5f), glm::vec3(0.5f), texture, 7);
     return data;
 }
 
@@ -319,10 +351,10 @@ void HeldItemView::update(
         MeshComponentAPI::setMaterial(m_blockEntity, blockMaterial);
         m_appliedMaterialId = blockMaterial.id;
     }
-    if (GameContext::s_terrainMaterial.isValid() &&
-        m_appliedHandMaterialId != GameContext::s_terrainMaterial.id) {
-        MeshComponentAPI::setMaterial(m_handEntity, GameContext::s_terrainMaterial);
-        m_appliedHandMaterialId = GameContext::s_terrainMaterial.id;
+    if (GameContext::s_blocksMaterial.isValid() &&
+        m_appliedHandMaterialId != GameContext::s_blocksMaterial.id) {
+        MeshComponentAPI::setMaterial(m_handEntity, GameContext::s_blocksMaterial);
+        m_appliedHandMaterialId = GameContext::s_blocksMaterial.id;
     }
     syncTransform(cameraEntity, moving, sprinting, deltaTime);
 }

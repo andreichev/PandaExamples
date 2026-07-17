@@ -11,7 +11,6 @@
 // Атласы: base_ground_1 — 6×6 (рельеф), base_materials_1 — 7×7 (кубы). Индекс тайла = row * grid + col.
 constexpr int GROUND_ATLAS_GRID = 6;
 constexpr int BLOCKS_ATLAS_GRID = 7;
-constexpr uint8_t GRASS_GROUND_TILE = 0; // единая трава всей поверхности рельефа
 
 Vec2 getUV(uint8_t tileIndex, int atlasGrid) {
     const float uvSize = 1.f / atlasGrid;
@@ -527,6 +526,35 @@ void addFaceTriangleIndices(uint32_t offset, std::vector<uint32_t> &indices) {
     indices.emplace_back(offset + 2);
 }
 
+// Веса материалов рельефа для вершинного цвета: r=трава, g=земля, b=камень, a=песок.
+// Считаются по окрестности 3×3×3 воксела ячейки — интерполяция по треугольникам даёт
+// плавные границы между материалами (шейдер terrain_frag блендит четыре тайла).
+Color terrainWeights(const ChunkMeshSnapshot &snapshot, int x, int y, int z) {
+    float grass = 0.f, dirt = 0.f, stone = 0.f, sand = 0.f;
+    for (int dy = -1; dy <= 1; dy++) {
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dz = -1; dz <= 1; dz++) {
+                const Voxel *voxel = snapshot.getPadded(
+                    x + dx + ChunkMeshSnapshot::PADDING,
+                    y + dy + ChunkMeshSnapshot::PADDING,
+                    z + dz + ChunkMeshSnapshot::PADDING
+                );
+                if (voxel == nullptr) { continue; }
+                switch (voxel->type) {
+                    case VoxelType::GRASS: grass += 1.f; break;
+                    case VoxelType::GROUND: dirt += 1.f; break;
+                    case VoxelType::STONE: stone += 1.f; break;
+                    case VoxelType::SAND: sand += 1.f; break;
+                    default: break;
+                }
+            }
+        }
+    }
+    const float sum = grass + dirt + stone + sand;
+    if (sum <= 0.f) { return Color(1.f, 0.f, 0.f, 0.f); }
+    return Color(grass / sum, dirt / sum, stone / sum, sand / sum);
+}
+
 // Зеркальный повтор координаты внутри тайла атласа: непрерывен (нет wrap-скачков UV на
 // границах метра), не выходит за тайл (нет bleeding в соседние тайлы).
 float mirrorWave(float value) {
@@ -547,12 +575,6 @@ void TerrainMeshGenerator::addMarchingCubesMesh(
     const float originY = static_cast<float>(snapshot.coord.y * Chunk::SIZE_Y);
     const float originZ = static_cast<float>(snapshot.coord.z * Chunk::SIZE_Z);
     constexpr float ISO = 0.5f;
-    // Вся поверхность — единая трава (задача этапа: без грубых границ между материалами;
-    // блендинг нескольких природных материалов — следующий шаг).
-    const Vec2 uvBase = getUV(GRASS_GROUND_TILE, GROUND_ATLAS_GRID);
-    const Color color = toColor(0xFFFFFFFF);
-    float uvSize = 1.f / GROUND_ATLAS_GRID;
-    uvSize -= 0.001f;
 
     for (int y = 0; y < Chunk::SIZE_Y; y++) {
         for (int x = 0; x < Chunk::SIZE_X; x++) {
@@ -569,6 +591,9 @@ void TerrainMeshGenerator::addMarchingCubesMesh(
                     anyNatural = anyNatural || field.natural(i, j, k);
                 }
                 if (config == 0 || config == 255 || !anyNatural) { continue; }
+
+                // Веса материалов рельефа — вершинный цвет (шейдер блендит тайлы ground-атласа).
+                const Color color = terrainWeights(snapshot, x, y, z);
 
                 const int8_t *tri = MarchingCubes::TRI_TABLE[config];
                 for (int t = 0; tri[t] != -1; t += 3) {
@@ -656,9 +681,7 @@ void TerrainMeshGenerator::addMarchingCubesMesh(
                             u = pos.x;
                             v = pos.y;
                         }
-                        const Vec2 uv(
-                            uvBase.x + mirrorWave(u) * uvSize, uvBase.y + mirrorWave(v) * uvSize
-                        );
+                        const Vec2 uv(mirrorWave(u), mirrorWave(v));
                         vertices.emplace_back(Vertex(pos, uv, normals[vert], color, 1.f));
                     }
                 }
