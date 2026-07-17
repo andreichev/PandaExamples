@@ -117,7 +117,12 @@
                     "orthoSize": 1.0,
                     "zNear": 0.10000000149011612,
                     "zFar": 1000.0
-                }
+                },
+                "postprocessing": 917000206,
+                "postprocessingEnabled": true,
+                "bloomEnabled": false,
+                "bloomIntensity": 1.0,
+                "bloomRadius": 1.0
             },
             "scriptListComponent": {
                 "scripts": [
@@ -303,15 +308,15 @@
             },
             "transformComponent": {
                 "position": {
-                    "x": 2.1094456315040588e-07,
+                    "x": 2.1094456315040588e-7,
                     "y": 1.1215732097625732,
-                    "z": 1.0887160897254944e-06
+                    "z": 0.0000010887160897254944
                 },
                 "rotation": {
-                    "x": -0.03186526522040367,
-                    "y": 0.2500545084476471,
-                    "z": 0.12232883274555206,
-                    "w": 0.9599442481994629
+                    "x": -0.03186526894569397,
+                    "y": 0.2500545382499695,
+                    "z": 0.12232884764671326,
+                    "w": 0.9599443674087524
                 },
                 "scale": {
                     "x": 0.9999980330467224,
@@ -350,7 +355,7 @@
                                 "name": "minSunIntensity",
                                 "fieldId": 4094324036,
                                 "type": 1,
-                                "value": 0.15
+                                "value": 0.15000000596046448
                             },
                             {
                                 "name": "maxSunIntensity",
@@ -362,7 +367,7 @@
                                 "name": "minAmbientIntensity",
                                 "fieldId": 2390201246,
                                 "type": 1,
-                                "value": 0.18
+                                "value": 0.18000000715255737
                             },
                             {
                                 "name": "maxAmbientIntensity",

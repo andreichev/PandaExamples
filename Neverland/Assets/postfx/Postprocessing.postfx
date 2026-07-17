@@ -1,0 +1,9 @@
+{
+    "passes": [
+        {
+            "material": 917000205,
+            "enabled": true,
+            "downsample": 1
+        }
+    ]
+}

@@ -19,9 +19,9 @@
             "id": 917000201,
             "type": 1,
             "meta": {
-                "minFiltering": 0,
-                "magFiltering": 0,
-                "numMips": 0,
+                "minFiltering": 5,
+                "magFiltering": 1,
+                "numMips": 4,
                 "srgb": true,
                 "sourcePath": "Assets/textures/base_ground_1.png",
                 "cookedPath": ".Panda/Textures/Assets/textures/base_ground_1.ptex"
@@ -41,6 +41,29 @@
             "meta": {
                 "vertexSourcePath": "Assets/materials/base_material/base_vert.hlsl",
                 "fragmentSourcePath": "Assets/materials/terrain_ground/terrain_frag.hlsl"
+            }
+        },
+        {
+            "id": 917000204,
+            "type": 3,
+            "meta": {
+                "vertexSourcePath": "Assets/postfx/fxaa/fxaa_vert.hlsl",
+                "fragmentSourcePath": "Assets/postfx/fxaa/fxaa_frag.hlsl"
+            }
+        },
+        {
+            "id": 917000205,
+            "type": 4,
+            "meta": {
+                "materialPath": "Assets/postfx/fxaa/fxaa.mat",
+                "shader": 917000204
+            }
+        },
+        {
+            "id": 917000206,
+            "type": 8,
+            "meta": {
+                "dataPath": "Assets/postfx/Postprocessing.postfx"
             }
         },
         {
@@ -67,9 +90,9 @@
             "id": 1842935031,
             "type": 1,
             "meta": {
-                "minFiltering": 0,
-                "magFiltering": 0,
-                "numMips": 0,
+                "minFiltering": 5,
+                "magFiltering": 1,
+                "numMips": 4,
                 "srgb": true,
                 "sourcePath": "Assets/textures/base_materials_1.png",
                 "cookedPath": ".Panda/Textures/Assets/textures/base_materials_1.ptex"
