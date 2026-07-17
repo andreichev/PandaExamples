@@ -8,27 +8,14 @@
 #include <cmath>
 #include <vector>
 
+// Дальние LOD-регионы — гладкий heightfield по той же высотной функции, что и рельеф:
+// непрерывная поверхность с нормалями из градиента высот вместо ступенчатых кубов, чтобы
+// дальний план вписывался в marching-cubes-передний. Материал — terrain (веса в цвете).
+
 namespace {
 
-// Дальний рельеф на terrain-шейдере: UV нормализованный (0..1 внутри тайла), цвет — веса
-// материалов (r=трава). Дальним регионам хватает чистой травы.
-constexpr uint8_t GRASS_SIDE_TILE = 0;
-constexpr uint8_t GRASS_TOP_TILE = 0;
-constexpr uint32_t GRASS_SIDE_COLOR = 0xFF000000; // вес травы = 1
-constexpr uint32_t GRASS_TOP_COLOR = 0xFF000000;
-constexpr float LIGHT_TOP = 0.95f;
-constexpr float LIGHT_FRONT_Z_POSITIVE = 1.0f;
-constexpr float LIGHT_BACK_Z_NEGATIVE = 0.75f;
-constexpr float LIGHT_X_NEGATIVE = 0.9f;
-constexpr float LIGHT_X_POSITIVE = 0.8f;
-constexpr float ATLAS_TILE_SIZE = 1.f / 6.f;
-constexpr float ATLAS_UV_INSET = 0.0005f;
-constexpr float ATLAS_UV_SIZE = ATLAS_TILE_SIZE - ATLAS_UV_INSET * 2.f;
-
-struct SideBottom {
-    bool visible = false;
-    float y = 0.f;
-};
+// Вес травы в вершинном цвете terrain-шейдера (r=1).
+constexpr uint32_t GRASS_WEIGHT_COLOR = 0xFF000000;
 
 Color toColor(uint32_t hex) {
     Color color;
@@ -65,199 +52,90 @@ bool isCellInsideRing(int worldX, int worldZ, int step, const RegionMeshBuildReq
     return isInsideRing(worldX + step / 2, worldZ + step / 2, request);
 }
 
-int cellHeight(int worldX, int worldZ, int step) {
-    const int h00 = ChunksStorage::terrainHeight(worldX, worldZ);
-    const int h10 = ChunksStorage::terrainHeight(worldX + step, worldZ);
-    const int h01 = ChunksStorage::terrainHeight(worldX, worldZ + step);
-    const int h11 = ChunksStorage::terrainHeight(worldX + step, worldZ + step);
-    const int height = std::max(std::max(h00, h10), std::max(h01, h11));
-    const int verticalStep = std::max(1, step / 2);
-    if (verticalStep == 1) { return height; }
-
-    const int quantizedHeight = ((height + verticalStep / 2) / verticalStep) * verticalStep;
-    return std::clamp(quantizedHeight, ChunksStorage::WORLD_MIN_Y + 1, ChunksStorage::WORLD_MAX_Y - 2);
+// Высота видимой поверхности: верх верхнего воксела — на ровной земле совпадает с
+// изоповерхностью marching cubes ближних чанков.
+float surfaceHeight(int x, int z) {
+    return static_cast<float>(ChunksStorage::terrainHeight(x, z) + 1);
 }
 
-Vec2 getTileUV(uint8_t, float u, float v) {
-    return Vec2(u, v); // terrain-шейдер сам строит атласные координаты из нормализованного UV
+Vec3 nodeNormal(int x, int z, int step) {
+    const float dx = surfaceHeight(x - step, z) - surfaceHeight(x + step, z);
+    const float dz = surfaceHeight(x, z - step) - surfaceHeight(x, z + step);
+    const float dy = 2.f * step;
+    const float length = std::sqrt(dx * dx + dy * dy + dz * dz);
+    return Vec3(dx / length, dy / length, dz / length);
 }
 
-void addQuad(
-    std::vector<Vertex> &vertices,
-    std::vector<uint32_t> &indices,
-    const Vec3 &p0,
-    const Vec3 &p1,
-    const Vec3 &p2,
-    const Vec3 &p3,
-    const Vec3 &normal,
-    const Color &color,
-    uint8_t tileIndex,
-    float light
-) {
-    TerrainMeshGenerator::addFaceIndices(static_cast<uint32_t>(vertices.size()), indices);
-    vertices.emplace_back(Vertex(p0, getTileUV(tileIndex, 0.f, 1.f), normal, color, light));
-    vertices.emplace_back(Vertex(p1, getTileUV(tileIndex, 1.f, 1.f), normal, color, light));
-    vertices.emplace_back(Vertex(p2, getTileUV(tileIndex, 1.f, 0.f), normal, color, light));
-    vertices.emplace_back(Vertex(p3, getTileUV(tileIndex, 0.f, 0.f), normal, color, light));
+// Зеркальный повтор нормализованного UV тайла; период 2*step — соседние узлы сетки дают
+// пилу 0→1→0 (текстура вдали крупнее, метровая плотность там не нужна).
+float mirrorWave(float value) {
+    float f = std::fmod(value, 2.f);
+    if (f < 0.f) { f += 2.f; }
+    return f <= 1.f ? f : 2.f - f;
 }
 
-void addQuadWithUv(
-    std::vector<Vertex> &vertices,
-    std::vector<uint32_t> &indices,
-    const Vec3 &p0,
-    const Vec3 &p1,
-    const Vec3 &p2,
-    const Vec3 &p3,
-    const Vec3 &normal,
-    const Color &color,
-    uint8_t tileIndex,
-    float light,
-    const Vec2 &uv0,
-    const Vec2 &uv1,
-    const Vec2 &uv2,
-    const Vec2 &uv3
-) {
-    TerrainMeshGenerator::addFaceIndices(static_cast<uint32_t>(vertices.size()), indices);
-    vertices.emplace_back(Vertex(p0, getTileUV(tileIndex, uv0.x, uv0.y), normal, color, light));
-    vertices.emplace_back(Vertex(p1, getTileUV(tileIndex, uv1.x, uv1.y), normal, color, light));
-    vertices.emplace_back(Vertex(p2, getTileUV(tileIndex, uv2.x, uv2.y), normal, color, light));
-    vertices.emplace_back(Vertex(p3, getTileUV(tileIndex, uv3.x, uv3.y), normal, color, light));
-}
+struct GridVertex {
+    Vec3 position;
+    Vec3 normal;
+    Vec2 uv;
+};
 
-float skirtBottomY(int height, int step) {
-    const int skirtDepth = std::max(step * 2, 8);
-    return static_cast<float>(std::max(ChunksStorage::WORLD_MIN_Y, height + 1 - skirtDepth));
-}
-
-SideBottom getSideBottom(
-    int height,
-    int neighborWorldX,
-    int neighborWorldZ,
-    int step,
-    const RegionMeshBuildRequest &request
-) {
-    if (!isCellInsideRing(neighborWorldX, neighborWorldZ, step, request)) {
-        return SideBottom{true, skirtBottomY(height, step)};
-    }
-
-    const int neighborHeight = cellHeight(neighborWorldX, neighborWorldZ, step);
-    if (neighborHeight >= height) { return SideBottom{}; }
-
-    return SideBottom{true, static_cast<float>(neighborHeight + 1)};
-}
-
-void addHeightfieldCell(
-    std::vector<Vertex> &vertices,
-    std::vector<uint32_t> &indices,
-    int worldX,
-    int worldZ,
-    int step,
-    const RegionMeshBuildRequest &request
-) {
-    if (!isCellInsideRing(worldX, worldZ, step, request)) { return; }
-
-    const int height = cellHeight(worldX, worldZ, step);
-    const float topY = static_cast<float>(height + 1);
-    const float x0 = static_cast<float>(worldX);
-    const float x1 = static_cast<float>(worldX + step);
-    const float z0 = static_cast<float>(worldZ);
-    const float z1 = static_cast<float>(worldZ + step);
-
-    const Color topColor = toColor(GRASS_TOP_COLOR);
-    const Color sideColor = toColor(GRASS_SIDE_COLOR);
-
-    addQuad(
-        vertices,
-        indices,
-        Vec3(x0, topY, z0),
-        Vec3(x0, topY, z1),
-        Vec3(x1, topY, z1),
-        Vec3(x1, topY, z0),
-        Vec3(0.f, 1.f, 0.f),
-        topColor,
-        GRASS_TOP_TILE,
-        LIGHT_TOP
+GridVertex makeGridVertex(int x, int z, int step) {
+    GridVertex vertex;
+    vertex.position = Vec3(static_cast<float>(x), surfaceHeight(x, z), static_cast<float>(z));
+    vertex.normal = nodeNormal(x, z, step);
+    vertex.uv = Vec2(
+        mirrorWave(static_cast<float>(x) / step), mirrorWave(static_cast<float>(z) / step)
     );
+    return vertex;
+}
 
-    const SideBottom left = getSideBottom(height, worldX - step, worldZ, step, request);
-    if (left.visible && left.y < topY) {
-        addQuadWithUv(
-            vertices,
-            indices,
-            Vec3(x0, left.y, z0),
-            Vec3(x0, left.y, z1),
-            Vec3(x0, topY, z1),
-            Vec3(x0, topY, z0),
-            Vec3(-1.f, 0.f, 0.f),
-            sideColor,
-            GRASS_SIDE_TILE,
-            LIGHT_X_NEGATIVE,
-            Vec2(0.f, 1.f),
-            Vec2(1.f, 1.f),
-            Vec2(1.f, 0.f),
-            Vec2(0.f, 0.f)
-        );
-    }
+void addTriangle(
+    std::vector<Vertex> &vertices,
+    std::vector<uint32_t> &indices,
+    const GridVertex &a,
+    const GridVertex &b,
+    const GridVertex &c,
+    Color color
+) {
+    const uint32_t base = static_cast<uint32_t>(vertices.size());
+    indices.emplace_back(base);
+    indices.emplace_back(base + 1);
+    indices.emplace_back(base + 2);
+    vertices.emplace_back(Vertex(a.position, a.uv, a.normal, color, 1.f));
+    vertices.emplace_back(Vertex(b.position, b.uv, b.normal, color, 1.f));
+    vertices.emplace_back(Vertex(c.position, c.uv, c.normal, color, 1.f));
+}
 
-    const SideBottom right = getSideBottom(height, worldX + step, worldZ, step, request);
-    if (right.visible && right.y < topY) {
-        addQuadWithUv(
-            vertices,
-            indices,
-            Vec3(x1, right.y, z0),
-            Vec3(x1, topY, z0),
-            Vec3(x1, topY, z1),
-            Vec3(x1, right.y, z1),
-            Vec3(1.f, 0.f, 0.f),
-            sideColor,
-            GRASS_SIDE_TILE,
-            LIGHT_X_POSITIVE,
-            Vec2(1.f, 1.f),
-            Vec2(1.f, 0.f),
-            Vec2(0.f, 0.f),
-            Vec2(0.f, 1.f)
-        );
-    }
-
-    const SideBottom back = getSideBottom(height, worldX, worldZ - step, step, request);
-    if (back.visible && back.y < topY) {
-        addQuadWithUv(
-            vertices,
-            indices,
-            Vec3(x0, back.y, z0),
-            Vec3(x0, topY, z0),
-            Vec3(x1, topY, z0),
-            Vec3(x1, back.y, z0),
-            Vec3(0.f, 0.f, -1.f),
-            sideColor,
-            GRASS_SIDE_TILE,
-            LIGHT_BACK_Z_NEGATIVE,
-            Vec2(1.f, 1.f),
-            Vec2(1.f, 0.f),
-            Vec2(0.f, 0.f),
-            Vec2(0.f, 1.f)
-        );
-    }
-
-    const SideBottom front = getSideBottom(height, worldX, worldZ + step, step, request);
-    if (front.visible && front.y < topY) {
-        addQuadWithUv(
-            vertices,
-            indices,
-            Vec3(x0, front.y, z1),
-            Vec3(x1, front.y, z1),
-            Vec3(x1, topY, z1),
-            Vec3(x0, topY, z1),
-            Vec3(0.f, 0.f, 1.f),
-            sideColor,
-            GRASS_SIDE_TILE,
-            LIGHT_FRONT_Z_POSITIVE,
-            Vec2(0.f, 1.f),
-            Vec2(1.f, 1.f),
-            Vec2(1.f, 0.f),
-            Vec2(0.f, 0.f)
-        );
-    }
+// Юбка по граничному ребру ячейки (сосед вне кольца): вертикальная стенка вниз, закрывает
+// щели на стыке колец LOD между собой и с ближними чанками.
+void addSkirt(
+    std::vector<Vertex> &vertices,
+    std::vector<uint32_t> &indices,
+    const GridVertex &edgeA,
+    const GridVertex &edgeB,
+    const Vec3 &outwardNormal,
+    int step,
+    Color color
+) {
+    const float depth = static_cast<float>(std::max(step * 2, 8));
+    const float bottomY =
+        std::min(edgeA.position.y, edgeB.position.y) - depth;
+    GridVertex bottomA = edgeA;
+    GridVertex bottomB = edgeB;
+    bottomA.position.y = bottomY;
+    bottomB.position.y = bottomY;
+    bottomA.normal = outwardNormal;
+    bottomB.normal = outwardNormal;
+    GridVertex topA = edgeA;
+    GridVertex topB = edgeB;
+    topA.normal = outwardNormal;
+    topB.normal = outwardNormal;
+    bottomA.uv = Vec2(edgeA.uv.x, 1.f);
+    bottomB.uv = Vec2(edgeB.uv.x, 1.f);
+    // Порядок вершин — чтобы лицевая сторона юбки смотрела наружу (в сторону отсутствующего соседа).
+    addTriangle(vertices, indices, topA, bottomB, bottomA, color);
+    addTriangle(vertices, indices, topA, topB, bottomB, color);
 }
 
 } // namespace
@@ -278,12 +156,35 @@ RegionMeshBuildResult RegionMeshGenerator::makeRegionMesh(const RegionMeshBuildR
 
     const int cellsX = (worldSizeX + step - 1) / step;
     const int cellsZ = (worldSizeZ + step - 1) / step;
-    vertices.reserve(static_cast<std::size_t>(cellsX * cellsZ * 12));
-    indices.reserve(static_cast<std::size_t>(cellsX * cellsZ * 18));
+    vertices.reserve(static_cast<std::size_t>(cellsX * cellsZ * 6));
+    indices.reserve(static_cast<std::size_t>(cellsX * cellsZ * 6));
 
+    const Color color = toColor(GRASS_WEIGHT_COLOR);
     for (int worldX = worldMinX; worldX < worldMaxX; worldX += step) {
         for (int worldZ = worldMinZ; worldZ < worldMaxZ; worldZ += step) {
-            addHeightfieldCell(vertices, indices, worldX, worldZ, step, request);
+            if (!isCellInsideRing(worldX, worldZ, step, request)) { continue; }
+
+            const GridVertex v00 = makeGridVertex(worldX, worldZ, step);
+            const GridVertex v01 = makeGridVertex(worldX, worldZ + step, step);
+            const GridVertex v11 = makeGridVertex(worldX + step, worldZ + step, step);
+            const GridVertex v10 = makeGridVertex(worldX + step, worldZ, step);
+
+            addTriangle(vertices, indices, v00, v01, v11, color);
+            addTriangle(vertices, indices, v11, v10, v00, color);
+
+            // Юбки по границам кольца (соседняя ячейка вне кольца).
+            if (!isCellInsideRing(worldX - step, worldZ, step, request)) {
+                addSkirt(vertices, indices, v01, v00, Vec3(-1.f, 0.f, 0.f), step, color);
+            }
+            if (!isCellInsideRing(worldX + step, worldZ, step, request)) {
+                addSkirt(vertices, indices, v10, v11, Vec3(1.f, 0.f, 0.f), step, color);
+            }
+            if (!isCellInsideRing(worldX, worldZ - step, step, request)) {
+                addSkirt(vertices, indices, v00, v10, Vec3(0.f, 0.f, -1.f), step, color);
+            }
+            if (!isCellInsideRing(worldX, worldZ + step, step, request)) {
+                addSkirt(vertices, indices, v11, v01, Vec3(0.f, 0.f, 1.f), step, color);
+            }
         }
     }
 
