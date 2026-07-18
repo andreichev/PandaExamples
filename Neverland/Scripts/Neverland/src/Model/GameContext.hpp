@@ -1,30 +1,21 @@
 #pragma once
 
-#include "ChunksStorage.hpp"
-
-#include <PandaAsync/PandaAsync.hpp>
+#include "BuildingGrid.hpp"
 
 class WorldSave;
 
 class GameContext final {
 public:
-    static ChunksStorage *s_chunkStorage;
-    // Сейв мира: дельты правленых чанков + игрок. Живёт от init до deinit; грузится до
-    // генерации первых чанков (дельты накладываются в ensureChunk).
+    // Постройки игрока (кубы поверх движкового terrain). Живёт от init до deinit.
+    static BuildingGrid *s_buildingGrid;
+    // Сейв мира: правки рельефа (дельта от .terrain-ассета) + блоки + игрок.
     static WorldSave *s_worldSave;
-    // Owns the chunk-mesh background jobs. Lives for the world's lifetime and is
-    // torn down in deinit() before the script module is unloaded.
-    static PandaAsync::Scheduler *s_scheduler;
-    // Chunk mesh jobs still in flight (touched only on the main thread).
-    static int s_pendingChunkJobs;
-    static int s_pendingRegionJobs;
-    static MaterialHandle s_terrainMaterial; // гладкий рельеф (base_ground_1)
+    static MaterialHandle s_terrainMaterial; // рельеф/рука природных (base_ground_1)
     static MaterialHandle s_blocksMaterial;  // рукотворные блоки/стены (base_materials_1)
 
     static void init();
     static void deinit();
 
-    // True once scheduled chunk meshes have all been uploaded. Voxel edits are
-    // still gated while streaming is catching up.
+    // Движковый terrain готов сразу после загрузки мира (меши строятся лениво в рендере).
     static bool isWorldLoaded();
 };

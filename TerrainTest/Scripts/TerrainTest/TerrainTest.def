@@ -1,0 +1,3 @@
+LIBRARY TerrainTest
+EXPORTS
+    pandaLoadPlugin

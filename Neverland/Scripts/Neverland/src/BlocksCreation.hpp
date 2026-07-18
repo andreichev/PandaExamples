@@ -5,15 +5,14 @@
 #pragma once
 
 #include "HeldItemView.hpp"
-#include "Model/ChunksStorage.hpp"
-#include "Model/TerrainBrush.hpp"
+#include "Model/GameBrush.hpp"
 #include "PlayerController.hpp"
 
 #include <Bamboo/Bamboo.hpp>
 
 class BlocksCreation final : public Script {
 public:
-    const int MAXIMUM_DISTANCE = 100;
+    const float MAXIMUM_DISTANCE = 100.f;
 
     void start() override;
     void update(float deltaTime) override;
@@ -23,21 +22,26 @@ public:
     }
     void setSelectedBlock(VoxelType type);
     // Кисть рельефа (панель TerrainBrushPanel и клавиши делят один стейт).
-    void setBrushMode(TerrainBrushMode mode) { m_brushMode = mode; }
-    TerrainBrushMode getBrushMode() const { return m_brushMode; }
+    void setBrushMode(GameBrushMode mode) { m_brushMode = mode; }
+    GameBrushMode getBrushMode() const { return m_brushMode; }
     void setBrushSize(int size);
     int getBrushSize() const { return m_brushSize; }
     static int brushSizeCount();
 
 private:
+    struct AimHit {
+        bool valid = false;
+        int x = 0, y = 0, z = 0;              // воксель попадания (мировой)
+        int normalX = 0, normalY = 0, normalZ = 0; // грань
+        bool isBuilding = false;              // попали в куб построек (иначе рельеф)
+    };
+
     Vec3 getPosition();
-    void setVoxel(int x, int y, int z, VoxelType type);
-    void applyEdits(const std::vector<TerrainBrushEdit> &edits); // батч правок + ремеш чанков
-    void updateChunk(const ChunkCoord &coord);
+    AimHit aim(const Vec3 &origin, const Vec3 &direction); // ближайший из рельефа и кубов
     void updateSelectedBlock();
-    void updateBrushSize();                                       // клавиши [ ] — размер кисти терраформа
-    float currentBrushRadius() const;                             // 0 = одиночный воксель
-    void updateBrushMarker(const std::vector<TerrainBrushEdit> &edits); // подсветка вокселей (desktop)
+    void updateBrushSize();           // клавиши [ ] — размер кисти, B — режим
+    float currentBrushRadius() const; // 0 = одиночный воксель
+    void updateBrushMarker(const std::vector<TerrainAccess::Edit> &edits); // подсветка вокселей
     void destroyBrushMarker();
     void updateTouchBlockInput(
         float deltaTime, bool &placePressed, bool &breakPressed, Vec2 &touchAim, bool &hasTouchAim
@@ -59,12 +63,12 @@ private:
     HeldItemView m_heldItemView;
     TouchActionState m_touchAction;
     VoxelType m_selectedBlock;
-    int m_brushSize = 2;              // индекс в BRUSH_RADII (0 — одиночный воксель)
-    TerrainBrushMode m_brushMode = TerrainBrushMode::Sphere;
-    std::vector<TerrainBrushEdit> m_previewEdits; // буфер превью/применения (без реаллокаций)
-    EntityHandle m_markerEntity;      // визуальный маркер кисти (только desktop)
+    int m_brushSize = 2;
+    GameBrushMode m_brushMode = GameBrushMode::Sphere;
+    std::vector<TerrainAccess::Edit> m_previewEdits; // буфер превью/применения
+    EntityHandle m_markerEntity;                     // визуальный маркер кисти (только desktop)
     MeshHandle m_markerMesh;
-    uint64_t m_markerSignature = 0;   // сигнатура набора подсвеченных вокселей
+    uint64_t m_markerSignature = 0; // сигнатура набора подсвеченных вокселей
     bool m_markerVisible = false;
 };
 

@@ -1,7 +1,7 @@
 #include "HeldItemView.hpp"
 
 #include "Model/GameContext.hpp"
-#include "Model/TerrainMeshGenerator.hpp"
+#include "Model/Voxel.hpp"
 #include "Model/VoxelTextureMapper.hpp"
 
 #include <Bamboo/Assets/AssetManagerAPI.hpp>
@@ -39,6 +39,12 @@ Color toColor(uint32_t hex) {
     );
 }
 
+void addQuadIndices(uint32_t offset, std::vector<uint32_t> &indices) {
+    for (uint32_t index : {offset, offset + 1u, offset + 2u, offset + 2u, offset + 3u, offset}) {
+        indices.emplace_back(index);
+    }
+}
+
 glm::vec3 toGlm(Vec3 value) {
     return glm::vec3(value.x, value.y, value.z);
 }
@@ -70,7 +76,7 @@ void addQuad(
     float light,
     float uvSize
 ) {
-    TerrainMeshGenerator::addFaceIndices(static_cast<uint32_t>(vertices.size()), indices);
+    addQuadIndices(static_cast<uint32_t>(vertices.size()), indices);
     vertices.emplace_back(Vertex(p0, Vec2(uv.x, uv.y + uvSize), normal, color, light));
     vertices.emplace_back(Vertex(p1, Vec2(uv.x + uvSize, uv.y + uvSize), normal, color, light));
     vertices.emplace_back(Vertex(p2, Vec2(uv.x + uvSize, uv.y), normal, color, light));
@@ -88,7 +94,7 @@ void addSolidQuad(
     Color color,
     float light
 ) {
-    TerrainMeshGenerator::addFaceIndices(static_cast<uint32_t>(vertices.size()), indices);
+    addQuadIndices(static_cast<uint32_t>(vertices.size()), indices);
     vertices.emplace_back(Vertex(p0, SOLID_WHITE_UV, normal, color, light));
     vertices.emplace_back(Vertex(p1, SOLID_WHITE_UV, normal, color, light));
     vertices.emplace_back(Vertex(p2, SOLID_WHITE_UV, normal, color, light));
@@ -293,7 +299,7 @@ MeshData makeHeldBlockMesh(VoxelType type) {
     Voxel voxel(type);
     VoxelTextureData &texture = VoxelTextureMapper::getTextureData(&voxel);
     MeshData data;
-    if (TerrainMeshGenerator::isNaturalType(type)) {
+    if (isNaturalVoxelType(type)) {
         Color weights(0.f, 0.f, 0.f, 0.f);
         switch (type) {
             case VoxelType::GRASS: weights.r = 1.f; break;
@@ -344,7 +350,7 @@ void HeldItemView::update(
     if (m_displayedBlock != selectedBlock) { updateMesh(selectedBlock); }
 
     // Блок в руке — материал своего атласа (терраформ/стройка), рука — terrain (белый снежный тайл).
-    MaterialHandle blockMaterial = TerrainMeshGenerator::isNaturalType(selectedBlock)
+    MaterialHandle blockMaterial = isNaturalVoxelType(selectedBlock)
                                              ? GameContext::s_terrainMaterial
                                              : GameContext::s_blocksMaterial;
     if (blockMaterial.isValid() && m_appliedMaterialId != blockMaterial.id) {

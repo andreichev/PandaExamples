@@ -1,16 +1,15 @@
 #include "Physics/VoxelCharacterController.hpp"
 
-#include "Model/ChunksStorage.hpp"
 #include "Model/GameContext.hpp"
-#include "Model/TerrainMeshGenerator.hpp"
+#include "Model/TerrainAccess.hpp"
 
 #include <algorithm>
 #include <cmath>
 
 // Физика ходит по ВИДИМОЙ геометрии: природный рельеф — изоповерхность того же density-поля,
-// что строит marching cubes (трилинейный семпл узловой плотности, iso 0.5), рукотворные блоки —
-// кубы (swept AABB, их видимая геометрия и есть кубы). Раньше рельеф коллизился кубами вокселей —
-// игрок проваливался там, где сглаженная поверхность не совпадает с воксельными ступенями.
+// что строит движковый marching cubes (трилинейный семпл узловой плотности, iso 0.5),
+// рукотворные блоки — кубы BuildingGrid (swept AABB). Рельеф читается ОКНОМ через TerrainAPI
+// (один батч-вызов на несколько кадров), семплы поля — по окну без ABI-обращений.
 
 namespace {
 
@@ -18,30 +17,49 @@ constexpr float COLLISION_EPSILON = 0.001f;
 constexpr float FIELD_ISO = 0.5f;
 constexpr float FIELD_SCAN_STEP = 0.25f; // шаг сканирования столбца при поиске поверхности
 
+// Окно рельефа вокруг персонажа: перечитывается при выходе капсулы из запаса.
+constexpr int WINDOW_RADIUS_XZ = 7;
+constexpr int WINDOW_RADIUS_Y = 11;
+constexpr int WINDOW_REFRESH_MARGIN = 4; // осталось меньше запаса до края — перечитать
+
+TerrainAccess::Window s_fieldWindow;
+bool s_fieldWindowValid = false;
+
 struct Aabb {
     glm::vec3 min;
     glm::vec3 max;
 };
 
-// Рукотворный куб (только они коллизятся как кубы; рельеф — полем).
-bool isConstructedVoxel(int x, int y, int z) {
-    if (!ChunksStorage::isWorldCoordInBounds(x, y, z)) { return false; }
-    if (GameContext::s_chunkStorage == nullptr) { return false; }
-    const Voxel *voxel = GameContext::s_chunkStorage->getVoxel(x, y, z);
-    if (voxel == nullptr) { return false; }
-    return voxel->isSolid() && !TerrainMeshGenerator::isNaturalType(voxel->type);
+void ensureFieldWindow(const glm::vec3 &eyePosition) {
+    const int centerX = static_cast<int>(std::floor(eyePosition.x));
+    const int centerY = static_cast<int>(std::floor(eyePosition.y));
+    const int centerZ = static_cast<int>(std::floor(eyePosition.z));
+    if (s_fieldWindowValid &&
+        centerX - WINDOW_REFRESH_MARGIN >= s_fieldWindow.minX + 1 &&
+        centerX + WINDOW_REFRESH_MARGIN <= s_fieldWindow.maxX - 1 &&
+        centerY - WINDOW_REFRESH_MARGIN >= s_fieldWindow.minY + 1 &&
+        centerY + WINDOW_REFRESH_MARGIN <= s_fieldWindow.maxY - 1 &&
+        centerZ - WINDOW_REFRESH_MARGIN >= s_fieldWindow.minZ + 1 &&
+        centerZ + WINDOW_REFRESH_MARGIN <= s_fieldWindow.maxZ - 1) {
+        return;
+    }
+    s_fieldWindow = TerrainAccess::readWindow(
+        centerX - WINDOW_RADIUS_XZ, centerY - WINDOW_RADIUS_Y, centerZ - WINDOW_RADIUS_XZ,
+        centerX + WINDOW_RADIUS_XZ, centerY + WINDOW_RADIUS_Y, centerZ + WINDOW_RADIUS_XZ
+    );
+    s_fieldWindowValid = true;
 }
 
-// Природный воксель для density-поля (как в TerrainMeshGenerator: постройки в поле не участвуют).
+// Рукотворный куб (только они коллизятся как кубы; рельеф — полем).
+bool isConstructedVoxel(int x, int y, int z) {
+    return GameContext::s_buildingGrid != nullptr && GameContext::s_buildingGrid->isSolidAt(x, y, z);
+}
+
+// Природный воксель для density-поля. Край участка — невидимая стена, ниже дна — твердь.
 bool isNaturalSolidAt(int x, int y, int z) {
-    if (!ChunksStorage::isWorldCoordInBounds(x, y, z)) { return true; }
-    if (GameContext::s_chunkStorage == nullptr) { return false; }
-    const Voxel *voxel = GameContext::s_chunkStorage->getVoxel(x, y, z);
-    if (voxel == nullptr) {
-        // Missing chunk data falls back to deterministic terrain (там только природные типы).
-        return y <= ChunksStorage::terrainHeight(x, z);
-    }
-    return voxel->isSolid() && TerrainMeshGenerator::isNaturalType(voxel->type);
+    if (!TerrainAccess::isInsideXZ(x, z)) { return y < TerrainAccess::worldMaxY(); }
+    if (y < 0) { return true; }
+    return s_fieldWindow.layerAt(x, y, z) != 0;
 }
 
 // Плотность узла решётки (угол воксела) — как NodeField в TerrainMeshGenerator: доля ПРИРОДНЫХ
@@ -191,6 +209,10 @@ float sanitizePositive(float value, float fallback) {
 
 } // namespace
 
+void VoxelCharacterController::invalidateFieldCache() {
+    s_fieldWindowValid = false;
+}
+
 void VoxelCharacterController::move(
     glm::vec3 &eyePosition,
     VoxelCharacterState &state,
@@ -198,7 +220,8 @@ void VoxelCharacterController::move(
     const VoxelCharacterInput &input,
     float deltaTime
 ) {
-    if (GameContext::s_chunkStorage == nullptr) { return; }
+    if (!TerrainAccess::isReady()) { return; }
+    ensureFieldWindow(eyePosition);
 
     const float maxFrameTime = sanitizePositive(config.maxFrameTime, 0.1f);
     const float maxSubstep = sanitizePositive(config.maxSubstep, 0.02f);

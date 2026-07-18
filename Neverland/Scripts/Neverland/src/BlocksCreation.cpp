@@ -4,9 +4,9 @@
 
 #include "BlocksCreation.hpp"
 #include "GameMenu.hpp"
-#include "Model/TerrainMeshGenerator.hpp"
 #include "Model/GameContext.hpp"
 #include "Model/WorldSave.hpp"
+#include "Physics/VoxelCharacterController.hpp"
 
 #include <unordered_set>
 #include "NeverlandTouchControls.hpp"
@@ -71,17 +71,17 @@ uint64_t packVoxelKey(int x, int y, int z) {
 // не в наборе). Координаты — относительно base; красится вершинным цветом поверх белого
 // тайла блочного атласа (как рука в HeldItemView).
 MeshData makeVoxelHighlightMesh(
-    const std::vector<TerrainBrushEdit> &edits, int baseX, int baseY, int baseZ
+    const std::vector<TerrainAccess::Edit> &edits, int baseX, int baseY, int baseZ
 ) {
     MeshData data;
     const Vec2 whiteUV(0.5f / 7.f, 0.5f / 7.f);
     const Color color(1.f, 0.85f, 0.25f, 1.f);
     constexpr float FRAME = 0.07f;  // толщина рамки
-    constexpr float OFFSET = 0.01f; // отступ от грани наружу (против z-fighting с terrain)
+    constexpr float OFFSET = 0.01f; // отступ от грани наружу (против z-fighting)
 
     std::unordered_set<uint64_t> occupied;
     occupied.reserve(edits.size() * 2);
-    for (const TerrainBrushEdit &edit : edits) {
+    for (const TerrainAccess::Edit &edit : edits) {
         occupied.insert(packVoxelKey(edit.x, edit.y, edit.z));
     }
 
@@ -104,7 +104,7 @@ MeshData makeVoxelHighlightMesh(
     };
 
     // Рамка грани: 4 полосы по периметру единичного квадрата.
-    auto addFaceFrame = [&](const TerrainBrushEdit &edit, int axis, int direction) {
+    auto addFaceFrame = [&](const TerrainAccess::Edit &edit, int axis, int direction) {
         const Vec3 origin(
             static_cast<float>(edit.x - baseX),
             static_cast<float>(edit.y - baseY),
@@ -122,7 +122,7 @@ MeshData makeVoxelHighlightMesh(
         addFrameQuad(axis, origin, normal, plane, 1.f - FRAME, FRAME, 1.f, 1.f - FRAME);
     };
 
-    for (const TerrainBrushEdit &edit : edits) {
+    for (const TerrainAccess::Edit &edit : edits) {
         if (!occupied.count(packVoxelKey(edit.x - 1, edit.y, edit.z))) { addFaceFrame(edit, 0, -1); }
         if (!occupied.count(packVoxelKey(edit.x + 1, edit.y, edit.z))) { addFaceFrame(edit, 0, 1); }
         if (!occupied.count(packVoxelKey(edit.x, edit.y - 1, edit.z))) { addFaceFrame(edit, 1, -1); }
@@ -135,9 +135,9 @@ MeshData makeVoxelHighlightMesh(
 
 // Сигнатура ФОРМЫ набора (координаты относительно первого воксела): при сдвиге прицела
 // без изменения формы меш не перестраивается — двигается только transform сущности.
-uint64_t editsSignature(const std::vector<TerrainBrushEdit> &edits) {
+uint64_t editsSignature(const std::vector<TerrainAccess::Edit> &edits) {
     uint64_t signature = 0x9E3779B97F4A7C15ull + edits.size();
-    for (const TerrainBrushEdit &edit : edits) {
+    for (const TerrainAccess::Edit &edit : edits) {
         signature ^=
             packVoxelKey(edit.x - edits[0].x, edit.y - edits[0].y, edit.z - edits[0].z) *
             0x100000001B3ull;
@@ -189,9 +189,7 @@ void BlocksCreation::updateBrushSize() {
     if (Input::isKeyJustPressed(Key::RIGHT_BRACKET)) { setBrushSize(m_brushSize + 1); }
     if (Input::isKeyJustPressed(Key::B)) {
         // Циклер режима кисти (дублирует панель).
-        m_brushMode = static_cast<TerrainBrushMode>(
-            (static_cast<int>(m_brushMode) + 1) % 3
-        );
+        m_brushMode = static_cast<GameBrushMode>((static_cast<int>(m_brushMode) + 1) % 3);
     }
 }
 
@@ -205,62 +203,55 @@ void BlocksCreation::updateSelectedBlock() {
     if (Input::isKeyJustPressed(Key::KEY_7)) { setSelectedBlock(VoxelType::SAND_STONE); }
 }
 
-void BlocksCreation::updateChunk(const ChunkCoord &coord) {
-    if (!ChunksStorage::isChunkCoordInBounds(coord)) { return; }
+BlocksCreation::AimHit BlocksCreation::aim(const Vec3 &origin, const Vec3 &direction) {
+    AimHit hit;
 
-    LOG_INFO("UPDATE CHUNK %d %d %d", coord.x, coord.y, coord.z);
-    ChunkMeshSnapshot snapshot;
-    if (!GameContext::s_chunkStorage->makeMeshSnapshot(coord, snapshot)) { return; }
+    // Кубы построек — воксельный DDA.
+    const auto blockHit = GameContext::s_buildingGrid->raycast(origin, direction, MAXIMUM_DISTANCE);
+    float blockDistance = blockHit ? blockHit->distance : MAXIMUM_DISTANCE + 1.f;
 
-    ChunkMeshBuildResult result = TerrainMeshGenerator::makeOneChunkMesh(snapshot, true);
-    Chunk *chunk = GameContext::s_chunkStorage->getChunk(result.coord);
-    if (chunk == nullptr || chunk->getVersion() != result.version) { return; }
-
-    chunk->updateMeshes(result.terrainMesh, result.blocksMesh);
-    chunk->applyMaterials(GameContext::s_terrainMaterial, GameContext::s_blocksMaterial);
-    chunk->clearNeedsRemesh();
-}
-
-void BlocksCreation::setVoxel(int x, int y, int z, VoxelType type) {
-    if (!ChunksStorage::isWorldCoordInBounds(x, y, z)) { return; }
-
-    if (!GameContext::s_chunkStorage->setVoxel(x, y, z, type)) { return; }
-    ChunkCoord coord = ChunksStorage::worldToChunkCoord(x, y, z);
-    const int localX = ChunksStorage::worldToLocalX(x);
-    const int localY = ChunksStorage::worldToLocalY(y);
-    const int localZ = ChunksStorage::worldToLocalZ(z);
-
-    updateChunk(coord);
-
-    // Воксель в ≤2 клетках от границы влияет на узлы/градиенты соседнего чанка (PADDING = 2).
-    if (localX <= 1) { updateChunk({coord.x - 1, coord.y, coord.z}); }
-    if (localX >= Chunk::SIZE_X - 2) { updateChunk({coord.x + 1, coord.y, coord.z}); }
-    if (localZ <= 1) { updateChunk({coord.x, coord.y, coord.z - 1}); }
-    if (localZ >= Chunk::SIZE_Z - 2) { updateChunk({coord.x, coord.y, coord.z + 1}); }
-    if (localY <= 1) { updateChunk({coord.x, coord.y - 1, coord.z}); }
-    if (localY >= Chunk::SIZE_Y - 2) { updateChunk({coord.x, coord.y + 1, coord.z}); }
-}
-
-void BlocksCreation::applyEdits(const std::vector<TerrainBrushEdit> &edits) {
-    std::unordered_set<ChunkCoord, ChunkCoordHash> affected;
-    for (const TerrainBrushEdit &edit : edits) {
-        if (!ChunksStorage::isWorldCoordInBounds(edit.x, edit.y, edit.z)) { continue; }
-        if (!GameContext::s_chunkStorage->setVoxel(edit.x, edit.y, edit.z, edit.type)) { continue; }
-
-        const ChunkCoord coord = ChunksStorage::worldToChunkCoord(edit.x, edit.y, edit.z);
-        const int localX = ChunksStorage::worldToLocalX(edit.x);
-        const int localY = ChunksStorage::worldToLocalY(edit.y);
-        const int localZ = ChunksStorage::worldToLocalZ(edit.z);
-        affected.insert(coord);
-        // Воксель в ≤2 клетках от границы влияет на узлы/градиенты соседнего чанка (PADDING = 2).
-        if (localX <= 1) { affected.insert({coord.x - 1, coord.y, coord.z}); }
-        if (localX >= Chunk::SIZE_X - 2) { affected.insert({coord.x + 1, coord.y, coord.z}); }
-        if (localZ <= 1) { affected.insert({coord.x, coord.y, coord.z - 1}); }
-        if (localZ >= Chunk::SIZE_Z - 2) { affected.insert({coord.x, coord.y, coord.z + 1}); }
-        if (localY <= 1) { affected.insert({coord.x, coord.y - 1, coord.z}); }
-        if (localY >= Chunk::SIZE_Y - 2) { affected.insert({coord.x, coord.y + 1, coord.z}); }
+    // Рельеф — точный луч по MC-поверхности через движок.
+    Vec3 surfacePoint, surfaceNormal;
+    float surfaceDistance = MAXIMUM_DISTANCE + 1.f;
+    const bool surfaceHit =
+        TerrainAccess::raycast(origin, direction, MAXIMUM_DISTANCE, surfacePoint, surfaceNormal);
+    if (surfaceHit) {
+        const float dx = surfacePoint.x - origin.x;
+        const float dy = surfacePoint.y - origin.y;
+        const float dz = surfacePoint.z - origin.z;
+        surfaceDistance = std::sqrt(dx * dx + dy * dy + dz * dz);
     }
-    for (const ChunkCoord &coord : affected) { updateChunk(coord); }
+
+    if (blockHit && blockDistance <= surfaceDistance) {
+        hit.valid = true;
+        hit.isBuilding = true;
+        hit.x = blockHit->x;
+        hit.y = blockHit->y;
+        hit.z = blockHit->z;
+        hit.normalX = blockHit->normalX;
+        hit.normalY = blockHit->normalY;
+        hit.normalZ = blockHit->normalZ;
+        return hit;
+    }
+    if (surfaceHit) {
+        hit.valid = true;
+        hit.isBuilding = false;
+        // Воксель рельефа: чуть внутрь поверхности вдоль нормали; грань — по доминанте нормали.
+        hit.x = static_cast<int>(std::floor(surfacePoint.x - surfaceNormal.x * 0.05f));
+        hit.y = static_cast<int>(std::floor(surfacePoint.y - surfaceNormal.y * 0.05f));
+        hit.z = static_cast<int>(std::floor(surfacePoint.z - surfaceNormal.z * 0.05f));
+        const float ax = std::abs(surfaceNormal.x);
+        const float ay = std::abs(surfaceNormal.y);
+        const float az = std::abs(surfaceNormal.z);
+        if (ay >= ax && ay >= az) {
+            hit.normalY = surfaceNormal.y > 0.f ? 1 : -1;
+        } else if (ax >= az) {
+            hit.normalX = surfaceNormal.x > 0.f ? 1 : -1;
+        } else {
+            hit.normalZ = surfaceNormal.z > 0.f ? 1 : -1;
+        }
+    }
+    return hit;
 }
 
 void BlocksCreation::updateTouchBlockInput(
@@ -329,7 +320,7 @@ void BlocksCreation::updateTouchBlockInput(
     }
 }
 
-void BlocksCreation::updateBrushMarker(const std::vector<TerrainBrushEdit> &edits) {
+void BlocksCreation::updateBrushMarker(const std::vector<TerrainAccess::Edit> &edits) {
 #if defined(NEVERLAND_MOBILE)
     (void)edits;
 #else
@@ -392,8 +383,7 @@ void BlocksCreation::update(float deltaTime) {
     const bool moving = isMovingInput();
     m_heldItemView.update(getEntity(), m_selectedBlock, moving, isSprintingInput(moving), deltaTime);
 
-    // Keep voxel edits disabled until the initial world is visible.
-    if (!GameContext::isWorldLoaded()) { return; }
+    if (!GameContext::isWorldLoaded() || !TerrainAccess::isReady()) { return; }
 
     bool placePressed = false;
     bool breakPressed = false;
@@ -414,56 +404,59 @@ void BlocksCreation::update(float deltaTime) {
     }
     // Рейкаст каждый кадр: маркер кисти показывает точку редактирования и без кликов.
     if (!m_playerController) { return; }
-    Vec3 position = getPosition();
-    Vec3 target = hasTouchAim
-                      ? m_playerController->getRayDirectionForScreenPoint(touchAim.x, touchAim.y)
-                      : m_playerController->getFront();
-    auto v = GameContext::s_chunkStorage->bresenham3D(
-        position.x, position.y, position.z, target.x, target.y, target.z, MAXIMUM_DISTANCE
-    );
-    const bool hasHit = v && v->voxel != nullptr;
+    const Vec3 position = getPosition();
+    const Vec3 target = hasTouchAim
+                            ? m_playerController->getRayDirectionForScreenPoint(touchAim.x, touchAim.y)
+                            : m_playerController->getFront();
+    const AimHit hit = aim(position, target);
+
     // Кисть работает только по природным типам; конструкции ставятся/ломаются по одному вокселю.
-    const bool brushActive = TerrainMeshGenerator::isNaturalType(m_selectedBlock);
-    const int hitX = hasHit ? static_cast<int>(v->end.x) : 0;
-    const int hitY = hasHit ? static_cast<int>(v->end.y) : 0;
-    const int hitZ = hasHit ? static_cast<int>(v->end.z) : 0;
-    const int normalX = hasHit ? static_cast<int>(v->normal.x) : 0;
-    const int normalY = hasHit ? static_cast<int>(v->normal.y) : 0;
-    const int normalZ = hasHit ? static_cast<int>(v->normal.z) : 0;
+    const bool brushActive = isNaturalVoxelType(m_selectedBlock);
     m_previewEdits.clear();
-    if (hasHit) {
+    if (hit.valid) {
         if (brushActive) {
             // Превью основного действия (ЛКМ): те же правки подсвечиваются и применяются.
-            TerrainBrush::computeEdits(
-                m_brushMode, /*secondary*/ false, hitX, hitY, hitZ, normalX, normalY, normalZ,
-                currentBrushRadius(), m_selectedBlock, m_previewEdits
+            GameBrush::computeEdits(
+                m_brushMode, /*secondary*/ false, hit.x, hit.y, hit.z, hit.normalX, hit.normalY,
+                hit.normalZ, currentBrushRadius(), m_selectedBlock, *GameContext::s_buildingGrid,
+                m_previewEdits
             );
         } else {
             // Конструкция: подсветка одного воксела будущей установки, без учёта кисти.
             m_previewEdits.push_back(
-                {hitX + normalX, hitY + normalY, hitZ + normalZ, m_selectedBlock}
+                {hit.x + hit.normalX, hit.y + hit.normalY, hit.z + hit.normalZ, m_selectedBlock}
             );
         }
     }
     updateBrushMarker(m_previewEdits);
-    if (hasHit && (placePressed || breakPressed)) {
-        if (placePressed) {
-            if (brushActive) {
-                applyEdits(m_previewEdits);
-            } else {
-                setVoxel(hitX + normalX, hitY + normalY, hitZ + normalZ, m_selectedBlock);
-            }
-        } else if (breakPressed) {
-            if (brushActive && TerrainMeshGenerator::isNaturalType(v->voxel->type)) {
-                // Обратное действие кисти: вырезать/опустить.
-                TerrainBrush::computeEdits(
-                    m_brushMode, /*secondary*/ true, hitX, hitY, hitZ, normalX, normalY, normalZ,
-                    currentBrushRadius(), m_selectedBlock, m_previewEdits
-                );
-                applyEdits(m_previewEdits);
-            } else {
-                setVoxel(hitX, hitY, hitZ, VoxelType::NOTHING);
-            }
+
+    if (!hit.valid || (!placePressed && !breakPressed)) { return; }
+    if (placePressed) {
+        if (brushActive) {
+            TerrainAccess::applyEdits(m_previewEdits);
+            VoxelCharacterController::invalidateFieldCache();
+        } else {
+            GameContext::s_buildingGrid->setBlock(
+                hit.x + hit.normalX, hit.y + hit.normalY, hit.z + hit.normalZ, m_selectedBlock
+            );
+        }
+    } else if (breakPressed) {
+        if (hit.isBuilding) {
+            GameContext::s_buildingGrid->setBlock(hit.x, hit.y, hit.z, VoxelType::NOTHING);
+        } else if (brushActive) {
+            // Обратное действие кисти: вырезать/опустить.
+            GameBrush::computeEdits(
+                m_brushMode, /*secondary*/ true, hit.x, hit.y, hit.z, hit.normalX, hit.normalY,
+                hit.normalZ, currentBrushRadius(), m_selectedBlock, *GameContext::s_buildingGrid,
+                m_previewEdits
+            );
+            TerrainAccess::applyEdits(m_previewEdits);
+            VoxelCharacterController::invalidateFieldCache();
+        } else {
+            // Строительный тип в руке, но целимся в рельеф — одиночный вырез воксела.
+            std::vector<TerrainAccess::Edit> single = {{hit.x, hit.y, hit.z, VoxelType::NOTHING}};
+            TerrainAccess::applyEdits(single);
+            VoxelCharacterController::invalidateFieldCache();
         }
     }
 }

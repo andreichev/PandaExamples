@@ -1,15 +1,13 @@
 #include "WorldSave.hpp"
-#include "ChunksStorage.hpp"
 
 #include <Bamboo/Logger.hpp>
 
-#include <cstdio>
 #include <fstream>
 
 namespace {
 
 constexpr uint32_t SAVE_MAGIC = 0x4E565356; // 'NVSV'
-constexpr uint32_t SAVE_VERSION = 1;
+constexpr uint32_t SAVE_VERSION = 2;        // движковый terrain: правки вокселей + блоки
 
 template<typename T>
 bool readValue(std::ifstream &file, T &value) {
@@ -26,7 +24,8 @@ void writeValue(std::ofstream &file, const T &value) {
 
 void WorldSave::load(const std::string &path) {
     m_path = path;
-    m_chunks.clear();
+    terrainEdits.clear();
+    buildingBlocks.clear();
     player = {};
 
     std::ifstream file(path, std::ios::binary);
@@ -38,7 +37,7 @@ void WorldSave::load(const std::string &path) {
         return;
     }
     if (!readValue(file, version) || version != SAVE_VERSION) {
-        LOG_ERROR("WorldSave: unsupported version in %s", path.c_str());
+        LOG_WARN("WorldSave: version %u unsupported (want %u) — starting fresh", version, SAVE_VERSION);
         return;
     }
 
@@ -52,25 +51,34 @@ void WorldSave::load(const std::string &path) {
     readValue(file, player.selectedBlock);
     player.valid = playerValid != 0;
 
-    uint32_t chunkCount = 0;
-    if (!readValue(file, chunkCount)) { return; }
-    for (uint32_t i = 0; i < chunkCount; i++) {
-        ChunkCoord coord;
-        uint32_t editCount = 0;
-        if (!readValue(file, coord.x) || !readValue(file, coord.y) || !readValue(file, coord.z) ||
-            !readValue(file, editCount)) {
-            LOG_ERROR("WorldSave: truncated file %s", path.c_str());
+    uint32_t editCount = 0;
+    if (!readValue(file, editCount)) { return; }
+    terrainEdits.reserve(editCount);
+    for (uint32_t i = 0; i < editCount; i++) {
+        uint64_t key = 0;
+        uint8_t layer = 0;
+        if (!readValue(file, key) || !readValue(file, layer)) {
+            LOG_ERROR("WorldSave: truncated terrain edits in %s", path.c_str());
             return;
         }
-        std::vector<VoxelEdit> edits(editCount);
-        file.read(reinterpret_cast<char *>(edits.data()), editCount * sizeof(VoxelEdit));
-        if (!file.good()) {
-            LOG_ERROR("WorldSave: truncated chunk in %s", path.c_str());
-            return;
-        }
-        m_chunks.emplace(coord, std::move(edits));
+        terrainEdits[key] = layer;
     }
-    LOG_INFO("WorldSave: loaded %u modified chunks from %s", chunkCount, path.c_str());
+
+    uint32_t blockCount = 0;
+    if (!readValue(file, blockCount)) { return; }
+    buildingBlocks.reserve(blockCount);
+    for (uint32_t i = 0; i < blockCount; i++) {
+        uint64_t key = 0;
+        uint8_t type = 0;
+        if (!readValue(file, key) || !readValue(file, type)) {
+            LOG_ERROR("WorldSave: truncated blocks in %s", path.c_str());
+            return;
+        }
+        buildingBlocks.emplace_back(key, type);
+    }
+    LOG_INFO(
+        "WorldSave: loaded %u terrain edits, %u blocks from %s", editCount, blockCount, path.c_str()
+    );
 }
 
 void WorldSave::saveToDisk() const {
@@ -89,41 +97,14 @@ void WorldSave::saveToDisk() const {
     writeValue(file, player.pitch);
     writeValue(file, player.yaw);
     writeValue(file, player.selectedBlock);
-    writeValue(file, static_cast<uint32_t>(m_chunks.size()));
-    for (const auto &[coord, edits] : m_chunks) {
-        writeValue(file, coord.x);
-        writeValue(file, coord.y);
-        writeValue(file, coord.z);
-        writeValue(file, static_cast<uint32_t>(edits.size()));
-        file.write(reinterpret_cast<const char *>(edits.data()), edits.size() * sizeof(VoxelEdit));
+    writeValue(file, static_cast<uint32_t>(terrainEdits.size()));
+    for (const auto &[key, layer] : terrainEdits) {
+        writeValue(file, key);
+        writeValue(file, layer);
     }
-}
-
-void WorldSave::captureChunk(const Chunk &chunk) {
-    // Эталон — свежая процедурная генерация того же чанка; дельта = отличия текущего состояния.
-    static Chunk reference; // только главный поток
-    reference.setCoord(chunk.getCoord());
-    ChunksStorage::generateChunkData(reference);
-
-    std::vector<VoxelEdit> edits;
-    for (int index = 0; index < Chunk::VOXEL_COUNT; index++) {
-        const VoxelType current = chunk.data().voxels[index].type;
-        if (current != reference.data().voxels[index].type) {
-            edits.push_back({static_cast<uint16_t>(index), static_cast<uint8_t>(current)});
-        }
+    writeValue(file, static_cast<uint32_t>(buildingBlocks.size()));
+    for (const auto &[key, type] : buildingBlocks) {
+        writeValue(file, key);
+        writeValue(file, type);
     }
-    if (edits.empty()) {
-        m_chunks.erase(chunk.getCoord()); // правки вернули чанк к исходному виду
-    } else {
-        m_chunks[chunk.getCoord()] = std::move(edits);
-    }
-}
-
-void WorldSave::applyToChunk(Chunk &chunk) const {
-    auto it = m_chunks.find(chunk.getCoord());
-    if (it == m_chunks.end()) { return; }
-    for (const VoxelEdit &edit : it->second) {
-        chunk.data().voxels[edit.index].type = static_cast<VoxelType>(edit.type);
-    }
-    chunk.data().modifiedByPlayer = true; // правленый чанк не должен выгружаться стримингом
 }

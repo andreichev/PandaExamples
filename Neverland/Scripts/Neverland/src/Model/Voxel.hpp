@@ -43,3 +43,35 @@ struct Voxel {
         return type != VoxelType::NOTHING && type != VoxelType::TALL_GRASS;
     }
 };
+
+// Природные типы — рельеф движкового Terrain3D; остальные твёрдые — постройки (BuildingGrid).
+inline bool isNaturalVoxelType(VoxelType type) {
+    switch (type) {
+        case VoxelType::GRASS:
+        case VoxelType::GROUND:
+        case VoxelType::STONE:
+        case VoxelType::SAND: return true;
+        default: return false;
+    }
+}
+
+// Маппинг природных типов на слои движкового terrain (веса r/g/b/a шейдера).
+inline uint8_t terrainLayerFor(VoxelType type) {
+    switch (type) {
+        case VoxelType::GRASS: return 1;
+        case VoxelType::GROUND: return 2;
+        case VoxelType::STONE: return 3;
+        case VoxelType::SAND: return 4;
+        default: return 0;
+    }
+}
+
+inline VoxelType voxelTypeForTerrainLayer(uint8_t layer) {
+    switch (layer) {
+        case 1: return VoxelType::GRASS;
+        case 2: return VoxelType::GROUND;
+        case 3: return VoxelType::STONE;
+        case 4: return VoxelType::SAND;
+        default: return VoxelType::NOTHING;
+    }
+}

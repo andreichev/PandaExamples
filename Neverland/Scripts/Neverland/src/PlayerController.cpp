@@ -4,7 +4,7 @@
 
 #include "PlayerController.hpp"
 #include "GameMenu.hpp"
-#include "Model/ChunksStorage.hpp"
+#include "Model/TerrainAccess.hpp"
 #include "Model/GameContext.hpp"
 #include "Model/WorldSave.hpp"
 #include "NeverlandTouchControls.hpp"
@@ -59,7 +59,9 @@ void PlayerController::start() {
         syncRotationFromAngles();
         return;
     }
-    const int groundHeight = ChunksStorage::terrainHeight(0, 0);
+    float groundHeight = 20.f;
+    Vec3 groundNormal;
+    TerrainAccess::sampleSurface(0.f, 0.f, groundHeight, groundNormal);
     m_physicsEyePosition = glm::vec3(0.0f, groundHeight + 1.0f + eyeHeight + 1.0f, 0.0f);
     m_visualYOffset = 0.0f;
     m_hasPhysicsEyePosition = true;

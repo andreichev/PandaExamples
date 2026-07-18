@@ -1,0 +1,109 @@
+[
+  {
+    "label": "Configure TerrainTest Debug",
+    "command": "./Scripts/TerrainTest/scripts/configure_scripts.sh",
+    "args": [
+      "debug"
+    ],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "use_new_terminal": false,
+    "allow_concurrent_runs": false,
+    "reveal": "always",
+    "hide": "never"
+  },
+  {
+    "label": "Build TerrainTest Debug",
+    "command": "./Scripts/TerrainTest/scripts/build_scripts.sh",
+    "args": [
+      "debug"
+    ],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "use_new_terminal": false,
+    "allow_concurrent_runs": false,
+    "reveal": "always",
+    "hide": "never"
+  },
+  {
+    "label": "Configure TerrainTest Release",
+    "command": "./Scripts/TerrainTest/scripts/configure_scripts.sh",
+    "args": [
+      "release"
+    ],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "use_new_terminal": false,
+    "allow_concurrent_runs": false,
+    "reveal": "always",
+    "hide": "never"
+  },
+  {
+    "label": "Build TerrainTest Release",
+    "command": "./Scripts/TerrainTest/scripts/build_scripts.sh",
+    "args": [
+      "release"
+    ],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "use_new_terminal": false,
+    "allow_concurrent_runs": false,
+    "reveal": "always",
+    "hide": "never"
+  },
+  {
+    "label": "Open Export Xcode macOS",
+    "command": "./Scripts/TerrainTest/scripts/open_export_xcode.sh",
+    "args": [
+      "macos-debug"
+    ],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "use_new_terminal": true,
+    "allow_concurrent_runs": false,
+    "reveal": "always",
+    "hide": "never"
+  },
+  {
+    "label": "Open Export Xcode iOS Simulator",
+    "command": "./Scripts/TerrainTest/scripts/open_export_xcode.sh",
+    "args": [
+      "ios-debug"
+    ],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "use_new_terminal": true,
+    "allow_concurrent_runs": false,
+    "reveal": "always",
+    "hide": "never"
+  },
+  {
+    "label": "Open Export Xcode iOS Device",
+    "command": "./Scripts/TerrainTest/scripts/open_export_xcode.sh",
+    "args": [
+      "ios-device-debug"
+    ],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "use_new_terminal": true,
+    "allow_concurrent_runs": false,
+    "reveal": "always",
+    "hide": "never"
+  },
+  {
+    "label": "Open Export Visual Studio Windows",
+    "command": "./Scripts/TerrainTest/scripts/open_export_visual_studio.sh",
+    "args": [
+      "windows-debug"
+    ],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "use_new_terminal": true,
+    "allow_concurrent_runs": false,
+    "reveal": "always",
+    "hide": "never"
+  },
+  {
+    "label": "Format Code",
+    "command": "./Scripts/TerrainTest/scripts/format_code.sh",
+    "args": [
+    ],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "use_new_terminal": false,
+    "allow_concurrent_runs": false,
+    "reveal": "always",
+    "hide": "never"
+  }
+]

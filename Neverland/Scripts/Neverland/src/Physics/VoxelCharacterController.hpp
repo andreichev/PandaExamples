@@ -39,6 +39,8 @@ public:
         const VoxelCharacterInput &input,
         float deltaTime
     );
+    // Правка рельефа рядом с игроком (кисть) — кешированное окно поля устарело.
+    static void invalidateFieldCache();
 
 private:
     static bool moveHorizontalWithStep(

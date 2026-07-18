@@ -64,7 +64,7 @@ private:
 };
 
 TerrainBrushPanel::TerrainBrushPanel(
-    std::function<void(TerrainBrushMode)> onModeChanged, std::function<void(int)> onSizeChanged
+    std::function<void(GameBrushMode)> onModeChanged, std::function<void(int)> onSizeChanged
 )
     : m_onModeChanged(std::move(onModeChanged))
     , m_onSizeChanged(std::move(onSizeChanged)) {
@@ -82,12 +82,12 @@ TerrainBrushPanel::TerrainBrushPanel(
     title->setTextColor(PandaUI::Color(0x9AA6BAFF));
     addSubview(title);
 
-    const TerrainBrushMode modes[3] = {
-        TerrainBrushMode::Sphere, TerrainBrushMode::Raise, TerrainBrushMode::Flatten
+    const GameBrushMode modes[3] = {
+        GameBrushMode::Sphere, GameBrushMode::Raise, GameBrushMode::Flatten
     };
     for (int index = 0; index < 3; index++) {
-        const TerrainBrushMode mode = modes[index];
-        auto button = std::make_shared<BrushPanelButton>(TerrainBrush::modeName(mode));
+        const GameBrushMode mode = modes[index];
+        auto button = std::make_shared<BrushPanelButton>(GameBrush::modeName(mode));
         button->layout().setWidth(PandaUI::Length::percent(100.f));
         button->setOnClick([this, mode](PandaUI::Button &) {
             if (m_onModeChanged) { m_onModeChanged(mode); }
@@ -139,7 +139,7 @@ TerrainBrushPanel::TerrainBrushPanel(
     applySelection();
 }
 
-void TerrainBrushPanel::setState(TerrainBrushMode mode, int size, int sizeCount) {
+void TerrainBrushPanel::setState(GameBrushMode mode, int size, int sizeCount) {
     if (m_mode == mode && m_size == size && m_sizeCount == sizeCount) { return; }
     m_mode = mode;
     m_size = size;
@@ -148,8 +148,8 @@ void TerrainBrushPanel::setState(TerrainBrushMode mode, int size, int sizeCount)
 }
 
 void TerrainBrushPanel::applySelection() {
-    const TerrainBrushMode modes[3] = {
-        TerrainBrushMode::Sphere, TerrainBrushMode::Raise, TerrainBrushMode::Flatten
+    const GameBrushMode modes[3] = {
+        GameBrushMode::Sphere, GameBrushMode::Raise, GameBrushMode::Flatten
     };
     for (int index = 0; index < 3; index++) {
         if (m_modeButtons[index]) { m_modeButtons[index]->setSelected(modes[index] == m_mode); }

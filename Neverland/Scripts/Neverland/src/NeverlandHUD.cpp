@@ -1,5 +1,5 @@
 #include "NeverlandHUD.hpp"
-#include "Model/TerrainMeshGenerator.hpp"
+#include "Model/Voxel.hpp"
 #include "Model/VoxelTextureMapper.hpp"
 #include "NeverlandTouchControls.hpp"
 
@@ -430,7 +430,7 @@ void NeverlandHUD::updateBrushPanel() {
     if (!m_brushPanel || !m_blocksCreation) { return; }
     // Кисть работает только по природным типам — для конструкций панель прячем.
     const bool naturalSelected =
-        TerrainMeshGenerator::isNaturalType(m_blocksCreation->getSelectedBlock());
+        isNaturalVoxelType(m_blocksCreation->getSelectedBlock());
     m_brushPanel->setHidden(!naturalSelected);
     if (!naturalSelected) { return; }
     m_brushPanel->setState(
@@ -482,7 +482,7 @@ void NeverlandHUD::buildUI() {
     if (shouldShowTouchControls()) { m_hudLayer->addSubview(makeTouchControls()); }
     if (shouldShowBrushPanel()) {
         m_brushPanel = std::make_shared<TerrainBrushPanel>(
-            [this](TerrainBrushMode mode) {
+            [this](GameBrushMode mode) {
                 if (m_blocksCreation) { m_blocksCreation->setBrushMode(mode); }
             },
             [this](int size) {
@@ -550,7 +550,7 @@ void NeverlandHUD::loadBlockPreviewTextures() {
     const bool hasGround = readAtlas(groundTileTexture, groundAtlas);
 
     for (size_t i = 0; i < BLOCKS.size(); ++i) {
-        if (TerrainMeshGenerator::isNaturalType(BLOCKS[i].type)) {
+        if (isNaturalVoxelType(BLOCKS[i].type)) {
             if (hasGround) { m_previewTextures[i] = makeTexturePreview(groundAtlas, 6, BLOCKS[i].type); }
         } else if (hasBlocks) {
             m_previewTextures[i] = makeTexturePreview(blocksAtlas, 7, BLOCKS[i].type);
