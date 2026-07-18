@@ -28,7 +28,6 @@ constexpr float HotbarHeight = HotbarPaddingVertical * 2.0f + HotbarSlotHeight;
 constexpr float HotbarTouchHeight = HotbarBottomMargin + HotbarHeight + 20.0f;
 
 constexpr float TouchButtonSize = 58.0f;
-constexpr float TouchButtonGap = 8.0f;
 
 constexpr float MenuButtonWidth = 240.0f;
 constexpr float MenuButtonHeight = 52.0f;
@@ -36,13 +35,14 @@ constexpr float MenuButtonGap = 14.0f;
 constexpr float MenuTitleFontSize = 52.0f;
 constexpr float MenuSubtitleFontSize = 20.0f;
 constexpr float MenuTitleGap = 42.0f;
-constexpr float MovePadLeftMargin = 0.0f;
-constexpr float MovePadBottom = HotbarHeight;
 constexpr float ActionControlsMargin = 24.0f;
 constexpr float ActionControlsBottom = HotbarTouchHeight + 16.0f;
-constexpr float MovePadSize = TouchButtonSize * 3.0f + TouchButtonGap * 2.0f;
 constexpr float JumpButtonWidth = 88.0f;
 constexpr float JumpButtonHeight = 58.0f;
+
+// Плавающий джойстик движения (появляется в точке касания левой половины экрана).
+constexpr float JoystickRadius = 64.0f;
+constexpr float JoystickKnobRadius = 26.0f;
 
 inline bool isInsideRect(float x, float y, float left, float top, float width, float height) {
     return x >= left && x <= left + width && y >= top && y <= top + height;
@@ -56,12 +56,6 @@ inline bool isInsideHotbarTouchArea(float x, float y, float width, float height)
     return isInsideRect(x, y, left, top, halfWidth * 2.0f, HotbarTouchHeight);
 }
 
-inline bool isInsideMovePadTouchArea(float x, float y, float, float height) {
-    const float left = MovePadLeftMargin;
-    const float top = height - MovePadBottom - MovePadSize;
-    return isInsideRect(x, y, left, top, MovePadSize, MovePadSize);
-}
-
 inline bool isInsideJumpButtonTouchArea(float x, float y, float width, float height) {
     const float left = width - ActionControlsMargin - JumpButtonWidth;
     const float top = height - ActionControlsBottom - JumpButtonHeight;
@@ -69,7 +63,7 @@ inline bool isInsideJumpButtonTouchArea(float x, float y, float width, float hei
 }
 
 inline bool isInsideMobileControlsTouchArea(float x, float y, float width, float height) {
-    return isInsideMovePadTouchArea(x, y, width, height) || isInsideJumpButtonTouchArea(x, y, width, height);
+    return isInsideJumpButtonTouchArea(x, y, width, height);
 }
 
 inline bool isInsideInteractiveHUDTouchArea(float x, float y, float width, float height) {

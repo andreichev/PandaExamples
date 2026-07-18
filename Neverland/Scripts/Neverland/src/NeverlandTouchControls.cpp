@@ -10,12 +10,9 @@ namespace NeverlandTouchControls {
 namespace {
 
 struct State {
-    bool forward = false;
-    bool backward = false;
-    bool left = false;
-    bool right = false;
     bool jumpDown = false;
     bool jumpPressed = false;
+    MoveStick moveStick;
 };
 
 State s_state;
@@ -25,14 +22,7 @@ float s_safeLeft = 0.0f;
 float s_safeRight = 0.0f;
 float s_safeBottom = 0.0f;
 
-bool &buttonState(Button button) {
-    switch (button) {
-        case Button::Forward: return s_state.forward;
-        case Button::Backward: return s_state.backward;
-        case Button::Left: return s_state.left;
-        case Button::Right: return s_state.right;
-        case Button::Jump: return s_state.jumpDown;
-    }
+bool &buttonState(Button) {
     return s_state.jumpDown;
 }
 
@@ -58,10 +48,18 @@ void setPressed(Button button, bool pressed) {
     current = pressed;
 }
 
+void setMoveStick(const MoveStick &stick) {
+    s_state.moveStick = stick;
+}
+
+const MoveStick &getMoveStick() {
+    return s_state.moveStick;
+}
+
 MoveAxes getMoveAxes() {
     MoveAxes axes;
-    axes.x = (s_state.right ? 1.0f : 0.0f) - (s_state.left ? 1.0f : 0.0f);
-    axes.y = (s_state.forward ? 1.0f : 0.0f) - (s_state.backward ? 1.0f : 0.0f);
+    axes.x = s_state.moveStick.axisX;
+    axes.y = s_state.moveStick.axisY;
     return axes;
 }
 

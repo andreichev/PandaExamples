@@ -23,19 +23,6 @@ struct Aabb {
     glm::vec3 max;
 };
 
-bool isSolidAt(int x, int y, int z) {
-    if (!ChunksStorage::isWorldCoordInBounds(x, y, z)) { return true; }
-    if (GameContext::s_chunkStorage == nullptr) { return false; }
-
-    const Voxel *voxel = GameContext::s_chunkStorage->getVoxel(x, y, z);
-    if (voxel == nullptr) {
-        // Missing chunk data falls back to deterministic terrain so streaming gaps do not become
-        // holes, while unloaded air above terrain stays passable.
-        return y <= ChunksStorage::terrainHeight(x, z);
-    }
-    return voxel->isSolid();
-}
-
 // Рукотворный куб (только они коллизятся как кубы; рельеф — полем).
 bool isConstructedVoxel(int x, int y, int z) {
     if (!ChunksStorage::isWorldCoordInBounds(x, y, z)) { return false; }
@@ -45,14 +32,26 @@ bool isConstructedVoxel(int x, int y, int z) {
     return voxel->isSolid() && !TerrainMeshGenerator::isNaturalType(voxel->type);
 }
 
-// Плотность узла решётки (угол воксела) — как NodeField в TerrainMeshGenerator: доля твёрдых
-// среди 8 смежных вокселей. Рукотворные участвуют: поверхность земли прилегает к постройкам.
+// Природный воксель для density-поля (как в TerrainMeshGenerator: постройки в поле не участвуют).
+bool isNaturalSolidAt(int x, int y, int z) {
+    if (!ChunksStorage::isWorldCoordInBounds(x, y, z)) { return true; }
+    if (GameContext::s_chunkStorage == nullptr) { return false; }
+    const Voxel *voxel = GameContext::s_chunkStorage->getVoxel(x, y, z);
+    if (voxel == nullptr) {
+        // Missing chunk data falls back to deterministic terrain (там только природные типы).
+        return y <= ChunksStorage::terrainHeight(x, z);
+    }
+    return voxel->isSolid() && TerrainMeshGenerator::isNaturalType(voxel->type);
+}
+
+// Плотность узла решётки (угол воксела) — как NodeField в TerrainMeshGenerator: доля ПРИРОДНЫХ
+// среди 8 смежных вокселей (постройки коллизятся кубами, в поле не участвуют).
 float nodeDensity(int nx, int ny, int nz) {
     int solid = 0;
     for (int dy = -1; dy <= 0; dy++) {
         for (int dx = -1; dx <= 0; dx++) {
             for (int dz = -1; dz <= 0; dz++) {
-                if (isSolidAt(nx + dx, ny + dy, nz + dz)) { solid++; }
+                if (isNaturalSolidAt(nx + dx, ny + dy, nz + dz)) { solid++; }
             }
         }
     }

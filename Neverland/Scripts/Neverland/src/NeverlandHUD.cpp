@@ -387,6 +387,7 @@ void NeverlandHUD::update(float) {
     updateSelection();
     updateMenuInput();
     applyMenuState();
+    if (shouldShowTouchControls()) { updateMoveStickOverlay(); }
 }
 
 void NeverlandHUD::shutdown() {
@@ -396,6 +397,8 @@ void NeverlandHUD::shutdown() {
     destroyBlockPreviewTextures();
     m_slots.fill(nullptr);
     m_selectionLabel.reset();
+    m_stickBase.reset();
+    m_stickKnob.reset();
     m_hudLayer.reset();
     m_mainMenu.reset();
     m_pauseMenu.reset();
@@ -596,79 +599,80 @@ std::shared_ptr<PandaUI::Panel> NeverlandHUD::makeTouchControls() {
     content->setBackgroundColor(transparent());
     content->layout().setWidth(PandaUI::Length::percent(100.f));
     content->layout().setFlexGrow(1.f);
-    content->addSubview(makeMovePad());
+    content->addSubview(makeMoveStickOverlay());
     content->addSubview(makeActionControls());
     overlay->addSubview(content);
     return overlay;
 }
 
-std::shared_ptr<PandaUI::Panel> NeverlandHUD::makeMovePad() {
-    auto pad = std::make_shared<PandaUI::Panel>();
-    pad->setBackgroundColor(transparent());
-    pad->layoutSetAbsolute();
-    pad->layout().setPosition(
-        PandaUI::Edge::Left, PandaUI::Length::points(NeverlandHUDLayout::MovePadLeftMargin)
-    );
-    pad->layout().setPosition(
-        PandaUI::Edge::Bottom, PandaUI::Length::points(NeverlandHUDLayout::MovePadBottom)
-    );
-    pad->layout().setWidth(PandaUI::Length::points(NeverlandHUDLayout::MovePadSize));
-    pad->layout().setHeight(PandaUI::Length::points(NeverlandHUDLayout::MovePadSize));
+// Плавающий джойстик: два неинтерактивных круга, позиционируются по стейту стика
+// (касания трекает PlayerController, HUD только рисует).
+std::shared_ptr<PandaUI::Panel> NeverlandHUD::makeMoveStickOverlay() {
+    auto overlay = std::make_shared<PandaUI::Panel>();
+    overlay->setBackgroundColor(transparent());
+    overlay->setUserInteractionEnabled(false);
+    overlay->layoutSetAbsolute();
+    overlay->layout().setPosition(PandaUI::Edge::Left, PandaUI::Length::points(0.f));
+    overlay->layout().setPosition(PandaUI::Edge::Top, PandaUI::Length::points(0.f));
+    overlay->layout().setWidth(PandaUI::Length::percent(100.f));
+    overlay->layout().setHeight(PandaUI::Length::percent(100.f));
 
-    auto forward = makeTouchControlButton("W", NeverlandTouchControls::Button::Forward);
-    forward->layoutSetAbsolute();
-    forward->layout().setPosition(
+    m_stickBase = std::make_shared<PandaUI::Panel>();
+    m_stickBase->setBackgroundColor(PandaUI::Color(0x1A212E55));
+    m_stickBase->surface().setBorderWidth(1.5f);
+    m_stickBase->surface().setBorderColor(PandaUI::Color(0xFFFFFF55));
+    m_stickBase->surface().setCornerRadius(NeverlandHUDLayout::JoystickRadius);
+    m_stickBase->setUserInteractionEnabled(false);
+    m_stickBase->layoutSetAbsolute();
+    m_stickBase->layout().setWidth(PandaUI::Length::points(NeverlandHUDLayout::JoystickRadius * 2.f));
+    m_stickBase->layout().setHeight(PandaUI::Length::points(NeverlandHUDLayout::JoystickRadius * 2.f));
+    m_stickBase->setHidden(true);
+
+    m_stickKnob = std::make_shared<PandaUI::Panel>();
+    m_stickKnob->setBackgroundColor(PandaUI::Color(0xE8EEF8AA));
+    m_stickKnob->surface().setCornerRadius(NeverlandHUDLayout::JoystickKnobRadius);
+    m_stickKnob->setUserInteractionEnabled(false);
+    m_stickKnob->layoutSetAbsolute();
+    m_stickKnob->layout().setWidth(PandaUI::Length::points(NeverlandHUDLayout::JoystickKnobRadius * 2.f));
+    m_stickKnob->layout().setHeight(PandaUI::Length::points(NeverlandHUDLayout::JoystickKnobRadius * 2.f));
+    m_stickKnob->setHidden(true);
+
+    overlay->addSubview(m_stickBase);
+    overlay->addSubview(m_stickKnob);
+    return overlay;
+}
+
+void NeverlandHUD::updateMoveStickOverlay() {
+    if (!m_stickBase || !m_stickKnob) { return; }
+    const NeverlandTouchControls::MoveStick &stick = NeverlandTouchControls::getMoveStick();
+    m_stickBase->setHidden(!stick.active);
+    m_stickKnob->setHidden(!stick.active);
+    if (!stick.active) { return; }
+
+    m_stickBase->layout().setPosition(
         PandaUI::Edge::Left,
-        PandaUI::Length::points(
-            NeverlandHUDLayout::TouchButtonSize + NeverlandHUDLayout::TouchButtonGap
-        )
+        PandaUI::Length::points(stick.originX - NeverlandHUDLayout::JoystickRadius)
     );
-    forward->layout().setPosition(PandaUI::Edge::Top, PandaUI::Length::points(0.f));
-    pad->addSubview(forward);
-
-    auto left = makeTouchControlButton("A", NeverlandTouchControls::Button::Left);
-    left->layoutSetAbsolute();
-    left->layout().setPosition(PandaUI::Edge::Left, PandaUI::Length::points(0.f));
-    left->layout().setPosition(
-        PandaUI::Edge::Top,
-        PandaUI::Length::points(
-            NeverlandHUDLayout::TouchButtonSize + NeverlandHUDLayout::TouchButtonGap
-        )
+    m_stickBase->layout().setPosition(
+        PandaUI::Edge::Top, PandaUI::Length::points(stick.originY - NeverlandHUDLayout::JoystickRadius)
     );
-    pad->addSubview(left);
-
-    auto backward = makeTouchControlButton("S", NeverlandTouchControls::Button::Backward);
-    backward->layoutSetAbsolute();
-    backward->layout().setPosition(
+    // Ручка не выходит за подложку: смещение клампится радиусом.
+    float offsetX = stick.currentX - stick.originX;
+    float offsetY = stick.currentY - stick.originY;
+    const float maxOffset = NeverlandHUDLayout::JoystickRadius - NeverlandHUDLayout::JoystickKnobRadius * 0.5f;
+    const float offsetLength = std::sqrt(offsetX * offsetX + offsetY * offsetY);
+    if (offsetLength > maxOffset && offsetLength > 0.001f) {
+        offsetX = offsetX / offsetLength * maxOffset;
+        offsetY = offsetY / offsetLength * maxOffset;
+    }
+    m_stickKnob->layout().setPosition(
         PandaUI::Edge::Left,
-        PandaUI::Length::points(
-            NeverlandHUDLayout::TouchButtonSize + NeverlandHUDLayout::TouchButtonGap
-        )
+        PandaUI::Length::points(stick.originX + offsetX - NeverlandHUDLayout::JoystickKnobRadius)
     );
-    backward->layout().setPosition(
+    m_stickKnob->layout().setPosition(
         PandaUI::Edge::Top,
-        PandaUI::Length::points(
-            (NeverlandHUDLayout::TouchButtonSize + NeverlandHUDLayout::TouchButtonGap) * 2.0f
-        )
+        PandaUI::Length::points(stick.originY + offsetY - NeverlandHUDLayout::JoystickKnobRadius)
     );
-    pad->addSubview(backward);
-
-    auto right = makeTouchControlButton("D", NeverlandTouchControls::Button::Right);
-    right->layoutSetAbsolute();
-    right->layout().setPosition(
-        PandaUI::Edge::Left,
-        PandaUI::Length::points(
-            (NeverlandHUDLayout::TouchButtonSize + NeverlandHUDLayout::TouchButtonGap) * 2.0f
-        )
-    );
-    right->layout().setPosition(
-        PandaUI::Edge::Top,
-        PandaUI::Length::points(
-            NeverlandHUDLayout::TouchButtonSize + NeverlandHUDLayout::TouchButtonGap
-        )
-    );
-    pad->addSubview(right);
-    return pad;
 }
 
 std::shared_ptr<PandaUI::Panel> NeverlandHUD::makeActionControls() {

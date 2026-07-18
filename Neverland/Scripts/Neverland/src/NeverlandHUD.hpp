@@ -44,7 +44,8 @@ private:
     std::shared_ptr<PandaUI::Panel> makePauseMenu();
     std::shared_ptr<PandaUI::Panel> makeCrosshair();
     std::shared_ptr<PandaUI::Panel> makeTouchControls();
-    std::shared_ptr<PandaUI::Panel> makeMovePad();
+    std::shared_ptr<PandaUI::Panel> makeMoveStickOverlay();
+    void updateMoveStickOverlay(); // позиция/видимость джойстика из NeverlandTouchControls
     std::shared_ptr<PandaUI::Panel> makeActionControls();
     std::shared_ptr<PandaUI::Panel> makeSelectionPill();
     std::shared_ptr<PandaUI::Panel> makeHotbar();
@@ -69,6 +70,8 @@ private:
     std::shared_ptr<PandaUI::Panel> m_mainMenu;  // стартовый экран
     std::shared_ptr<PandaUI::Panel> m_pauseMenu; // пауза (Esc)
     GameMenuState m_appliedMenuState = GameMenuState::MainMenu;
+    std::shared_ptr<PandaUI::Panel> m_stickBase; // подложка джойстика (видна при касании)
+    std::shared_ptr<PandaUI::Panel> m_stickKnob; // ручка джойстика
     std::shared_ptr<PandaUI::Label> m_selectionLabel;
     std::array<std::shared_ptr<PandaUI::Button>, BLOCKS.size()> m_slots;
     std::array<PandaUI::TextureHandle, BLOCKS.size()> m_previewTextures;

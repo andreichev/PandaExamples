@@ -457,10 +457,9 @@ bool TerrainMeshGenerator::isNaturalType(VoxelType type) {
 
 namespace {
 
-// Узловое поле marching cubes: узел (i,j,k) — угол воксела (i,j,k). density — доля твёрдых
-// вокселей среди 8 смежных (рукотворные участвуют, чтобы земля прилегала к постройкам без
-// щелей), naturalNear — есть ли среди них природный: ячейки без природного вклада
-// пропускаются, иначе гладкая «кожа» накрывала бы дома из блоков.
+// Узловое поле marching cubes: узел (i,j,k) — угол воксела (i,j,k). density — доля ПРИРОДНЫХ
+// вокселей среди 8 смежных: рукотворные блоки в поле не участвуют, иначе гладкая «кожа»
+// рельефа обволакивала бы постройки.
 struct NodeField {
     static constexpr int MARGIN = 1; // узлы за границей чанка — для градиентов на границе
     static constexpr int NX = Chunk::SIZE_X + 1 + MARGIN * 2;
@@ -468,7 +467,6 @@ struct NodeField {
     static constexpr int NZ = Chunk::SIZE_Z + 1 + MARGIN * 2;
 
     std::vector<float> density;
-    std::vector<uint8_t> naturalNear;
 
     static int index(int i, int j, int k) {
         return ((j + MARGIN) * NX + (i + MARGIN)) * NZ + (k + MARGIN);
@@ -476,10 +474,6 @@ struct NodeField {
 
     float d(int i, int j, int k) const {
         return density[index(i, j, k)];
-    }
-
-    bool natural(int i, int j, int k) const {
-        return naturalNear[index(i, j, k)] != 0;
     }
 
     Vec3 gradient(int i, int j, int k) const {
@@ -492,12 +486,10 @@ struct NodeField {
 
     void fill(const ChunkMeshSnapshot &snapshot) {
         density.assign(NX * NY * NZ, 0.f);
-        naturalNear.assign(NX * NY * NZ, 0);
         for (int j = -MARGIN; j <= Chunk::SIZE_Y + MARGIN; j++) {
             for (int i = -MARGIN; i <= Chunk::SIZE_X + MARGIN; i++) {
                 for (int k = -MARGIN; k <= Chunk::SIZE_Z + MARGIN; k++) {
                     int solid = 0;
-                    bool nat = false;
                     for (int dy = -1; dy <= 0; dy++) {
                         for (int dx = -1; dx <= 0; dx++) {
                             for (int dz = -1; dz <= 0; dz++) {
@@ -507,13 +499,11 @@ struct NodeField {
                                     k + dz + ChunkMeshSnapshot::PADDING
                                 );
                                 if (voxel == nullptr) { continue; }
-                                if (voxel->isSolid()) { solid++; }
-                                if (TerrainMeshGenerator::isNaturalType(voxel->type)) { nat = true; }
+                                if (TerrainMeshGenerator::isNaturalType(voxel->type)) { solid++; }
                             }
                         }
                     }
                     density[index(i, j, k)] = solid / 8.f;
-                    if (nat) { naturalNear[index(i, j, k)] = 1; }
                 }
             }
         }
@@ -580,7 +570,6 @@ void TerrainMeshGenerator::addMarchingCubesMesh(
         for (int x = 0; x < Chunk::SIZE_X; x++) {
             for (int z = 0; z < Chunk::SIZE_Z; z++) {
                 float cornerDensity[8];
-                bool anyNatural = false;
                 int config = 0;
                 for (int corner = 0; corner < 8; corner++) {
                     const int i = x + MarchingCubes::CORNER_OFFSETS[corner][0];
@@ -588,9 +577,8 @@ void TerrainMeshGenerator::addMarchingCubesMesh(
                     const int k = z + MarchingCubes::CORNER_OFFSETS[corner][2];
                     cornerDensity[corner] = field.d(i, j, k);
                     if (cornerDensity[corner] > ISO) { config |= 1 << corner; }
-                    anyNatural = anyNatural || field.natural(i, j, k);
                 }
-                if (config == 0 || config == 255 || !anyNatural) { continue; }
+                if (config == 0 || config == 255) { continue; }
 
                 // Веса материалов рельефа — вершинный цвет (шейдер блендит тайлы ground-атласа).
                 const Color color = terrainWeights(snapshot, x, y, z);

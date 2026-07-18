@@ -172,6 +172,7 @@ void PlayerController::updateTouchControls() {
         tracker->active = true;
     }
 
+    NeverlandTouchControls::MoveStick stick;
     if (m_moveTouch.active) {
         const float radius = std::max(touchMoveRadius, 1.0f);
         glm::vec2 move(
@@ -186,21 +187,15 @@ void PlayerController::updateTouchControls() {
                 m_touchMoveDirection = glm::normalize(m_touchMoveDirection);
             }
         }
+        stick.active = true;
+        stick.originX = m_moveTouch.startX;
+        stick.originY = m_moveTouch.startY;
+        stick.currentX = m_moveTouch.lastX;
+        stick.currentY = m_moveTouch.lastY;
+        stick.axisX = move.x;
+        stick.axisY = move.y;
     }
-
-    const NeverlandTouchControls::MoveAxes buttonMove = NeverlandTouchControls::getMoveAxes();
-    if (std::abs(buttonMove.x) > 0.001f || std::abs(buttonMove.y) > 0.001f) {
-        glm::vec3 buttonMoveDirection =
-            getHorizontalRight() * buttonMove.x + getHorizontalForward() * buttonMove.y;
-        if (glm::length(buttonMoveDirection) > 0.0001f) {
-            m_touchMoveDirection += glm::normalize(buttonMoveDirection);
-            if (glm::length(m_touchMoveDirection) > 0.0001f) {
-                m_touchMoveDirection = glm::normalize(m_touchMoveDirection);
-            } else {
-                m_touchMoveDirection = glm::vec3(0.0f);
-            }
-        }
-    }
+    NeverlandTouchControls::setMoveStick(stick); // HUD рисует джойстик по этому стейту
     m_touchJumpPressed = m_touchJumpPressed || NeverlandTouchControls::consumeJumpPressed();
 }
 
