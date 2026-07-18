@@ -3,6 +3,7 @@
 #include "BlocksCreation.hpp"
 #include "GameMenu.hpp"
 #include "NeverlandHUDLayout.hpp"
+#include "TerrainBrushPanel.hpp"
 
 #include <Bamboo/Bamboo.hpp>
 #include <Bamboo/Script.hpp>
@@ -37,6 +38,7 @@ private:
     void updateTouchControlSafeArea();
     void updateSelection();
     void updateMenuInput();  // Esc: Playing ↔ Paused
+    void updateBrushPanel(); // Alt-модификатор курсора + синк панели кисти (desktop)
     void applyMenuState();   // видимость HUD/меню + идемпотентность по последнему состоянию
     void loadBlockPreviewTextures();
     void destroyBlockPreviewTextures();
@@ -72,6 +74,7 @@ private:
     GameMenuState m_appliedMenuState = GameMenuState::MainMenu;
     std::shared_ptr<PandaUI::Panel> m_stickBase; // подложка джойстика (видна при касании)
     std::shared_ptr<PandaUI::Panel> m_stickKnob; // ручка джойстика
+    std::shared_ptr<TerrainBrushPanel> m_brushPanel; // панель кисти terrain (desktop)
     std::shared_ptr<PandaUI::Label> m_selectionLabel;
     std::array<std::shared_ptr<PandaUI::Button>, BLOCKS.size()> m_slots;
     std::array<PandaUI::TextureHandle, BLOCKS.size()> m_previewTextures;

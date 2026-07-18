@@ -36,6 +36,17 @@ Color toColor(uint32_t hex) {
     return color;
 }
 
+namespace {
+
+// Грань рукотворного куба прячет только соседний рукотворный куб: природный воксель не
+// считается укрытием — marching cubes срезает рельеф, и стык остался бы дырой.
+bool constructedAt(const ChunkMeshSnapshot &snapshot, int x, int y, int z) {
+    const Voxel *voxel = snapshot.getWorld(x, y, z);
+    return voxel != nullptr && voxel->isSolid() && !TerrainMeshGenerator::isNaturalType(voxel->type);
+}
+
+} // namespace
+
 ChunkMeshBuildResult
 TerrainMeshGenerator::makeOneChunkMesh(const ChunkMeshSnapshot &snapshot, bool ambientOcclusion) {
     std::vector<Vertex> vertices; // рукотворные кубы (blocksMesh)
@@ -71,7 +82,7 @@ TerrainMeshGenerator::makeOneChunkMesh(const ChunkMeshSnapshot &snapshot, bool a
                 float a = 0, b = 0, c = 0, d = 0, e = 0, f = 0, g = 0, h = 0;
 
                 // Front
-                if (isAir(x, y, z + 1, snapshot)) {
+                if (!constructedAt(snapshot, x, y, z + 1)) {
                     addFaceIndices(static_cast<uint32_t>(vertices.size()), indices);
                     const Vec3 normal(0.f, 0.f, 1.f);
                     light = 1.0f;
@@ -132,7 +143,7 @@ TerrainMeshGenerator::makeOneChunkMesh(const ChunkMeshSnapshot &snapshot, bool a
                     )); // 3
                 }
                 // Back
-                if (isAir(x, y, z - 1, snapshot)) {
+                if (!constructedAt(snapshot, x, y, z - 1)) {
                     addFaceIndices(static_cast<uint32_t>(vertices.size()), indices);
                     const Vec3 normal(0.f, 0.f, -1.f);
                     light = 0.75f;
@@ -193,7 +204,7 @@ TerrainMeshGenerator::makeOneChunkMesh(const ChunkMeshSnapshot &snapshot, bool a
                     )); // 7
                 }
                 // Top
-                if (isAir(x, y + 1, z, snapshot)) {
+                if (!constructedAt(snapshot, x, y + 1, z)) {
                     addFaceIndices(static_cast<uint32_t>(vertices.size()), indices);
                     const Vec3 normal(0.f, 1.f, 0.f);
                     light = 0.95f;
@@ -254,7 +265,7 @@ TerrainMeshGenerator::makeOneChunkMesh(const ChunkMeshSnapshot &snapshot, bool a
                     )); // 9
                 }
                 // Bottom
-                if (isAir(x, y - 1, z, snapshot)) {
+                if (!constructedAt(snapshot, x, y - 1, z)) {
                     addFaceIndices(static_cast<uint32_t>(vertices.size()), indices);
                     const Vec3 normal(0.f, -1.f, 0.f);
                     light = 0.85f;
@@ -315,7 +326,7 @@ TerrainMeshGenerator::makeOneChunkMesh(const ChunkMeshSnapshot &snapshot, bool a
                     )); // 15
                 }
                 // Right
-                if (isAir(x - 1, y, z, snapshot)) {
+                if (!constructedAt(snapshot, x - 1, y, z)) {
                     addFaceIndices(static_cast<uint32_t>(vertices.size()), indices);
                     const Vec3 normal(-1.f, 0.f, 0.f);
                     light = 0.9f;
@@ -376,7 +387,7 @@ TerrainMeshGenerator::makeOneChunkMesh(const ChunkMeshSnapshot &snapshot, bool a
                     )); // 19
                 }
                 // Left
-                if (isAir(x + 1, y, z, snapshot)) {
+                if (!constructedAt(snapshot, x + 1, y, z)) {
                     addFaceIndices(static_cast<uint32_t>(vertices.size()), indices);
                     const Vec3 normal(1.f, 0.f, 0.f);
                     light = 0.8f;
