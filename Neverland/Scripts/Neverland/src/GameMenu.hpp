@@ -19,14 +19,8 @@ public:
     // Ввод игрока (движение/взгляд/копание) разрешён только в геймплее.
     static bool isGameplayActive();
 
-    // Зажатый UI-модификатор (Alt, desktop): в геймплее временно освобождает курсор
-    // для кликов по HUD (панель кисти); взгляд и правки блоков на это время замирают.
-    static void setUIModifierHeld(bool held);
-    static bool isUIModifierHeld();
-
 private:
     static void syncCursor();
 
     static GameMenuState s_state;
-    static bool s_uiModifierHeld;
 };

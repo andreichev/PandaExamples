@@ -4,7 +4,6 @@
 #include "GameMenu.hpp"
 #include "Model/BlockPalette.hpp"
 #include "NeverlandHUDLayout.hpp"
-#include "TerrainBrushPanel.hpp"
 
 #include <Bamboo/Bamboo.hpp>
 #include <Bamboo/Script.hpp>
@@ -37,7 +36,6 @@ private:
     void updateTouchControlSafeArea();
     void updateSelection();
     void updateMenuInput();  // Esc: Playing ↔ Paused; M: Playing ↔ BlockPicker
-    void updateBrushPanel(); // Alt-модификатор курсора + синк панели рельефа (desktop)
     void applyMenuState();   // видимость HUD/меню + идемпотентность по последнему состоянию
     void loadBlockPreviewTextures();
     void destroyBlockPreviewTextures();
@@ -63,7 +61,6 @@ private:
     GameMenuState m_appliedMenuState = GameMenuState::MainMenu;
     std::shared_ptr<PandaUI::Panel> m_stickBase; // подложка джойстика (видна при касании)
     std::shared_ptr<PandaUI::Panel> m_stickKnob; // ручка джойстика
-    std::shared_ptr<TerrainBrushPanel> m_brushPanel; // инструмент рельефа (desktop)
     std::shared_ptr<PandaUI::Label> m_selectionLabel;
     std::array<std::shared_ptr<PandaUI::Button>, NeverlandHUDLayout::HotbarSlotCount> m_slots;
     // Контейнеры превью слотов (контент меняется при изменении MRU-списка).

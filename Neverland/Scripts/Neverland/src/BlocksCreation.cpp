@@ -410,11 +410,6 @@ void BlocksCreation::update(float deltaTime) {
     Vec2 touchAim;
     bool hasTouchAim = false;
     updateTouchBlockInput(deltaTime, placePressed, breakPressed, touchAim, hasTouchAim);
-    // Пока зажат Alt (свободный курсор для панели кисти) клики уходят в UI, не в мир.
-    if (GameMenu::isUIModifierHeld()) {
-        placePressed = false;
-        breakPressed = false;
-    }
     // Рейкаст каждый кадр: маркер кисти показывает точку редактирования и без кликов.
     if (!m_playerController) { return; }
     const Vec3 position = getPosition();
@@ -478,8 +473,7 @@ void BlocksCreation::update(float deltaTime) {
     // Строительный режим рельеф не трогает.
 #else
     // Desktop: протяжка — зажатый ЛКМ тянет линию объектов, установка на отпускании.
-    const bool leftHeld =
-        Input::isMouseButtonPressed(MouseButton::LEFT) && !GameMenu::isUIModifierHeld();
+    const bool leftHeld = Input::isMouseButtonPressed(MouseButton::LEFT);
     if (!m_dragActive && placePressed && hit.valid) {
         m_dragActive = true;
         m_dragBase = pendingObject(hit);

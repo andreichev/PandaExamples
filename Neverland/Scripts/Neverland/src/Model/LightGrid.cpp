@@ -62,6 +62,8 @@ uint8_t LightGrid::blockAt(int x, int y, int z) const {
 
 bool LightGrid::isOpaque(const BuildingCellGrid &buildings, int x, int y, int z) const {
     if (isInside(x, y, z) && m_terrainOpaque[cellIndex(x, y, z)] != 0) { return true; }
+    // Плотный кеш занятости — горячий путь; objectAt (хеш-таблицы) только по занятым.
+    if (!buildings.hasCellAt(x, y, z)) { return false; }
     const ArchitectureObject *object = buildings.objectAt(x, y, z);
     if (object == nullptr) { return false; }
     switch (object->type) {
@@ -172,16 +174,45 @@ LightGrid::ChangedBox LightGrid::recomputeBox(
         queue.push_back({x, y, z});
     };
 
+    constexpr int DIRECTIONS[6][3] = {
+        {1, 0, 0}, {-1, 0, 0}, {0, 1, 0}, {0, -1, 0}, {0, 0, 1}, {0, 0, -1}
+    };
+    // Лампы — списком объектов (скан всех ячеек = хеш-лукап на каждую).
+    for (const auto &[id, object] : buildings.objects()) {
+        if (object.type != ArchObjectType::Lamp) { continue; }
+        pushIfBrighter(object.x, object.y, object.z, 0, LAMP_LEVEL);
+    }
+    // Освещённые ячейки — сиды только на фронтире (могут улучшить соседа): почти весь
+    // открытый мир — ровное солнце, сидировать его целиком = миллионы пустых узлов волны.
     for (int z = fromZ; z < toZ; z++) {
         for (int x = fromX; x < toX; x++) {
             for (int y = fromY; y < toY; y++) {
-                const ArchitectureObject *object = buildings.objectAt(x, y, z);
-                if (object != nullptr && object->type == ArchObjectType::Lamp) {
-                    pushIfBrighter(x, y, z, 0, LAMP_LEVEL);
+                const uint8_t cell = m_cells[cellIndex(x, y, z)];
+                if (cell == 0) { continue; }
+                const uint8_t sun = cell >> 4;
+                const uint8_t block = cell & 0x0F;
+                for (const auto &direction : DIRECTIONS) {
+                    const int nx = x + direction[0];
+                    const int ny = y + direction[1];
+                    const int nz = z + direction[2];
+                    if (nx < fromX || nx >= toX || ny < fromY || ny >= toY || nz < fromZ ||
+                        nz >= toZ) {
+                        continue;
+                    }
+                    const size_t neighborIndex = cellIndex(nx, ny, nz);
+                    if (m_terrainOpaque[neighborIndex] != 0) { continue; }
+                    const bool down = direction[1] < 0;
+                    const uint8_t sunOut =
+                        sun == 0 ? 0
+                                 : (down && sun == SUN_MAX ? SUN_MAX
+                                                           : static_cast<uint8_t>(sun - 1));
+                    const uint8_t blockOut = block == 0 ? 0 : static_cast<uint8_t>(block - 1);
+                    const uint8_t neighbor = m_cells[neighborIndex];
+                    if ((neighbor >> 4) < sunOut || (neighbor & 0x0F) < blockOut) {
+                        queue.push_back({x, y, z});
+                        break;
+                    }
                 }
-                // Ячейки со светом — сиды волны (солнечные колонны растекаются вбок).
-                const size_t index = cellIndex(x, y, z);
-                if (m_cells[index] != 0) { queue.push_back({x, y, z}); }
             }
         }
     }
@@ -205,9 +236,6 @@ LightGrid::ChangedBox LightGrid::recomputeBox(
     }
 
     // 3) Волна: солнце вниз без затухания, прочие направления −1; источники −1 всюду.
-    constexpr int DIRECTIONS[6][3] = {
-        {1, 0, 0}, {-1, 0, 0}, {0, 1, 0}, {0, -1, 0}, {0, 0, 1}, {0, 0, -1}
-    };
     while (!queue.empty()) {
         const Node node = queue.front();
         queue.pop_front();

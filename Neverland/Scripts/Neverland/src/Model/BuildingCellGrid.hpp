@@ -105,9 +105,21 @@ public:
 
     // Сейв v3: все объекты. Порядок полей — см. WorldSave.
     void collectObjects(std::vector<ArchitectureObject> &outObjects) const;
+    // Восстановление сейва: только раскладка по ячейкам, чанки остаются dirty — единый
+    // ремеш зовёт вызывающий (rebuildDirtyChunks) после пересчёта света.
     void restoreObjects(const std::vector<ArchitectureObject> &objects);
     // Миграция сейвов v2: одиночные кубы (packed воксель + VoxelType) → Block-объекты.
     void restoreLegacyBlocks(const std::vector<std::pair<uint64_t, uint8_t>> &blocks);
+    // Ремеш всех чанков, помеченных dirty (загрузка: один проход после света).
+    void rebuildDirtyChunks();
+    // Ячейка занята каким-либо объектом — плотный кеш без хеш-таблиц (горячий путь света).
+    bool hasCellAt(int x, int y, int z) const {
+        return isInside(x, y, z) && m_blocks[voxelIndex(x, y, z)] != 0;
+    }
+    // Объекты (id → объект): свет сидирует лампы списком, а не сканом всех ячеек.
+    const std::unordered_map<uint32_t, ArchitectureObject> &objects() const {
+        return m_objects;
+    }
 
 private:
     struct ChunkView {
@@ -128,7 +140,6 @@ private:
     void markDirtyAround(int x, int y, int z);
     // Свет: пересчёт вокруг изменённого объекта + ремеш затронутых чанков.
     void applyLightForObjectChange(const ArchitectureObject &object);
-    void rebuildDirtyChunks();
     void rebuildChunk(int chunkX, int chunkY, int chunkZ);
     // Объект семейства линии стен, владеющий ячейкой (nullptr, если ячейка не стенная).
     const ArchitectureObject *wallAt(int x, int y, int z) const;

@@ -1595,7 +1595,6 @@ void BuildingCellGrid::restoreObjects(const std::vector<ArchitectureObject> &obj
     for (const ArchitectureObject &object : objects) {
         placeInternal(object, false); // id пересоздаются, занятые/вне-границ пропускаются
     }
-    rebuildDirtyChunks();
 }
 
 void BuildingCellGrid::restoreLegacyBlocks(const std::vector<std::pair<uint64_t, uint8_t>> &blocks) {
@@ -1608,5 +1607,4 @@ void BuildingCellGrid::restoreLegacyBlocks(const std::vector<std::pair<uint64_t,
         object.material = static_cast<VoxelType>(value);
         placeInternal(object, false);
     }
-    rebuildDirtyChunks();
 }

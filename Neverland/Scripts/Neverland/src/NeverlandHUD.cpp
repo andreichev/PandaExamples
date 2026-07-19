@@ -135,11 +135,6 @@ bool shouldShowTouchControls() {
 #endif
 }
 
-// Панель кисти terrain — только desktop (клики по ней требуют свободного курсора по Alt).
-bool shouldShowBrushPanel() {
-    return !shouldShowTouchControls();
-}
-
 std::shared_ptr<PandaUI::Label>
 makeLabel(const std::string &text, float fontSize, PandaUI::Color color) {
     auto label = std::make_shared<PandaUI::Label>(text);
@@ -353,7 +348,6 @@ void NeverlandHUD::update(float) {
     updateTouchControlSafeArea();
     updateSelection();
     updateMenuInput();
-    if (shouldShowBrushPanel()) { updateBrushPanel(); }
     applyMenuState();
     if (shouldShowTouchControls()) { updateMoveStickOverlay(); }
 }
@@ -369,7 +363,6 @@ void NeverlandHUD::shutdown() {
     m_selectionLabel.reset();
     m_stickBase.reset();
     m_stickKnob.reset();
-    m_brushPanel.reset();
     m_hudLayer.reset();
     m_pauseMenu.reset();
     m_blocksMenu.reset();
@@ -394,20 +387,6 @@ void NeverlandHUD::updateMenuInput() {
                GameMenu::state() == GameMenuState::BlockPicker) {
         GameMenu::setState(GameMenuState::Playing);
     }
-}
-
-void NeverlandHUD::updateBrushPanel() {
-    GameMenu::setUIModifierHeld(
-        GameMenu::state() == GameMenuState::Playing && Input::isKeyPressed(Key::LEFT_ALT)
-    );
-    if (!m_brushPanel || !m_blocksCreation) { return; }
-    // Панель — постоянный инструмент рельефа; подсветка материала горит в терраформ-режиме.
-    const bool terraformActive = !m_blocksCreation->isElementSelected() &&
-                                 isNaturalVoxelType(m_blocksCreation->getSelectedBlock());
-    m_brushPanel->setState(
-        m_blocksCreation->getBrushMode(), m_blocksCreation->getBrushSize(),
-        BlocksCreation::brushSizeCount(), m_blocksCreation->getSelectedBlock(), terraformActive
-    );
 }
 
 void NeverlandHUD::applyMenuState() {
@@ -451,29 +430,6 @@ void NeverlandHUD::buildUI() {
     if (shouldShowCrosshair()) { m_hudLayer->addSubview(makeCrosshair()); }
     m_hudLayer->addSubview(safeArea);
     if (shouldShowTouchControls()) { m_hudLayer->addSubview(makeTouchControls()); }
-    if (shouldShowBrushPanel()) {
-        const std::array<PandaUI::TextureHandle, 4> materialPreviews = {
-            previewFor(VoxelType::GRASS), previewFor(VoxelType::GROUND),
-            previewFor(VoxelType::STONE), previewFor(VoxelType::SAND)
-        };
-        m_brushPanel = std::make_shared<TerrainBrushPanel>(
-            [this](VoxelType material) {
-                if (m_blocksCreation) { m_blocksCreation->setSelectedBlock(material); }
-            },
-            [this](GameBrushMode mode) {
-                if (m_blocksCreation) { m_blocksCreation->setBrushMode(mode); }
-            },
-            [this](int size) {
-                if (m_blocksCreation) { m_blocksCreation->setBrushSize(size); }
-            },
-            materialPreviews
-        );
-        m_brushPanel->layoutSetAbsolute();
-        m_brushPanel->layout().setPosition(PandaUI::Edge::Left, PandaUI::Length::points(16.f));
-        m_brushPanel->layout().setPosition(PandaUI::Edge::Bottom, PandaUI::Length::points(16.f));
-        m_hudLayer->addSubview(m_brushPanel);
-    }
-
     m_pauseMenu = makePauseMenu();
     m_blocksMenu = std::make_shared<ArchLibraryMenu>(
         m_blocksCreation, [this](VoxelType type) { return previewFor(type); }

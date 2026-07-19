@@ -6,6 +6,8 @@
 #include <Bamboo/Input.hpp>
 #include <Bamboo/Logger.hpp>
 
+#include <chrono>
+
 void BaseScript::start() {
     GameContext::init();
     GameContext::s_blocksMaterial = material;
@@ -24,6 +26,17 @@ void BaseScript::start() {
         TerrainAccess::worldMaxZ() - TerrainAccess::worldMinZ(), material, roofMaterial
     );
 
+    // Загрузка мира одним проходом на фазу: рестор сейва раскладывает объекты БЕЗ меша
+    // (чанки копят dirty), затем свет целиком, затем единый ремеш уже с готовым светом.
+    using Clock = std::chrono::steady_clock;
+    const auto phaseMs = [](Clock::time_point &phase) {
+        const auto now = Clock::now();
+        const auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(now - phase).count();
+        phase = now;
+        return static_cast<long long>(ms);
+    };
+    Clock::time_point phase = Clock::now();
+
     // Восстановление сейва: правки рельефа поверх ассета + архитектурные объекты
     // (сейвы v2 несут одиночные кубы — мигрируются в Block-объекты).
     if (WorldSave *save = GameContext::s_worldSave) {
@@ -32,9 +45,10 @@ void BaseScript::start() {
         GameContext::s_buildingGrid->restoreLegacyBlocks(save->legacyBlocks);
         save->legacyBlocks.clear(); // после миграции сейв живёт объектами
     }
+    const long long restoreMs = phaseMs(phase);
 
-    // Воксельный свет: прозрачность рельефа одним окном, полный пересчёт, полный ремеш
-    // построек (старт мира — единственное место полного прохода).
+    // Воксельный свет: прозрачность рельефа одним окном + полный пересчёт (старт мира —
+    // единственное место полного прохода).
     const int minX = TerrainAccess::worldMinX();
     const int minZ = TerrainAccess::worldMinZ();
     const int sizeX = TerrainAccess::worldMaxX() - minX;
@@ -53,10 +67,17 @@ void BaseScript::start() {
         }
     }
     GameContext::s_lightGrid->recomputeAll(*GameContext::s_buildingGrid);
-    GameContext::s_buildingGrid->markLightDirtyBox(
-        minX, 0, minZ, minX + sizeX, sizeY, minZ + sizeZ
-    );
+    const long long lightMs = phaseMs(phase);
+
+    GameContext::s_buildingGrid->rebuildDirtyChunks();
+    const long long meshMs = phaseMs(phase);
+
     GameContext::s_lightmap->init(*GameContext::s_lightGrid, terrainMaterial);
+    const long long lightmapMs = phaseMs(phase);
+    LOG_INFO(
+        "Neverland: world load — restore %lld ms, light %lld ms, mesh %lld ms, lightmap %lld ms",
+        restoreMs, lightMs, meshMs, lightmapMs
+    );
 }
 
 void BaseScript::update(float dt) {
