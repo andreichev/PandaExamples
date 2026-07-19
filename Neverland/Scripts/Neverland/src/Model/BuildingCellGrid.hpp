@@ -57,7 +57,11 @@ public:
     };
 
     // Границы в мировых воксельных координатах: [minX..minX+sizeX) и т.д.
-    void init(int minX, int minY, int minZ, int sizeX, int sizeY, int sizeZ, MaterialHandle material);
+    // roofMaterial — атлас черепицы: скаты/конёк рисуются вторым мешем чанка.
+    void init(
+        int minX, int minY, int minZ, int sizeX, int sizeY, int sizeZ, MaterialHandle material,
+        MaterialHandle roofMaterial
+    );
     void shutdown();
 
     VoxelType blockAt(int x, int y, int z) const; // вне сетки → NOTHING
@@ -91,6 +95,8 @@ private:
     struct ChunkView {
         EntityHandle entity = 0;
         MeshHandle mesh = 0;
+        EntityHandle roofEntity = 0; // скаты/конёк — материал черепицы
+        MeshHandle roofMesh = 0;
         bool dirty = true;
     };
 
@@ -118,10 +124,12 @@ private:
         int startX, int startY, int startZ, int endX, int endY, int endZ,
         std::vector<Vertex> &vertices, std::vector<uint32_t> &indices
     ) const;
-    // Крыши: связная область ячеек → скаты/фронтоны/конёк (двускатная).
+    // Крыши: связная область ячеек → скаты/фронтоны/конёк (двускатная). Фронтоны —
+    // в основной меш (материал стен), скаты и конёк — в roof-буферы (черепица).
     void appendRoofGeometry(
         int startX, int startY, int startZ, int endX, int endY, int endZ,
-        std::vector<Vertex> &vertices, std::vector<uint32_t> &indices
+        std::vector<Vertex> &vertices, std::vector<uint32_t> &indices,
+        std::vector<Vertex> &roofVertices, std::vector<uint32_t> &roofIndices
     ) const;
     // Область крыши, связная с ячейкой (flood 4-соседство, тот же материал и высота).
     void collectRoofRegion(int x, int y, int z, std::vector<std::array<int, 3>> &outCells) const;
@@ -137,4 +145,5 @@ private:
     uint32_t m_nextObjectId = 1;
     std::vector<ChunkView> m_views;
     MaterialHandle m_material;
+    MaterialHandle m_roofMaterial;
 };

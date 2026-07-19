@@ -16,7 +16,7 @@ void GameMenu::setState(GameMenuState state) {
 
 void GameMenu::reset() {
     s_uiModifierHeld = false;
-    setState(GameMenuState::MainMenu);
+    setState(GameMenuState::Playing); // старт мира — сразу игра (без главного меню)
 }
 
 bool GameMenu::isGameplayActive() {

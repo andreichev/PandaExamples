@@ -90,6 +90,26 @@
             }
         },
         {
+            "id": 917000210,
+            "type": 1,
+            "meta": {
+                "minFiltering": 5,
+                "magFiltering": 1,
+                "numMips": 4,
+                "srgb": true,
+                "sourcePath": "Assets/textures/base_roof_1.png",
+                "cookedPath": ".Panda/Textures/Assets/textures/base_roof_1.ptex"
+            }
+        },
+        {
+            "id": 917000211,
+            "type": 4,
+            "meta": {
+                "materialPath": "Assets/materials/roof/roof.mat",
+                "shader": 1302887341
+            }
+        },
+        {
             "id": 1072302657,
             "type": 1,
             "meta": {

@@ -64,6 +64,12 @@
                                 "fieldId": 36632844,
                                 "type": 4,
                                 "value": 917000209
+                            },
+                            {
+                                "name": "roofMaterial",
+                                "fieldId": 565541840,
+                                "type": 4,
+                                "value": 917000211
                             }
                         ]
                     }

@@ -8,6 +8,7 @@ WorldSave *GameContext::s_worldSave = nullptr;
 MaterialHandle GameContext::s_terrainMaterial = {};
 MaterialHandle GameContext::s_blocksMaterial = {};
 MaterialHandle GameContext::s_markerMaterial = {};
+MaterialHandle GameContext::s_roofMaterial = {};
 
 void GameContext::init() {
     s_worldSave = new WorldSave();
@@ -29,6 +30,7 @@ void GameContext::deinit() {
     s_terrainMaterial = {};
     s_blocksMaterial = {};
     s_markerMaterial = {};
+    s_roofMaterial = {};
 }
 
 bool GameContext::isWorldLoaded() {

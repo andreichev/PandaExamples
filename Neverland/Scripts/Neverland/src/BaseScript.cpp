@@ -11,6 +11,7 @@ void BaseScript::start() {
     GameContext::s_blocksMaterial = material;
     GameContext::s_terrainMaterial = terrainMaterial;
     GameContext::s_markerMaterial = markerMaterial;
+    GameContext::s_roofMaterial = roofMaterial;
 
     if (!TerrainAccess::init()) {
         LOG_ERROR("Neverland: engine terrain is missing — add a 'Terrain' entity with Terrain3D");
@@ -20,7 +21,7 @@ void BaseScript::start() {
     GameContext::s_buildingGrid->init(
         TerrainAccess::worldMinX(), 0, TerrainAccess::worldMinZ(),
         TerrainAccess::worldMaxX() - TerrainAccess::worldMinX(), TerrainAccess::worldMaxY(),
-        TerrainAccess::worldMaxZ() - TerrainAccess::worldMinZ(), material
+        TerrainAccess::worldMaxZ() - TerrainAccess::worldMinZ(), material, roofMaterial
     );
 
     // Восстановление сейва: правки рельефа поверх ассета + архитектурные объекты

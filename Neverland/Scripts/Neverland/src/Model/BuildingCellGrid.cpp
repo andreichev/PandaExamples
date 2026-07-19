@@ -79,7 +79,8 @@ constexpr float CORNER_UV[4][2] = {{0.f, 1.f}, {1.f, 1.f}, {1.f, 0.f}, {0.f, 0.f
 } // namespace
 
 void BuildingCellGrid::init(
-    int minX, int minY, int minZ, int sizeX, int sizeY, int sizeZ, MaterialHandle material
+    int minX, int minY, int minZ, int sizeX, int sizeY, int sizeZ, MaterialHandle material,
+    MaterialHandle roofMaterial
 ) {
     shutdown();
     m_minX = minX;
@@ -94,12 +95,15 @@ void BuildingCellGrid::init(
     m_blocks.assign(static_cast<size_t>(sizeX) * sizeY * sizeZ, 0);
     m_views.assign(static_cast<size_t>(m_chunksX) * m_chunksY * m_chunksZ, {});
     m_material = material;
+    m_roofMaterial = roofMaterial;
 }
 
 void BuildingCellGrid::shutdown() {
     for (ChunkView &view : m_views) {
         if (view.mesh.isValid()) { AssetManagerAPI::deleteMesh(view.mesh); }
         if (view.entity.isValid()) { WorldAPI::destroyEntity(view.entity); }
+        if (view.roofMesh.isValid()) { AssetManagerAPI::deleteMesh(view.roofMesh); }
+        if (view.roofEntity.isValid()) { WorldAPI::destroyEntity(view.roofEntity); }
         view = {};
     }
     m_views.clear();
@@ -371,36 +375,48 @@ void BuildingCellGrid::rebuildChunk(int chunkX, int chunkY, int chunkZ) {
         }
     }
 
+    std::vector<Vertex> roofVertices;
+    std::vector<uint32_t> roofIndices;
     appendWallGeometry(startX, startY, startZ, endX, endY, endZ, vertices, indices);
     appendCorniceGeometry(startX, startY, startZ, endX, endY, endZ, vertices, indices);
-    appendRoofGeometry(startX, startY, startZ, endX, endY, endZ, vertices, indices);
+    appendRoofGeometry(
+        startX, startY, startZ, endX, endY, endZ, vertices, indices, roofVertices, roofIndices
+    );
 
-    if (vertices.empty()) {
-        if (view.mesh.isValid()) {
-            AssetManagerAPI::deleteMesh(view.mesh);
-            view.mesh = {};
+    const auto applyMesh = [&](std::vector<Vertex> &&meshVertices, std::vector<uint32_t> &&meshIndices,
+                               MeshHandle &mesh, EntityHandle &entity, MaterialHandle material,
+                               const char *namePrefix) {
+        if (meshVertices.empty()) {
+            if (mesh.isValid()) {
+                AssetManagerAPI::deleteMesh(mesh);
+                mesh = {};
+            }
+            if (entity.isValid()) {
+                WorldAPI::destroyEntity(entity);
+                entity = {};
+            }
+            return;
         }
-        if (view.entity.isValid()) {
-            WorldAPI::destroyEntity(view.entity);
-            view.entity = {};
+        if (!mesh.isValid()) { mesh = AssetManagerAPI::createMesh(); }
+        MeshData meshData;
+        meshData.vertices = std::move(meshVertices);
+        meshData.indices = std::move(meshIndices);
+        MeshAPI::update(mesh, meshData);
+        if (!entity.isValid()) {
+            const std::string name = std::string(namePrefix) + " " + std::to_string(chunkX) + "," +
+                                     std::to_string(chunkY) + "," + std::to_string(chunkZ);
+            entity = WorldAPI::createEntity(name.c_str());
+            EntityAPI::addComponent(entity, ComponentType::MESH_COMPONENT);
+            MeshComponentAPI::setMesh(entity, mesh);
+            MeshComponentAPI::setMaterial(entity, material);
+            TransformComponentAPI::setPosition(entity, {0.f, 0.f, 0.f});
         }
-        return;
-    }
-
-    if (!view.mesh.isValid()) { view.mesh = AssetManagerAPI::createMesh(); }
-    MeshData meshData;
-    meshData.vertices = std::move(vertices);
-    meshData.indices = std::move(indices);
-    MeshAPI::update(view.mesh, meshData);
-    if (!view.entity.isValid()) {
-        const std::string name = "Buildings " + std::to_string(chunkX) + "," +
-                                 std::to_string(chunkY) + "," + std::to_string(chunkZ);
-        view.entity = WorldAPI::createEntity(name.c_str());
-        EntityAPI::addComponent(view.entity, ComponentType::MESH_COMPONENT);
-        MeshComponentAPI::setMesh(view.entity, view.mesh);
-        MeshComponentAPI::setMaterial(view.entity, m_material);
-        TransformComponentAPI::setPosition(view.entity, {0.f, 0.f, 0.f});
-    }
+    };
+    applyMesh(std::move(vertices), std::move(indices), view.mesh, view.entity, m_material, "Buildings");
+    applyMesh(
+        std::move(roofVertices), std::move(roofIndices), view.roofMesh, view.roofEntity,
+        m_roofMaterial.isValid() ? m_roofMaterial : m_material, "Roofs"
+    );
 }
 
 namespace {
@@ -521,6 +537,17 @@ void BuildingCellGrid::appendWallGeometry(
                 const bool extendEnd = cornerWall(*wall, runEnd->x + stepX, runEnd->z + stepZ);
                 const float extend = 0.5f + WALL_THICKNESS * 0.5f;
 
+                // Обратная сторона угла: перпендикуляр СБОКУ торцевой ячейки продлевает
+                // своё полотно в неё — наш торец укорачивается до ближней грани этого
+                // полотна и не рисуется (иначе хвост торчит перед перпендикуляром).
+                const auto sideCorner = [&](const ArchitectureObject *endCell) {
+                    return cornerWall(*wall, endCell->x + stepZ, endCell->z + stepX) ||
+                           cornerWall(*wall, endCell->x - stepZ, endCell->z - stepX);
+                };
+                const bool retractStart = !extendStart && sideCorner(runStart);
+                const bool retractEnd = !extendEnd && sideCorner(runEnd);
+                const float retract = 0.5f - WALL_THICKNESS * 0.5f;
+
                 const float baseY = static_cast<float>(wall->y);
                 const float topY = baseY + static_cast<float>(WALL_HEIGHT);
                 const Voxel voxel(wall->material);
@@ -544,6 +571,8 @@ void BuildingCellGrid::appendWallGeometry(
                     float finish = cellU + 1.f;
                     if (i == 0 && extendStart) { begin -= extend; }
                     if (i == runLength - 1 && extendEnd) { finish += extend; }
+                    if (i == 0 && retractStart) { begin += retract; }
+                    if (i == runLength - 1 && retractEnd) { finish -= retract; }
 
                     const float center =
                         (wall->rotation == 0 ? static_cast<float>(cellZ) : static_cast<float>(cellX)) + 0.5f;
@@ -723,8 +752,8 @@ void BuildingCellGrid::appendWallGeometry(
                             0.f, WALL_THICKNESS, 1.f
                         );
                     };
-                    if (i == 0 && !extendStart) { addCap(begin, true); }
-                    if (i == runLength - 1 && !extendEnd) { addCap(finish, false); }
+                    if (i == 0 && !extendStart && !retractStart) { addCap(begin, true); }
+                    if (i == runLength - 1 && !extendEnd && !retractEnd) { addCap(finish, false); }
                 }
             }
         }
@@ -1004,7 +1033,8 @@ void BuildingCellGrid::markRoofRegionDirty(const ArchitectureObject &object) {
 // чанк её левой ячейки (регион-dirty при правках гарантирует пересбор).
 void BuildingCellGrid::appendRoofGeometry(
     int startX, int startY, int startZ, int endX, int endY, int endZ,
-    std::vector<Vertex> &vertices, std::vector<uint32_t> &indices
+    std::vector<Vertex> &vertices, std::vector<uint32_t> &indices,
+    std::vector<Vertex> &roofVertices, std::vector<uint32_t> &roofIndices
 ) const {
     std::unordered_map<uint32_t, bool> processedRegions;
 
@@ -1063,39 +1093,66 @@ void BuildingCellGrid::appendRoofGeometry(
                 const float baseY = static_cast<float>(y);
                 const Voxel voxel(seed->material);
                 const VoxelTextureData &texture = VoxelTextureMapper::getTextureData(&voxel);
-                const uint8_t tile = texture.sideTileIndex;
+                const uint8_t wallTile = texture.sideTileIndex;
                 const uint32_t tint = texture.sideColor;
+                // Черепица: колонка roof-атласа по материалу объекта (ряд 0).
+                const uint8_t roofTile = [&]() -> uint8_t {
+                    switch (seed->material) {
+                        case VoxelType::BOARDS:
+                        case VoxelType::TREE:
+                        case VoxelType::DARK_BRICK: return 1; // коричневая
+                        case VoxelType::SAND_STONE:
+                        case VoxelType::WHITE_PLASTER: return 2; // серая
+                        case VoxelType::DARK_STONE:
+                        case VoxelType::SLATE: return 3; // тёмная
+                        default: return 0; // красная
+                    }
+                }();
 
                 // Все квады — в осях (a, y, t); конёк вдоль Z отражает порядок вершин.
+                // Скаты/конёк — в roof-буферы (черепица), фронтоны — в основной (стены).
                 const auto P = [&](float a, float yy, float t) {
                     return alongX ? Vec3(a, yy, t) : Vec3(t, yy, a);
+                };
+                const auto emitQuadTo = [&](std::vector<Vertex> &outVertices,
+                                            std::vector<uint32_t> &outIndices, uint8_t quadTile,
+                                            const Vec3 &p0, const Vec3 &p1, const Vec3 &p2,
+                                            const Vec3 &p3, float na, float ny, float nt, float u0,
+                                            float v0, float u1, float v1) {
+                    const Vec3 normal = alongX ? Vec3(na, ny, nt) : Vec3(nt, ny, na);
+                    if (alongX) {
+                        addWallQuad(outVertices, outIndices, p0, p1, p2, p3, normal, quadTile, tint, u0, v0, u1, v1);
+                    } else {
+                        addWallQuad(outVertices, outIndices, p0, p3, p2, p1, normal, quadTile, tint, u0, v0, u1, v1);
+                    }
                 };
                 const auto emitQuad = [&](const Vec3 &p0, const Vec3 &p1, const Vec3 &p2,
                                           const Vec3 &p3, float na, float ny, float nt, float u0,
                                           float v0, float u1, float v1) {
-                    const Vec3 normal = alongX ? Vec3(na, ny, nt) : Vec3(nt, ny, na);
-                    if (alongX) {
-                        addWallQuad(vertices, indices, p0, p1, p2, p3, normal, tile, tint, u0, v0, u1, v1);
-                    } else {
-                        addWallQuad(vertices, indices, p0, p3, p2, p1, normal, tile, tint, u0, v0, u1, v1);
-                    }
+                    emitQuadTo(roofVertices, roofIndices, roofTile, p0, p1, p2, p3, na, ny, nt, u0, v0, u1, v1);
                 };
-                const auto emitTriangle = [&](const Vec3 &p0, const Vec3 &p1, const Vec3 &p2,
-                                              float na, float ny, float nt) {
+                const auto emitTriangleTo = [&](std::vector<Vertex> &outVertices,
+                                                std::vector<uint32_t> &outIndices, uint8_t triangleTile,
+                                                const Vec3 &p0, const Vec3 &p1, const Vec3 &p2,
+                                                float na, float ny, float nt) {
                     const Vec3 normal = alongX ? Vec3(na, ny, nt) : Vec3(nt, ny, na);
-                    const Vec2 uv(0.f, 0.f);
-                    const uint32_t base = static_cast<uint32_t>(vertices.size());
+                    const float uvSize = 1.f / BLOCKS_ATLAS_GRID;
+                    const Vec2 uv(
+                        triangleTile % BLOCKS_ATLAS_GRID * uvSize + uvSize * 0.5f,
+                        triangleTile / BLOCKS_ATLAS_GRID * uvSize + uvSize * 0.5f
+                    );
+                    const uint32_t base = static_cast<uint32_t>(outVertices.size());
                     const Color color = hexColor(tint);
-                    vertices.emplace_back(Vertex(p0, uv, normal, color, 1.f));
+                    outVertices.emplace_back(Vertex(p0, uv, normal, color, 1.f));
                     if (alongX) {
-                        vertices.emplace_back(Vertex(p1, uv, normal, color, 1.f));
-                        vertices.emplace_back(Vertex(p2, uv, normal, color, 1.f));
+                        outVertices.emplace_back(Vertex(p1, uv, normal, color, 1.f));
+                        outVertices.emplace_back(Vertex(p2, uv, normal, color, 1.f));
                     } else {
-                        vertices.emplace_back(Vertex(p2, uv, normal, color, 1.f));
-                        vertices.emplace_back(Vertex(p1, uv, normal, color, 1.f));
+                        outVertices.emplace_back(Vertex(p2, uv, normal, color, 1.f));
+                        outVertices.emplace_back(Vertex(p1, uv, normal, color, 1.f));
                     }
                     for (uint32_t index : {base, base + 1u, base + 2u}) {
-                        indices.emplace_back(index);
+                        outIndices.emplace_back(index);
                     }
                 };
 
@@ -1195,14 +1252,15 @@ void BuildingCellGrid::appendRoofGeometry(
                     const float wallRidgeY = baseY + (wallMid - wallT0) * ROOF_SLOPE;
                     const auto emitGable = [&](float atA, float inwardSign) {
                         const float innerA = atA + inwardSign * GABLE_THICKNESS;
-                        // Наружная и внутренняя треугольные грани.
-                        emitTriangle(
-                            P(atA, baseY, wallT0), P(atA, baseY, wallT1), P(atA, wallRidgeY, wallMid),
-                            -inwardSign, 0.f, 0.f
+                        // Наружная и внутренняя треугольные грани (материал стен).
+                        emitTriangleTo(
+                            vertices, indices, wallTile, P(atA, baseY, wallT0), P(atA, baseY, wallT1),
+                            P(atA, wallRidgeY, wallMid), -inwardSign, 0.f, 0.f
                         );
-                        emitTriangle(
-                            P(innerA, baseY, wallT0), P(innerA, wallRidgeY, wallMid),
-                            P(innerA, baseY, wallT1), inwardSign, 0.f, 0.f
+                        emitTriangleTo(
+                            vertices, indices, wallTile, P(innerA, baseY, wallT0),
+                            P(innerA, wallRidgeY, wallMid), P(innerA, baseY, wallT1), inwardSign,
+                            0.f, 0.f
                         );
                     };
                     if (gableFront) { emitGable(a0, 1.f); }
@@ -1221,14 +1279,16 @@ void BuildingCellGrid::appendRoofGeometry(
                         slopeAngleCos, slopeAngleSin, 0.f, 0.f, 1.f, 0.4f
                     );
                     if (gableFront) {
-                        emitTriangle(
+                        emitTriangleTo(
+                            roofVertices, roofIndices, roofTile,
                             P(a0, ridgeBaseY, tMid - RIDGE_HALF_WIDTH),
                             P(a0, ridgeBaseY, tMid + RIDGE_HALF_WIDTH),
                             P(a0, ridgeY + RIDGE_HEIGHT, tMid), -1.f, 0.f, 0.f
                         );
                     }
                     if (gableBack) {
-                        emitTriangle(
+                        emitTriangleTo(
+                            roofVertices, roofIndices, roofTile,
                             P(a1, ridgeBaseY, tMid + RIDGE_HALF_WIDTH),
                             P(a1, ridgeBaseY, tMid - RIDGE_HALF_WIDTH),
                             P(a1, ridgeY + RIDGE_HEIGHT, tMid), 1.f, 0.f, 0.f
