@@ -16,6 +16,11 @@
             "value": 0.009999999776482582
         },
         {
+            "name": "daylight",
+            "type": 0,
+            "value": 1.0
+        },
+        {
             "name": "baseColorTexture",
             "type": 3,
             "value": 917000210

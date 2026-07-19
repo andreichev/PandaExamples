@@ -32,6 +32,30 @@ void BaseScript::start() {
         GameContext::s_buildingGrid->restoreLegacyBlocks(save->legacyBlocks);
         save->legacyBlocks.clear(); // после миграции сейв живёт объектами
     }
+
+    // Воксельный свет: прозрачность рельефа одним окном, полный пересчёт, полный ремеш
+    // построек (старт мира — единственное место полного прохода).
+    const int minX = TerrainAccess::worldMinX();
+    const int minZ = TerrainAccess::worldMinZ();
+    const int sizeX = TerrainAccess::worldMaxX() - minX;
+    const int sizeZ = TerrainAccess::worldMaxZ() - minZ;
+    const int sizeY = TerrainAccess::worldMaxY();
+    GameContext::s_lightGrid->init(minX, 0, minZ, sizeX, sizeY, sizeZ);
+    const TerrainAccess::Window window =
+        TerrainAccess::readWindow(minX, 0, minZ, minX + sizeX, sizeY, minZ + sizeZ);
+    for (int y = 0; y < sizeY; y++) {
+        for (int z = minZ; z < minZ + sizeZ; z++) {
+            for (int x = minX; x < minX + sizeX; x++) {
+                if (window.layerAt(x, y, z) != 0) {
+                    GameContext::s_lightGrid->setTerrainOpaque(x, y, z, true);
+                }
+            }
+        }
+    }
+    GameContext::s_lightGrid->recomputeAll(*GameContext::s_buildingGrid);
+    GameContext::s_buildingGrid->markLightDirtyBox(
+        minX, 0, minZ, minX + sizeX, sizeY, minZ + sizeZ
+    );
 }
 
 void BaseScript::update(float dt) {

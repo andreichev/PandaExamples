@@ -2,6 +2,8 @@
 
 #include "Voxel.hpp"
 
+class LightGrid;
+
 #include <Bamboo/Assets/MeshAPI.hpp>
 #include <Bamboo/Base.hpp>
 
@@ -21,7 +23,8 @@ enum class ArchObjectType : uint8_t {
     Door = 4,    // модуль линии стен: открытый проём до перемычки
     Cornice = 5, // непрерывный карниз: ячейка пояса, соседние сливаются в профиль по пути
     Roof = 6,    // двускатная крыша: область ячеек, конёк вдоль длинной оси, скаты/фронтоны
-    COUNT = 7
+    Lamp = 7,    // источник света: фонарик-куб, светит уровнем LAMP_LEVEL (LightGrid)
+    COUNT = 8
 };
 
 // Высота стенного модуля в ячейках (классический этаж).
@@ -70,6 +73,13 @@ public:
         int minX, int minY, int minZ, int sizeX, int sizeY, int sizeZ, MaterialHandle material,
         MaterialHandle roofMaterial
     );
+    // Воксельный свет: мешер запекает каналы в вершины; правки объектов пересчитывают
+    // сетку света и ремешат чанки изменившихся ячеек.
+    void setLightGrid(LightGrid *lightGrid) {
+        m_lightGrid = lightGrid;
+    }
+    // Дирти + ремеш чанков, пересекающих бокс (изменившийся свет).
+    void markLightDirtyBox(int fromX, int fromY, int fromZ, int toX, int toY, int toZ);
     void shutdown();
 
     VoxelType blockAt(int x, int y, int z) const; // вне сетки → NOTHING
@@ -116,6 +126,8 @@ private:
     void writeObjectCells(const ArchitectureObject &object, bool clear);
     uint32_t placeInternal(ArchitectureObject object, bool rebuild);
     void markDirtyAround(int x, int y, int z);
+    // Свет: пересчёт вокруг изменённого объекта + ремеш затронутых чанков.
+    void applyLightForObjectChange(const ArchitectureObject &object);
     void rebuildDirtyChunks();
     void rebuildChunk(int chunkX, int chunkY, int chunkZ);
     // Объект семейства линии стен, владеющий ячейкой (nullptr, если ячейка не стенная).
@@ -127,6 +139,8 @@ private:
         int startX, int startY, int startZ, int endX, int endY, int endZ,
         std::vector<Vertex> &vertices, std::vector<uint32_t> &indices
     ) const;
+    // Фонарик-куб (эмиссив) в основной меш.
+    void appendLampCube(int x, int y, int z, std::vector<Vertex> &vertices, std::vector<uint32_t> &indices) const;
     // Карнизы: цепочки ячеек → профиль по пути (ExtrudedProfile), митра-углы.
     void appendCorniceGeometry(
         int startX, int startY, int startZ, int endX, int endY, int endZ,
@@ -154,4 +168,5 @@ private:
     std::vector<ChunkView> m_views;
     MaterialHandle m_material;
     MaterialHandle m_roofMaterial;
+    LightGrid *m_lightGrid = nullptr;
 };

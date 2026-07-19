@@ -1,5 +1,7 @@
 #include "SunCycle.hpp"
 
+#include "Model/GameContext.hpp"
+
 #include <Bamboo/ApplicationAPI.hpp>
 #include <Bamboo/Assets/MaterialAPI.hpp>
 #include <Bamboo/Components/DirectionalLightComponentAPI.hpp>
@@ -60,6 +62,14 @@ void SunCycle::update(float) {
 }
 
 void SunCycle::syncSky(const glm::vec3 &sunDirection, float dayAmount, float duskAmount) {
+    // Дневной фактор гасит солнечный канал воксельного света построек (шейдер blocks_lit)
+    // — ночь наступает без ремеша мешей, канал источников (лампы) не тускнеет.
+    if (GameContext::s_blocksMaterial.isValid()) {
+        MaterialAPI::setFloat(GameContext::s_blocksMaterial, "daylight", dayAmount);
+    }
+    if (GameContext::s_roofMaterial.isValid()) {
+        MaterialAPI::setFloat(GameContext::s_roofMaterial, "daylight", dayAmount);
+    }
     // Небо больше не крутит собственный цикл в шейдере — состояние дня пишет скрипт.
     if (!skyMaterial.isValid()) { return; }
     MaterialAPI::setColor(

@@ -1,5 +1,6 @@
 #include "BuildingCellGrid.hpp"
 #include "ExtrudedProfile.hpp"
+#include "LightGrid.hpp"
 #include "VoxelTextureMapper.hpp"
 
 #include <Bamboo/Assets/AssetManagerAPI.hpp>
@@ -28,6 +29,26 @@ Color hexColor(uint32_t hex) {
         (hex & 0xFF) / 255.f
     );
 }
+
+// Упаковка воксельного света в vertex.light: старший байт — солнце, младший — источники
+// (шейдер blocks_lit распаковывает и гасит солнечный канал полем daylight). Каналы уже
+// умножены на faceLight; АО едет отдельно (альфа тинта), поэтому интерполяция пака
+// по грани безопасна — он константен.
+float packChannels(float sunEffective, float blockEffective) {
+    return std::floor(std::clamp(sunEffective, 0.f, 1.f) * 255.f) * 256.f +
+           std::floor(std::clamp(blockEffective, 0.f, 1.f) * 255.f);
+}
+
+float packCellLight(const LightGrid *grid, int x, int y, int z, float faceLight) {
+    float sun = 1.f;
+    float block = 0.f;
+    if (grid != nullptr && grid->isReady()) {
+        sun = grid->sunAt(x, y, z) / 15.f;
+        block = grid->blockAt(x, y, z) / 15.f;
+    }
+    return packChannels(sun * faceLight, block * faceLight);
+}
+
 
 // Грань куба: нормаль, свет, 4 вершины (offsets углов) и для каждой вершины — 3 направления
 // соседей AO (два ребра + диагональ) в мировых смещениях от куба.
@@ -147,6 +168,7 @@ void BuildingCellGrid::cellsFor(
         case ArchObjectType::Block:
         case ArchObjectType::Cornice:
         case ArchObjectType::Roof:
+        case ArchObjectType::Lamp:
             outCells.push_back({object.x, object.y, object.z});
             return;
         case ArchObjectType::Beam: {
@@ -183,8 +205,11 @@ bool BuildingCellGrid::isPhysicsSolidAt(int x, int y, int z) const {
     if (object != nullptr && object->type == ArchObjectType::Door && y < object->y + 2) {
         return false;
     }
-    // Карниз — декор: не коллайдит (профиль много меньше ячейки).
-    if (object != nullptr && object->type == ArchObjectType::Cornice) { return false; }
+    // Карниз и лампа — декор: не коллайдят (габарит много меньше ячейки).
+    if (object != nullptr &&
+        (object->type == ArchObjectType::Cornice || object->type == ArchObjectType::Lamp)) {
+        return false;
+    }
     return true;
 }
 
@@ -224,12 +249,44 @@ void BuildingCellGrid::writeObjectCells(const ArchitectureObject &object, bool c
     }
 }
 
+void BuildingCellGrid::markLightDirtyBox(int fromX, int fromY, int fromZ, int toX, int toY, int toZ) {
+    for (int y = std::max(fromY, m_minY); y < std::min(toY, m_minY + m_sizeY); y += CHUNK) {
+        for (int z = std::max(fromZ, m_minZ); z < std::min(toZ, m_minZ + m_sizeZ); z += CHUNK) {
+            for (int x = std::max(fromX, m_minX); x < std::min(toX, m_minX + m_sizeX); x += CHUNK) {
+                markDirtyAround(x, y, z);
+            }
+        }
+    }
+    // Крайние ячейки бокса (шаг CHUNK может перескочить край).
+    markDirtyAround(toX - 1, toY - 1, toZ - 1);
+    rebuildDirtyChunks();
+}
+
+// Свет: пересчёт вокруг изменённых ячеек объекта + ремеш чанков изменившегося света.
+void BuildingCellGrid::applyLightForObjectChange(const ArchitectureObject &object) {
+    if (m_lightGrid == nullptr || !m_lightGrid->isReady()) { return; }
+    std::vector<std::array<int, 3>> cells;
+    cellsFor(object, cells);
+    std::vector<LightGrid::Edit> edits;
+    edits.reserve(cells.size());
+    for (const auto &cell : cells) {
+        edits.push_back({cell[0], cell[1], cell[2]});
+    }
+    const LightGrid::ChangedBox changed = m_lightGrid->recomputeAround(*this, edits);
+    if (changed.any) {
+        markLightDirtyBox(
+            changed.fromX, changed.fromY, changed.fromZ, changed.toX, changed.toY, changed.toZ
+        );
+    }
+}
+
 uint32_t BuildingCellGrid::placeInternal(ArchitectureObject object, bool rebuild) {
     if (!canPlace(object)) { return 0; }
     object.id = m_nextObjectId++;
     writeObjectCells(object, false);
     m_objects.emplace(object.id, object);
     if (object.type == ArchObjectType::Roof) { markRoofRegionDirty(object); }
+    if (rebuild) { applyLightForObjectChange(object); }
     if (rebuild) { rebuildDirtyChunks(); }
     return object.id;
 }
@@ -252,6 +309,7 @@ bool BuildingCellGrid::removeObjectAt(int x, int y, int z) {
     const ArchitectureObject removed = objectIt->second;
     writeObjectCells(removed, true);
     m_objects.erase(objectIt);
+    applyLightForObjectChange(removed);
     if (removed.type == ArchObjectType::Roof) {
         // Область уже без удалённой ячейки: дирти́м соседей-крыши (их полосы пересчитаются).
         constexpr int NEIGHBORS[4][2] = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
@@ -321,6 +379,11 @@ void BuildingCellGrid::rebuildChunk(int chunkX, int chunkY, int chunkZ) {
             for (int x = startX; x < endX; x++) {
                 const VoxelType type = blockAt(x, y, z);
                 if (type == VoxelType::NOTHING) { continue; }
+                if (const ArchitectureObject *lamp = objectAt(x, y, z);
+                    lamp != nullptr && lamp->type == ArchObjectType::Lamp) {
+                    appendLampCube(x, y, z, vertices, indices);
+                    continue;
+                }
                 if (!isFullCellAt(x, y, z)) { continue; } // тонкие элементы рисуют свои проходы
                 Voxel voxel(type);
                 const VoxelTextureData &texture = VoxelTextureMapper::getTextureData(&voxel);
@@ -349,6 +412,11 @@ void BuildingCellGrid::rebuildChunk(int chunkX, int chunkY, int chunkZ) {
                     for (uint32_t index : {base, base + 1u, base + 2u, base + 2u, base + 3u, base}) {
                         indices.emplace_back(index);
                     }
+                    // Свет грани — из ячейки перед ней; АО — в альфу тинта (пер-вершинно).
+                    const float packedLight = packCellLight(
+                        m_lightGrid, x + face.normal[0], y + face.normal[1], z + face.normal[2],
+                        face.light
+                    );
                     for (int corner = 0; corner < 4; corner++) {
                         float occlusion = 0.f;
                         for (int neighbor = 0; neighbor < 3; neighbor++) {
@@ -366,9 +434,9 @@ void BuildingCellGrid::rebuildChunk(int chunkX, int chunkY, int chunkZ) {
                             uvBase.x + CORNER_UV[corner][0] * uvSize,
                             uvBase.y + CORNER_UV[corner][1] * uvSize
                         );
-                        vertices.emplace_back(Vertex(
-                            position, uv, normal, hexColor(tint), face.light * (1.f - occlusion)
-                        ));
+                        Color vertexColor = hexColor(tint);
+                        vertexColor.a *= 1.f - occlusion;
+                        vertices.emplace_back(Vertex(position, uv, normal, vertexColor, packedLight));
                     }
                 }
             }
@@ -421,6 +489,40 @@ void BuildingCellGrid::rebuildChunk(int chunkX, int chunkY, int chunkZ) {
 
 namespace {
 
+// Фонарик: светящийся столбик по центру ячейки (эмиссив — полный канал источников,
+// ночь его не гасит).
+void appendLampCubeQuads(
+    float centerX, float baseY, float centerZ, std::vector<Vertex> &vertices,
+    std::vector<uint32_t> &indices
+) {
+    constexpr float HALF = 0.14f;
+    constexpr float HEIGHT = 0.7f;
+    constexpr uint8_t LAMP_TILE = 0;      // светлый тайл атласа
+    constexpr uint32_t LAMP_TINT = 0xFFE2A8FF; // тёплое свечение
+    const float emissive = 255.f;         // pack(0, 1): только канал источников
+    const float x0 = centerX - HALF, x1 = centerX + HALF;
+    const float z0 = centerZ - HALF, z1 = centerZ + HALF;
+    const float y0 = baseY, y1 = baseY + HEIGHT;
+    const auto quad = [&](const Vec3 &p0, const Vec3 &p1, const Vec3 &p2, const Vec3 &p3,
+                          const Vec3 &normal) {
+        const Vec2 uv(0.02f, 0.02f);
+        const uint32_t base = static_cast<uint32_t>(vertices.size());
+        for (uint32_t index : {base, base + 1u, base + 2u, base + 2u, base + 3u, base}) {
+            indices.emplace_back(index);
+        }
+        (void)LAMP_TILE;
+        for (const Vec3 &point : {p0, p1, p2, p3}) {
+            vertices.emplace_back(Vertex(point, uv, normal, hexColor(LAMP_TINT), emissive));
+        }
+    };
+    quad({x0, y0, z1}, {x1, y0, z1}, {x1, y1, z1}, {x0, y1, z1}, {0.f, 0.f, 1.f});
+    quad({x1, y0, z0}, {x0, y0, z0}, {x0, y1, z0}, {x1, y1, z0}, {0.f, 0.f, -1.f});
+    quad({x1, y0, z1}, {x1, y0, z0}, {x1, y1, z0}, {x1, y1, z1}, {1.f, 0.f, 0.f});
+    quad({x0, y0, z0}, {x0, y0, z1}, {x0, y1, z1}, {x0, y1, z0}, {-1.f, 0.f, 0.f});
+    quad({x0, y1, z1}, {x1, y1, z1}, {x1, y1, z0}, {x0, y1, z0}, {0.f, 1.f, 0.f});
+    quad({x0, y0, z0}, {x1, y0, z0}, {x1, y0, z1}, {x0, y0, z1}, {0.f, -1.f, 0.f});
+}
+
 // Толщина стенного полотна (визуальная; топологически стена занимает ячейку).
 constexpr float WALL_THICKNESS = 0.3f;
 // Проём окна/двери: высота подоконной стенки, низ перемычки, боковые простенки.
@@ -442,7 +544,8 @@ float wallFaceLight(int normalX, int normalY, int normalZ) {
     return 0.8f;
 }
 
-// Квад стены: p0..p3 против часовой снаружи; UV — доли атласного тайла (v вниз, как у кубов).
+// Квад стены: p0..p3 против часовой снаружи; UV — доли атласного тайла (v вниз, как у
+// кубов). packedLight < 0 — «на открытом солнце» (полный sun-канал × faceLight).
 void addWallQuad(
     std::vector<Vertex> &vertices,
     std::vector<uint32_t> &indices,
@@ -456,13 +559,15 @@ void addWallQuad(
     float u0,
     float v0,
     float u1,
-    float v1
+    float v1,
+    float packedLight = -1.f
 ) {
     const Vec2 uvBase = tileUV(tileIndex);
     const float uvSize = 1.f / BLOCKS_ATLAS_GRID - 0.001f;
-    const float light = wallFaceLight(
+    const float faceLight = wallFaceLight(
         static_cast<int>(normal.x), static_cast<int>(normal.y), static_cast<int>(normal.z)
     );
+    const float light = packedLight >= 0.f ? packedLight : packChannels(faceLight, 0.f);
     const uint32_t base = static_cast<uint32_t>(vertices.size());
     for (uint32_t index : {base, base + 1u, base + 2u, base + 2u, base + 3u, base}) {
         indices.emplace_back(index);
@@ -480,6 +585,12 @@ void addWallQuad(
 }
 
 } // namespace
+
+void BuildingCellGrid::appendLampCube(
+    int x, int y, int z, std::vector<Vertex> &vertices, std::vector<uint32_t> &indices
+) const {
+    appendLampCubeQuads(x + 0.5f, static_cast<float>(y), z + 0.5f, vertices, indices);
+}
 
 // Раны линии стен: последовательности модулей семейства (Wall/Window/Door) одной
 // оси/материала/базы сливаются в единое полотно — крупные плоскости без пер-ячеечного
@@ -584,20 +695,33 @@ void BuildingCellGrid::appendWallGeometry(
                     const auto P = [&](float a, float yy, float s) {
                         return wall->rotation == 0 ? Vec3(a, yy, s) : Vec3(s, yy, a);
                     };
+                    const auto emitQuadLit = [&](const Vec3 &p0, const Vec3 &p1, const Vec3 &p2,
+                                                 const Vec3 &p3, float na, float ny, float ns,
+                                                 uint8_t quadTile, uint32_t quadTint, float u0,
+                                                 float v0, float u1, float v1, float packedLight) {
+                        const Vec3 normal = wall->rotation == 0 ? Vec3(na, ny, ns) : Vec3(ns, ny, na);
+                        if (wall->rotation == 0) {
+                            addWallQuad(vertices, indices, p0, p1, p2, p3, normal, quadTile,
+                                        quadTint, u0, v0, u1, v1, packedLight);
+                        } else {
+                            addWallQuad(vertices, indices, p0, p3, p2, p1, normal, quadTile,
+                                        quadTint, u0, v0, u1, v1, packedLight);
+                        }
+                    };
                     const auto emitQuad = [&](const Vec3 &p0, const Vec3 &p1, const Vec3 &p2,
                                               const Vec3 &p3, float na, float ny, float ns,
                                               uint8_t quadTile, uint32_t quadTint, float u0,
                                               float v0, float u1, float v1) {
-                        const Vec3 normal = wall->rotation == 0 ? Vec3(na, ny, ns) : Vec3(ns, ny, na);
-                        if (wall->rotation == 0) {
-                            addWallQuad(vertices, indices, p0, p1, p2, p3, normal, quadTile,
-                                        quadTint, u0, v0, u1, v1);
-                        } else {
-                            addWallQuad(vertices, indices, p0, p3, p2, p1, normal, quadTile,
-                                        quadTint, u0, v0, u1, v1);
-                        }
+                        emitQuadLit(p0, p1, p2, p3, na, ny, ns, quadTile, quadTint, u0, v0, u1, v1, -1.f);
                     };
 
+                    // Ячейки света по сторонам полотна (мировые оси); свет per-уровнево.
+                    const int lightCellBX = wall->rotation == 0 ? cellX : cellX + 1;
+                    const int lightCellBZ = wall->rotation == 0 ? cellZ + 1 : cellZ;
+                    const int lightCellAX = wall->rotation == 0 ? cellX : cellX - 1;
+                    const int lightCellAZ = wall->rotation == 0 ? cellZ - 1 : cellZ;
+                    const float faceLightB = wall->rotation == 0 ? 1.0f : 0.8f;
+                    const float faceLightA = wall->rotation == 0 ? 0.75f : 0.9f;
                     // Кусок полотна [u0..u1]×[y0..y1]: обе стороны, нарезка по метрам,
                     // мировой UV (полный тайл на метр — стыки метров и чанков бесшовны).
                     const auto emitBand = [&](float u0, float u1, float y0, float y1) {
@@ -611,15 +735,22 @@ void BuildingCellGrid::appendWallGeometry(
                                 const float metre = std::floor(yy + 1e-4f);
                                 const float texV1 = 1.f - (yy - metre);
                                 const float texV0 = 1.f - (yNext - metre);
-                                emitQuad(
+                                const int lightY = static_cast<int>(metre);
+                                const float packedB = packCellLight(
+                                    m_lightGrid, lightCellBX, lightY, lightCellBZ, faceLightB
+                                );
+                                const float packedA = packCellLight(
+                                    m_lightGrid, lightCellAX, lightY, lightCellAZ, faceLightA
+                                );
+                                emitQuadLit(
                                     P(u, yy, sideB), P(uNext, yy, sideB), P(uNext, yNext, sideB),
                                     P(u, yNext, sideB), 0.f, 0.f, 1.f, tile, tint, texU0, texV0,
-                                    texU1, texV1
+                                    texU1, texV1, packedB
                                 );
-                                emitQuad(
+                                emitQuadLit(
                                     P(uNext, yy, sideA), P(u, yy, sideA), P(u, yNext, sideA),
                                     P(uNext, yNext, sideA), 0.f, 0.f, -1.f, tile, tint, texU0,
-                                    texV0, texU1, texV1
+                                    texV0, texU1, texV1, packedA
                                 );
                                 yy = yNext;
                             }

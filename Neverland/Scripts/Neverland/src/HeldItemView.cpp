@@ -63,6 +63,12 @@ Quat toBambooQuat(const glm::quat &value) {
     return Quat(value.x, value.y, value.z, value.w);
 }
 
+// Шейдер блоков ждёт упакованные каналы света (см. BuildingCellGrid): рука — полный
+// солнечный + четверть канала источников, чтобы ночью блок в руке оставался читаемым.
+float packHandLight(float faceLight) {
+    return std::floor(faceLight * 255.f) * 256.f + std::floor(faceLight * 0.25f * 255.f);
+}
+
 void addQuad(
     std::vector<Vertex> &vertices,
     std::vector<uint32_t> &indices,
@@ -76,6 +82,7 @@ void addQuad(
     float light,
     float uvSize
 ) {
+    light = packHandLight(light);
     addQuadIndices(static_cast<uint32_t>(vertices.size()), indices);
     vertices.emplace_back(Vertex(p0, Vec2(uv.x, uv.y + uvSize), normal, color, light));
     vertices.emplace_back(Vertex(p1, Vec2(uv.x + uvSize, uv.y + uvSize), normal, color, light));
@@ -94,6 +101,7 @@ void addSolidQuad(
     Color color,
     float light
 ) {
+    light = packHandLight(light);
     addQuadIndices(static_cast<uint32_t>(vertices.size()), indices);
     vertices.emplace_back(Vertex(p0, SOLID_WHITE_UV, normal, color, light));
     vertices.emplace_back(Vertex(p1, SOLID_WHITE_UV, normal, color, light));

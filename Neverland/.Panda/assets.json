@@ -106,7 +106,15 @@
             "type": 4,
             "meta": {
                 "materialPath": "Assets/materials/roof/roof.mat",
-                "shader": 1302887341
+                "shader": 917000212
+            }
+        },
+        {
+            "id": 917000212,
+            "type": 3,
+            "meta": {
+                "vertexSourcePath": "Assets/materials/blocks_lit/blocks_lit_vert.hlsl",
+                "fragmentSourcePath": "Assets/materials/blocks_lit/blocks_lit_frag.hlsl"
             }
         },
         {
@@ -158,7 +166,7 @@
             "type": 4,
             "meta": {
                 "materialPath": "Assets/materials/base_material/base_material.mat",
-                "shader": 1302887341
+                "shader": 917000212
             }
         },
         {

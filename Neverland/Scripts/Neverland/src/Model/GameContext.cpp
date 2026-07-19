@@ -9,6 +9,7 @@ MaterialHandle GameContext::s_terrainMaterial = {};
 MaterialHandle GameContext::s_blocksMaterial = {};
 MaterialHandle GameContext::s_markerMaterial = {};
 MaterialHandle GameContext::s_roofMaterial = {};
+LightGrid *GameContext::s_lightGrid = nullptr;
 
 void GameContext::init() {
     s_worldSave = new WorldSave();
@@ -17,6 +18,8 @@ void GameContext::init() {
         s_worldSave->load(saveDirectory + "/neverland_world.sav");
     }
     s_buildingGrid = new BuildingCellGrid();
+    s_lightGrid = new LightGrid();
+    s_buildingGrid->setLightGrid(s_lightGrid);
 }
 
 void GameContext::deinit() {
@@ -27,6 +30,8 @@ void GameContext::deinit() {
     }
     delete s_worldSave;
     s_worldSave = nullptr;
+    delete s_lightGrid;
+    s_lightGrid = nullptr;
     s_terrainMaterial = {};
     s_blocksMaterial = {};
     s_markerMaterial = {};
@@ -35,4 +40,20 @@ void GameContext::deinit() {
 
 bool GameContext::isWorldLoaded() {
     return s_buildingGrid != nullptr;
+}
+
+void GameContext::onTerrainEditsApplied(const std::vector<TerrainAccess::Edit> &edits) {
+    if (s_lightGrid == nullptr || !s_lightGrid->isReady() || s_buildingGrid == nullptr) { return; }
+    std::vector<LightGrid::Edit> lightEdits;
+    lightEdits.reserve(edits.size());
+    for (const TerrainAccess::Edit &edit : edits) {
+        s_lightGrid->setTerrainOpaque(edit.x, edit.y, edit.z, edit.type != VoxelType::NOTHING);
+        lightEdits.push_back({edit.x, edit.y, edit.z});
+    }
+    const LightGrid::ChangedBox changed = s_lightGrid->recomputeAround(*s_buildingGrid, lightEdits);
+    if (changed.any) {
+        s_buildingGrid->markLightDirtyBox(
+            changed.fromX, changed.fromY, changed.fromZ, changed.toX, changed.toY, changed.toZ
+        );
+    }
 }

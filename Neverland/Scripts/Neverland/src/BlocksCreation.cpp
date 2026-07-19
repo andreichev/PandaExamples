@@ -450,6 +450,7 @@ void BlocksCreation::update(float deltaTime) {
         if (!hit.valid || (!placePressed && !breakPressed)) { return; }
         if (placePressed) {
             TerrainAccess::applyEdits(m_previewEdits);
+            GameContext::onTerrainEditsApplied(m_previewEdits);
             VoxelCharacterController::invalidateFieldCache();
         } else {
             // Обратное действие кисти: вырезать/опустить. Рельеф правится только здесь.
@@ -459,6 +460,7 @@ void BlocksCreation::update(float deltaTime) {
                 m_previewEdits
             );
             TerrainAccess::applyEdits(m_previewEdits);
+            GameContext::onTerrainEditsApplied(m_previewEdits);
             VoxelCharacterController::invalidateFieldCache();
         }
         return;
