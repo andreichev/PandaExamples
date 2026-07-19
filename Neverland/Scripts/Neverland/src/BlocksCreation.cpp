@@ -493,8 +493,9 @@ ArchitectureObject BlocksCreation::pendingObject(const AimHit &hit) const {
             object.rotation = front.z >= 0.f ? 1 : 3;
         }
     }
-    if (isWallFamilyType(object.type) && m_playerController) {
-        // Модуль линии стен тянется вдоль направления взгляда (как забор от игрока).
+    if ((isWallFamilyType(object.type) || object.type == ArchObjectType::Cornice) &&
+        m_playerController) {
+        // Модуль линии стен/карниз тянется вдоль направления взгляда (как забор от игрока).
         const Vec3 front = m_playerController->getFront();
         object.rotation = std::abs(front.x) >= std::abs(front.z) ? 0 : 1;
     }

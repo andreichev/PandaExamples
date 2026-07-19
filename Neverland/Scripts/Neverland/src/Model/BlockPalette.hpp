@@ -44,12 +44,14 @@ constexpr std::array<BlockEntry, 8> BUILDING_BLOCKS = {
 };
 
 // Многоклеточные элементы (меню, секция Elements). Материал — текущий строительный.
-constexpr std::array<ElementEntry, 5> ELEMENTS = {
+constexpr std::array<ElementEntry, 7> ELEMENTS = {
     ElementEntry{ArchObjectType::Block, "Basic", "1 x 1"},
     ElementEntry{ArchObjectType::Beam, "Beam", "3 x 1"},
     ElementEntry{ArchObjectType::Wall, "Wall", "1 x 3"},
     ElementEntry{ArchObjectType::Window, "Window", "1 x 3"},
     ElementEntry{ArchObjectType::Door, "Door", "1 x 3"},
+    ElementEntry{ArchObjectType::Cornice, "Cornice", "1 x 1"},
+    ElementEntry{ArchObjectType::Roof, "Roof", "area"},
 };
 
 // Материалы рельефа (терраформинг кистью) — отдельная секция, с блоками не смешиваются.

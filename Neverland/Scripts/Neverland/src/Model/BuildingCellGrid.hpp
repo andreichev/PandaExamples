@@ -17,9 +17,11 @@ enum class ArchObjectType : uint8_t {
     Block = 0,  // одиночный куб 1×1×1
     Beam = 1,   // балка 3×1×1, поворот задаёт ось (0:+X, 1:+Z, 2:-X, 3:-Z)
     Wall = 2,   // стена 1×WALL_HEIGHT×1; rotation 0 — плоскость вдоль X, 1 — вдоль Z
-    Window = 3, // модуль линии стен: подоконная стенка + проём с рамой + перемычка
-    Door = 4,   // модуль линии стен: открытый проём до перемычки
-    COUNT = 5
+    Window = 3,  // модуль линии стен: подоконная стенка + проём с рамой + перемычка
+    Door = 4,    // модуль линии стен: открытый проём до перемычки
+    Cornice = 5, // непрерывный карниз: ячейка пояса, соседние сливаются в профиль по пути
+    Roof = 6,    // двускатная крыша: область ячеек, конёк вдоль длинной оси, скаты/фронтоны
+    COUNT = 7
 };
 
 // Высота стенного модуля в ячейках (классический этаж).
@@ -111,6 +113,20 @@ private:
         int startX, int startY, int startZ, int endX, int endY, int endZ,
         std::vector<Vertex> &vertices, std::vector<uint32_t> &indices
     ) const;
+    // Карнизы: цепочки ячеек → профиль по пути (ExtrudedProfile), митра-углы.
+    void appendCorniceGeometry(
+        int startX, int startY, int startZ, int endX, int endY, int endZ,
+        std::vector<Vertex> &vertices, std::vector<uint32_t> &indices
+    ) const;
+    // Крыши: связная область ячеек → скаты/фронтоны/конёк (двускатная).
+    void appendRoofGeometry(
+        int startX, int startY, int startZ, int endX, int endY, int endZ,
+        std::vector<Vertex> &vertices, std::vector<uint32_t> &indices
+    ) const;
+    // Область крыши, связная с ячейкой (flood 4-соседство, тот же материал и высота).
+    void collectRoofRegion(int x, int y, int z, std::vector<std::array<int, 3>> &outCells) const;
+    // Полоса крыши зависит от дальних краёв области — правка дирти́т всю область.
+    void markRoofRegionDirty(const ArchitectureObject &object);
 
     int m_minX = 0, m_minY = 0, m_minZ = 0;
     int m_sizeX = 0, m_sizeY = 0, m_sizeZ = 0;

@@ -1,4 +1,5 @@
 #include "BuildingCellGrid.hpp"
+#include "ExtrudedProfile.hpp"
 #include "VoxelTextureMapper.hpp"
 
 #include <Bamboo/Assets/AssetManagerAPI.hpp>
@@ -140,6 +141,8 @@ void BuildingCellGrid::cellsFor(
     outCells.clear();
     switch (object.type) {
         case ArchObjectType::Block:
+        case ArchObjectType::Cornice:
+        case ArchObjectType::Roof:
             outCells.push_back({object.x, object.y, object.z});
             return;
         case ArchObjectType::Beam: {
@@ -176,6 +179,8 @@ bool BuildingCellGrid::isPhysicsSolidAt(int x, int y, int z) const {
     if (object != nullptr && object->type == ArchObjectType::Door && y < object->y + 2) {
         return false;
     }
+    // Карниз — декор: не коллайдит (профиль много меньше ячейки).
+    if (object != nullptr && object->type == ArchObjectType::Cornice) { return false; }
     return true;
 }
 
@@ -220,6 +225,7 @@ uint32_t BuildingCellGrid::placeInternal(ArchitectureObject object, bool rebuild
     object.id = m_nextObjectId++;
     writeObjectCells(object, false);
     m_objects.emplace(object.id, object);
+    if (object.type == ArchObjectType::Roof) { markRoofRegionDirty(object); }
     if (rebuild) { rebuildDirtyChunks(); }
     return object.id;
 }
@@ -239,8 +245,21 @@ bool BuildingCellGrid::removeObjectAt(int x, int y, int z) {
         rebuildDirtyChunks();
         return true;
     }
-    writeObjectCells(objectIt->second, true);
+    const ArchitectureObject removed = objectIt->second;
+    writeObjectCells(removed, true);
     m_objects.erase(objectIt);
+    if (removed.type == ArchObjectType::Roof) {
+        // Область уже без удалённой ячейки: дирти́м соседей-крыши (их полосы пересчитаются).
+        constexpr int NEIGHBORS[4][2] = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+        for (const auto &offset : NEIGHBORS) {
+            const ArchitectureObject *neighbor =
+                objectAt(removed.x + offset[0], removed.y, removed.z + offset[1]);
+            if (neighbor != nullptr && neighbor->type == ArchObjectType::Roof) {
+                markRoofRegionDirty(*neighbor);
+                break;
+            }
+        }
+    }
     rebuildDirtyChunks();
     return true;
 }
@@ -298,7 +317,7 @@ void BuildingCellGrid::rebuildChunk(int chunkX, int chunkY, int chunkZ) {
             for (int x = startX; x < endX; x++) {
                 const VoxelType type = blockAt(x, y, z);
                 if (type == VoxelType::NOTHING) { continue; }
-                if (wallAt(x, y, z) != nullptr) { continue; } // стены рисует WallRun-проход
+                if (!isFullCellAt(x, y, z)) { continue; } // тонкие элементы рисуют свои проходы
                 Voxel voxel(type);
                 const VoxelTextureData &texture = VoxelTextureMapper::getTextureData(&voxel);
                 for (const FaceSpec &face : FACES) {
@@ -353,6 +372,8 @@ void BuildingCellGrid::rebuildChunk(int chunkX, int chunkY, int chunkZ) {
     }
 
     appendWallGeometry(startX, startY, startZ, endX, endY, endZ, vertices, indices);
+    appendCorniceGeometry(startX, startY, startZ, endX, endY, endZ, vertices, indices);
+    appendRoofGeometry(startX, startY, startZ, endX, endY, endZ, vertices, indices);
 
     if (vertices.empty()) {
         if (view.mesh.isValid()) {
@@ -704,6 +725,515 @@ void BuildingCellGrid::appendWallGeometry(
                     };
                     if (i == 0 && !extendStart) { addCap(begin, true); }
                     if (i == runLength - 1 && !extendEnd) { addCap(finish, false); }
+                }
+            }
+        }
+    }
+}
+
+namespace {
+
+// Сечение карниза: двусторонний ступенчатый профиль (примыкание ±0.15 = толщина стены,
+// выступ до ±0.38, высота 0.3). Обход — от правого примыкания через верх к левому:
+// нормали (путь × профиль) выходят наружу.
+const std::vector<ExtrudedProfile::ProfilePoint> CORNICE_PROFILE = {
+    {0.15f, 0.f}, {0.28f, 0.f}, {0.28f, 0.12f}, {0.38f, 0.12f}, {0.38f, 0.30f},
+    {-0.38f, 0.30f}, {-0.38f, 0.12f}, {-0.28f, 0.12f}, {-0.28f, 0.f}, {-0.15f, 0.f},
+};
+
+} // namespace
+
+// Цепочки карнизных ячеек (соседство по 4 сторонам, тот же материал и высота) →
+// непрерывный профиль по пути: кольца на границах ячеек, митра в центрах угловых
+// (масштаб поперечника 1/cos 45°), замкнутый контур здания — кольцо без торцов.
+// Чанко-клип: отрезок рисует чанк ячейки его середины.
+void BuildingCellGrid::appendCorniceGeometry(
+    int startX, int startY, int startZ, int endX, int endY, int endZ,
+    std::vector<Vertex> &vertices, std::vector<uint32_t> &indices
+) const {
+    std::unordered_map<uint32_t, bool> processedCells;
+
+    const auto corniceAt = [this](int x, int y, int z) -> const ArchitectureObject * {
+        const ArchitectureObject *object = objectAt(x, y, z);
+        return object != nullptr && object->type == ArchObjectType::Cornice ? object : nullptr;
+    };
+    const auto sameCornice = [&](const ArchitectureObject &sample, int x, int z) -> const ArchitectureObject * {
+        const ArchitectureObject *cornice = corniceAt(x, sample.y, z);
+        if (cornice == nullptr || cornice->material != sample.material) { return nullptr; }
+        return cornice;
+    };
+
+    constexpr int DIRECTIONS[4][2] = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+
+    for (int y = startY; y < endY; y++) {
+        for (int z = startZ; z < endZ; z++) {
+            for (int x = startX; x < endX; x++) {
+                const ArchitectureObject *seed = corniceAt(x, y, z);
+                if (seed == nullptr || processedCells.count(seed->id)) { continue; }
+
+                // Обход цепочки: прямо, при повороте — единственный боковой; развилка = разрыв.
+                const auto step = [&](std::pair<int, int> cell, int &dirX, int &dirZ) -> bool {
+                    if (sameCornice(*seed, cell.first + dirX, cell.second + dirZ)) { return true; }
+                    int turnX = 0, turnZ = 0, options = 0;
+                    for (const auto &direction : DIRECTIONS) {
+                        if (direction[0] == -dirX && direction[1] == -dirZ) { continue; } // назад
+                        if (direction[0] == dirX && direction[1] == dirZ) { continue; }   // прямо (нет)
+                        if (sameCornice(*seed, cell.first + direction[0], cell.second + direction[1])) {
+                            turnX = direction[0];
+                            turnZ = direction[1];
+                            options++;
+                        }
+                    }
+                    if (options != 1) { return false; }
+                    dirX = turnX;
+                    dirZ = turnZ;
+                    return true;
+                };
+                const auto walk = [&](int dirX, int dirZ, std::vector<std::pair<int, int>> &out) {
+                    std::pair<int, int> cell{seed->x, seed->z};
+                    while (step(cell, dirX, dirZ)) {
+                        cell = {cell.first + dirX, cell.second + dirZ};
+                        if (cell.first == seed->x && cell.second == seed->z) { return true; } // цикл
+                        out.push_back(cell);
+                        if (out.size() > 4096) { break; } // страховка
+                    }
+                    return false;
+                };
+
+                // Первое направление с соседом; одиночка — вдоль rotation взгляда.
+                int firstDirX = 0, firstDirZ = 0;
+                for (const auto &direction : DIRECTIONS) {
+                    if (sameCornice(*seed, seed->x + direction[0], seed->z + direction[1])) {
+                        firstDirX = direction[0];
+                        firstDirZ = direction[1];
+                        break;
+                    }
+                }
+                std::vector<std::pair<int, int>> chain;
+                bool closed = false;
+                if (firstDirX == 0 && firstDirZ == 0) {
+                    chain.push_back({seed->x, seed->z}); // одиночная ячейка
+                } else {
+                    std::vector<std::pair<int, int>> forward;
+                    closed = walk(firstDirX, firstDirZ, forward);
+                    std::vector<std::pair<int, int>> backward;
+                    if (!closed) { walk(-firstDirX, -firstDirZ, backward); }
+                    for (auto it = backward.rbegin(); it != backward.rend(); ++it) {
+                        chain.push_back(*it);
+                    }
+                    chain.push_back({seed->x, seed->z});
+                    for (const auto &cell : forward) {
+                        chain.push_back(cell);
+                    }
+                }
+                for (const auto &cell : chain) {
+                    if (const ArchitectureObject *object = corniceAt(cell.first, y, cell.second)) {
+                        processedCells.emplace(object->id, true);
+                    }
+                }
+
+                // Кольца пути: внешние края (открытые концы), границы ячеек (целые
+                // метры), центры угловых с митрой. Продольная координата — накопленная
+                // дистанция между кольцами; владелец отрезка — ячейка его середины.
+                const float baseHeight = static_cast<float>(seed->y);
+                const auto centerOf = [&](const std::pair<int, int> &cell) {
+                    return Vec3(cell.first + 0.5f, baseHeight, cell.second + 0.5f);
+                };
+                const auto rightVec = [](const Vec3 &direction) {
+                    return Vec3(-direction.z, 0.f, direction.x); // dir × up, Y-вверх
+                };
+                const auto directionBetween = [&](size_t indexA, size_t indexB) {
+                    const Vec3 a = centerOf(chain[indexA]);
+                    const Vec3 b = centerOf(chain[indexB]);
+                    return Vec3(b.x - a.x, 0.f, b.z - a.z);
+                };
+
+                struct RawRing {
+                    Vec3 base;
+                    Vec3 side;
+                    Vec3 ownerMid; // середина отрезка ЗА кольцом (чанко-клип)
+                };
+                std::vector<RawRing> raw;
+
+                if (chain.size() == 1) {
+                    // Одиночка: путь через ячейку вдоль rotation (0 — X, 1 — Z).
+                    const Vec3 center = centerOf(chain[0]);
+                    const Vec3 direction = seed->rotation == 0 ? Vec3(1.f, 0.f, 0.f) : Vec3(0.f, 0.f, 1.f);
+                    const Vec3 side = rightVec(direction);
+                    raw.push_back(
+                        {Vec3(center.x - direction.x * 0.5f, baseHeight, center.z - direction.z * 0.5f),
+                         side, center}
+                    );
+                    raw.push_back(
+                        {Vec3(center.x + direction.x * 0.5f, baseHeight, center.z + direction.z * 0.5f),
+                         side, center}
+                    );
+                } else {
+                    const size_t count = chain.size();
+                    for (size_t i = 0; i < count; i++) {
+                        const Vec3 center = centerOf(chain[i]);
+                        const size_t previous = (i + count - 1) % count;
+                        const size_t next = (i + 1) % count;
+                        const bool hasPrevious = closed || i > 0;
+                        const bool hasNext = closed || i + 1 < count;
+                        const Vec3 inDir = hasPrevious ? directionBetween(previous, i) : directionBetween(i, next);
+                        const Vec3 outDir = hasNext ? directionBetween(i, next) : inDir;
+                        const bool corner =
+                            hasPrevious && hasNext && (inDir.x != outDir.x || inDir.z != outDir.z);
+
+                        if (!hasPrevious) { // открытое начало: внешний край ячейки
+                            raw.push_back(
+                                {Vec3(center.x - outDir.x * 0.5f, baseHeight, center.z - outDir.z * 0.5f),
+                                 rightVec(outDir), center}
+                            );
+                        }
+                        if (corner) { // митра в центре угловой (биссектриса, 1/cos 45°)
+                            const Vec3 rightIn = rightVec(inDir);
+                            const Vec3 rightOut = rightVec(outDir);
+                            Vec3 miter(rightIn.x + rightOut.x, 0.f, rightIn.z + rightOut.z);
+                            const float miterLength =
+                                std::sqrt(miter.x * miter.x + miter.z * miter.z);
+                            if (miterLength > 1e-5f) {
+                                const float miterScale = std::sqrt(2.f) / miterLength;
+                                miter = Vec3(miter.x * miterScale, 0.f, miter.z * miterScale);
+                            }
+                            raw.push_back(
+                                {center, miter,
+                                 Vec3(center.x + outDir.x * 0.25f, baseHeight, center.z + outDir.z * 0.25f)}
+                            );
+                        }
+                        if (hasNext) { // граница со следующей ячейкой: отрезок за ней — её
+                            raw.push_back(
+                                {Vec3(center.x + outDir.x * 0.5f, baseHeight, center.z + outDir.z * 0.5f),
+                                 rightVec(outDir), centerOf(chain[next])}
+                            );
+                        } else { // открытый конец: внешний край ячейки
+                            raw.push_back(
+                                {Vec3(center.x + inDir.x * 0.5f, baseHeight, center.z + inDir.z * 0.5f),
+                                 rightVec(inDir), center}
+                            );
+                        }
+                    }
+                }
+
+                std::vector<ExtrudedProfile::PathRing> rings;
+                rings.reserve(raw.size());
+                float along = 0.f;
+                for (size_t i = 0; i < raw.size(); i++) {
+                    if (i > 0) {
+                        const Vec3 &previousBase = raw[i - 1].base;
+                        const float dx = raw[i].base.x - previousBase.x;
+                        const float dz = raw[i].base.z - previousBase.z;
+                        along += std::sqrt(dx * dx + dz * dz);
+                    }
+                    ExtrudedProfile::PathRing ring;
+                    ring.base = raw[i].base;
+                    ring.side = raw[i].side;
+                    ring.along = along;
+                    const int ownerX = static_cast<int>(std::floor(raw[i].ownerMid.x));
+                    const int ownerZ = static_cast<int>(std::floor(raw[i].ownerMid.z));
+                    ring.chunkOwned = ownerX >= startX && ownerX < endX && ownerZ >= startZ &&
+                                      ownerZ < endZ && seed->y >= startY && seed->y < endY;
+                    rings.push_back(ring);
+                }
+
+                const Voxel voxel(seed->material);
+                const VoxelTextureData &texture = VoxelTextureMapper::getTextureData(&voxel);
+                ExtrudedProfile::extrude(
+                    CORNICE_PROFILE, rings, closed, texture.sideTileIndex, texture.sideColor,
+                    vertices, indices
+                );
+            }
+        }
+    }
+}
+
+namespace {
+
+// Двускатная крыша: уклон (высота на метр поперечника), свес стрехи, толщина пластины
+// ската, толщина фронтонной стенки, полусечение конькового бруса.
+constexpr float ROOF_SLOPE = 0.7f;
+constexpr float ROOF_OVERHANG = 0.25f;
+constexpr float ROOF_THICKNESS = 0.12f;
+constexpr float GABLE_THICKNESS = 0.2f;
+constexpr float RIDGE_HALF_WIDTH = 0.16f;
+constexpr float RIDGE_HEIGHT = 0.1f;
+
+} // namespace
+
+void BuildingCellGrid::collectRoofRegion(
+    int x, int y, int z, std::vector<std::array<int, 3>> &outCells
+) const {
+    outCells.clear();
+    const ArchitectureObject *seed = objectAt(x, y, z);
+    if (seed == nullptr || seed->type != ArchObjectType::Roof) { return; }
+    std::unordered_map<uint64_t, bool> visited;
+    std::vector<std::array<int, 3>> frontier = {{x, y, z}};
+    visited.emplace(packCell(x, y, z), true);
+    constexpr int NEIGHBORS[4][2] = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+    while (!frontier.empty()) {
+        const std::array<int, 3> cell = frontier.back();
+        frontier.pop_back();
+        outCells.push_back(cell);
+        for (const auto &offset : NEIGHBORS) {
+            const int nx = cell[0] + offset[0];
+            const int nz = cell[2] + offset[1];
+            if (visited.count(packCell(nx, y, nz))) { continue; }
+            const ArchitectureObject *neighbor = objectAt(nx, y, nz);
+            if (neighbor == nullptr || neighbor->type != ArchObjectType::Roof ||
+                neighbor->material != seed->material || neighbor->y != seed->y) {
+                continue;
+            }
+            visited.emplace(packCell(nx, y, nz), true);
+            frontier.push_back({nx, y, nz});
+        }
+    }
+}
+
+void BuildingCellGrid::markRoofRegionDirty(const ArchitectureObject &object) {
+    std::vector<std::array<int, 3>> region;
+    collectRoofRegion(object.x, object.y, object.z, region);
+    for (const auto &cell : region) {
+        markDirtyAround(cell[0], cell[1], cell[2]);
+    }
+}
+
+// Область крышных ячеек → двускатная крыша: конёк вдоль длинной оси области, каждая
+// полоса поперёк конька строит два ската от своих краёв (свес + пластина с толщиной),
+// фронтоны на торцах вдоль конька, коньковый брус «домиком». Полосу целиком рисует
+// чанк её левой ячейки (регион-dirty при правках гарантирует пересбор).
+void BuildingCellGrid::appendRoofGeometry(
+    int startX, int startY, int startZ, int endX, int endY, int endZ,
+    std::vector<Vertex> &vertices, std::vector<uint32_t> &indices
+) const {
+    std::unordered_map<uint32_t, bool> processedRegions;
+
+    for (int y = startY; y < endY; y++) {
+        for (int z = startZ; z < endZ; z++) {
+            for (int x = startX; x < endX; x++) {
+                const ArchitectureObject *seed = objectAt(x, y, z);
+                if (seed == nullptr || seed->type != ArchObjectType::Roof) { continue; }
+
+                std::vector<std::array<int, 3>> region;
+                collectRoofRegion(x, y, z, region);
+                if (region.empty()) { continue; }
+                uint32_t canonicalId = UINT32_MAX;
+                for (const auto &cell : region) {
+                    const ArchitectureObject *object = objectAt(cell[0], y, cell[2]);
+                    if (object != nullptr && object->id < canonicalId) { canonicalId = object->id; }
+                }
+                if (processedRegions.count(canonicalId)) { continue; }
+                processedRegions.emplace(canonicalId, true);
+
+                // Конёк — вдоль оси с бОльшим экстентом области.
+                int minX = region[0][0], maxX = region[0][0];
+                int minZ = region[0][2], maxZ = region[0][2];
+                for (const auto &cell : region) {
+                    minX = std::min(minX, cell[0]);
+                    maxX = std::max(maxX, cell[0]);
+                    minZ = std::min(minZ, cell[2]);
+                    maxZ = std::max(maxZ, cell[2]);
+                }
+                const bool alongX = (maxX - minX) >= (maxZ - minZ);
+                const int minA = alongX ? minX : minZ;
+                const int maxA = alongX ? maxX : maxZ;
+
+                // Диапазон поперечника каждой полосы вдоль конька.
+                struct Strip {
+                    bool present = false;
+                    int tMin = 0;
+                    int tMax = 0;
+                    int ownerT = 0; // ячейка-владелец (клип по чанку)
+                };
+                std::vector<Strip> strips(static_cast<size_t>(maxA - minA + 1));
+                for (const auto &cell : region) {
+                    const int a = alongX ? cell[0] : cell[2];
+                    const int t = alongX ? cell[2] : cell[0];
+                    Strip &strip = strips[static_cast<size_t>(a - minA)];
+                    if (!strip.present) {
+                        strip.present = true;
+                        strip.tMin = strip.tMax = strip.ownerT = t;
+                    } else {
+                        strip.tMin = std::min(strip.tMin, t);
+                        strip.tMax = std::max(strip.tMax, t);
+                        strip.ownerT = strip.tMin;
+                    }
+                }
+
+                const float baseY = static_cast<float>(y);
+                const Voxel voxel(seed->material);
+                const VoxelTextureData &texture = VoxelTextureMapper::getTextureData(&voxel);
+                const uint8_t tile = texture.sideTileIndex;
+                const uint32_t tint = texture.sideColor;
+
+                // Все квады — в осях (a, y, t); конёк вдоль Z отражает порядок вершин.
+                const auto P = [&](float a, float yy, float t) {
+                    return alongX ? Vec3(a, yy, t) : Vec3(t, yy, a);
+                };
+                const auto emitQuad = [&](const Vec3 &p0, const Vec3 &p1, const Vec3 &p2,
+                                          const Vec3 &p3, float na, float ny, float nt, float u0,
+                                          float v0, float u1, float v1) {
+                    const Vec3 normal = alongX ? Vec3(na, ny, nt) : Vec3(nt, ny, na);
+                    if (alongX) {
+                        addWallQuad(vertices, indices, p0, p1, p2, p3, normal, tile, tint, u0, v0, u1, v1);
+                    } else {
+                        addWallQuad(vertices, indices, p0, p3, p2, p1, normal, tile, tint, u0, v0, u1, v1);
+                    }
+                };
+                const auto emitTriangle = [&](const Vec3 &p0, const Vec3 &p1, const Vec3 &p2,
+                                              float na, float ny, float nt) {
+                    const Vec3 normal = alongX ? Vec3(na, ny, nt) : Vec3(nt, ny, na);
+                    const Vec2 uv(0.f, 0.f);
+                    const uint32_t base = static_cast<uint32_t>(vertices.size());
+                    const Color color = hexColor(tint);
+                    vertices.emplace_back(Vertex(p0, uv, normal, color, 1.f));
+                    if (alongX) {
+                        vertices.emplace_back(Vertex(p1, uv, normal, color, 1.f));
+                        vertices.emplace_back(Vertex(p2, uv, normal, color, 1.f));
+                    } else {
+                        vertices.emplace_back(Vertex(p2, uv, normal, color, 1.f));
+                        vertices.emplace_back(Vertex(p1, uv, normal, color, 1.f));
+                    }
+                    for (uint32_t index : {base, base + 1u, base + 2u}) {
+                        indices.emplace_back(index);
+                    }
+                };
+
+                const float slopeAngleCos = 1.f / std::sqrt(1.f + ROOF_SLOPE * ROOF_SLOPE);
+                const float slopeAngleSin = ROOF_SLOPE * slopeAngleCos;
+
+                for (size_t stripIndex = 0; stripIndex < strips.size(); stripIndex++) {
+                    const Strip &strip = strips[stripIndex];
+                    if (!strip.present) { continue; }
+                    const int stripA = minA + static_cast<int>(stripIndex);
+                    // Клип: полосу целиком рисует чанк её левой ячейки.
+                    const int ownerX = alongX ? stripA : strip.ownerT;
+                    const int ownerZ = alongX ? strip.ownerT : stripA;
+                    if (ownerX < startX || ownerX >= endX || ownerZ < startZ || ownerZ >= endZ) {
+                        continue;
+                    }
+
+                    const float a0 = static_cast<float>(stripA);
+                    const float a1 = a0 + 1.f;
+                    const float tEdge0 = static_cast<float>(strip.tMin) - ROOF_OVERHANG;
+                    const float tEdge1 = static_cast<float>(strip.tMax) + 1.f + ROOF_OVERHANG;
+                    const float tMid = (tEdge0 + tEdge1) * 0.5f;
+                    const float eavesY = baseY - ROOF_OVERHANG * ROOF_SLOPE;
+                    const float ridgeY = eavesY + (tMid - tEdge0) * ROOF_SLOPE;
+                    const float slopeLength = (tMid - tEdge0) / slopeAngleCos;
+
+                    // Скат: right=false — подъём в +t (нормаль в −t), true — зеркально.
+                    const auto emitSlope = [&](bool right) {
+                        const float tStart = right ? tEdge1 : tEdge0;
+                        const float tDirection = right ? -1.f : 1.f;
+                        const float normalT = right ? slopeAngleSin : -slopeAngleSin;
+                        const auto surfacePoint = [&](float along, float s, bool lower) {
+                            const float t = tStart + tDirection * s * slopeAngleCos;
+                            const float height = eavesY + s * slopeAngleSin;
+                            const float offsetY = lower ? -ROOF_THICKNESS * slopeAngleCos : 0.f;
+                            const float offsetT = lower ? -normalT * ROOF_THICKNESS : 0.f;
+                            return P(along, height + offsetY, t + offsetT);
+                        };
+                        for (float s = 0.f; s < slopeLength - 1e-4f;) {
+                            const float sNext = std::min(std::floor(s + 1e-4f) + 1.f, slopeLength);
+                            const float texU0 = s - std::floor(s + 1e-4f);
+                            const float texU1 = texU0 + (sNext - s);
+                            const float texV0 = a0 - std::floor(a0);
+                            // Верхняя поверхность.
+                            if (right) {
+                                emitQuad(
+                                    surfacePoint(a0, s, false), surfacePoint(a1, s, false),
+                                    surfacePoint(a1, sNext, false), surfacePoint(a0, sNext, false),
+                                    0.f, slopeAngleCos, normalT, texU0, texV0, texU1, texV0 + 1.f
+                                );
+                                emitQuad(
+                                    surfacePoint(a1, s, true), surfacePoint(a0, s, true),
+                                    surfacePoint(a0, sNext, true), surfacePoint(a1, sNext, true),
+                                    0.f, -slopeAngleCos, -normalT, texU0, texV0, texU1, texV0 + 1.f
+                                );
+                            } else {
+                                emitQuad(
+                                    surfacePoint(a1, s, false), surfacePoint(a0, s, false),
+                                    surfacePoint(a0, sNext, false), surfacePoint(a1, sNext, false),
+                                    0.f, slopeAngleCos, normalT, texU0, texV0, texU1, texV0 + 1.f
+                                );
+                                emitQuad(
+                                    surfacePoint(a0, s, true), surfacePoint(a1, s, true),
+                                    surfacePoint(a1, sNext, true), surfacePoint(a0, sNext, true),
+                                    0.f, -slopeAngleCos, -normalT, texU0, texV0, texU1, texV0 + 1.f
+                                );
+                            }
+                            s = sNext;
+                        }
+                        // Стреха: торец пластины (нормаль вниз-наружу вдоль ската).
+                        const float capNormalT = right ? slopeAngleCos : -slopeAngleCos;
+                        if (right) {
+                            emitQuad(
+                                surfacePoint(a1, 0.f, false), surfacePoint(a0, 0.f, false),
+                                surfacePoint(a0, 0.f, true), surfacePoint(a1, 0.f, true), 0.f,
+                                -slopeAngleSin, capNormalT, 0.f, 0.f, 1.f, ROOF_THICKNESS
+                            );
+                        } else {
+                            emitQuad(
+                                surfacePoint(a0, 0.f, false), surfacePoint(a1, 0.f, false),
+                                surfacePoint(a1, 0.f, true), surfacePoint(a0, 0.f, true), 0.f,
+                                -slopeAngleSin, capNormalT, 0.f, 0.f, 1.f, ROOF_THICKNESS
+                            );
+                        }
+                    };
+                    emitSlope(false);
+                    emitSlope(true);
+
+                    // Фронтоны: на торцах области вдоль конька (границы без соседней полосы).
+                    const bool gableFront =
+                        stripIndex == 0 || !strips[stripIndex - 1].present;
+                    const bool gableBack =
+                        stripIndex + 1 >= strips.size() || !strips[stripIndex + 1].present;
+                    const float wallT0 = static_cast<float>(strip.tMin);
+                    const float wallT1 = static_cast<float>(strip.tMax) + 1.f;
+                    const float wallMid = (wallT0 + wallT1) * 0.5f;
+                    const float wallRidgeY = baseY + (wallMid - wallT0) * ROOF_SLOPE;
+                    const auto emitGable = [&](float atA, float inwardSign) {
+                        const float innerA = atA + inwardSign * GABLE_THICKNESS;
+                        // Наружная и внутренняя треугольные грани.
+                        emitTriangle(
+                            P(atA, baseY, wallT0), P(atA, baseY, wallT1), P(atA, wallRidgeY, wallMid),
+                            -inwardSign, 0.f, 0.f
+                        );
+                        emitTriangle(
+                            P(innerA, baseY, wallT0), P(innerA, wallRidgeY, wallMid),
+                            P(innerA, baseY, wallT1), inwardSign, 0.f, 0.f
+                        );
+                    };
+                    if (gableFront) { emitGable(a0, 1.f); }
+                    if (gableBack) { emitGable(a1, -1.f); }
+
+                    // Коньковый брус «домиком» поверх стыка скатов.
+                    const float ridgeBaseY = ridgeY - RIDGE_HALF_WIDTH * ROOF_SLOPE;
+                    emitQuad(
+                        P(a1, ridgeBaseY, tMid - RIDGE_HALF_WIDTH), P(a0, ridgeBaseY, tMid - RIDGE_HALF_WIDTH),
+                        P(a0, ridgeY + RIDGE_HEIGHT, tMid), P(a1, ridgeY + RIDGE_HEIGHT, tMid), 0.f,
+                        slopeAngleCos, -slopeAngleSin, 0.f, 0.f, 1.f, 0.4f
+                    );
+                    emitQuad(
+                        P(a0, ridgeBaseY, tMid + RIDGE_HALF_WIDTH), P(a1, ridgeBaseY, tMid + RIDGE_HALF_WIDTH),
+                        P(a1, ridgeY + RIDGE_HEIGHT, tMid), P(a0, ridgeY + RIDGE_HEIGHT, tMid), 0.f,
+                        slopeAngleCos, slopeAngleSin, 0.f, 0.f, 1.f, 0.4f
+                    );
+                    if (gableFront) {
+                        emitTriangle(
+                            P(a0, ridgeBaseY, tMid - RIDGE_HALF_WIDTH),
+                            P(a0, ridgeBaseY, tMid + RIDGE_HALF_WIDTH),
+                            P(a0, ridgeY + RIDGE_HEIGHT, tMid), -1.f, 0.f, 0.f
+                        );
+                    }
+                    if (gableBack) {
+                        emitTriangle(
+                            P(a1, ridgeBaseY, tMid + RIDGE_HALF_WIDTH),
+                            P(a1, ridgeBaseY, tMid - RIDGE_HALF_WIDTH),
+                            P(a1, ridgeY + RIDGE_HEIGHT, tMid), 1.f, 0.f, 0.f
+                        );
+                    }
                 }
             }
         }
