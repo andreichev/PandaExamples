@@ -56,10 +56,14 @@ void BaseScript::start() {
     GameContext::s_buildingGrid->markLightDirtyBox(
         minX, 0, minZ, minX + sizeX, sizeY, minZ + sizeZ
     );
+    GameContext::s_lightmap->init(*GameContext::s_lightGrid, terrainMaterial);
 }
 
 void BaseScript::update(float dt) {
     updateAutosave(dt);
+    if (GameContext::s_lightmap != nullptr && GameContext::s_lightGrid != nullptr) {
+        GameContext::s_lightmap->update(*GameContext::s_lightGrid, dt);
+    }
     if (Input::isKeyPressed(Key::L)) { LOG_INFO("Hello Panda! var: %d", var); }
 }
 

@@ -16,9 +16,24 @@
             "value": 0.009999999776482582
         },
         {
+            "name": "lightMapParams",
+            "type": 2,
+            "value": {
+                "x": -96.0,
+                "y": -96.0,
+                "z": 192.0,
+                "w": 8.0
+            }
+        },
+        {
             "name": "baseColorTexture",
             "type": 3,
             "value": 917000201
+        },
+        {
+            "name": "lightMap",
+            "type": 3,
+            "value": 0
         }
     ]
 }

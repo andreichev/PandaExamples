@@ -46,6 +46,18 @@ public:
     uint8_t sunAt(int x, int y, int z) const;
     uint8_t blockAt(int x, int y, int z) const;
 
+    // Поколение изменений: растёт при каждом фактическом изменении света (аплоад светокарты).
+    uint32_t generation() const {
+        return m_generation;
+    }
+
+    int minX() const { return m_minX; }
+    int minY() const { return m_minY; }
+    int minZ() const { return m_minZ; }
+    int sizeX() const { return m_sizeX; }
+    int sizeY() const { return m_sizeY; }
+    int sizeZ() const { return m_sizeZ; }
+
 private:
     bool isInside(int x, int y, int z) const;
     size_t cellIndex(int x, int y, int z) const;
@@ -56,6 +68,7 @@ private:
 
     int m_minX = 0, m_minY = 0, m_minZ = 0;
     int m_sizeX = 0, m_sizeY = 0, m_sizeZ = 0;
+    uint32_t m_generation = 0;
     std::vector<uint8_t> m_cells;         // упаковка: sun << 4 | block
     std::vector<uint8_t> m_terrainOpaque; // 1 = ячейка рельефа непрозрачна
 };

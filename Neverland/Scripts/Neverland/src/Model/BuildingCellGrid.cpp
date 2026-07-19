@@ -49,6 +49,26 @@ float packCellLight(const LightGrid *grid, int x, int y, int z, float faceLight)
     return packChannels(sun * faceLight, block * faceLight);
 }
 
+// Свет сегмента полотна: максимум каналов по боковой ячейке и её соседям вдоль рана —
+// у перпендикулярного примыкания боковая ячейка лежит в толще стены (свет 0), иначе
+// углы коробки всегда чёрные.
+float packBestCellLight(
+    const LightGrid *grid, int x, int y, int z, int alongStepX, int alongStepZ, float faceLight
+) {
+    float sun = 1.f;
+    float block = 0.f;
+    if (grid != nullptr && grid->isReady()) {
+        sun = 0.f;
+        for (int offset = -1; offset <= 1; offset++) {
+            sun = std::max(sun, grid->sunAt(x + alongStepX * offset, y, z + alongStepZ * offset) / 15.f);
+            block = std::max(
+                block, grid->blockAt(x + alongStepX * offset, y, z + alongStepZ * offset) / 15.f
+            );
+        }
+    }
+    return packChannels(sun * faceLight, block * faceLight);
+}
+
 
 // Грань куба: нормаль, свет, 4 вершины (offsets углов) и для каждой вершины — 3 направления
 // соседей AO (два ребра + диагональ) в мировых смещениях от куба.
@@ -736,11 +756,13 @@ void BuildingCellGrid::appendWallGeometry(
                                 const float texV1 = 1.f - (yy - metre);
                                 const float texV0 = 1.f - (yNext - metre);
                                 const int lightY = static_cast<int>(metre);
-                                const float packedB = packCellLight(
-                                    m_lightGrid, lightCellBX, lightY, lightCellBZ, faceLightB
+                                const float packedB = packBestCellLight(
+                                    m_lightGrid, lightCellBX, lightY, lightCellBZ, stepX, stepZ,
+                                    faceLightB
                                 );
-                                const float packedA = packCellLight(
-                                    m_lightGrid, lightCellAX, lightY, lightCellAZ, faceLightA
+                                const float packedA = packBestCellLight(
+                                    m_lightGrid, lightCellAX, lightY, lightCellAZ, stepX, stepZ,
+                                    faceLightA
                                 );
                                 emitQuadLit(
                                     P(u, yy, sideB), P(uNext, yy, sideB), P(uNext, yNext, sideB),

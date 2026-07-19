@@ -6,6 +6,8 @@
 cbuffer MATERIAL_FIELDS : register(b0) {
     float4 baseColorFactor; // @color
     float alphaCutoff;
+    // Светокарта мира (атлас Y-слоёв): (minX, minZ, размер участка в ячейках, тайлов в ряду).
+    float4 lightMapParams;
 };
 
 cbuffer PANDA_FIELDS : register(b1) {
@@ -34,6 +36,31 @@ cbuffer SCENE_LIGHTS {
 
 Texture2D baseColorTexture;
 SamplerState baseColorTextureSampler;
+// Воксельный свет (LightGrid игры): R — солнце 0..1, G — источники 0..1.
+Texture2D lightMap;
+SamplerState lightMapSampler;
+
+// Семпл света по мировой позиции: слой атласа по Y, билинейный по XZ, lerp слоёв.
+float2 sampleVoxelLight(float3 worldPos) {
+    float cells = max(lightMapParams.z, 1.0);
+    float tilesPerRow = max(lightMapParams.w, 1.0);
+    float atlasSize = cells * tilesPerRow;
+    float layerCount = tilesPerRow * tilesPerRow;
+
+    float2 local = float2(worldPos.x - lightMapParams.x, worldPos.z - lightMapParams.y);
+    // Полутексельный инсет — билинейка не тянет соседний слой атласа.
+    local = clamp(local, 0.5, cells - 0.5);
+
+    float layerF = clamp(worldPos.y, 0.0, layerCount - 1.0);
+    float layer0 = floor(layerF);
+    float layer1 = min(layer0 + 1.0, layerCount - 1.0);
+
+    float2 tile0 = float2(fmod(layer0, tilesPerRow), floor(layer0 / tilesPerRow));
+    float2 tile1 = float2(fmod(layer1, tilesPerRow), floor(layer1 / tilesPerRow));
+    float2 light0 = lightMap.Sample(lightMapSampler, (tile0 * cells + local) / atlasSize).rg;
+    float2 light1 = lightMap.Sample(lightMapSampler, (tile1 * cells + local) / atlasSize).rg;
+    return lerp(light0, light1, frac(layerF));
+}
 
 static const float TILE = 1.0 / 6.0;
 static const float TILE_INSET = 0.004;
@@ -83,6 +110,12 @@ float4 main(PSInput input) : SV_Target0 {
         lighting += radiance * specular;
     }
 
-    float3 litColor = baseColor * lighting * input.fragLight;
+    // Воксельный свет: солнечный канал затеняет сценическое освещение (тень под
+    // крышей/деревом), канал источников добавляет тёплый свет ламп (работает ночью).
+    float2 voxelLight = sampleVoxelLight(input.worldPos);
+    float shadowFactor = lerp(0.32, 1.0, voxelLight.r);
+    float3 lampColor = float3(1.0, 0.86, 0.62) * voxelLight.g * 0.85;
+
+    float3 litColor = baseColor * (lighting * shadowFactor + lampColor) * input.fragLight;
     return float4(litColor, 1.0);
 }

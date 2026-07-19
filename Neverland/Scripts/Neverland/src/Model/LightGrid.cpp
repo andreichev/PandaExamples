@@ -225,5 +225,6 @@ LightGrid::ChangedBox LightGrid::recomputeBox(
             if (sunOut > 0 || blockOut > 0) { pushIfBrighter(nx, ny, nz, sunOut, blockOut); }
         }
     }
+    if (changed.any) { m_generation++; }
     return changed;
 }

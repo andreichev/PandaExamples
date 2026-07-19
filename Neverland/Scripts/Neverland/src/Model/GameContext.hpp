@@ -2,6 +2,7 @@
 
 #include "BuildingCellGrid.hpp"
 #include "LightGrid.hpp"
+#include "LightmapTexture.hpp"
 #include "TerrainAccess.hpp"
 
 class WorldSave;
@@ -18,6 +19,8 @@ public:
     static MaterialHandle s_roofMaterial;    // черепица крыш (base_roof_1)
     // Воксельный свет мира (солнце + лампы); мешер построек читает при ремеше.
     static LightGrid *s_lightGrid;
+    // Светокарта рельефа (атлас LightGrid → terrain-шейдер).
+    static LightmapTexture *s_lightmap;
 
     static void init();
     static void deinit();

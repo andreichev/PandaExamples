@@ -10,6 +10,7 @@ MaterialHandle GameContext::s_blocksMaterial = {};
 MaterialHandle GameContext::s_markerMaterial = {};
 MaterialHandle GameContext::s_roofMaterial = {};
 LightGrid *GameContext::s_lightGrid = nullptr;
+LightmapTexture *GameContext::s_lightmap = nullptr;
 
 void GameContext::init() {
     s_worldSave = new WorldSave();
@@ -20,6 +21,7 @@ void GameContext::init() {
     s_buildingGrid = new BuildingCellGrid();
     s_lightGrid = new LightGrid();
     s_buildingGrid->setLightGrid(s_lightGrid);
+    s_lightmap = new LightmapTexture();
 }
 
 void GameContext::deinit() {
@@ -30,6 +32,9 @@ void GameContext::deinit() {
     }
     delete s_worldSave;
     s_worldSave = nullptr;
+    if (s_lightmap != nullptr) { s_lightmap->shutdown(); }
+    delete s_lightmap;
+    s_lightmap = nullptr;
     delete s_lightGrid;
     s_lightGrid = nullptr;
     s_terrainMaterial = {};
