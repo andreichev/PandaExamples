@@ -7,6 +7,7 @@ BuildingGrid *GameContext::s_buildingGrid = nullptr;
 WorldSave *GameContext::s_worldSave = nullptr;
 MaterialHandle GameContext::s_terrainMaterial = {};
 MaterialHandle GameContext::s_blocksMaterial = {};
+MaterialHandle GameContext::s_markerMaterial = {};
 
 void GameContext::init() {
     s_worldSave = new WorldSave();
@@ -27,6 +28,7 @@ void GameContext::deinit() {
     s_worldSave = nullptr;
     s_terrainMaterial = {};
     s_blocksMaterial = {};
+    s_markerMaterial = {};
 }
 
 bool GameContext::isWorldLoaded() {

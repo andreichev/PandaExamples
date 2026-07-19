@@ -1,0 +1,9 @@
+{
+    "inputs": [
+        {
+            "name": "alphaMode",
+            "type": 1,
+            "value": 2
+        }
+    ]
+}

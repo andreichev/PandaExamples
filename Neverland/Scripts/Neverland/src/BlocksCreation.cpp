@@ -67,17 +67,16 @@ uint64_t packVoxelKey(int x, int y, int z) {
            static_cast<uint64_t>(static_cast<uint32_t>(z));
 }
 
-// Меш подсветки набора вокселей: рамки внешних граней (грань видна, если соседний воксель
-// не в наборе). Координаты — относительно base; красится вершинным цветом поверх белого
-// тайла блочного атласа (как рука в HeldItemView).
+// Меш подсветки набора вокселей: ПОЛУПРОЗРАЧНЫЕ квады внешних граней (грань видна, если
+// соседний воксель не в наборе). Координаты — относительно base; материал маркера —
+// unlit с блендом (s_markerMaterial), цвет и альфа — в вершинах.
 MeshData makeVoxelHighlightMesh(
     const std::vector<TerrainAccess::Edit> &edits, int baseX, int baseY, int baseZ
 ) {
     MeshData data;
-    const Vec2 whiteUV(0.5f / 7.f, 0.5f / 7.f);
-    const Color color(1.f, 0.85f, 0.25f, 1.f);
-    constexpr float FRAME = 0.07f;  // толщина рамки
-    constexpr float OFFSET = 0.01f; // отступ от грани наружу (против z-fighting)
+    const Vec2 uv(0.f, 0.f);                  // маркер-шейдер текстуру не семплит
+    const Color color(1.f, 0.85f, 0.25f, 0.05f); // маленькая прозрачность заливки
+    constexpr float OFFSET = 0.01f;           // отступ от грани наружу (против z-fighting)
 
     std::unordered_set<uint64_t> occupied;
     occupied.reserve(edits.size() * 2);
@@ -85,26 +84,8 @@ MeshData makeVoxelHighlightMesh(
         occupied.insert(packVoxelKey(edit.x, edit.y, edit.z));
     }
 
-    // Двусторонний квад в плоскости грани; (u0..u1, v0..v1) — прямоугольник в осях грани.
-    auto addFrameQuad = [&](int axis, const Vec3 &origin, const Vec3 &normal, float plane,
-                            float u0, float v0, float u1, float v1) {
-        auto pointAt = [&](float u, float v) {
-            if (axis == 0) { return Vec3(origin.x + plane, origin.y + u, origin.z + v); }
-            if (axis == 1) { return Vec3(origin.x + u, origin.y + plane, origin.z + v); }
-            return Vec3(origin.x + u, origin.y + v, origin.z + plane);
-        };
-        const uint32_t base = static_cast<uint32_t>(data.vertices.size());
-        for (const Vec3 &p : {pointAt(u0, v0), pointAt(u1, v0), pointAt(u1, v1), pointAt(u0, v1)}) {
-            data.vertices.emplace_back(Vertex(p, whiteUV, normal, color, 1.f));
-        }
-        for (uint32_t idx : {base, base + 1u, base + 2u, base + 2u, base + 3u, base,
-                             base + 2u, base + 1u, base, base, base + 3u, base + 2u}) {
-            data.indices.emplace_back(idx);
-        }
-    };
-
-    // Рамка грани: 4 полосы по периметру единичного квадрата.
-    auto addFaceFrame = [&](const TerrainAccess::Edit &edit, int axis, int direction) {
+    // Двусторонний полный квад грани воксела.
+    auto addFaceQuad = [&](const TerrainAccess::Edit &edit, int axis, int direction) {
         const Vec3 origin(
             static_cast<float>(edit.x - baseX),
             static_cast<float>(edit.y - baseY),
@@ -116,19 +97,28 @@ MeshData makeVoxelHighlightMesh(
             axis == 1 ? static_cast<float>(direction) : 0.f,
             axis == 2 ? static_cast<float>(direction) : 0.f
         );
-        addFrameQuad(axis, origin, normal, plane, 0.f, 0.f, 1.f, FRAME);
-        addFrameQuad(axis, origin, normal, plane, 0.f, 1.f - FRAME, 1.f, 1.f);
-        addFrameQuad(axis, origin, normal, plane, 0.f, FRAME, FRAME, 1.f - FRAME);
-        addFrameQuad(axis, origin, normal, plane, 1.f - FRAME, FRAME, 1.f, 1.f - FRAME);
+        auto pointAt = [&](float u, float v) {
+            if (axis == 0) { return Vec3(origin.x + plane, origin.y + u, origin.z + v); }
+            if (axis == 1) { return Vec3(origin.x + u, origin.y + plane, origin.z + v); }
+            return Vec3(origin.x + u, origin.y + v, origin.z + plane);
+        };
+        const uint32_t base = static_cast<uint32_t>(data.vertices.size());
+        for (const Vec3 &p : {pointAt(0.f, 0.f), pointAt(1.f, 0.f), pointAt(1.f, 1.f), pointAt(0.f, 1.f)}) {
+            data.vertices.emplace_back(Vertex(p, uv, normal, color, 1.f));
+        }
+        for (uint32_t idx : {base, base + 1u, base + 2u, base + 2u, base + 3u, base,
+                             base + 2u, base + 1u, base, base, base + 3u, base + 2u}) {
+            data.indices.emplace_back(idx);
+        }
     };
 
     for (const TerrainAccess::Edit &edit : edits) {
-        if (!occupied.count(packVoxelKey(edit.x - 1, edit.y, edit.z))) { addFaceFrame(edit, 0, -1); }
-        if (!occupied.count(packVoxelKey(edit.x + 1, edit.y, edit.z))) { addFaceFrame(edit, 0, 1); }
-        if (!occupied.count(packVoxelKey(edit.x, edit.y - 1, edit.z))) { addFaceFrame(edit, 1, -1); }
-        if (!occupied.count(packVoxelKey(edit.x, edit.y + 1, edit.z))) { addFaceFrame(edit, 1, 1); }
-        if (!occupied.count(packVoxelKey(edit.x, edit.y, edit.z - 1))) { addFaceFrame(edit, 2, -1); }
-        if (!occupied.count(packVoxelKey(edit.x, edit.y, edit.z + 1))) { addFaceFrame(edit, 2, 1); }
+        if (!occupied.count(packVoxelKey(edit.x - 1, edit.y, edit.z))) { addFaceQuad(edit, 0, -1); }
+        if (!occupied.count(packVoxelKey(edit.x + 1, edit.y, edit.z))) { addFaceQuad(edit, 0, 1); }
+        if (!occupied.count(packVoxelKey(edit.x, edit.y - 1, edit.z))) { addFaceQuad(edit, 1, -1); }
+        if (!occupied.count(packVoxelKey(edit.x, edit.y + 1, edit.z))) { addFaceQuad(edit, 1, 1); }
+        if (!occupied.count(packVoxelKey(edit.x, edit.y, edit.z - 1))) { addFaceQuad(edit, 2, -1); }
+        if (!occupied.count(packVoxelKey(edit.x, edit.y, edit.z + 1))) { addFaceQuad(edit, 2, 1); }
     }
     return data;
 }
@@ -324,7 +314,10 @@ void BlocksCreation::updateBrushMarker(const std::vector<TerrainAccess::Edit> &e
 #if defined(NEVERLAND_MOBILE)
     (void)edits;
 #else
-    const bool wantVisible = !edits.empty() && GameContext::s_blocksMaterial.isValid();
+    MaterialHandle markerMaterial = GameContext::s_markerMaterial.isValid()
+                                        ? GameContext::s_markerMaterial
+                                        : GameContext::s_blocksMaterial;
+    const bool wantVisible = !edits.empty() && markerMaterial.isValid();
     if (!wantVisible) {
         if (m_markerVisible && m_markerEntity.isValid()) {
             // Прячем за горизонт вместо destroy: маркер нужен почти каждый кадр.
@@ -340,7 +333,7 @@ void BlocksCreation::updateBrushMarker(const std::vector<TerrainAccess::Edit> &e
         m_markerEntity = WorldAPI::createEntity("Brush Marker");
         EntityAPI::addComponent(m_markerEntity, ComponentType::MESH_COMPONENT);
         MeshComponentAPI::setMesh(m_markerEntity, m_markerMesh);
-        MeshComponentAPI::setMaterial(m_markerEntity, GameContext::s_blocksMaterial);
+        MeshComponentAPI::setMaterial(m_markerEntity, markerMaterial);
     }
     // Меш в координатах относительно первого воксела набора, сущность — в его мировой позиции:
     // при сдвиге прицела без изменения формы двигается только transform.

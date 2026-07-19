@@ -10,6 +10,7 @@ void BaseScript::start() {
     GameContext::init();
     GameContext::s_blocksMaterial = material;
     GameContext::s_terrainMaterial = terrainMaterial;
+    GameContext::s_markerMaterial = markerMaterial;
 
     if (!TerrainAccess::init()) {
         LOG_ERROR("Neverland: engine terrain is missing — add a 'Terrain' entity with Terrain3D");

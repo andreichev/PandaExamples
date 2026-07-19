@@ -13,11 +13,13 @@ public:
     int var;
     MaterialHandle material;        // рукотворные блоки/стены (base_materials_1)
     MaterialHandle terrainMaterial; // рельеф + рука природных (base_ground_1)
+    MaterialHandle markerMaterial;  // подсветка кисти/блока (полупрозрачный unlit)
 
     PANDA_FIELDS_BEGIN(BaseScript)
     PANDA_FIELD(var)
     PANDA_FIELD(material)
     PANDA_FIELD(terrainMaterial)
+    PANDA_FIELD(markerMaterial)
     PANDA_FIELDS_END
 
     void start() override;

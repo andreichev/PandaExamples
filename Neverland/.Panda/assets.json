@@ -74,6 +74,22 @@
             }
         },
         {
+            "id": 917000208,
+            "type": 3,
+            "meta": {
+                "vertexSourcePath": "Assets/materials/marker/marker_vert.hlsl",
+                "fragmentSourcePath": "Assets/materials/marker/marker_frag.hlsl"
+            }
+        },
+        {
+            "id": 917000209,
+            "type": 4,
+            "meta": {
+                "materialPath": "Assets/materials/marker/marker.mat",
+                "shader": 917000208
+            }
+        },
+        {
             "id": 1072302657,
             "type": 1,
             "meta": {
