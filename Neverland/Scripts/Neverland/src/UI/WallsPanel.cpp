@@ -24,12 +24,26 @@ WallsPanel::WallsPanel(const ArchUIContext &context) {
     m_rows.push_back(thickness);
     addSubview(thickness);
 
+    // Цоколь тянется на весь ран (окна/двери обходит) и только у нижнего этажа.
+    auto plinth = std::make_shared<PresetRow>(
+        context, ArchObjectType::Wall, "Plinth", 1,
+        std::vector<PresetRow::Option>{{"Stone", 0}, {"None", 1}}
+    );
+    m_rows.push_back(plinth);
+    addSubview(plinth);
+
+    // Фахверк: тёмный каркас со случайными раскосами поверх полотна (лучше на светлом).
+    auto style = std::make_shared<PresetRow>(
+        context, ArchObjectType::Wall, "Style", 2,
+        std::vector<PresetRow::Option>{{"Plain", 0}, {"Timber", 1}}
+    );
+    m_rows.push_back(style);
+    addSubview(style);
+
     ArchUI::addPlannedSection(
         *this, {
-                   "Plinth course",
                    "Rustication",
                    "String courses",
-                   "Combined type: stone base + plaster top",
                }
     );
 }

@@ -20,13 +20,13 @@ WindowsPanel::WindowsPanel(const ArchUIContext &context) {
     addRow("Opening", 0, {{"Narrow", 1}, {"Standard", 0}, {"Wide", 2}});
     addRow("Sill", 1, {{"0.6", 1}, {"0.9", 0}, {"1.2", 2}});
     addRow("Frame", 2, {{"Cross", 0}, {"None", 1}, {"Bars", 2}});
+    // Наличник вокруг проёма; Pediment добавляет сандрик-полочку сверху.
+    addRow("Trim", 3, {{"Casing", 0}, {"None", 1}, {"Pediment", 2}});
 
     ArchUI::addPlannedSection(
         *this, {
                    "Shape: rectangular / arched",
                    "Casements and transom",
-                   "Architrave (trim)",
-                   "Pediment above the window",
                    "Brackets",
                    "Shutters",
                    "Frame material and color",

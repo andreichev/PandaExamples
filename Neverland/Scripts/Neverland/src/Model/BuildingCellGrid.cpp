@@ -51,6 +51,15 @@ float packCellLight(const LightGrid *grid, int x, int y, int z, float faceLight)
 
 // Свет грани куба: из ячейки перед гранью; если она в толще тонкого элемента (стены) —
 // максимум по 4 соседям в плоскости грани (иначе кубы у стен всегда чёрные).
+// Пер-блочная вариативность тона: лёгкий джиттер яркости по хешу координат ломает
+// «обои» на больших плоскостях одного материала (кладка из чуть разных камней).
+float blockToneVariation(int x, int y, int z) {
+    uint32_t h = 374761393u * static_cast<uint32_t>(x) + 668265263u * static_cast<uint32_t>(y) +
+                 974634617u * static_cast<uint32_t>(z);
+    h = (h ^ (h >> 13)) * 1274126177u;
+    return 0.93f + static_cast<float>((h >> 16) & 0xFF) / 255.f * 0.07f;
+}
+
 float packFaceCellLight(
     const LightGrid *grid, int x, int y, int z, int normalX, int normalY, int normalZ,
     float faceLight
@@ -493,6 +502,10 @@ void BuildingCellGrid::rebuildChunk(int chunkX, int chunkY, int chunkZ) {
                             uvBase.y + CORNER_UV[corner][1] * uvSize
                         );
                         Color vertexColor = hexColor(tint);
+                        const float tone = blockToneVariation(x, y, z);
+                        vertexColor.r *= tone;
+                        vertexColor.g *= tone;
+                        vertexColor.b *= tone;
                         vertexColor.a *= 1.f - occlusion;
                         vertices.emplace_back(Vertex(position, uv, normal, vertexColor, packedLight));
                     }
@@ -591,6 +604,21 @@ constexpr float WALL_DOOR_JAMB = 0.1f;
 // Рама окна: сечение бруска и тайл дерева в blocks-атласе.
 constexpr float WALL_FRAME_BAR = 0.08f;
 constexpr uint8_t WALL_FRAME_TILE = 2;
+
+// Накладные детали фасада: наличник окна (планки вокруг проёма + подоконная доска +
+// сандрик-полочка) и каменный цоколь низа стены. Тайлы — из общего blocks-атласа.
+constexpr uint8_t WALL_CASING_TILE = 0;  // светлая штукатурка
+constexpr float WALL_CASING_WIDTH = 0.12f;
+constexpr float WALL_CASING_DEPTH = 0.045f;
+constexpr uint8_t WALL_PLINTH_TILE = 44; // тёмный камень
+constexpr float WALL_PLINTH_HEIGHT = 0.55f;
+constexpr float WALL_PLINTH_DEPTH = 0.06f;
+
+// Фахверк (стиль стены 1): тёмный деревянный каркас поверх полотна — стойки по границам
+// ячеек, обвязки, ригель, случайные раскосы. Брус — накладка на обеих сторонах полотна.
+constexpr float WALL_TIMBER_WIDTH = 0.11f;
+constexpr float WALL_TIMBER_DEPTH = 0.035f;
+constexpr uint32_t WALL_TIMBER_TINT = 0xB2A392FF; // приглушение светлого тайла дерева
 
 // Свет граней — те же значения, что у кубов (FACES), но без AO: полотно едино.
 float wallFaceLight(int normalX, int normalY, int normalZ) {
@@ -729,6 +757,17 @@ void BuildingCellGrid::appendWallGeometry(
                 const uint32_t tint = texture.sideColor;
                 const uint8_t topTile = texture.topTileIndex;
                 const uint32_t topTint = texture.topColor;
+
+                // Цоколь рана — настройка первой Wall-ячейки (тянется под окна и двери).
+                bool runPlinth = false;
+                for (int i = 0; i < runLength; i++) {
+                    const ArchitectureObject *module =
+                        wallAt(runStart->x + stepX * i, wall->y, runStart->z + stepZ * i);
+                    if (module != nullptr && module->type == ArchObjectType::Wall) {
+                        runPlinth = module->params[1] == 0; // 0 = каменный цоколь (дефолт)
+                        break;
+                    }
+                }
 
                 for (int i = 0; i < runLength; i++) {
                     const int cellX = runStart->x + stepX * i;
@@ -873,10 +912,174 @@ void BuildingCellGrid::appendWallGeometry(
                         );
                     };
 
+                    // Бокс в (a, y, s): 6 граней, UV пропорционален размеру грани.
+                    // Грани, легшие в плоскость полотна, прячет backface culling.
+                    const auto emitBox = [&](float a0, float a1, float y0, float y1, float s0,
+                                             float s1, uint8_t boxTile, uint32_t boxTint) {
+                        emitQuad(
+                            P(a0, y0, s1), P(a1, y0, s1), P(a1, y1, s1), P(a0, y1, s1), 0.f, 0.f,
+                            1.f, boxTile, boxTint, 0.f, 0.f, a1 - a0, y1 - y0
+                        );
+                        emitQuad(
+                            P(a1, y0, s0), P(a0, y0, s0), P(a0, y1, s0), P(a1, y1, s0), 0.f, 0.f,
+                            -1.f, boxTile, boxTint, 0.f, 0.f, a1 - a0, y1 - y0
+                        );
+                        emitQuad(
+                            P(a1, y0, s0), P(a1, y0, s1), P(a1, y1, s1), P(a1, y1, s0), 1.f, 0.f,
+                            0.f, boxTile, boxTint, 0.f, 0.f, s1 - s0, y1 - y0
+                        );
+                        emitQuad(
+                            P(a0, y0, s1), P(a0, y0, s0), P(a0, y1, s0), P(a0, y1, s1), -1.f, 0.f,
+                            0.f, boxTile, boxTint, 0.f, 0.f, s1 - s0, y1 - y0
+                        );
+                        emitQuad(
+                            P(a0, y1, s0), P(a0, y1, s1), P(a1, y1, s1), P(a1, y1, s0), 0.f, 1.f,
+                            0.f, boxTile, boxTint, 0.f, 0.f, a1 - a0, s1 - s0
+                        );
+                        emitQuad(
+                            P(a0, y0, s0), P(a1, y0, s0), P(a1, y0, s1), P(a0, y0, s1), 0.f, -1.f,
+                            0.f, boxTile, boxTint, 0.f, 0.f, a1 - a0, s1 - s0
+                        );
+                    };
+
+                    // Вертикальное продолжение рана: сосед сверху/снизу того же материала.
+                    const bool wallAbove =
+                        wallAt(cellX, wall->y + WALL_HEIGHT, cellZ) != nullptr &&
+                        wallAt(cellX, wall->y + WALL_HEIGHT, cellZ)->material == wall->material;
+                    const bool wallBelow =
+                        wallAt(cellX, wall->y - 1, cellZ) != nullptr &&
+                        wallAt(cellX, wall->y - 1, cellZ)->material == wall->material;
+
+                    // Цоколь: накладные плиты обеих сторон полотна (только нижний этаж рана).
+                    const auto emitPlinth = [&](float a0, float a1) {
+                        if (!runPlinth || wallBelow || a1 - a0 < 1e-4f) { return; }
+                        emitBox(
+                            a0, a1, baseY, baseY + WALL_PLINTH_HEIGHT, sideB,
+                            sideB + WALL_PLINTH_DEPTH, WALL_PLINTH_TILE, 0xFFFFFFFF
+                        );
+                        emitBox(
+                            a0, a1, baseY, baseY + WALL_PLINTH_HEIGHT,
+                            sideA - WALL_PLINTH_DEPTH, sideA, WALL_PLINTH_TILE, 0xFFFFFFFF
+                        );
+                    };
+
+                    // Наклонный брус-накладка в плоскости полотна: от (a0,y0) к (a1,y1),
+                    // сечение WALL_TIMBER_WIDTH; торцы упираются в стойки/обвязки.
+                    const auto emitDiagonal = [&](float a0, float y0, float a1, float y1,
+                                                  float s0, float s1) {
+                        const float da = a1 - a0;
+                        const float dy = y1 - y0;
+                        const float length = std::sqrt(da * da + dy * dy);
+                        if (length < 1e-3f) { return; }
+                        const float px = -dy / length * (WALL_TIMBER_WIDTH * 0.5f);
+                        const float py = da / length * (WALL_TIMBER_WIDTH * 0.5f);
+                        const float nx = px / (WALL_TIMBER_WIDTH * 0.5f);
+                        const float ny = py / (WALL_TIMBER_WIDTH * 0.5f);
+                        emitQuad( // плоскость +s
+                            P(a0 - px, y0 - py, s1), P(a1 - px, y1 - py, s1),
+                            P(a1 + px, y1 + py, s1), P(a0 + px, y0 + py, s1), 0.f, 0.f, 1.f,
+                            WALL_FRAME_TILE, WALL_TIMBER_TINT, 0.f, 0.f, length, WALL_TIMBER_WIDTH
+                        );
+                        emitQuad( // плоскость -s
+                            P(a1 - px, y1 - py, s0), P(a0 - px, y0 - py, s0),
+                            P(a0 + px, y0 + py, s0), P(a1 + px, y1 + py, s0), 0.f, 0.f, -1.f,
+                            WALL_FRAME_TILE, WALL_TIMBER_TINT, 0.f, 0.f, length, WALL_TIMBER_WIDTH
+                        );
+                        emitQuad( // верхняя кромка
+                            P(a0 + px, y0 + py, s0), P(a0 + px, y0 + py, s1),
+                            P(a1 + px, y1 + py, s1), P(a1 + px, y1 + py, s0), nx, ny, 0.f,
+                            WALL_FRAME_TILE, WALL_TIMBER_TINT, 0.f, 0.f, length, s1 - s0
+                        );
+                        emitQuad( // нижняя кромка
+                            P(a0 - px, y0 - py, s0), P(a1 - px, y1 - py, s0),
+                            P(a1 - px, y1 - py, s1), P(a0 - px, y0 - py, s1), -nx, -ny, 0.f,
+                            WALL_FRAME_TILE, WALL_TIMBER_TINT, 0.f, 0.f, length, s1 - s0
+                        );
+                    };
+
+                    // Фахверк: каркас этой ячейки. Стойка на левой границе (общая с соседом),
+                    // правая — только на конце цепочки; обвязки и ригель между стойками;
+                    // раскосы — в половине панелей, направление по хешу мировых координат.
+                    const auto emitTimberFrame = [&]() {
+                        const float bw = WALL_TIMBER_WIDTH;
+                        const float lowY =
+                            (runPlinth && !wallBelow) ? baseY + WALL_PLINTH_HEIGHT : baseY;
+                        const float midY = baseY + 1.5f;
+                        const float sides[2][2] = {
+                            {sideB, sideB + WALL_TIMBER_DEPTH},
+                            {sideA - WALL_TIMBER_DEPTH, sideA}
+                        };
+                        const auto timberNeighbor = [&](int nx, int nz) {
+                            const ArchitectureObject *neighbor = wallAt(nx, wall->y, nz);
+                            return neighbor != nullptr && neighbor->type == ArchObjectType::Wall &&
+                                   neighbor->rotation == wall->rotation &&
+                                   neighbor->params[2] == 1;
+                        };
+                        const bool timberRight = timberNeighbor(cellX + stepX, cellZ + stepZ);
+                        const float a0 = cellU + bw;
+                        const float a1 = cellU + 1.f - (timberRight ? 0.f : bw);
+                        for (const auto &side : sides) {
+                            emitBox(
+                                cellU, cellU + bw, lowY, topY, side[0], side[1], WALL_FRAME_TILE,
+                                WALL_TIMBER_TINT
+                            );
+                            if (!timberRight) {
+                                emitBox(
+                                    cellU + 1.f - bw, cellU + 1.f, lowY, topY, side[0], side[1],
+                                    WALL_FRAME_TILE, WALL_TIMBER_TINT
+                                );
+                            }
+                            emitBox(
+                                a0, a1, lowY, lowY + bw, side[0], side[1], WALL_FRAME_TILE,
+                                WALL_TIMBER_TINT
+                            );
+                            emitBox(
+                                a0, a1, topY - bw, topY, side[0], side[1], WALL_FRAME_TILE,
+                                WALL_TIMBER_TINT
+                            );
+                            emitBox(
+                                a0, a1, midY - bw * 0.5f, midY + bw * 0.5f, side[0], side[1],
+                                WALL_FRAME_TILE, WALL_TIMBER_TINT
+                            );
+                        }
+                        const float panels[2][2] = {
+                            {lowY + bw, midY - bw * 0.5f}, {midY + bw * 0.5f, topY - bw}
+                        };
+                        const float d0 = cellU + bw;
+                        const float d1 = cellU + 1.f - bw;
+                        for (int panel = 0; panel < 2; panel++) {
+                            uint32_t h = 2246822519u * static_cast<uint32_t>(cellX) +
+                                         3266489917u *
+                                             static_cast<uint32_t>(wall->y * 2 + panel) +
+                                         668265263u * static_cast<uint32_t>(cellZ);
+                            h = (h ^ (h >> 15)) * 2654435761u;
+                            const uint32_t kind = (h >> 8) & 3u; // 0 «/», 1 «\», 2-3 — без
+                            if (kind > 1) { continue; }
+                            const float y0 = panels[panel][0];
+                            const float y1 = panels[panel][1];
+                            if (y1 - y0 < 0.4f) { continue; }
+                            for (const auto &side : sides) {
+                                if (kind == 0) {
+                                    emitDiagonal(d0, y0, d1, y1, side[0], side[1]);
+                                } else {
+                                    emitDiagonal(d0, y1, d1, y0, side[0], side[1]);
+                                }
+                            }
+                        }
+                    };
+
                     switch (cellModule->type) {
-                        case ArchObjectType::Wall:
+                        case ArchObjectType::Wall: {
                             emitBand(begin, finish, baseY, topY);
+                            if (cellModule->params[2] == 1) { emitTimberFrame(); }
+                            // Угловое продление закрывает стык цоколей перпендикулярных стен.
+                            float plinth0 = begin;
+                            float plinth1 = finish;
+                            if (i == 0 && extendStart) { plinth0 -= WALL_PLINTH_DEPTH; }
+                            if (i == runLength - 1 && extendEnd) { plinth1 += WALL_PLINTH_DEPTH; }
+                            emitPlinth(plinth0, plinth1);
                             break;
+                        }
                         case ArchObjectType::Window: {
                             // Пресеты модуля: ширина проёма, высота подоконника, раскладка рамы.
                             const float jamb = cellModule->params[0] == 1   ? 0.25f
@@ -894,7 +1097,7 @@ void BuildingCellGrid::appendWallGeometry(
                             emitBand(begin, finish, headY, topY); // перемычка
                             emitBand(begin, u0, sillY, headY);    // простенок слева
                             emitBand(u1, finish, sillY, headY);   // простенок справа
-                            emitReveals(u0, u1, sillY, headY, true);
+                            emitReveals(u0, u1, sillY, headY, cellModule->params[3] == 1);
                             const float barHalf = WALL_FRAME_BAR * 0.5f;
                             const float uMid = (u0 + u1) * 0.5f;
                             const float yMid = (sillY + headY) * 0.5f;
@@ -904,6 +1107,45 @@ void BuildingCellGrid::appendWallGeometry(
                             if (frameKind == 0) { // горизонтальная — только у креста
                                 emitBar(u0, u1, yMid - barHalf, yMid + barHalf, center - barHalf, center + barHalf);
                             }
+                            // Наличник (params[3]: 0 наличник, 1 без, 2 +сандрик): планки
+                            // вокруг проёма на обеих сторонах полотна + подоконная доска.
+                            // Планки клампятся в ячейку — соседние окна не пересекаются.
+                            const uint8_t trimKind = cellModule->params[3];
+                            if (trimKind != 1) {
+                                const float cw = WALL_CASING_WIDTH;
+                                const float cd = WALL_CASING_DEPTH;
+                                const float left = std::max(u0 - cw, cellU);
+                                const float right = std::min(u1 + cw, cellU + 1.f);
+                                const float casingSides[2][2] = {
+                                    {sideB, sideB + cd}, {sideA - cd, sideA}
+                                };
+                                for (const auto &side : casingSides) {
+                                    emitBox(
+                                        left, u0, sillY, headY, side[0], side[1],
+                                        WALL_CASING_TILE, 0xFFFFFFFF
+                                    );
+                                    emitBox(
+                                        u1, right, sillY, headY, side[0], side[1],
+                                        WALL_CASING_TILE, 0xFFFFFFFF
+                                    );
+                                    emitBox(
+                                        left, right, headY, headY + cw, side[0], side[1],
+                                        WALL_CASING_TILE, 0xFFFFFFFF
+                                    );
+                                }
+                                emitBox( // подоконная доска — шире и глубже планок
+                                    left, right, sillY - 0.07f, sillY, sideA - cd - 0.02f,
+                                    sideB + cd + 0.02f, WALL_CASING_TILE, 0xFFFFFFFF
+                                );
+                                if (trimKind == 2) { // сандрик-полочка над окном
+                                    emitBox(
+                                        std::max(left - 0.06f, cellU), std::min(right + 0.06f, cellU + 1.f),
+                                        headY + cw, headY + cw + 0.09f, sideA - cd - 0.03f,
+                                        sideB + cd + 0.03f, WALL_CASING_TILE, 0xFFFFFFFF
+                                    );
+                                }
+                            }
+                            emitPlinth(begin, finish);
                             break;
                         }
                         case ArchObjectType::Door: {
@@ -918,6 +1160,8 @@ void BuildingCellGrid::appendWallGeometry(
                             emitBand(u1, finish, baseY, headY);   // простенок справа
                             emitBand(begin, finish, headY, topY); // перемычка
                             emitReveals(u0, u1, baseY, headY, false); // порог — пол, без откоса
+                            emitPlinth(begin, u0);
+                            emitPlinth(u1, finish);
                             break;
                         }
                         default:
@@ -925,12 +1169,6 @@ void BuildingCellGrid::appendWallGeometry(
                     }
 
                     // Верх/низ: полосы толщиной стены (пропуск при вертикальном продолжении).
-                    const bool wallAbove =
-                        wallAt(cellX, wall->y + WALL_HEIGHT, cellZ) != nullptr &&
-                        wallAt(cellX, wall->y + WALL_HEIGHT, cellZ)->material == wall->material;
-                    const bool wallBelow =
-                        wallAt(cellX, wall->y - 1, cellZ) != nullptr &&
-                        wallAt(cellX, wall->y - 1, cellZ)->material == wall->material;
                     for (float u = begin; u < finish - 1e-4f;) {
                         const float next = std::min(std::floor(u + 1e-4f) + 1.f, finish);
                         const float texU0 = u - std::floor(u + 1e-4f);
