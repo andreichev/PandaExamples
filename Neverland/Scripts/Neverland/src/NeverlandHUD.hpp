@@ -53,8 +53,9 @@ private:
     std::shared_ptr<PandaUI::Panel> makeActionControls();
     std::shared_ptr<PandaUI::Panel> makeSelectionPill();
     std::shared_ptr<PandaUI::Panel> makeHotbar();
-    std::shared_ptr<PandaUI::Button> makeSlot(const BlockPalette::BlockEntry &entry);
+    std::shared_ptr<PandaUI::Button> makeSlot(int index);
     void applySlotStyle(size_t index, bool selected);
+    void refreshHotbar(const std::vector<VoxelType> &recent); // MRU: превью слотов по списку
 
     PandaUI::Window m_window;
     Shared<BlocksCreation> m_blocksCreation;
@@ -68,7 +69,10 @@ private:
     std::shared_ptr<PandaUI::Panel> m_stickKnob; // ручка джойстика
     std::shared_ptr<TerrainBrushPanel> m_brushPanel; // инструмент рельефа (desktop)
     std::shared_ptr<PandaUI::Label> m_selectionLabel;
-    std::array<std::shared_ptr<PandaUI::Button>, BlockPalette::BUILDING_HOTBAR.size()> m_slots;
+    std::array<std::shared_ptr<PandaUI::Button>, NeverlandHUDLayout::HotbarSlotCount> m_slots;
+    // Контейнеры превью слотов (контент меняется при изменении MRU-списка).
+    std::array<std::shared_ptr<PandaUI::Panel>, NeverlandHUDLayout::HotbarSlotCount> m_slotPreviews;
+    std::vector<VoxelType> m_displayedHotbar; // отображённый MRU-список
     // Карточки меню: блоки по типу + элементы по типу (для подсветки выбора).
     std::vector<std::pair<VoxelType, std::shared_ptr<BlockCardButton>>> m_blockCards;
     std::vector<std::pair<ArchObjectType, std::shared_ptr<BlockCardButton>>> m_elementCards;

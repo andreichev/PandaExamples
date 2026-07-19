@@ -20,14 +20,19 @@ public:
     VoxelType getSelectedBlock() const {
         return m_selectedBlock;
     }
-    void setSelectedBlock(VoxelType type); // сбрасывает выбранный элемент (обычный блок)
-    // Многоклеточный элемент (Beam): материал — текущий строительный блок.
+    // Материал (блок). Форму (element) не трогает: блок — материал, элемент — форма.
+    void setSelectedBlock(VoxelType type);
+    // Форма постройки (Basic/Beam/Wall). Материал — текущий строительный блок.
     void setSelectedElement(ArchObjectType element);
     ArchObjectType getSelectedElement() const {
         return m_selectedElement;
     }
     bool isElementSelected() const {
         return m_selectedElement != ArchObjectType::Block;
+    }
+    // Недавние строительные материалы (MRU, front = текущий) — источник хотбара.
+    const std::vector<VoxelType> &getRecentBlocks() const {
+        return m_recentBlocks;
     }
     // Кисть рельефа (панель TerrainBrushPanel и клавиши делят один стейт).
     void setBrushMode(GameBrushMode mode) { m_brushMode = mode; }
@@ -75,6 +80,8 @@ private:
     TouchActionState m_touchAction;
     VoxelType m_selectedBlock;
     ArchObjectType m_selectedElement = ArchObjectType::Block;
+    VoxelType m_lastBuildingMaterial = VoxelType::STONE_BRICKS;
+    std::vector<VoxelType> m_recentBlocks; // MRU строительных материалов (хотбар)
     int m_brushSize = 2;
     GameBrushMode m_brushMode = GameBrushMode::Sphere;
     std::vector<TerrainAccess::Edit> m_previewEdits; // буфер превью/применения

@@ -139,12 +139,13 @@ uint64_t editsSignature(const std::vector<TerrainAccess::Edit> &edits) {
 } // namespace
 
 void BlocksCreation::start() {
-    m_selectedBlock = VoxelType::GROUND;
+    VoxelType initial = VoxelType::GROUND;
     if (const WorldSave *save = GameContext::s_worldSave;
         save != nullptr && save->player.valid && save->player.selectedBlock < static_cast<uint8_t>(VoxelType::COUNT)) {
         const VoxelType saved = static_cast<VoxelType>(save->player.selectedBlock);
-        if (saved != VoxelType::NOTHING) { m_selectedBlock = saved; }
+        if (saved != VoxelType::NOTHING) { initial = saved; }
     }
+    setSelectedBlock(initial); // строительный материал сразу займёт первый слот хотбара
     m_playerController = EntityAPI::getScript<PlayerController>(getEntity());
 }
 
@@ -158,7 +159,16 @@ void BlocksCreation::shutdown() {
 void BlocksCreation::setSelectedBlock(VoxelType type) {
     if (type == VoxelType::NOTHING || type == VoxelType::COUNT) { return; }
     m_selectedBlock = type;
-    m_selectedElement = ArchObjectType::Block;
+    if (!isNaturalVoxelType(type)) {
+        m_lastBuildingMaterial = type;
+        // MRU хотбара: текущий материал всегда в первом слоте.
+        m_recentBlocks.erase(
+            std::remove(m_recentBlocks.begin(), m_recentBlocks.end(), type), m_recentBlocks.end()
+        );
+        m_recentBlocks.insert(m_recentBlocks.begin(), type);
+        constexpr size_t HOTBAR_CAPACITY = 7;
+        if (m_recentBlocks.size() > HOTBAR_CAPACITY) { m_recentBlocks.resize(HOTBAR_CAPACITY); }
+    }
     if (WorldSave *save = GameContext::s_worldSave) {
         save->player.selectedBlock = static_cast<uint8_t>(type);
     }
@@ -167,8 +177,8 @@ void BlocksCreation::setSelectedBlock(VoxelType type) {
 void BlocksCreation::setSelectedElement(ArchObjectType element) {
     if (element >= ArchObjectType::COUNT) { return; }
     m_selectedElement = element;
-    // Материал элемента — строительный: терраформ-материал в балку не превращается.
-    if (isNaturalVoxelType(m_selectedBlock)) { m_selectedBlock = VoxelType::STONE_BRICKS; }
+    // Форма строит из строительного материала: терраформ-материал не превращается в модуль.
+    if (isNaturalVoxelType(m_selectedBlock)) { setSelectedBlock(m_lastBuildingMaterial); }
 }
 
 float BlocksCreation::currentBrushRadius() const {
@@ -193,12 +203,12 @@ void BlocksCreation::updateBrushSize() {
 }
 
 void BlocksCreation::updateSelectedBlock() {
-    // Клавиши 1-7 — строительный хотбар; терраформ выбирается в панели/меню.
+    // Клавиши 1-7 — слоты MRU-хотбара (выбранный переезжает в первый слот).
     constexpr Key HOTKEYS[] = {Key::KEY_1, Key::KEY_2, Key::KEY_3, Key::KEY_4,
                                Key::KEY_5, Key::KEY_6, Key::KEY_7};
-    for (size_t i = 0; i < BlockPalette::BUILDING_HOTBAR.size(); i++) {
-        if (Input::isKeyJustPressed(HOTKEYS[i])) {
-            setSelectedBlock(BlockPalette::BUILDING_HOTBAR[i].type);
+    for (size_t i = 0; i < std::size(HOTKEYS); i++) {
+        if (Input::isKeyJustPressed(HOTKEYS[i]) && i < m_recentBlocks.size()) {
+            setSelectedBlock(m_recentBlocks[i]);
         }
     }
 }
@@ -483,8 +493,8 @@ ArchitectureObject BlocksCreation::pendingObject(const AimHit &hit) const {
             object.rotation = front.z >= 0.f ? 1 : 3;
         }
     }
-    if (object.type == ArchObjectType::Wall && m_playerController) {
-        // Стена тянется вдоль направления взгляда (как забор от игрока).
+    if (isWallFamilyType(object.type) && m_playerController) {
+        // Модуль линии стен тянется вдоль направления взгляда (как забор от игрока).
         const Vec3 front = m_playerController->getFront();
         object.rotation = std::abs(front.x) >= std::abs(front.z) ? 0 : 1;
     }

@@ -14,14 +14,22 @@ using namespace Bamboo;
 
 // Типы архитектурных объектов. Значения персистятся в сейве (u8) — только в конец.
 enum class ArchObjectType : uint8_t {
-    Block = 0, // одиночный куб 1×1×1
-    Beam = 1,  // балка 3×1×1, поворот задаёт ось (0:+X, 1:+Z, 2:-X, 3:-Z)
-    Wall = 2,  // стена 1×WALL_HEIGHT×1; rotation 0 — плоскость вдоль X, 1 — вдоль Z
-    COUNT = 3
+    Block = 0,  // одиночный куб 1×1×1
+    Beam = 1,   // балка 3×1×1, поворот задаёт ось (0:+X, 1:+Z, 2:-X, 3:-Z)
+    Wall = 2,   // стена 1×WALL_HEIGHT×1; rotation 0 — плоскость вдоль X, 1 — вдоль Z
+    Window = 3, // модуль линии стен: подоконная стенка + проём с рамой + перемычка
+    Door = 4,   // модуль линии стен: открытый проём до перемычки
+    COUNT = 5
 };
 
 // Высота стенного модуля в ячейках (классический этаж).
 constexpr int WALL_HEIGHT = 3;
+
+// Семейство линии стен: участвуют в ранах WallRun (полотно не рвётся на окнах/дверях).
+inline bool isWallFamilyType(ArchObjectType type) {
+    return type == ArchObjectType::Wall || type == ArchObjectType::Window ||
+           type == ArchObjectType::Door;
+}
 
 // Архитектурный объект: занимает набор ячеек, владеет ими целиком (ставится/ломается
 // как одно целое). Геометрия v1 — кубы занятых ячеек; крупные плоскости — этап WallRun.
@@ -54,6 +62,8 @@ public:
     bool isSolidAt(int x, int y, int z) const {
         return blockAt(x, y, z) != VoxelType::NOTHING;
     }
+    // Твёрдость для персонажа: дверной проём проходим (нижние 2 ячейки Door).
+    bool isPhysicsSolidAt(int x, int y, int z) const;
 
     // Ячейки, которые займёт объект (не проверяет границы/занятость).
     static void cellsFor(const ArchitectureObject &object, std::vector<std::array<int, 3>> &outCells);
@@ -92,8 +102,10 @@ private:
     void markDirtyAround(int x, int y, int z);
     void rebuildDirtyChunks();
     void rebuildChunk(int chunkX, int chunkY, int chunkZ);
-    // Wall-объект, владеющий ячейкой (nullptr, если ячейка не стенная).
+    // Объект семейства линии стен, владеющий ячейкой (nullptr, если ячейка не стенная).
     const ArchitectureObject *wallAt(int x, int y, int z) const;
+    // Ячейка заполнена кубом целиком (прячет грани соседей и участвует в AO).
+    bool isFullCellAt(int x, int y, int z) const;
     // WallRun-проход: раны стен, пересекающие чанк, → крупные тонкие поверхности.
     void appendWallGeometry(
         int startX, int startY, int startZ, int endX, int endY, int endZ,

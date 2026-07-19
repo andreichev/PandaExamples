@@ -52,7 +52,7 @@ void ensureFieldWindow(const glm::vec3 &eyePosition) {
 
 // Рукотворный куб (только они коллизятся как кубы; рельеф — полем).
 bool isConstructedVoxel(int x, int y, int z) {
-    return GameContext::s_buildingGrid != nullptr && GameContext::s_buildingGrid->isSolidAt(x, y, z);
+    return GameContext::s_buildingGrid != nullptr && GameContext::s_buildingGrid->isPhysicsSolidAt(x, y, z);
 }
 
 // Природный воксель для density-поля. Край участка — невидимая стена, ниже дна — твердь.

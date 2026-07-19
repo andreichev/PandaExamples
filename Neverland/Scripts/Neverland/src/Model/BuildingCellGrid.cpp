@@ -152,6 +152,8 @@ void BuildingCellGrid::cellsFor(
             return;
         }
         case ArchObjectType::Wall:
+        case ArchObjectType::Window:
+        case ArchObjectType::Door:
             // Колонна 1×WALL_HEIGHT×1; rotation влияет только на геометрию плоскостей.
             for (int i = 0; i < WALL_HEIGHT; i++) {
                 outCells.push_back({object.x, object.y + i, object.z});
@@ -164,7 +166,26 @@ void BuildingCellGrid::cellsFor(
 
 const ArchitectureObject *BuildingCellGrid::wallAt(int x, int y, int z) const {
     const ArchitectureObject *object = objectAt(x, y, z);
-    return object != nullptr && object->type == ArchObjectType::Wall ? object : nullptr;
+    return object != nullptr && isWallFamilyType(object->type) ? object : nullptr;
+}
+
+bool BuildingCellGrid::isPhysicsSolidAt(int x, int y, int z) const {
+    if (!isSolidAt(x, y, z)) { return false; }
+    const ArchitectureObject *object = objectAt(x, y, z);
+    // Дверной проём (нижние 2 ячейки модуля) — проходим; перемычка твёрдая.
+    if (object != nullptr && object->type == ArchObjectType::Door && y < object->y + 2) {
+        return false;
+    }
+    return true;
+}
+
+bool BuildingCellGrid::isFullCellAt(int x, int y, int z) const {
+    if (!isSolidAt(x, y, z)) { return false; }
+    const ArchitectureObject *object = objectAt(x, y, z);
+    // Тонкие элементы (стены) занимают ячейку топологически, но не заполняют её:
+    // грань соседнего куба им не прятать, жёсткого AO не давать.
+    return object == nullptr || object->type == ArchObjectType::Block ||
+           object->type == ArchObjectType::Beam;
 }
 
 bool BuildingCellGrid::canPlace(const ArchitectureObject &object) const {
@@ -281,9 +302,9 @@ void BuildingCellGrid::rebuildChunk(int chunkX, int chunkY, int chunkZ) {
                 Voxel voxel(type);
                 const VoxelTextureData &texture = VoxelTextureMapper::getTextureData(&voxel);
                 for (const FaceSpec &face : FACES) {
-                    // Грань прячет только соседний куб построек: рельеф MC срезает поверхность,
-                    // природный воксель не укрытие (иначе дыры на стыке).
-                    if (isSolidAt(x + face.normal[0], y + face.normal[1], z + face.normal[2])) {
+                    // Грань прячет только соседняя ПОЛНАЯ ячейка построек: рельеф MC срезает
+                    // поверхность, а тонкие элементы (стены) ячейку не заполняют.
+                    if (isFullCellAt(x + face.normal[0], y + face.normal[1], z + face.normal[2])) {
                         continue;
                     }
                     const bool top = face.normal[1] > 0;
@@ -309,7 +330,7 @@ void BuildingCellGrid::rebuildChunk(int chunkX, int chunkY, int chunkZ) {
                         float occlusion = 0.f;
                         for (int neighbor = 0; neighbor < 3; neighbor++) {
                             const int *offset = face.aoNeighbors[corner][neighbor];
-                            if (isSolidAt(x + offset[0], y + offset[1], z + offset[2])) {
+                            if (isFullCellAt(x + offset[0], y + offset[1], z + offset[2])) {
                                 occlusion += AO_FACTOR;
                             }
                         }
@@ -365,6 +386,14 @@ namespace {
 
 // Толщина стенного полотна (визуальная; топологически стена занимает ячейку).
 constexpr float WALL_THICKNESS = 0.3f;
+// Проём окна/двери: высота подоконной стенки, низ перемычки, боковые простенки.
+constexpr float WALL_SILL_HEIGHT = 0.9f;
+constexpr float WALL_HEAD_HEIGHT = 2.1f;
+constexpr float WALL_WINDOW_JAMB = 0.15f;
+constexpr float WALL_DOOR_JAMB = 0.1f;
+// Рама окна: сечение бруска и тайл дерева в blocks-атласе.
+constexpr float WALL_FRAME_BAR = 0.08f;
+constexpr uint8_t WALL_FRAME_TILE = 2;
 
 // Свет граней — те же значения, что у кубов (FACES), но без AO: полотно едино.
 float wallFaceLight(int normalX, int normalY, int normalZ) {
@@ -415,11 +444,12 @@ void addWallQuad(
 
 } // namespace
 
-// Раны стен: последовательности Wall-объектов одной оси/материала/базы сливаются в единое
-// полотно — крупные плоскости без пер-ячеечного AO («не воксельная геометрия», диздок).
-// Ран может пересекать границы чанков: каждый чанк рисует свои ячейки (UV мировой —
-// стык бесшовный). Внешний угол: продление полотна до дальней плоскости перпендикулярной
-// стены того же материала (торец при этом скрыт и не рисуется).
+// Раны линии стен: последовательности модулей семейства (Wall/Window/Door) одной
+// оси/материала/базы сливаются в единое полотно — крупные плоскости без пер-ячеечного
+// AO («не воксельная геометрия», диздок). Ран может пересекать границы чанков: каждый
+// чанк рисует свои ячейки (UV мировой — стык бесшовный). Окно/дверь не рвут полотно:
+// их ячейка генерит куски полотна вокруг проёма, откосы и раму. Внешний угол —
+// продление полотна до дальней плоскости перпендикулярной стены того же материала.
 void BuildingCellGrid::appendWallGeometry(
     int startX, int startY, int startZ, int endX, int endY, int endZ,
     std::vector<Vertex> &vertices, std::vector<uint32_t> &indices
@@ -449,7 +479,6 @@ void BuildingCellGrid::appendWallGeometry(
                 const int stepX = wall->rotation == 0 ? 1 : 0;
                 const int stepZ = wall->rotation == 0 ? 0 : 1;
 
-                // Начало рана: назад вдоль оси до первой несовместимой ячейки.
                 const ArchitectureObject *runStart = wall;
                 while (const ArchitectureObject *previous =
                            sameWall(*wall, runStart->x - stepX, runStart->z - stepZ)) {
@@ -466,8 +495,6 @@ void BuildingCellGrid::appendWallGeometry(
                     runLength++;
                 }
 
-                // Внешний угол: полотно заходит в угловую ячейку до ДАЛЬНЕЙ грани
-                // перпендикулярной стены; торец при этом не рисуется (скрыт).
                 const bool extendStart =
                     cornerWall(*wall, runStart->x - stepX, runStart->z - stepZ);
                 const bool extendEnd = cornerWall(*wall, runEnd->x + stepX, runEnd->z + stepZ);
@@ -482,15 +509,18 @@ void BuildingCellGrid::appendWallGeometry(
                 const uint8_t topTile = texture.topTileIndex;
                 const uint32_t topTint = texture.topColor;
 
-                // Ячейки рана: чанк рисует только свои (+ продление у принадлежащего ему конца).
                 for (int i = 0; i < runLength; i++) {
                     const int cellX = runStart->x + stepX * i;
                     const int cellZ = runStart->z + stepZ * i;
                     if (cellX < startX || cellX >= endX || cellZ < startZ || cellZ >= endZ) {
                         continue;
                     }
-                    float begin = static_cast<float>(wall->rotation == 0 ? cellX : cellZ);
-                    float finish = begin + 1.f;
+                    const ArchitectureObject *cellModule = wallAt(cellX, wall->y, cellZ);
+                    if (cellModule == nullptr) { continue; }
+
+                    const float cellU = static_cast<float>(wall->rotation == 0 ? cellX : cellZ);
+                    float begin = cellU;
+                    float finish = cellU + 1.f;
                     if (i == 0 && extendStart) { begin -= extend; }
                     if (i == runLength - 1 && extendEnd) { finish += extend; }
 
@@ -499,101 +529,178 @@ void BuildingCellGrid::appendWallGeometry(
                     const float sideA = center - WALL_THICKNESS * 0.5f;
                     const float sideB = center + WALL_THICKNESS * 0.5f;
 
+                    // Все квады строятся в осях (along, y, side); rot1 отражает порядок
+                    // вершин (свап осей меняет хиральность). Нормаль — тоже в (a, y, s).
+                    const auto P = [&](float a, float yy, float s) {
+                        return wall->rotation == 0 ? Vec3(a, yy, s) : Vec3(s, yy, a);
+                    };
+                    const auto emitQuad = [&](const Vec3 &p0, const Vec3 &p1, const Vec3 &p2,
+                                              const Vec3 &p3, float na, float ny, float ns,
+                                              uint8_t quadTile, uint32_t quadTint, float u0,
+                                              float v0, float u1, float v1) {
+                        const Vec3 normal = wall->rotation == 0 ? Vec3(na, ny, ns) : Vec3(ns, ny, na);
+                        if (wall->rotation == 0) {
+                            addWallQuad(vertices, indices, p0, p1, p2, p3, normal, quadTile,
+                                        quadTint, u0, v0, u1, v1);
+                        } else {
+                            addWallQuad(vertices, indices, p0, p3, p2, p1, normal, quadTile,
+                                        quadTint, u0, v0, u1, v1);
+                        }
+                    };
+
+                    // Кусок полотна [u0..u1]×[y0..y1]: обе стороны, нарезка по метрам,
+                    // мировой UV (полный тайл на метр — стыки метров и чанков бесшовны).
+                    const auto emitBand = [&](float u0, float u1, float y0, float y1) {
+                        if (u1 - u0 < 1e-4f || y1 - y0 < 1e-4f) { return; }
+                        for (float u = u0; u < u1 - 1e-4f;) {
+                            const float uNext = std::min(std::floor(u + 1e-4f) + 1.f, u1);
+                            const float texU0 = u - std::floor(u + 1e-4f);
+                            const float texU1 = texU0 + (uNext - u);
+                            for (float yy = y0; yy < y1 - 1e-4f;) {
+                                const float yNext = std::min(std::floor(yy + 1e-4f) + 1.f, y1);
+                                const float metre = std::floor(yy + 1e-4f);
+                                const float texV1 = 1.f - (yy - metre);
+                                const float texV0 = 1.f - (yNext - metre);
+                                emitQuad(
+                                    P(u, yy, sideB), P(uNext, yy, sideB), P(uNext, yNext, sideB),
+                                    P(u, yNext, sideB), 0.f, 0.f, 1.f, tile, tint, texU0, texV0,
+                                    texU1, texV1
+                                );
+                                emitQuad(
+                                    P(uNext, yy, sideA), P(u, yy, sideA), P(u, yNext, sideA),
+                                    P(uNext, yNext, sideA), 0.f, 0.f, -1.f, tile, tint, texU0,
+                                    texV0, texU1, texV1
+                                );
+                                yy = yNext;
+                            }
+                            u = uNext;
+                        }
+                    };
+
+                    // Откосы проёма [u0..u1]×[y0..y1]: внутренние поверхности толщины стены.
+                    const auto emitReveals = [&](float u0, float u1, float y0, float y1, bool withSill) {
+                        if (withSill) { // подоконник (нормаль вверх)
+                            emitQuad(
+                                P(u0, y0, sideA), P(u0, y0, sideB), P(u1, y0, sideB),
+                                P(u1, y0, sideA), 0.f, 1.f, 0.f, topTile, topTint, 0.f, 0.f,
+                                u1 - u0, WALL_THICKNESS
+                            );
+                        }
+                        emitQuad( // верх проёма (нормаль вниз)
+                            P(u0, y1, sideA), P(u1, y1, sideA), P(u1, y1, sideB), P(u0, y1, sideB),
+                            0.f, -1.f, 0.f, topTile, topTint, 0.f, 0.f, u1 - u0, WALL_THICKNESS
+                        );
+                        emitQuad( // левый откос (нормаль внутрь проёма, +a)
+                            P(u0, y0, sideB), P(u0, y0, sideA), P(u0, y1, sideA), P(u0, y1, sideB),
+                            1.f, 0.f, 0.f, tile, tint, 0.f, 0.f, WALL_THICKNESS, y1 - y0
+                        );
+                        emitQuad( // правый откос (нормаль внутрь проёма, -a)
+                            P(u1, y0, sideA), P(u1, y0, sideB), P(u1, y1, sideB), P(u1, y1, sideA),
+                            -1.f, 0.f, 0.f, tile, tint, 0.f, 0.f, WALL_THICKNESS, y1 - y0
+                        );
+                    };
+
+                    // Брусок рамы: бокс в (a, y, s) без торцов (упираются в откосы/бруски).
+                    const auto emitBar = [&](float a0, float a1, float y0, float y1, float s0, float s1) {
+                        emitQuad( // сторона s1
+                            P(a0, y0, s1), P(a1, y0, s1), P(a1, y1, s1), P(a0, y1, s1), 0.f, 0.f,
+                            1.f, WALL_FRAME_TILE, 0xFFFFFFFF, 0.f, 0.f, 1.f, 1.f
+                        );
+                        emitQuad( // сторона s0
+                            P(a1, y0, s0), P(a0, y0, s0), P(a0, y1, s0), P(a1, y1, s0), 0.f, 0.f,
+                            -1.f, WALL_FRAME_TILE, 0xFFFFFFFF, 0.f, 0.f, 1.f, 1.f
+                        );
+                        emitQuad( // грань +a
+                            P(a1, y0, s0), P(a1, y0, s1), P(a1, y1, s1), P(a1, y1, s0), 1.f, 0.f,
+                            0.f, WALL_FRAME_TILE, 0xFFFFFFFF, 0.f, 0.f, 1.f, 1.f
+                        );
+                        emitQuad( // грань -a
+                            P(a0, y0, s1), P(a0, y0, s0), P(a0, y1, s0), P(a0, y1, s1), -1.f, 0.f,
+                            0.f, WALL_FRAME_TILE, 0xFFFFFFFF, 0.f, 0.f, 1.f, 1.f
+                        );
+                        emitQuad( // верх
+                            P(a0, y1, s0), P(a0, y1, s1), P(a1, y1, s1), P(a1, y1, s0), 0.f, 1.f,
+                            0.f, WALL_FRAME_TILE, 0xFFFFFFFF, 0.f, 0.f, 1.f, 1.f
+                        );
+                        emitQuad( // низ
+                            P(a0, y0, s0), P(a1, y0, s0), P(a1, y0, s1), P(a0, y0, s1), 0.f, -1.f,
+                            0.f, WALL_FRAME_TILE, 0xFFFFFFFF, 0.f, 0.f, 1.f, 1.f
+                        );
+                    };
+
+                    switch (cellModule->type) {
+                        case ArchObjectType::Wall:
+                            emitBand(begin, finish, baseY, topY);
+                            break;
+                        case ArchObjectType::Window: {
+                            const float sillY = baseY + WALL_SILL_HEIGHT;
+                            const float headY = baseY + WALL_HEAD_HEIGHT;
+                            const float u0 = cellU + WALL_WINDOW_JAMB;
+                            const float u1 = cellU + 1.f - WALL_WINDOW_JAMB;
+                            emitBand(begin, finish, baseY, sillY); // подоконная стенка
+                            emitBand(begin, finish, headY, topY); // перемычка
+                            emitBand(begin, u0, sillY, headY);    // простенок слева
+                            emitBand(u1, finish, sillY, headY);   // простенок справа
+                            emitReveals(u0, u1, sillY, headY, true);
+                            // Рама-крест по центру толщины стены.
+                            const float barHalf = WALL_FRAME_BAR * 0.5f;
+                            const float uMid = (u0 + u1) * 0.5f;
+                            const float yMid = (sillY + headY) * 0.5f;
+                            emitBar(uMid - barHalf, uMid + barHalf, sillY, headY, center - barHalf, center + barHalf);
+                            emitBar(u0, u1, yMid - barHalf, yMid + barHalf, center - barHalf, center + barHalf);
+                            break;
+                        }
+                        case ArchObjectType::Door: {
+                            const float headY = baseY + WALL_HEAD_HEIGHT;
+                            const float u0 = cellU + WALL_DOOR_JAMB;
+                            const float u1 = cellU + 1.f - WALL_DOOR_JAMB;
+                            emitBand(begin, u0, baseY, headY);    // простенок слева
+                            emitBand(u1, finish, baseY, headY);   // простенок справа
+                            emitBand(begin, finish, headY, topY); // перемычка
+                            emitReveals(u0, u1, baseY, headY, false); // порог — пол, без откоса
+                            break;
+                        }
+                        default:
+                            break;
+                    }
+
+                    // Верх/низ: полосы толщиной стены (пропуск при вертикальном продолжении).
                     const bool wallAbove =
                         wallAt(cellX, wall->y + WALL_HEIGHT, cellZ) != nullptr &&
                         wallAt(cellX, wall->y + WALL_HEIGHT, cellZ)->material == wall->material;
                     const bool wallBelow =
                         wallAt(cellX, wall->y - 1, cellZ) != nullptr &&
                         wallAt(cellX, wall->y - 1, cellZ)->material == wall->material;
-
-                    // Полотно: по метру на квад (полный тайл атласа), дробные куски у продлений;
-                    // UV мировой — стыки метров и чанков бесшовны, пер-ячеечного AO нет.
                     for (float u = begin; u < finish - 1e-4f;) {
-                        const float next = std::min(std::floor(u + 1.f), finish);
-                        const float texU0 = u - std::floor(u);
+                        const float next = std::min(std::floor(u + 1e-4f) + 1.f, finish);
+                        const float texU0 = u - std::floor(u + 1e-4f);
                         const float texU1 = texU0 + (next - u);
-                        for (int level = 0; level < WALL_HEIGHT; level++) {
-                            const float y0 = baseY + level;
-                            const float y1 = y0 + 1.f;
-                            if (wall->rotation == 0) {
-                                addWallQuad(
-                                    vertices, indices, {u, y0, sideB}, {next, y0, sideB},
-                                    {next, y1, sideB}, {u, y1, sideB}, {0.f, 0.f, 1.f}, tile, tint,
-                                    texU0, 0.f, texU1, 1.f
-                                );
-                                addWallQuad(
-                                    vertices, indices, {next, y0, sideA}, {u, y0, sideA},
-                                    {u, y1, sideA}, {next, y1, sideA}, {0.f, 0.f, -1.f}, tile, tint,
-                                    texU0, 0.f, texU1, 1.f
-                                );
-                            } else {
-                                addWallQuad(
-                                    vertices, indices, {sideB, y0, next}, {sideB, y0, u},
-                                    {sideB, y1, u}, {sideB, y1, next}, {1.f, 0.f, 0.f}, tile, tint,
-                                    texU0, 0.f, texU1, 1.f
-                                );
-                                addWallQuad(
-                                    vertices, indices, {sideA, y0, u}, {sideA, y0, next},
-                                    {sideA, y1, next}, {sideA, y1, u}, {-1.f, 0.f, 0.f}, tile, tint,
-                                    texU0, 0.f, texU1, 1.f
-                                );
-                            }
-                        }
-                        // Верх/низ: полосы толщиной стены (пропуск, если стена продолжается по вертикали).
                         if (!wallAbove) {
-                            if (wall->rotation == 0) {
-                                addWallQuad(
-                                    vertices, indices, {u, topY, sideA}, {u, topY, sideB},
-                                    {next, topY, sideB}, {next, topY, sideA}, {0.f, 1.f, 0.f},
-                                    topTile, topTint, 0.f, texU0, WALL_THICKNESS, texU1
-                                );
-                            } else {
-                                addWallQuad(
-                                    vertices, indices, {sideA, topY, u}, {sideA, topY, next},
-                                    {sideB, topY, next}, {sideB, topY, u}, {0.f, 1.f, 0.f},
-                                    topTile, topTint, 0.f, texU0, WALL_THICKNESS, texU1
-                                );
-                            }
+                            emitQuad(
+                                P(u, topY, sideA), P(u, topY, sideB), P(next, topY, sideB),
+                                P(next, topY, sideA), 0.f, 1.f, 0.f, topTile, topTint, texU0, 0.f,
+                                texU1, WALL_THICKNESS
+                            );
                         }
                         if (!wallBelow) {
-                            if (wall->rotation == 0) {
-                                addWallQuad(
-                                    vertices, indices, {u, baseY, sideA}, {next, baseY, sideA},
-                                    {next, baseY, sideB}, {u, baseY, sideB}, {0.f, -1.f, 0.f},
-                                    topTile, topTint, 0.f, texU0, WALL_THICKNESS, texU1
-                                );
-                            } else {
-                                addWallQuad(
-                                    vertices, indices, {sideA, baseY, u}, {sideB, baseY, u},
-                                    {sideB, baseY, next}, {sideA, baseY, next}, {0.f, -1.f, 0.f},
-                                    topTile, topTint, 0.f, texU0, WALL_THICKNESS, texU1
-                                );
-                            }
+                            emitQuad(
+                                P(u, baseY, sideA), P(next, baseY, sideA), P(next, baseY, sideB),
+                                P(u, baseY, sideB), 0.f, -1.f, 0.f, topTile, topTint, texU0, 0.f,
+                                texU1, WALL_THICKNESS
+                            );
                         }
                         u = next;
                     }
 
                     // Торцы — только на непродлённых концах рана.
                     const auto addCap = [&](float at, bool negative) {
-                        const Vec3 normal = wall->rotation == 0
-                                                ? Vec3(negative ? -1.f : 1.f, 0.f, 0.f)
-                                                : Vec3(0.f, 0.f, negative ? -1.f : 1.f);
-                        // Порядок вершин: против часовой снаружи для обеих ориентаций.
                         const float capNear = negative ? sideA : sideB;
                         const float capFar = negative ? sideB : sideA;
-                        if (wall->rotation == 0) {
-                            addWallQuad(
-                                vertices, indices, {at, baseY, capNear}, {at, baseY, capFar},
-                                {at, topY, capFar}, {at, topY, capNear}, normal, tile, tint, 0.f, 0.f,
-                                WALL_THICKNESS, 1.f
-                            );
-                        } else {
-                            addWallQuad(
-                                vertices, indices, {capFar, baseY, at}, {capNear, baseY, at},
-                                {capNear, topY, at}, {capFar, topY, at}, normal, tile, tint, 0.f, 0.f,
-                                WALL_THICKNESS, 1.f
-                            );
-                        }
+                        emitQuad(
+                            P(at, baseY, capNear), P(at, baseY, capFar), P(at, topY, capFar),
+                            P(at, topY, capNear), negative ? -1.f : 1.f, 0.f, 0.f, tile, tint, 0.f,
+                            0.f, WALL_THICKNESS, 1.f
+                        );
                     };
                     if (i == 0 && !extendStart) { addCap(begin, true); }
                     if (i == runLength - 1 && !extendEnd) { addCap(finish, false); }

@@ -486,6 +486,8 @@ void NeverlandHUD::shutdown() {
     if (m_window.isValid()) { m_window.setRootView(nullptr); }
     destroyBlockPreviewTextures();
     m_slots.fill(nullptr);
+    m_slotPreviews.fill(nullptr);
+    m_displayedHotbar.clear();
     m_selectionLabel.reset();
     m_stickBase.reset();
     m_stickKnob.reset();
@@ -644,10 +646,25 @@ std::shared_ptr<PandaUI::Panel> NeverlandHUD::makeBlocksMenu() {
         return line;
     };
 
+    auto titleRow = std::make_shared<PandaUI::Panel>();
+    titleRow->setBackgroundColor(PandaUI::Color(0x00000000));
+    titleRow->layout().setFlexDirection(PandaUI::FlexDirection::Row);
+    titleRow->layout().setAlignItems(PandaUI::Align::Center);
+    titleRow->layout().setJustifyContent(PandaUI::Justify::SpaceBetween);
+    titleRow->layout().setWidth(PandaUI::Length::percent(100.f));
     auto title = std::make_shared<PandaUI::Label>("Blocks");
     title->setFont(PandaUI::Font(24.f));
     title->setTextColor(PandaUI::Color(0xF4F7FFFF));
-    card->addSubview(title);
+    titleRow->addSubview(title);
+    auto closeButton = std::make_shared<MenuButton>("Close");
+    closeButton->layout().setWidth(PandaUI::Length::points(96.f));
+    closeButton->layout().setHeight(PandaUI::Length::points(34.f));
+    closeButton->setFont(PandaUI::Font(14.f));
+    closeButton->setOnClick([](PandaUI::Button &) {
+        GameMenu::setState(GameMenuState::Playing);
+    });
+    titleRow->addSubview(closeButton);
+    card->addSubview(titleRow);
 
     // Building: сетка фиксированными рядами (PandaUI без flex-wrap).
     card->addSubview(sectionLabel("Building"));
@@ -663,7 +680,6 @@ std::shared_ptr<PandaUI::Panel> NeverlandHUD::makeBlocksMenu() {
             std::make_shared<BlockCardButton>(entry.name, previewFor(entry.type), nullptr);
         blockCard->setOnClick([this, type = entry.type](PandaUI::Button &) {
             if (m_blocksCreation) { m_blocksCreation->setSelectedBlock(type); }
-            GameMenu::setState(GameMenuState::Playing);
         });
         m_blockCards.emplace_back(entry.type, blockCard);
         row->addSubview(blockCard);
@@ -675,7 +691,6 @@ std::shared_ptr<PandaUI::Panel> NeverlandHUD::makeBlocksMenu() {
         auto elementCard = std::make_shared<BlockCardButton>(entry.name, PandaUI::TextureHandle{}, entry.hint);
         elementCard->setOnClick([this, type = entry.type](PandaUI::Button &) {
             if (m_blocksCreation) { m_blocksCreation->setSelectedElement(type); }
-            GameMenu::setState(GameMenuState::Playing);
         });
         m_elementCards.emplace_back(entry.type, elementCard);
         row->addSubview(elementCard);
@@ -691,7 +706,6 @@ std::shared_ptr<PandaUI::Panel> NeverlandHUD::makeBlocksMenu() {
             std::make_shared<BlockCardButton>(entry.name, previewFor(entry.type), nullptr);
         terrainCard->setOnClick([this, type = entry.type](PandaUI::Button &) {
             if (m_blocksCreation) { m_blocksCreation->setSelectedBlock(type); }
-            GameMenu::setState(GameMenuState::Playing);
         });
         m_blockCards.emplace_back(entry.type, terrainCard);
         row->addSubview(terrainCard);
@@ -995,15 +1009,30 @@ std::shared_ptr<PandaUI::Panel> NeverlandHUD::makeHotbar() {
     hotbar->layout().setGap(NeverlandHUDLayout::HotbarGap);
     hotbar->layout().setFlexDirection(PandaUI::FlexDirection::Row);
 
-    for (size_t i = 0; i < BlockPalette::BUILDING_HOTBAR.size(); ++i) {
-        auto slot = makeSlot(BlockPalette::BUILDING_HOTBAR[i]);
+    for (int i = 0; i < NeverlandHUDLayout::HotbarSlotCount; ++i) {
+        auto slot = makeSlot(i);
         m_slots[i] = slot;
         hotbar->addSubview(slot);
     }
     return hotbar;
 }
 
-std::shared_ptr<PandaUI::Button> NeverlandHUD::makeSlot(const BlockPalette::BlockEntry &slot) {
+void NeverlandHUD::refreshHotbar(const std::vector<VoxelType> &recent) {
+    for (size_t i = 0; i < m_slotPreviews.size(); ++i) {
+        if (!m_slotPreviews[i]) { continue; }
+        m_slotPreviews[i]->removeAllSubviews();
+        if (i >= recent.size()) { continue; }
+        auto image = std::make_shared<PandaUI::ImageView>(previewFor(recent[i]));
+        image->setContentMode(PandaUI::ImageContentMode::Fit);
+        image->setUserInteractionEnabled(false);
+        image->layout().setWidth(PandaUI::Length::points(NeverlandHUDLayout::HotbarSwatchWidth));
+        image->layout().setHeight(PandaUI::Length::points(NeverlandHUDLayout::HotbarSwatchHeight));
+        m_slotPreviews[i]->addSubview(image);
+    }
+    m_displayedHotbar = recent;
+}
+
+std::shared_ptr<PandaUI::Button> NeverlandHUD::makeSlot(int index) {
     auto view = std::make_shared<HotbarSlotButton>();
     view->setFocusable(false);
     view->setClipsToBounds(true);
@@ -1016,13 +1045,18 @@ std::shared_ptr<PandaUI::Button> NeverlandHUD::makeSlot(const BlockPalette::Bloc
     view->layout().setJustifyContent(PandaUI::Justify::Center);
     view->setOpacity(0.82f);
     view->getTitleLabel()->setHidden(true);
-    view->setOnClick([this, type = slot.type](PandaUI::Button &) {
+    view->setOnClick([this, index](PandaUI::Button &) {
         if (!m_blocksCreation) { return; }
-        m_blocksCreation->setSelectedBlock(type);
-        updateSelection();
+        const std::vector<VoxelType> &recent = m_blocksCreation->getRecentBlocks();
+        if (index < static_cast<int>(recent.size())) {
+            m_blocksCreation->setSelectedBlock(recent[index]);
+            updateSelection();
+        }
     });
 
-    view->addSubview(makeBlockPreview(previewFor(slot.type)));
+    auto preview = makeBlockPreview({}); // контент заполняет refreshHotbar по MRU
+    m_slotPreviews[index] = preview;
+    view->addSubview(preview);
 
     return view;
 }
@@ -1031,24 +1065,28 @@ void NeverlandHUD::updateSelection() {
     if (!m_blocksCreation) { return; }
     const VoxelType selected = m_blocksCreation->getSelectedBlock();
     const bool elementSelected = m_blocksCreation->isElementSelected();
-    if (selected == m_displayedSelection && elementSelected == m_displayedElementSelected) {
+    const std::vector<VoxelType> &recent = m_blocksCreation->getRecentBlocks();
+    if (selected == m_displayedSelection && elementSelected == m_displayedElementSelected &&
+        recent == m_displayedHotbar) {
         return;
     }
+    refreshHotbar(recent);
 
-    for (size_t i = 0; i < BlockPalette::BUILDING_HOTBAR.size(); ++i) {
-        applySlotStyle(i, !elementSelected && BlockPalette::BUILDING_HOTBAR[i].type == selected);
+    // Левый слот — текущий строительный материал; при терраформе хотбар не подсвечен.
+    const bool buildingSelected = !isNaturalVoxelType(selected);
+    for (size_t i = 0; i < m_slots.size(); ++i) {
+        applySlotStyle(i, buildingSelected && i == 0 && !recent.empty());
     }
     for (auto &[type, card] : m_blockCards) {
-        if (card) { card->setCardSelected(!elementSelected && type == selected); }
+        if (card) { card->setCardSelected(type == selected); }
     }
+    // Форма и материал независимы: подсветка формы не гасится выбором блока.
     for (auto &[type, card] : m_elementCards) {
-        if (card) {
-            card->setCardSelected(elementSelected && type == m_blocksCreation->getSelectedElement());
-        }
+        if (card) { card->setCardSelected(type == m_blocksCreation->getSelectedElement()); }
     }
     if (m_selectionLabel) {
         std::string name;
-        if (elementSelected) {
+        if (elementSelected && buildingSelected) {
             for (const BlockPalette::ElementEntry &entry : BlockPalette::ELEMENTS) {
                 if (entry.type == m_blocksCreation->getSelectedElement()) { name = entry.name; }
             }
