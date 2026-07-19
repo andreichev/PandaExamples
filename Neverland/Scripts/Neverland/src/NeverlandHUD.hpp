@@ -16,7 +16,7 @@
 
 using namespace Bamboo;
 
-class BlockCardButton;
+class ArchLibraryMenu;
 
 class NeverlandHUD final : public Script {
 public:
@@ -43,13 +43,6 @@ private:
     void destroyBlockPreviewTextures();
     PandaUI::TextureHandle previewFor(VoxelType type) const;
     std::shared_ptr<PandaUI::Panel> makePauseMenu();
-    // Меню выбора блоков (M): вкладки Building / Terrain.
-    std::shared_ptr<PandaUI::Panel> makeBlocksMenu();
-    std::shared_ptr<PandaUI::Panel> makeBuildingTab();
-    std::shared_ptr<PandaUI::Panel> makeTerrainTab();
-    void setBlocksMenuTab(int tab); // 0 — Building, 1 — Terrain
-    // Редактор пресетов выбранного элемента (Roof/Window) в панели Element settings.
-    void rebuildElementSettings();
     std::shared_ptr<PandaUI::Panel> makeCrosshair();
     std::shared_ptr<PandaUI::Panel> makeTouchControls();
     std::shared_ptr<PandaUI::Panel> makeMoveStickOverlay();
@@ -65,14 +58,8 @@ private:
     Shared<BlocksCreation> m_blocksCreation;
     std::shared_ptr<PandaUI::Panel> m_root;
     std::shared_ptr<PandaUI::Panel> m_hudLayer;   // игровой HUD (прицел/хотбар/тач) — скрыт в меню
-    std::shared_ptr<PandaUI::Panel> m_pauseMenu;  // пауза (Esc)
-    std::shared_ptr<PandaUI::Panel> m_blocksMenu; // выбор блоков (M)
-    std::shared_ptr<PandaUI::Panel> m_buildingTab; // вкладка строительства
-    std::shared_ptr<PandaUI::Panel> m_terrainTab;  // вкладка рельефа
-    std::array<std::shared_ptr<PandaUI::Button>, 2> m_tabButtons;
-    // Задел под настройки выбранного элемента (параметры будущих сложных блоков).
-    std::shared_ptr<PandaUI::Panel> m_elementSettings;
-    int m_activeMenuTab = 0;
+    std::shared_ptr<PandaUI::Panel> m_pauseMenu;    // пауза (Esc)
+    std::shared_ptr<ArchLibraryMenu> m_blocksMenu;  // Библиотека архитектуры (M)
     GameMenuState m_appliedMenuState = GameMenuState::MainMenu;
     std::shared_ptr<PandaUI::Panel> m_stickBase; // подложка джойстика (видна при касании)
     std::shared_ptr<PandaUI::Panel> m_stickKnob; // ручка джойстика
@@ -82,9 +69,6 @@ private:
     // Контейнеры превью слотов (контент меняется при изменении MRU-списка).
     std::array<std::shared_ptr<PandaUI::Panel>, NeverlandHUDLayout::HotbarSlotCount> m_slotPreviews;
     std::vector<VoxelType> m_displayedHotbar; // отображённый MRU-список
-    // Карточки меню: блоки по типу + элементы по типу (для подсветки выбора).
-    std::vector<std::pair<VoxelType, std::shared_ptr<BlockCardButton>>> m_blockCards;
-    std::vector<std::pair<ArchObjectType, std::shared_ptr<BlockCardButton>>> m_elementCards;
     // Превью тайлов по типу вокселя (строительные + природные).
     std::array<PandaUI::TextureHandle, static_cast<size_t>(VoxelType::COUNT)> m_previewTextures;
     VoxelType m_displayedSelection = VoxelType::NOTHING;

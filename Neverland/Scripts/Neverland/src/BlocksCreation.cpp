@@ -553,16 +553,13 @@ void BlocksCreation::rebuildDragLine(const ArchitectureObject &current) {
 }
 
 uint8_t BlocksCreation::getElementParam(ArchObjectType element, int index) const {
-    if (index < 0 || index >= ARCH_PARAM_COUNT) { return 0; }
-    if (element == ArchObjectType::Roof) { return m_roofParams[index]; }
-    if (element == ArchObjectType::Window) { return m_windowParams[index]; }
-    return 0;
+    if (index < 0 || index >= ARCH_PARAM_COUNT || element >= ArchObjectType::COUNT) { return 0; }
+    return m_elementParams[static_cast<size_t>(element)][index];
 }
 
 void BlocksCreation::setElementParam(ArchObjectType element, int index, uint8_t value) {
-    if (index < 0 || index >= ARCH_PARAM_COUNT) { return; }
-    if (element == ArchObjectType::Roof) { m_roofParams[index] = value; }
-    if (element == ArchObjectType::Window) { m_windowParams[index] = value; }
+    if (index < 0 || index >= ARCH_PARAM_COUNT || element >= ArchObjectType::COUNT) { return; }
+    m_elementParams[static_cast<size_t>(element)][index] = value;
 }
 
 ArchitectureObject BlocksCreation::pendingObject(const AimHit &hit) const {

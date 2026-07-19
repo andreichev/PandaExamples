@@ -49,6 +49,44 @@ float packCellLight(const LightGrid *grid, int x, int y, int z, float faceLight)
     return packChannels(sun * faceLight, block * faceLight);
 }
 
+// Свет грани куба: из ячейки перед гранью; если она в толще тонкого элемента (стены) —
+// максимум по 4 соседям в плоскости грани (иначе кубы у стен всегда чёрные).
+float packFaceCellLight(
+    const LightGrid *grid, int x, int y, int z, int normalX, int normalY, int normalZ,
+    float faceLight
+) {
+    if (grid == nullptr || !grid->isReady()) { return packChannels(faceLight, 0.f); }
+    float sun = grid->sunAt(x, y, z) / 15.f;
+    float block = grid->blockAt(x, y, z) / 15.f;
+    if (sun <= 0.f && block <= 0.f) {
+        // Соседи в плоскости грани: касательные — две оси, перпендикулярные нормали.
+        int offsets[4][3] = {};
+        int count = 0;
+        if (normalX == 0) {
+            offsets[count][0] = 1;
+            offsets[count + 1][0] = -1;
+            count += 2;
+        }
+        if (normalY == 0) {
+            offsets[count][1] = 1;
+            offsets[count + 1][1] = -1;
+            count += 2;
+        }
+        if (normalZ == 0 && count < 4) {
+            offsets[count][2] = 1;
+            offsets[count + 1][2] = -1;
+            count += 2;
+        }
+        for (int i = 0; i < count; i++) {
+            sun = std::max(sun, grid->sunAt(x + offsets[i][0], y + offsets[i][1], z + offsets[i][2]) / 15.f);
+            block = std::max(
+                block, grid->blockAt(x + offsets[i][0], y + offsets[i][1], z + offsets[i][2]) / 15.f
+            );
+        }
+    }
+    return packChannels(sun * faceLight, block * faceLight);
+}
+
 // Свет сегмента полотна: максимум каналов по боковой ячейке и её соседям вдоль рана —
 // у перпендикулярного примыкания боковая ячейка лежит в толще стены (свет 0), иначе
 // углы коробки всегда чёрные.
@@ -433,9 +471,9 @@ void BuildingCellGrid::rebuildChunk(int chunkX, int chunkY, int chunkZ) {
                         indices.emplace_back(index);
                     }
                     // Свет грани — из ячейки перед ней; АО — в альфу тинта (пер-вершинно).
-                    const float packedLight = packCellLight(
+                    const float packedLight = packFaceCellLight(
                         m_lightGrid, x + face.normal[0], y + face.normal[1], z + face.normal[2],
-                        face.light
+                        face.normal[0], face.normal[1], face.normal[2], face.light
                     );
                     for (int corner = 0; corner < 4; corner++) {
                         float occlusion = 0.f;
@@ -627,7 +665,8 @@ void BuildingCellGrid::appendWallGeometry(
     const auto sameWall = [this](const ArchitectureObject &sample, int x, int z) -> const ArchitectureObject * {
         const ArchitectureObject *wall = wallAt(x, sample.y, z);
         if (wall == nullptr || wall->rotation != sample.rotation ||
-            wall->material != sample.material || wall->y != sample.y) {
+            wall->material != sample.material || wall->y != sample.y ||
+            wall->params[0] != sample.params[0]) { // толщина различает полотна
             return nullptr;
         }
         return wall;
@@ -663,10 +702,13 @@ void BuildingCellGrid::appendWallGeometry(
                     runLength++;
                 }
 
+                // Толщина полотна — пресет стены (0.2 лёгкая, 0.3 стандарт, 0.5 крепостная).
+                const float wallThickness =
+                    wall->params[0] == 1 ? 0.2f : wall->params[0] == 2 ? 0.5f : WALL_THICKNESS;
                 const bool extendStart =
                     cornerWall(*wall, runStart->x - stepX, runStart->z - stepZ);
                 const bool extendEnd = cornerWall(*wall, runEnd->x + stepX, runEnd->z + stepZ);
-                const float extend = 0.5f + WALL_THICKNESS * 0.5f;
+                const float extend = 0.5f + wallThickness * 0.5f;
 
                 // Обратная сторона угла: перпендикуляр СБОКУ торцевой ячейки продлевает
                 // своё полотно в неё — наш торец укорачивается до ближней грани этого
@@ -677,7 +719,7 @@ void BuildingCellGrid::appendWallGeometry(
                 };
                 const bool retractStart = !extendStart && sideCorner(runStart);
                 const bool retractEnd = !extendEnd && sideCorner(runEnd);
-                const float retract = 0.5f - WALL_THICKNESS * 0.5f;
+                const float retract = 0.5f - wallThickness * 0.5f;
 
                 const float baseY = static_cast<float>(wall->y);
                 const float topY = baseY + static_cast<float>(WALL_HEIGHT);
@@ -707,8 +749,8 @@ void BuildingCellGrid::appendWallGeometry(
 
                     const float center =
                         (wall->rotation == 0 ? static_cast<float>(cellZ) : static_cast<float>(cellX)) + 0.5f;
-                    const float sideA = center - WALL_THICKNESS * 0.5f;
-                    const float sideB = center + WALL_THICKNESS * 0.5f;
+                    const float sideA = center - wallThickness * 0.5f;
+                    const float sideB = center + wallThickness * 0.5f;
 
                     // Все квады строятся в осях (along, y, side); rot1 отражает порядок
                     // вершин (свап осей меняет хиральность). Нормаль — тоже в (a, y, s).
@@ -786,20 +828,20 @@ void BuildingCellGrid::appendWallGeometry(
                             emitQuad(
                                 P(u0, y0, sideA), P(u0, y0, sideB), P(u1, y0, sideB),
                                 P(u1, y0, sideA), 0.f, 1.f, 0.f, topTile, topTint, 0.f, 0.f,
-                                u1 - u0, WALL_THICKNESS
+                                u1 - u0, wallThickness
                             );
                         }
                         emitQuad( // верх проёма (нормаль вниз)
                             P(u0, y1, sideA), P(u1, y1, sideA), P(u1, y1, sideB), P(u0, y1, sideB),
-                            0.f, -1.f, 0.f, topTile, topTint, 0.f, 0.f, u1 - u0, WALL_THICKNESS
+                            0.f, -1.f, 0.f, topTile, topTint, 0.f, 0.f, u1 - u0, wallThickness
                         );
                         emitQuad( // левый откос (нормаль внутрь проёма, +a)
                             P(u0, y0, sideB), P(u0, y0, sideA), P(u0, y1, sideA), P(u0, y1, sideB),
-                            1.f, 0.f, 0.f, tile, tint, 0.f, 0.f, WALL_THICKNESS, y1 - y0
+                            1.f, 0.f, 0.f, tile, tint, 0.f, 0.f, wallThickness, y1 - y0
                         );
                         emitQuad( // правый откос (нормаль внутрь проёма, -a)
                             P(u1, y0, sideA), P(u1, y0, sideB), P(u1, y1, sideB), P(u1, y1, sideA),
-                            -1.f, 0.f, 0.f, tile, tint, 0.f, 0.f, WALL_THICKNESS, y1 - y0
+                            -1.f, 0.f, 0.f, tile, tint, 0.f, 0.f, wallThickness, y1 - y0
                         );
                     };
 
@@ -865,9 +907,13 @@ void BuildingCellGrid::appendWallGeometry(
                             break;
                         }
                         case ArchObjectType::Door: {
+                            // Пресет ширины проёма: стандарт / узкий / портал во всю ячейку.
+                            const float doorJamb = cellModule->params[0] == 1   ? 0.25f
+                                                   : cellModule->params[0] == 2 ? 0.02f
+                                                                                : WALL_DOOR_JAMB;
                             const float headY = baseY + WALL_HEAD_HEIGHT;
-                            const float u0 = cellU + WALL_DOOR_JAMB;
-                            const float u1 = cellU + 1.f - WALL_DOOR_JAMB;
+                            const float u0 = cellU + doorJamb;
+                            const float u1 = cellU + 1.f - doorJamb;
                             emitBand(begin, u0, baseY, headY);    // простенок слева
                             emitBand(u1, finish, baseY, headY);   // простенок справа
                             emitBand(begin, finish, headY, topY); // перемычка
@@ -893,14 +939,14 @@ void BuildingCellGrid::appendWallGeometry(
                             emitQuad(
                                 P(u, topY, sideA), P(u, topY, sideB), P(next, topY, sideB),
                                 P(next, topY, sideA), 0.f, 1.f, 0.f, topTile, topTint, texU0, 0.f,
-                                texU1, WALL_THICKNESS
+                                texU1, wallThickness
                             );
                         }
                         if (!wallBelow) {
                             emitQuad(
                                 P(u, baseY, sideA), P(next, baseY, sideA), P(next, baseY, sideB),
                                 P(u, baseY, sideB), 0.f, -1.f, 0.f, topTile, topTint, texU0, 0.f,
-                                texU1, WALL_THICKNESS
+                                texU1, wallThickness
                             );
                         }
                         u = next;
@@ -913,7 +959,7 @@ void BuildingCellGrid::appendWallGeometry(
                         emitQuad(
                             P(at, baseY, capNear), P(at, baseY, capFar), P(at, topY, capFar),
                             P(at, topY, capNear), negative ? -1.f : 1.f, 0.f, 0.f, tile, tint, 0.f,
-                            0.f, WALL_THICKNESS, 1.f
+                            0.f, wallThickness, 1.f
                         );
                     };
                     if (i == 0 && !extendStart && !retractStart) { addCap(begin, true); }

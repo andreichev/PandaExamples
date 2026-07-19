@@ -87,8 +87,8 @@ private:
     ArchObjectType m_selectedElement = ArchObjectType::Block;
     VoxelType m_lastBuildingMaterial = VoxelType::STONE_BRICKS;
     std::vector<VoxelType> m_recentBlocks; // MRU строительных материалов (хотбар)
-    uint8_t m_roofParams[ARCH_PARAM_COUNT] = {};   // пресеты крыши (редактор в меню)
-    uint8_t m_windowParams[ARCH_PARAM_COUNT] = {}; // пресеты окна
+    // Пресеты всех форм (редакторы Библиотеки архитектуры); 0 = значение по умолчанию.
+    uint8_t m_elementParams[static_cast<size_t>(ArchObjectType::COUNT)][ARCH_PARAM_COUNT] = {};
     bool m_dragActive = false;             // протяжка ЛКМ (desktop, building-режим)
     ArchitectureObject m_dragBase;         // первый объект линии
     std::vector<ArchitectureObject> m_dragLine;

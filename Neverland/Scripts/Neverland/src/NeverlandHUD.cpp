@@ -2,6 +2,7 @@
 #include "Model/Voxel.hpp"
 #include "Model/VoxelTextureMapper.hpp"
 #include "NeverlandTouchControls.hpp"
+#include "UI/ArchLibraryMenu.hpp"
 
 #include <Bamboo/ApplicationAPI.hpp>
 #include <Bamboo/EntityAPI.hpp>
@@ -115,135 +116,6 @@ PandaUI::TextureHandle makeTexturePreview(const TexturePixels &atlas, int atlasG
 }
 
 } // namespace
-
-// Карточка меню блоков: превью (или крупная подпись у элементов) + имя, подсветка выбора.
-class BlockCardButton final : public PandaUI::Button {
-public:
-    BlockCardButton(const char *name, PandaUI::TextureHandle preview, const char *fallbackText)
-        : PandaUI::Button("")
-        , m_selected(false) {
-        setFocusable(false);
-        setClipsToBounds(true);
-        surface().setCornerRadius(10.f);
-        surface().setBorderWidth(1.5f);
-        layout().setWidth(PandaUI::Length::points(NeverlandHUDLayout::MenuCardWidth));
-        layout().setHeight(PandaUI::Length::points(NeverlandHUDLayout::MenuCardHeight));
-        layout().setPadding(6.f);
-        layout().setGap(4.f);
-        layout().setFlexDirection(PandaUI::FlexDirection::Column);
-        layout().setAlignItems(PandaUI::Align::Center);
-        layout().setJustifyContent(PandaUI::Justify::Center);
-        getTitleLabel()->setHidden(true);
-
-        auto previewArea = std::make_shared<PandaUI::Panel>();
-        previewArea->setBackgroundColor(PandaUI::Color(0x00000000));
-        previewArea->layout().setWidth(PandaUI::Length::points(NeverlandHUDLayout::MenuCardPreview));
-        previewArea->layout().setHeight(PandaUI::Length::points(NeverlandHUDLayout::MenuCardPreview));
-        previewArea->layout().setAlignItems(PandaUI::Align::Center);
-        previewArea->layout().setJustifyContent(PandaUI::Justify::Center);
-        if (preview) {
-            auto image = std::make_shared<PandaUI::ImageView>(preview);
-            image->setContentMode(PandaUI::ImageContentMode::Fit);
-            image->setUserInteractionEnabled(false);
-            image->layout().setWidth(PandaUI::Length::percent(100.f));
-            image->layout().setHeight(PandaUI::Length::percent(100.f));
-            previewArea->addSubview(image);
-        } else if (fallbackText) {
-            auto text = std::make_shared<PandaUI::Label>(fallbackText);
-            text->setFont(PandaUI::Font(16.f));
-            text->setTextColor(PandaUI::Color(0xF4F7FFFF));
-            previewArea->addSubview(text);
-        }
-        addSubview(previewArea);
-
-        auto label = std::make_shared<PandaUI::Label>(name);
-        label->setFont(PandaUI::Font(11.f));
-        label->setTextColor(PandaUI::Color(0xD5DCE8FF));
-        addSubview(label);
-        updateAppearance();
-    }
-
-    void setCardSelected(bool selected) {
-        if (m_selected == selected) { return; }
-        m_selected = selected;
-        updateAppearance();
-    }
-
-private:
-    void controlStateChanged(PandaUI::ControlState, PandaUI::ControlState) override {
-        updateAppearance();
-    }
-
-    void themeChanged() override {
-        updateAppearance();
-    }
-
-    void updateAppearance() {
-        if (hasControlState(PandaUI::ControlState::Highlighted)) {
-            setBackgroundColor(PandaUI::Color(0x414A59FF));
-            surface().setBorderColor(PandaUI::Color(0xFFFFFFFF));
-        } else if (hasControlState(PandaUI::ControlState::Hovered)) {
-            setBackgroundColor(PandaUI::Color(0x39424FEE));
-            surface().setBorderColor(PandaUI::Color(0xFFFFFFAA));
-        } else {
-            setBackgroundColor(PandaUI::Color(0x2A313CDD));
-            surface().setBorderColor(
-                m_selected ? PandaUI::Color(0xFFFFFFFF) : PandaUI::Color(0x5C667666)
-            );
-        }
-    }
-
-    bool m_selected;
-};
-
-// Кнопка пресета в редакторе элемента: компактная, с подсветкой выбранного значения.
-class SettingsPresetButton final : public PandaUI::Button {
-public:
-    explicit SettingsPresetButton(std::string text)
-        : PandaUI::Button(std::move(text)) {
-        setFocusable(false);
-        setFont(PandaUI::Font(12.f));
-        surface().setCornerRadius(8.f);
-        surface().setBorderWidth(1.f);
-        layout().setHeight(PandaUI::Length::points(26.f));
-        layout().setPadding(PandaUI::Edge::Horizontal, 10.f);
-        layout().setPadding(PandaUI::Edge::Vertical, 0.f);
-        updateAppearance();
-    }
-
-    void setSelected(bool selected) {
-        if (m_selected == selected) { return; }
-        m_selected = selected;
-        updateAppearance();
-    }
-
-private:
-    void controlStateChanged(PandaUI::ControlState, PandaUI::ControlState) override {
-        updateAppearance();
-    }
-
-    void themeChanged() override {
-        updateAppearance();
-    }
-
-    void updateAppearance() {
-        if (hasControlState(PandaUI::ControlState::Highlighted) || m_selected) {
-            setBackgroundColor(PandaUI::Color(0xE8EEF8E6));
-            getTitleLabel()->setTextColor(PandaUI::Color(0x111722FF));
-            surface().setBorderColor(PandaUI::Color(0xFFFFFFFF));
-        } else if (hasControlState(PandaUI::ControlState::Hovered)) {
-            setBackgroundColor(PandaUI::Color(0x414A59EE));
-            getTitleLabel()->setTextColor(PandaUI::Color(0xF4F7FFFF));
-            surface().setBorderColor(PandaUI::Color(0xFFFFFFAA));
-        } else {
-            setBackgroundColor(PandaUI::Color(0x2D3440DD));
-            getTitleLabel()->setTextColor(PandaUI::Color(0xF4F7FFFF));
-            surface().setBorderColor(PandaUI::Color(0x5C6676AA));
-        }
-    }
-
-    bool m_selected = false;
-};
 
 namespace {
 
@@ -440,49 +312,6 @@ makeTouchControlButton(const std::string &text, NeverlandTouchControls::Button b
     return view;
 }
 
-// Кнопка меню — стиль TouchControlButton, но крупнее и с текстом по центру.
-class MenuButton final : public PandaUI::Button {
-public:
-    explicit MenuButton(std::string text)
-        : PandaUI::Button(std::move(text)) {
-        setFocusable(false);
-        setFont(PandaUI::Font(20.f));
-        getTitleLabel()->setTextColor(PandaUI::Color(0xF4F7FFFF));
-        surface().setCornerRadius(14.f);
-        surface().setBorderWidth(1.5f);
-        layout().setWidth(PandaUI::Length::points(NeverlandHUDLayout::MenuButtonWidth));
-        layout().setHeight(PandaUI::Length::points(NeverlandHUDLayout::MenuButtonHeight));
-        layout().setPadding(0.f);
-        updateAppearance();
-    }
-
-private:
-    void controlStateChanged(PandaUI::ControlState, PandaUI::ControlState) override {
-        updateAppearance();
-    }
-
-    void themeChanged() override {
-        updateAppearance();
-    }
-
-    void updateAppearance() {
-        if (hasControlState(PandaUI::ControlState::Highlighted)) {
-            setBackgroundColor(PandaUI::Color(0xF4F7FFFF));
-            getTitleLabel()->setTextColor(PandaUI::Color(0x111722FF));
-            surface().setBorderColor(PandaUI::Color(0xFFFFFFFF));
-        } else if (hasControlState(PandaUI::ControlState::Hovered)) {
-            setBackgroundColor(PandaUI::Color(0x2A3342E6));
-            getTitleLabel()->setTextColor(PandaUI::Color(0xFFFFFFFF));
-            surface().setBorderColor(PandaUI::Color(0xFFFFFFAA));
-        } else {
-            setBackgroundColor(PandaUI::Color(0x151B26CC));
-            getTitleLabel()->setTextColor(PandaUI::Color(0xF4F7FFFF));
-            surface().setBorderColor(PandaUI::Color(0xFFFFFF66));
-        }
-        surface().setShadowColor(PandaUI::Color(0x00000038));
-    }
-};
-
 std::shared_ptr<MenuButton> makeMenuButton(const std::string &text, std::function<void()> action) {
     auto button = std::make_shared<MenuButton>(text);
     button->setOnClick([action = std::move(action)](PandaUI::Button &) {
@@ -541,8 +370,6 @@ void NeverlandHUD::shutdown() {
     m_stickBase.reset();
     m_stickKnob.reset();
     m_brushPanel.reset();
-    m_blockCards.clear();
-    m_elementCards.clear();
     m_hudLayer.reset();
     m_pauseMenu.reset();
     m_blocksMenu.reset();
@@ -648,277 +475,13 @@ void NeverlandHUD::buildUI() {
     }
 
     m_pauseMenu = makePauseMenu();
-    m_blocksMenu = makeBlocksMenu();
+    m_blocksMenu = std::make_shared<ArchLibraryMenu>(
+        m_blocksCreation, [this](VoxelType type) { return previewFor(type); }
+    );
     m_root->addSubview(m_hudLayer);
     m_root->addSubview(m_pauseMenu);
     m_root->addSubview(m_blocksMenu);
     m_window.setRootView(m_root);
-}
-
-// Меню выбора блоков (M): вкладки Building и Terrain. Building — материалы, формы и
-// задел под настройки элементов (будущие параметрические блоки); Terrain — материалы
-// рельефа. Меню не закрывается при выборе (Close/M/Esc).
-std::shared_ptr<PandaUI::Panel> NeverlandHUD::makeBlocksMenu() {
-    m_blockCards.clear();
-    m_elementCards.clear();
-    auto overlay = makeMenuOverlay(PandaUI::Color(0x0B101AA8));
-
-    auto card = std::make_shared<PandaUI::Panel>();
-    card->setBackgroundColor(PandaUI::Color(0x151B26F2));
-    card->surface().setCornerRadius(18.f);
-    card->surface().setBorderWidth(1.f);
-    card->surface().setBorderColor(PandaUI::Color(0xFFFFFF2E));
-    card->layout().setFlexDirection(PandaUI::FlexDirection::Column);
-    card->layout().setPadding(20.f);
-    card->layout().setGap(10.f);
-    card->layout().setWidth(PandaUI::Length::points(NeverlandHUDLayout::MenuCardWidth * 4.f + 8.f * 3.f + 40.f));
-
-    // Шапка: вкладки + Close.
-    auto titleRow = std::make_shared<PandaUI::Panel>();
-    titleRow->setBackgroundColor(PandaUI::Color(0x00000000));
-    titleRow->layout().setFlexDirection(PandaUI::FlexDirection::Row);
-    titleRow->layout().setAlignItems(PandaUI::Align::Center);
-    titleRow->layout().setGap(8.f);
-    titleRow->layout().setWidth(PandaUI::Length::percent(100.f));
-
-    const auto makeTab = [this](const char *title, int tabIndex) {
-        auto tab = std::make_shared<MenuButton>(title);
-        tab->layout().setWidth(PandaUI::Length::points(120.f));
-        tab->layout().setHeight(PandaUI::Length::points(36.f));
-        tab->setFont(PandaUI::Font(15.f));
-        tab->setOnClick([this, tabIndex](PandaUI::Button &) { setBlocksMenuTab(tabIndex); });
-        m_tabButtons[tabIndex] = tab;
-        return tab;
-    };
-    titleRow->addSubview(makeTab("Building", 0));
-    titleRow->addSubview(makeTab("Terrain", 1));
-
-    auto spacer = std::make_shared<PandaUI::Panel>();
-    spacer->setBackgroundColor(PandaUI::Color(0x00000000));
-    spacer->layout().setFlexGrow(1.f);
-    titleRow->addSubview(spacer);
-
-    auto closeButton = std::make_shared<MenuButton>("Close");
-    closeButton->layout().setWidth(PandaUI::Length::points(96.f));
-    closeButton->layout().setHeight(PandaUI::Length::points(34.f));
-    closeButton->setFont(PandaUI::Font(14.f));
-    closeButton->setOnClick([](PandaUI::Button &) {
-        GameMenu::setState(GameMenuState::Playing);
-    });
-    titleRow->addSubview(closeButton);
-    card->addSubview(titleRow);
-
-    m_buildingTab = makeBuildingTab();
-    m_terrainTab = makeTerrainTab();
-    card->addSubview(m_buildingTab);
-    card->addSubview(m_terrainTab);
-
-    auto hint = std::make_shared<PandaUI::Label>("M / Esc — close");
-    hint->setFont(PandaUI::Font(11.f));
-    hint->setTextColor(PandaUI::Color(0x9AA6BAFF));
-    card->addSubview(hint);
-
-    overlay->addSubview(card);
-    setBlocksMenuTab(0);
-    return overlay;
-}
-
-namespace {
-
-std::shared_ptr<PandaUI::Label> makeSectionLabel(const char *text) {
-    auto label = std::make_shared<PandaUI::Label>(text);
-    label->setFont(PandaUI::Font(13.f));
-    label->setTextColor(PandaUI::Color(0x9AA6BAFF));
-    return label;
-}
-
-std::shared_ptr<PandaUI::Panel> makeCardsRow() {
-    auto row = std::make_shared<PandaUI::Panel>();
-    row->setBackgroundColor(PandaUI::Color(0x00000000));
-    row->layout().setFlexDirection(PandaUI::FlexDirection::Row);
-    row->layout().setGap(8.f);
-    return row;
-}
-
-} // namespace
-
-std::shared_ptr<PandaUI::Panel> NeverlandHUD::makeBuildingTab() {
-    auto tab = std::make_shared<PandaUI::Panel>();
-    tab->setBackgroundColor(PandaUI::Color(0x00000000));
-    tab->layout().setFlexDirection(PandaUI::FlexDirection::Column);
-    tab->layout().setGap(10.f);
-    tab->layout().setWidth(PandaUI::Length::percent(100.f));
-
-    // Материалы: сетка фиксированными рядами (PandaUI без flex-wrap).
-    tab->addSubview(makeSectionLabel("Materials"));
-    constexpr size_t CARDS_PER_ROW = 4;
-    std::shared_ptr<PandaUI::Panel> row;
-    for (size_t i = 0; i < BlockPalette::BUILDING_BLOCKS.size(); ++i) {
-        if (i % CARDS_PER_ROW == 0) {
-            row = makeCardsRow();
-            tab->addSubview(row);
-        }
-        const BlockPalette::BlockEntry &entry = BlockPalette::BUILDING_BLOCKS[i];
-        auto blockCard =
-            std::make_shared<BlockCardButton>(entry.name, previewFor(entry.type), nullptr);
-        blockCard->setOnClick([this, type = entry.type](PandaUI::Button &) {
-            if (m_blocksCreation) { m_blocksCreation->setSelectedBlock(type); }
-        });
-        m_blockCards.emplace_back(entry.type, blockCard);
-        row->addSubview(blockCard);
-    }
-
-    tab->addSubview(makeSectionLabel("Elements"));
-    row = makeCardsRow();
-    size_t elementsInRow = 0;
-    for (const BlockPalette::ElementEntry &entry : BlockPalette::ELEMENTS) {
-        if (elementsInRow == CARDS_PER_ROW) {
-            tab->addSubview(row);
-            row = makeCardsRow();
-            elementsInRow = 0;
-        }
-        auto elementCard = std::make_shared<BlockCardButton>(entry.name, PandaUI::TextureHandle{}, entry.hint);
-        elementCard->setOnClick([this, type = entry.type](PandaUI::Button &) {
-            if (m_blocksCreation) { m_blocksCreation->setSelectedElement(type); }
-        });
-        m_elementCards.emplace_back(entry.type, elementCard);
-        row->addSubview(elementCard);
-        elementsInRow++;
-    }
-    tab->addSubview(row);
-
-    // Задел под настройки выбранного элемента: сюда лягут параметры будущих сложных
-    // блоков (размеры, стиль, пресеты). Пока — подпись-заглушка.
-    m_elementSettings = std::make_shared<PandaUI::Panel>();
-    m_elementSettings->setBackgroundColor(PandaUI::Color(0x10141CB0));
-    m_elementSettings->surface().setCornerRadius(10.f);
-    m_elementSettings->surface().setBorderWidth(1.f);
-    m_elementSettings->surface().setBorderColor(PandaUI::Color(0xFFFFFF1A));
-    m_elementSettings->layout().setFlexDirection(PandaUI::FlexDirection::Column);
-    m_elementSettings->layout().setPadding(10.f);
-    m_elementSettings->layout().setGap(6.f);
-    m_elementSettings->layout().setWidth(PandaUI::Length::percent(100.f));
-    m_elementSettings->addSubview(makeSectionLabel("Element settings"));
-    auto placeholder = std::make_shared<PandaUI::Label>("No settings for this element yet");
-    placeholder->setFont(PandaUI::Font(12.f));
-    placeholder->setTextColor(PandaUI::Color(0x6E7A8EFF));
-    m_elementSettings->addSubview(placeholder);
-    tab->addSubview(m_elementSettings);
-
-    return tab;
-}
-
-std::shared_ptr<PandaUI::Panel> NeverlandHUD::makeTerrainTab() {
-    auto tab = std::make_shared<PandaUI::Panel>();
-    tab->setBackgroundColor(PandaUI::Color(0x00000000));
-    tab->layout().setFlexDirection(PandaUI::FlexDirection::Column);
-    tab->layout().setGap(10.f);
-    tab->layout().setWidth(PandaUI::Length::percent(100.f));
-
-    tab->addSubview(makeSectionLabel("Sculpting materials"));
-    auto row = makeCardsRow();
-    for (const BlockPalette::BlockEntry &entry : BlockPalette::TERRAIN_MATERIALS) {
-        auto terrainCard =
-            std::make_shared<BlockCardButton>(entry.name, previewFor(entry.type), nullptr);
-        terrainCard->setOnClick([this, type = entry.type](PandaUI::Button &) {
-            if (m_blocksCreation) { m_blocksCreation->setSelectedBlock(type); }
-        });
-        m_blockCards.emplace_back(entry.type, terrainCard);
-        row->addSubview(terrainCard);
-    }
-    tab->addSubview(row);
-
-    auto note = std::make_shared<PandaUI::Label>("Brush mode and size — panel on the left");
-    note->setFont(PandaUI::Font(12.f));
-    note->setTextColor(PandaUI::Color(0x6E7A8EFF));
-    tab->addSubview(note);
-
-    return tab;
-}
-
-// Пресеты редакторов: то, что генераторы реально умеют (наброски юзера — ориентир).
-void NeverlandHUD::rebuildElementSettings() {
-    if (!m_elementSettings || !m_blocksCreation) { return; }
-    m_elementSettings->removeAllSubviews();
-
-    auto header = std::make_shared<PandaUI::Label>("Element settings");
-    header->setFont(PandaUI::Font(13.f));
-    header->setTextColor(PandaUI::Color(0x9AA6BAFF));
-    m_elementSettings->addSubview(header);
-
-    struct PresetOption {
-        const char *name;
-        uint8_t value;
-    };
-    struct PresetRow {
-        const char *title;
-        int paramIndex;
-        std::vector<PresetOption> options;
-    };
-    const ArchObjectType element = m_blocksCreation->getSelectedElement();
-    std::vector<PresetRow> rows;
-    if (element == ArchObjectType::Roof) {
-        rows = {
-            {"Form", 0, {{"Gable", 0}, {"Flat", 1}}},
-            {"Slope", 1, {{"22\u00B0", 1}, {"35\u00B0", 0}, {"45\u00B0", 2}}},
-            {"Tiles", 2, {{"Auto", 0}, {"Red", 1}, {"Brown", 2}, {"Grey", 3}, {"Dark", 4}}},
-            {"Overhang", 3, {{"None", 1}, {"0.25", 0}, {"0.5", 2}}},
-        };
-    } else if (element == ArchObjectType::Window) {
-        rows = {
-            {"Opening", 0, {{"Narrow", 1}, {"Standard", 0}, {"Wide", 2}}},
-            {"Sill", 1, {{"0.6", 1}, {"0.9", 0}, {"1.2", 2}}},
-            {"Frame", 2, {{"Cross", 0}, {"None", 1}, {"Bars", 2}}},
-        };
-    }
-    if (rows.empty()) {
-        auto placeholder = std::make_shared<PandaUI::Label>("No settings for this element yet");
-        placeholder->setFont(PandaUI::Font(12.f));
-        placeholder->setTextColor(PandaUI::Color(0x6E7A8EFF));
-        m_elementSettings->addSubview(placeholder);
-        return;
-    }
-
-    for (const PresetRow &row : rows) {
-        auto rowPanel = std::make_shared<PandaUI::Panel>();
-        rowPanel->setBackgroundColor(PandaUI::Color(0x00000000));
-        rowPanel->layout().setFlexDirection(PandaUI::FlexDirection::Row);
-        rowPanel->layout().setAlignItems(PandaUI::Align::Center);
-        rowPanel->layout().setGap(6.f);
-        rowPanel->layout().setWidth(PandaUI::Length::percent(100.f));
-
-        auto title = std::make_shared<PandaUI::Label>(row.title);
-        title->setFont(PandaUI::Font(12.f));
-        title->setTextColor(PandaUI::Color(0xD5DCE8FF));
-        title->layout().setWidth(PandaUI::Length::points(76.f));
-        rowPanel->addSubview(title);
-
-        const uint8_t current = m_blocksCreation->getElementParam(element, row.paramIndex);
-        for (const PresetOption &option : row.options) {
-            auto button = std::make_shared<SettingsPresetButton>(option.name);
-            button->setSelected(option.value == current);
-            button->setOnClick(
-                [this, element, paramIndex = row.paramIndex, value = option.value](PandaUI::Button &) {
-                    if (m_blocksCreation) {
-                        m_blocksCreation->setElementParam(element, paramIndex, value);
-                        m_blocksCreation->setSelectedElement(element); // пресет = выбор формы
-                    }
-                    rebuildElementSettings();
-                }
-            );
-            rowPanel->addSubview(button);
-        }
-        m_elementSettings->addSubview(rowPanel);
-    }
-}
-
-void NeverlandHUD::setBlocksMenuTab(int tab) {
-    m_activeMenuTab = tab;
-    if (m_buildingTab) { m_buildingTab->setHidden(tab != 0); }
-    if (m_terrainTab) { m_terrainTab->setHidden(tab != 1); }
-    for (int i = 0; i < 2; i++) {
-        if (m_tabButtons[i]) { m_tabButtons[i]->setOpacity(i == tab ? 1.f : 0.55f); }
-    }
 }
 
 std::shared_ptr<PandaUI::Panel> NeverlandHUD::makePauseMenu() {
@@ -1281,13 +844,7 @@ void NeverlandHUD::updateSelection() {
     for (size_t i = 0; i < m_slots.size(); ++i) {
         applySlotStyle(i, buildingSelected && i == 0 && !recent.empty());
     }
-    for (auto &[type, card] : m_blockCards) {
-        if (card) { card->setCardSelected(type == selected); }
-    }
-    // Форма и материал независимы: подсветка формы не гасится выбором блока.
-    for (auto &[type, card] : m_elementCards) {
-        if (card) { card->setCardSelected(type == element); }
-    }
+    if (m_blocksMenu) { m_blocksMenu->syncSelection(selected, element); }
     if (m_selectionLabel) {
         std::string name;
         if (elementSelected && buildingSelected) {
@@ -1300,7 +857,6 @@ void NeverlandHUD::updateSelection() {
         }
         m_selectionLabel->setText(name);
     }
-    if (element != m_displayedElement) { rebuildElementSettings(); }
     m_displayedSelection = selected;
     m_displayedElement = element;
 }
