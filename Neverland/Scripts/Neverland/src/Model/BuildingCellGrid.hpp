@@ -16,8 +16,12 @@ using namespace Bamboo;
 enum class ArchObjectType : uint8_t {
     Block = 0, // одиночный куб 1×1×1
     Beam = 1,  // балка 3×1×1, поворот задаёт ось (0:+X, 1:+Z, 2:-X, 3:-Z)
-    COUNT = 2
+    Wall = 2,  // стена 1×WALL_HEIGHT×1; rotation 0 — плоскость вдоль X, 1 — вдоль Z
+    COUNT = 3
 };
+
+// Высота стенного модуля в ячейках (классический этаж).
+constexpr int WALL_HEIGHT = 3;
 
 // Архитектурный объект: занимает набор ячеек, владеет ими целиком (ставится/ломается
 // как одно целое). Геометрия v1 — кубы занятых ячеек; крупные плоскости — этап WallRun.
@@ -88,6 +92,13 @@ private:
     void markDirtyAround(int x, int y, int z);
     void rebuildDirtyChunks();
     void rebuildChunk(int chunkX, int chunkY, int chunkZ);
+    // Wall-объект, владеющий ячейкой (nullptr, если ячейка не стенная).
+    const ArchitectureObject *wallAt(int x, int y, int z) const;
+    // WallRun-проход: раны стен, пересекающие чанк, → крупные тонкие поверхности.
+    void appendWallGeometry(
+        int startX, int startY, int startZ, int endX, int endY, int endZ,
+        std::vector<Vertex> &vertices, std::vector<uint32_t> &indices
+    ) const;
 
     int m_minX = 0, m_minY = 0, m_minZ = 0;
     int m_sizeX = 0, m_sizeY = 0, m_sizeZ = 0;

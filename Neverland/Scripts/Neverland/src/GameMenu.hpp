@@ -7,7 +7,7 @@ enum class GameMenuState {
     MainMenu,    // стартовый экран: Play / Quit
     Playing,     // геймплей: ввод игрока активен, курсор захвачен
     Paused,      // пауза (Esc): Resume / Quit, мир продолжает жить
-    BlockPicker, // меню выбора блоков (Tab): курсор свободен, мир живёт
+    BlockPicker, // меню выбора блоков (M): курсор свободен, мир живёт
 };
 
 class GameMenu final {

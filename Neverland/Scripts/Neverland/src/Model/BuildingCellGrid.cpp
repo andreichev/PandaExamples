@@ -151,9 +151,20 @@ void BuildingCellGrid::cellsFor(
             }
             return;
         }
+        case ArchObjectType::Wall:
+            // Колонна 1×WALL_HEIGHT×1; rotation влияет только на геометрию плоскостей.
+            for (int i = 0; i < WALL_HEIGHT; i++) {
+                outCells.push_back({object.x, object.y + i, object.z});
+            }
+            return;
         case ArchObjectType::COUNT:
             return;
     }
+}
+
+const ArchitectureObject *BuildingCellGrid::wallAt(int x, int y, int z) const {
+    const ArchitectureObject *object = objectAt(x, y, z);
+    return object != nullptr && object->type == ArchObjectType::Wall ? object : nullptr;
 }
 
 bool BuildingCellGrid::canPlace(const ArchitectureObject &object) const {
@@ -266,6 +277,7 @@ void BuildingCellGrid::rebuildChunk(int chunkX, int chunkY, int chunkZ) {
             for (int x = startX; x < endX; x++) {
                 const VoxelType type = blockAt(x, y, z);
                 if (type == VoxelType::NOTHING) { continue; }
+                if (wallAt(x, y, z) != nullptr) { continue; } // стены рисует WallRun-проход
                 Voxel voxel(type);
                 const VoxelTextureData &texture = VoxelTextureMapper::getTextureData(&voxel);
                 for (const FaceSpec &face : FACES) {
@@ -319,6 +331,8 @@ void BuildingCellGrid::rebuildChunk(int chunkX, int chunkY, int chunkZ) {
         }
     }
 
+    appendWallGeometry(startX, startY, startZ, endX, endY, endZ, vertices, indices);
+
     if (vertices.empty()) {
         if (view.mesh.isValid()) {
             AssetManagerAPI::deleteMesh(view.mesh);
@@ -344,6 +358,248 @@ void BuildingCellGrid::rebuildChunk(int chunkX, int chunkY, int chunkZ) {
         MeshComponentAPI::setMesh(view.entity, view.mesh);
         MeshComponentAPI::setMaterial(view.entity, m_material);
         TransformComponentAPI::setPosition(view.entity, {0.f, 0.f, 0.f});
+    }
+}
+
+namespace {
+
+// Толщина стенного полотна (визуальная; топологически стена занимает ячейку).
+constexpr float WALL_THICKNESS = 0.3f;
+
+// Свет граней — те же значения, что у кубов (FACES), но без AO: полотно едино.
+float wallFaceLight(int normalX, int normalY, int normalZ) {
+    if (normalZ > 0) { return 1.0f; }
+    if (normalZ < 0) { return 0.75f; }
+    if (normalY > 0) { return 0.95f; }
+    if (normalY < 0) { return 0.85f; }
+    if (normalX < 0) { return 0.9f; }
+    return 0.8f;
+}
+
+// Квад стены: p0..p3 против часовой снаружи; UV — доли атласного тайла (v вниз, как у кубов).
+void addWallQuad(
+    std::vector<Vertex> &vertices,
+    std::vector<uint32_t> &indices,
+    const Vec3 &p0,
+    const Vec3 &p1,
+    const Vec3 &p2,
+    const Vec3 &p3,
+    const Vec3 &normal,
+    uint8_t tileIndex,
+    uint32_t tint,
+    float u0,
+    float v0,
+    float u1,
+    float v1
+) {
+    const Vec2 uvBase = tileUV(tileIndex);
+    const float uvSize = 1.f / BLOCKS_ATLAS_GRID - 0.001f;
+    const float light = wallFaceLight(
+        static_cast<int>(normal.x), static_cast<int>(normal.y), static_cast<int>(normal.z)
+    );
+    const uint32_t base = static_cast<uint32_t>(vertices.size());
+    for (uint32_t index : {base, base + 1u, base + 2u, base + 2u, base + 3u, base}) {
+        indices.emplace_back(index);
+    }
+    const Vec2 uvs[4] = {
+        {uvBase.x + u0 * uvSize, uvBase.y + v1 * uvSize},
+        {uvBase.x + u1 * uvSize, uvBase.y + v1 * uvSize},
+        {uvBase.x + u1 * uvSize, uvBase.y + v0 * uvSize},
+        {uvBase.x + u0 * uvSize, uvBase.y + v0 * uvSize},
+    };
+    const Vec3 points[4] = {p0, p1, p2, p3};
+    for (int i = 0; i < 4; i++) {
+        vertices.emplace_back(Vertex(points[i], uvs[i], normal, hexColor(tint), light));
+    }
+}
+
+} // namespace
+
+// Раны стен: последовательности Wall-объектов одной оси/материала/базы сливаются в единое
+// полотно — крупные плоскости без пер-ячеечного AO («не воксельная геометрия», диздок).
+// Ран может пересекать границы чанков: каждый чанк рисует свои ячейки (UV мировой —
+// стык бесшовный). Внешний угол: продление полотна до дальней плоскости перпендикулярной
+// стены того же материала (торец при этом скрыт и не рисуется).
+void BuildingCellGrid::appendWallGeometry(
+    int startX, int startY, int startZ, int endX, int endY, int endZ,
+    std::vector<Vertex> &vertices, std::vector<uint32_t> &indices
+) const {
+    std::unordered_map<uint32_t, bool> processedRuns; // id стартового объекта рана
+
+    const auto sameWall = [this](const ArchitectureObject &sample, int x, int z) -> const ArchitectureObject * {
+        const ArchitectureObject *wall = wallAt(x, sample.y, z);
+        if (wall == nullptr || wall->rotation != sample.rotation ||
+            wall->material != sample.material || wall->y != sample.y) {
+            return nullptr;
+        }
+        return wall;
+    };
+    // Перпендикулярная стена того же материала в угловой ячейке (для продления полотна).
+    const auto cornerWall = [this](const ArchitectureObject &sample, int x, int z) {
+        const ArchitectureObject *wall = wallAt(x, sample.y, z);
+        return wall != nullptr && wall->rotation != sample.rotation &&
+               wall->material == sample.material && wall->y == sample.y;
+    };
+
+    for (int y = startY; y < endY; y++) {
+        for (int z = startZ; z < endZ; z++) {
+            for (int x = startX; x < endX; x++) {
+                const ArchitectureObject *wall = wallAt(x, y, z);
+                if (wall == nullptr || y != wall->y) { continue; } // ран ведём от базовых ячеек
+                const int stepX = wall->rotation == 0 ? 1 : 0;
+                const int stepZ = wall->rotation == 0 ? 0 : 1;
+
+                // Начало рана: назад вдоль оси до первой несовместимой ячейки.
+                const ArchitectureObject *runStart = wall;
+                while (const ArchitectureObject *previous =
+                           sameWall(*wall, runStart->x - stepX, runStart->z - stepZ)) {
+                    runStart = previous;
+                }
+                if (processedRuns.count(runStart->id)) { continue; }
+                processedRuns.emplace(runStart->id, true);
+
+                int runLength = 1;
+                const ArchitectureObject *runEnd = runStart;
+                while (const ArchitectureObject *next =
+                           sameWall(*wall, runEnd->x + stepX, runEnd->z + stepZ)) {
+                    runEnd = next;
+                    runLength++;
+                }
+
+                // Внешний угол: полотно заходит в угловую ячейку до ДАЛЬНЕЙ грани
+                // перпендикулярной стены; торец при этом не рисуется (скрыт).
+                const bool extendStart =
+                    cornerWall(*wall, runStart->x - stepX, runStart->z - stepZ);
+                const bool extendEnd = cornerWall(*wall, runEnd->x + stepX, runEnd->z + stepZ);
+                const float extend = 0.5f + WALL_THICKNESS * 0.5f;
+
+                const float baseY = static_cast<float>(wall->y);
+                const float topY = baseY + static_cast<float>(WALL_HEIGHT);
+                const Voxel voxel(wall->material);
+                const VoxelTextureData &texture = VoxelTextureMapper::getTextureData(&voxel);
+                const uint8_t tile = texture.sideTileIndex;
+                const uint32_t tint = texture.sideColor;
+                const uint8_t topTile = texture.topTileIndex;
+                const uint32_t topTint = texture.topColor;
+
+                // Ячейки рана: чанк рисует только свои (+ продление у принадлежащего ему конца).
+                for (int i = 0; i < runLength; i++) {
+                    const int cellX = runStart->x + stepX * i;
+                    const int cellZ = runStart->z + stepZ * i;
+                    if (cellX < startX || cellX >= endX || cellZ < startZ || cellZ >= endZ) {
+                        continue;
+                    }
+                    float begin = static_cast<float>(wall->rotation == 0 ? cellX : cellZ);
+                    float finish = begin + 1.f;
+                    if (i == 0 && extendStart) { begin -= extend; }
+                    if (i == runLength - 1 && extendEnd) { finish += extend; }
+
+                    const float center =
+                        (wall->rotation == 0 ? static_cast<float>(cellZ) : static_cast<float>(cellX)) + 0.5f;
+                    const float sideA = center - WALL_THICKNESS * 0.5f;
+                    const float sideB = center + WALL_THICKNESS * 0.5f;
+
+                    const bool wallAbove =
+                        wallAt(cellX, wall->y + WALL_HEIGHT, cellZ) != nullptr &&
+                        wallAt(cellX, wall->y + WALL_HEIGHT, cellZ)->material == wall->material;
+                    const bool wallBelow =
+                        wallAt(cellX, wall->y - 1, cellZ) != nullptr &&
+                        wallAt(cellX, wall->y - 1, cellZ)->material == wall->material;
+
+                    // Полотно: по метру на квад (полный тайл атласа), дробные куски у продлений;
+                    // UV мировой — стыки метров и чанков бесшовны, пер-ячеечного AO нет.
+                    for (float u = begin; u < finish - 1e-4f;) {
+                        const float next = std::min(std::floor(u + 1.f), finish);
+                        const float texU0 = u - std::floor(u);
+                        const float texU1 = texU0 + (next - u);
+                        for (int level = 0; level < WALL_HEIGHT; level++) {
+                            const float y0 = baseY + level;
+                            const float y1 = y0 + 1.f;
+                            if (wall->rotation == 0) {
+                                addWallQuad(
+                                    vertices, indices, {u, y0, sideB}, {next, y0, sideB},
+                                    {next, y1, sideB}, {u, y1, sideB}, {0.f, 0.f, 1.f}, tile, tint,
+                                    texU0, 0.f, texU1, 1.f
+                                );
+                                addWallQuad(
+                                    vertices, indices, {next, y0, sideA}, {u, y0, sideA},
+                                    {u, y1, sideA}, {next, y1, sideA}, {0.f, 0.f, -1.f}, tile, tint,
+                                    texU0, 0.f, texU1, 1.f
+                                );
+                            } else {
+                                addWallQuad(
+                                    vertices, indices, {sideB, y0, next}, {sideB, y0, u},
+                                    {sideB, y1, u}, {sideB, y1, next}, {1.f, 0.f, 0.f}, tile, tint,
+                                    texU0, 0.f, texU1, 1.f
+                                );
+                                addWallQuad(
+                                    vertices, indices, {sideA, y0, u}, {sideA, y0, next},
+                                    {sideA, y1, next}, {sideA, y1, u}, {-1.f, 0.f, 0.f}, tile, tint,
+                                    texU0, 0.f, texU1, 1.f
+                                );
+                            }
+                        }
+                        // Верх/низ: полосы толщиной стены (пропуск, если стена продолжается по вертикали).
+                        if (!wallAbove) {
+                            if (wall->rotation == 0) {
+                                addWallQuad(
+                                    vertices, indices, {u, topY, sideA}, {u, topY, sideB},
+                                    {next, topY, sideB}, {next, topY, sideA}, {0.f, 1.f, 0.f},
+                                    topTile, topTint, 0.f, texU0, WALL_THICKNESS, texU1
+                                );
+                            } else {
+                                addWallQuad(
+                                    vertices, indices, {sideA, topY, u}, {sideA, topY, next},
+                                    {sideB, topY, next}, {sideB, topY, u}, {0.f, 1.f, 0.f},
+                                    topTile, topTint, 0.f, texU0, WALL_THICKNESS, texU1
+                                );
+                            }
+                        }
+                        if (!wallBelow) {
+                            if (wall->rotation == 0) {
+                                addWallQuad(
+                                    vertices, indices, {u, baseY, sideA}, {next, baseY, sideA},
+                                    {next, baseY, sideB}, {u, baseY, sideB}, {0.f, -1.f, 0.f},
+                                    topTile, topTint, 0.f, texU0, WALL_THICKNESS, texU1
+                                );
+                            } else {
+                                addWallQuad(
+                                    vertices, indices, {sideA, baseY, u}, {sideB, baseY, u},
+                                    {sideB, baseY, next}, {sideA, baseY, next}, {0.f, -1.f, 0.f},
+                                    topTile, topTint, 0.f, texU0, WALL_THICKNESS, texU1
+                                );
+                            }
+                        }
+                        u = next;
+                    }
+
+                    // Торцы — только на непродлённых концах рана.
+                    const auto addCap = [&](float at, bool negative) {
+                        const Vec3 normal = wall->rotation == 0
+                                                ? Vec3(negative ? -1.f : 1.f, 0.f, 0.f)
+                                                : Vec3(0.f, 0.f, negative ? -1.f : 1.f);
+                        // Порядок вершин: против часовой снаружи для обеих ориентаций.
+                        const float capNear = negative ? sideA : sideB;
+                        const float capFar = negative ? sideB : sideA;
+                        if (wall->rotation == 0) {
+                            addWallQuad(
+                                vertices, indices, {at, baseY, capNear}, {at, baseY, capFar},
+                                {at, topY, capFar}, {at, topY, capNear}, normal, tile, tint, 0.f, 0.f,
+                                WALL_THICKNESS, 1.f
+                            );
+                        } else {
+                            addWallQuad(
+                                vertices, indices, {capFar, baseY, at}, {capNear, baseY, at},
+                                {capNear, topY, at}, {capFar, topY, at}, normal, tile, tint, 0.f, 0.f,
+                                WALL_THICKNESS, 1.f
+                            );
+                        }
+                    };
+                    if (i == 0 && !extendStart) { addCap(begin, true); }
+                    if (i == runLength - 1 && !extendEnd) { addCap(finish, false); }
+                }
+            }
+        }
     }
 }
 

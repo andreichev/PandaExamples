@@ -502,7 +502,7 @@ void NeverlandHUD::shutdown() {
 }
 
 void NeverlandHUD::updateMenuInput() {
-    if (Input::isKeyJustPressed(Key::TAB)) {
+    if (Input::isKeyJustPressed(Key::M)) {
         if (GameMenu::state() == GameMenuState::Playing) {
             GameMenu::setState(GameMenuState::BlockPicker);
         } else if (GameMenu::state() == GameMenuState::BlockPicker) {
@@ -698,7 +698,7 @@ std::shared_ptr<PandaUI::Panel> NeverlandHUD::makeBlocksMenu() {
     }
     card->addSubview(row);
 
-    auto hint = std::make_shared<PandaUI::Label>("Tab / Esc — close");
+    auto hint = std::make_shared<PandaUI::Label>("M / Esc — close");
     hint->setFont(PandaUI::Font(11.f));
     hint->setTextColor(PandaUI::Color(0x9AA6BAFF));
     card->addSubview(hint);

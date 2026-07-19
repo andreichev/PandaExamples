@@ -36,7 +36,7 @@ private:
     void buildUI();
     void updateTouchControlSafeArea();
     void updateSelection();
-    void updateMenuInput();  // Esc: Playing ↔ Paused; Tab: Playing ↔ BlockPicker
+    void updateMenuInput();  // Esc: Playing ↔ Paused; M: Playing ↔ BlockPicker
     void updateBrushPanel(); // Alt-модификатор курсора + синк панели рельефа (desktop)
     void applyMenuState();   // видимость HUD/меню + идемпотентность по последнему состоянию
     void loadBlockPreviewTextures();
@@ -44,7 +44,7 @@ private:
     PandaUI::TextureHandle previewFor(VoxelType type) const;
     std::shared_ptr<PandaUI::Panel> makeMainMenu();
     std::shared_ptr<PandaUI::Panel> makePauseMenu();
-    // Меню выбора блоков (Tab): секции Building / Elements / Terrain разделены.
+    // Меню выбора блоков (M): секции Building / Elements / Terrain разделены.
     std::shared_ptr<PandaUI::Panel> makeBlocksMenu();
     std::shared_ptr<PandaUI::Panel> makeCrosshair();
     std::shared_ptr<PandaUI::Panel> makeTouchControls();
