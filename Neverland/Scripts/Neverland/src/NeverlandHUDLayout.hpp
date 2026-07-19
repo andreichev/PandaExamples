@@ -22,8 +22,9 @@ constexpr float HotbarGap = 6.0f;
 constexpr float HotbarBottomMargin = 0.0f;
 constexpr int HotbarSlotCount = 7;
 
-constexpr float HotbarWidth =
-    HotbarPaddingHorizontal * 2.0f + HotbarSlotWidth * HotbarSlotCount + HotbarGap * (HotbarSlotCount - 1);
+// +1 — кнопка Menu в правом краю хотбара.
+constexpr float HotbarWidth = HotbarPaddingHorizontal * 2.0f +
+                              HotbarSlotWidth * (HotbarSlotCount + 1) + HotbarGap * HotbarSlotCount;
 constexpr float HotbarHeight = HotbarPaddingVertical * 2.0f + HotbarSlotHeight;
 constexpr float HotbarTouchHeight = HotbarBottomMargin + HotbarHeight + 20.0f;
 

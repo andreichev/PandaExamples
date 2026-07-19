@@ -34,6 +34,9 @@ public:
     const std::vector<VoxelType> &getRecentBlocks() const {
         return m_recentBlocks;
     }
+    // Пресеты элементов (редакторы в меню): применяются к новым установкам.
+    uint8_t getElementParam(ArchObjectType element, int index) const;
+    void setElementParam(ArchObjectType element, int index, uint8_t value);
     // Кисть рельефа (панель TerrainBrushPanel и клавиши делят один стейт).
     void setBrushMode(GameBrushMode mode) { m_brushMode = mode; }
     GameBrushMode getBrushMode() const { return m_brushMode; }
@@ -74,6 +77,8 @@ private:
 
     // Объект под установку по прицелу: origin за гранью, поворот от взгляда, материал.
     ArchitectureObject pendingObject(const AimHit &hit) const;
+    // Протяжка (desktop): линия объектов от старта до прицела вдоль доминантной оси.
+    void rebuildDragLine(const ArchitectureObject &current);
 
     Shared<PlayerController> m_playerController;
     HeldItemView m_heldItemView;
@@ -82,6 +87,11 @@ private:
     ArchObjectType m_selectedElement = ArchObjectType::Block;
     VoxelType m_lastBuildingMaterial = VoxelType::STONE_BRICKS;
     std::vector<VoxelType> m_recentBlocks; // MRU строительных материалов (хотбар)
+    uint8_t m_roofParams[ARCH_PARAM_COUNT] = {};   // пресеты крыши (редактор в меню)
+    uint8_t m_windowParams[ARCH_PARAM_COUNT] = {}; // пресеты окна
+    bool m_dragActive = false;             // протяжка ЛКМ (desktop, building-режим)
+    ArchitectureObject m_dragBase;         // первый объект линии
+    std::vector<ArchitectureObject> m_dragLine;
     int m_brushSize = 2;
     GameBrushMode m_brushMode = GameBrushMode::Sphere;
     std::vector<TerrainAccess::Edit> m_previewEdits; // буфер превью/применения

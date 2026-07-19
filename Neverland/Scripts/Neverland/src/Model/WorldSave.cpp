@@ -7,7 +7,8 @@
 namespace {
 
 constexpr uint32_t SAVE_MAGIC = 0x4E565356; // 'NVSV'
-constexpr uint32_t SAVE_VERSION = 3;        // архитектурные объекты построек
+constexpr uint32_t SAVE_VERSION = 4;          // объекты с параметрами-пресетами
+constexpr uint32_t OBJECTS_V3_VERSION = 3;    // объекты без params (читаются нулями)
 constexpr uint32_t LEGACY_BLOCKS_VERSION = 2; // одиночные кубы — мигрируются
 
 template<typename T>
@@ -39,7 +40,8 @@ void WorldSave::load(const std::string &path) {
         return;
     }
     if (!readValue(file, version) ||
-        (version != SAVE_VERSION && version != LEGACY_BLOCKS_VERSION)) {
+        (version != SAVE_VERSION && version != OBJECTS_V3_VERSION &&
+         version != LEGACY_BLOCKS_VERSION)) {
         LOG_WARN("WorldSave: version %u unsupported (want %u) — starting fresh", version, SAVE_VERSION);
         return;
     }
@@ -105,6 +107,14 @@ void WorldSave::load(const std::string &path) {
         object.z = z;
         object.rotation = rotation;
         object.material = static_cast<VoxelType>(material);
+        if (version >= SAVE_VERSION) {
+            for (int p = 0; p < ARCH_PARAM_COUNT; p++) {
+                if (!readValue(file, object.params[p])) {
+                    LOG_ERROR("WorldSave: truncated object params in %s", path.c_str());
+                    return;
+                }
+            }
+        }
         if (object.type >= ArchObjectType::COUNT ||
             object.material >= VoxelType::COUNT) { // сейв из более новой версии игры
             continue;
@@ -146,5 +156,8 @@ void WorldSave::saveToDisk() const {
         writeValue(file, static_cast<int32_t>(object.z));
         writeValue(file, object.rotation);
         writeValue(file, static_cast<uint8_t>(object.material));
+        for (int p = 0; p < ARCH_PARAM_COUNT; p++) {
+            writeValue(file, object.params[p]);
+        }
     }
 }

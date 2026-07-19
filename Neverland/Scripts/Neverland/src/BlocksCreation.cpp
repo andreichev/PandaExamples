@@ -445,22 +445,14 @@ void BlocksCreation::update(float deltaTime) {
             }
         }
     }
-    updateBrushMarker(m_previewEdits);
-
-    if (!hit.valid || (!placePressed && !breakPressed)) { return; }
-    if (placePressed) {
-        if (brushActive) {
+    if (brushActive) {
+        updateBrushMarker(m_previewEdits);
+        if (!hit.valid || (!placePressed && !breakPressed)) { return; }
+        if (placePressed) {
             TerrainAccess::applyEdits(m_previewEdits);
             VoxelCharacterController::invalidateFieldCache();
         } else {
-            GameContext::s_buildingGrid->place(pendingObject(hit));
-        }
-    } else if (breakPressed) {
-        if (hit.isBuilding) {
-            // Объект исчезает целиком (владение ячейками — у объекта).
-            GameContext::s_buildingGrid->removeObjectAt(hit.x, hit.y, hit.z);
-        } else if (brushActive) {
-            // Обратное действие кисти: вырезать/опустить.
+            // Обратное действие кисти: вырезать/опустить. Рельеф правится только здесь.
             GameBrush::computeEdits(
                 m_brushMode, /*secondary*/ true, hit.x, hit.y, hit.z, hit.normalX, hit.normalY,
                 hit.normalZ, currentBrushRadius(), m_selectedBlock, *GameContext::s_buildingGrid,
@@ -468,13 +460,107 @@ void BlocksCreation::update(float deltaTime) {
             );
             TerrainAccess::applyEdits(m_previewEdits);
             VoxelCharacterController::invalidateFieldCache();
-        } else {
-            // Строительный тип в руке, но целимся в рельеф — одиночный вырез воксела.
-            std::vector<TerrainAccess::Edit> single = {{hit.x, hit.y, hit.z, VoxelType::NOTHING}};
-            TerrainAccess::applyEdits(single);
+        }
+        return;
+    }
+
+#if defined(NEVERLAND_MOBILE)
+    // Мобила: одиночная установка/слом (протяжка конфликтует с камерой).
+    updateBrushMarker(m_previewEdits);
+    if (!hit.valid || (!placePressed && !breakPressed)) { return; }
+    if (placePressed) {
+        GameContext::s_buildingGrid->place(pendingObject(hit));
+    } else if (hit.isBuilding) {
+        GameContext::s_buildingGrid->removeObjectAt(hit.x, hit.y, hit.z);
+    }
+    // Строительный режим рельеф не трогает.
+#else
+    // Desktop: протяжка — зажатый ЛКМ тянет линию объектов, установка на отпускании.
+    const bool leftHeld =
+        Input::isMouseButtonPressed(MouseButton::LEFT) && !GameMenu::isUIModifierHeld();
+    if (!m_dragActive && placePressed && hit.valid) {
+        m_dragActive = true;
+        m_dragBase = pendingObject(hit);
+        m_dragLine = {m_dragBase};
+    }
+    if (m_dragActive) {
+        if (hit.valid) { rebuildDragLine(pendingObject(hit)); }
+        m_previewEdits.clear();
+        std::vector<std::array<int, 3>> cells;
+        for (const ArchitectureObject &object : m_dragLine) {
+            BuildingCellGrid::cellsFor(object, cells);
+            for (const auto &cell : cells) {
+                m_previewEdits.push_back({cell[0], cell[1], cell[2], object.material});
+            }
+        }
+        if (breakPressed) { // ПКМ во время протяжки — отмена
+            m_dragActive = false;
+            m_dragLine.clear();
+        } else if (!leftHeld) {
+            for (const ArchitectureObject &object : m_dragLine) {
+                GameContext::s_buildingGrid->place(object);
+            }
+            m_dragActive = false;
+            m_dragLine.clear();
             VoxelCharacterController::invalidateFieldCache();
         }
+        updateBrushMarker(m_previewEdits);
+        return;
     }
+    updateBrushMarker(m_previewEdits);
+    if (!hit.valid || !breakPressed) { return; }
+    if (hit.isBuilding) {
+        // Объект исчезает целиком (владение ячейками — у объекта).
+        GameContext::s_buildingGrid->removeObjectAt(hit.x, hit.y, hit.z);
+    }
+    // Строительный режим рельеф не трогает: терраформ — только природным материалом.
+#endif
+}
+
+// Линия протяжки: от базы до текущего прицела вдоль доминантной оси; шаг — размер
+// формы вдоль этой оси (балка встык), осевые формы поворачиваются вдоль линии.
+void BlocksCreation::rebuildDragLine(const ArchitectureObject &current) {
+    m_dragLine.clear();
+    const int deltaX = current.x - m_dragBase.x;
+    const int deltaZ = current.z - m_dragBase.z;
+    const bool axisX = std::abs(deltaX) >= std::abs(deltaZ);
+    const int distance = axisX ? deltaX : deltaZ;
+    const int direction = distance >= 0 ? 1 : -1;
+
+    int step = 1;
+    if (m_dragBase.type == ArchObjectType::Beam) { step = 3; } // сегменты встык
+
+    ArchitectureObject object = m_dragBase;
+    // Осевые формы ложатся вдоль линии протяжки.
+    if (isWallFamilyType(object.type) || object.type == ArchObjectType::Cornice) {
+        object.rotation = axisX ? 0 : 1;
+    } else if (object.type == ArchObjectType::Beam) {
+        object.rotation = axisX ? (direction > 0 ? 0 : 2) : (direction > 0 ? 1 : 3);
+    }
+
+    const int count = std::abs(distance) / step + 1;
+    for (int i = 0; i < count; i++) {
+        ArchitectureObject lineObject = object;
+        if (axisX) {
+            lineObject.x = m_dragBase.x + direction * step * i;
+        } else {
+            lineObject.z = m_dragBase.z + direction * step * i;
+        }
+        m_dragLine.push_back(lineObject);
+    }
+}
+
+uint8_t BlocksCreation::getElementParam(ArchObjectType element, int index) const {
+    if (index < 0 || index >= ARCH_PARAM_COUNT) { return 0; }
+    if (element == ArchObjectType::Roof) { return m_roofParams[index]; }
+    if (element == ArchObjectType::Window) { return m_windowParams[index]; }
+    return 0;
+}
+
+void BlocksCreation::setElementParam(ArchObjectType element, int index, uint8_t value) {
+    if (index < 0 || index >= ARCH_PARAM_COUNT) { return; }
+    if (element == ArchObjectType::Roof) { m_roofParams[index] = value; }
+    if (element == ArchObjectType::Window) { m_windowParams[index] = value; }
 }
 
 ArchitectureObject BlocksCreation::pendingObject(const AimHit &hit) const {
@@ -484,6 +570,9 @@ ArchitectureObject BlocksCreation::pendingObject(const AimHit &hit) const {
     object.y = hit.y + hit.normalY;
     object.z = hit.z + hit.normalZ;
     object.material = m_selectedBlock;
+    for (int p = 0; p < ARCH_PARAM_COUNT; p++) {
+        object.params[p] = getElementParam(object.type, p);
+    }
     if (object.type == ArchObjectType::Beam && m_playerController) {
         // Балка растёт от прицела в направлении взгляда (доминантная ось XZ).
         const Vec3 front = m_playerController->getFront();

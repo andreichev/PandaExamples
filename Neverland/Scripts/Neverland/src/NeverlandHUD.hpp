@@ -48,6 +48,8 @@ private:
     std::shared_ptr<PandaUI::Panel> makeBuildingTab();
     std::shared_ptr<PandaUI::Panel> makeTerrainTab();
     void setBlocksMenuTab(int tab); // 0 — Building, 1 — Terrain
+    // Редактор пресетов выбранного элемента (Roof/Window) в панели Element settings.
+    void rebuildElementSettings();
     std::shared_ptr<PandaUI::Panel> makeCrosshair();
     std::shared_ptr<PandaUI::Panel> makeTouchControls();
     std::shared_ptr<PandaUI::Panel> makeMoveStickOverlay();
@@ -86,7 +88,7 @@ private:
     // Превью тайлов по типу вокселя (строительные + природные).
     std::array<PandaUI::TextureHandle, static_cast<size_t>(VoxelType::COUNT)> m_previewTextures;
     VoxelType m_displayedSelection = VoxelType::NOTHING;
-    bool m_displayedElementSelected = false;
+    ArchObjectType m_displayedElement = ArchObjectType::COUNT; // COUNT = «не применено»
 };
 
 REGISTER_SCRIPT(NeverlandHUD)

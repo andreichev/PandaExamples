@@ -683,21 +683,32 @@ void BuildingCellGrid::appendWallGeometry(
                             emitBand(begin, finish, baseY, topY);
                             break;
                         case ArchObjectType::Window: {
-                            const float sillY = baseY + WALL_SILL_HEIGHT;
+                            // Пресеты модуля: ширина проёма, высота подоконника, раскладка рамы.
+                            const float jamb = cellModule->params[0] == 1   ? 0.25f
+                                               : cellModule->params[0] == 2 ? 0.08f
+                                                                            : WALL_WINDOW_JAMB;
+                            const float sillHeight = cellModule->params[1] == 1   ? 0.6f
+                                                     : cellModule->params[1] == 2 ? 1.2f
+                                                                                  : WALL_SILL_HEIGHT;
+                            const uint8_t frameKind = cellModule->params[2]; // 0 крест, 1 без, 2 вертикаль
+                            const float sillY = baseY + sillHeight;
                             const float headY = baseY + WALL_HEAD_HEIGHT;
-                            const float u0 = cellU + WALL_WINDOW_JAMB;
-                            const float u1 = cellU + 1.f - WALL_WINDOW_JAMB;
+                            const float u0 = cellU + jamb;
+                            const float u1 = cellU + 1.f - jamb;
                             emitBand(begin, finish, baseY, sillY); // подоконная стенка
                             emitBand(begin, finish, headY, topY); // перемычка
                             emitBand(begin, u0, sillY, headY);    // простенок слева
                             emitBand(u1, finish, sillY, headY);   // простенок справа
                             emitReveals(u0, u1, sillY, headY, true);
-                            // Рама-крест по центру толщины стены.
                             const float barHalf = WALL_FRAME_BAR * 0.5f;
                             const float uMid = (u0 + u1) * 0.5f;
                             const float yMid = (sillY + headY) * 0.5f;
-                            emitBar(uMid - barHalf, uMid + barHalf, sillY, headY, center - barHalf, center + barHalf);
-                            emitBar(u0, u1, yMid - barHalf, yMid + barHalf, center - barHalf, center + barHalf);
+                            if (frameKind != 1) { // вертикальная планка есть у креста и вертикали
+                                emitBar(uMid - barHalf, uMid + barHalf, sillY, headY, center - barHalf, center + barHalf);
+                            }
+                            if (frameKind == 0) { // горизонтальная — только у креста
+                                emitBar(u0, u1, yMid - barHalf, yMid + barHalf, center - barHalf, center + barHalf);
+                            }
                             break;
                         }
                         case ArchObjectType::Door: {
@@ -1010,7 +1021,8 @@ void BuildingCellGrid::collectRoofRegion(
             if (visited.count(packCell(nx, y, nz))) { continue; }
             const ArchitectureObject *neighbor = objectAt(nx, y, nz);
             if (neighbor == nullptr || neighbor->type != ArchObjectType::Roof ||
-                neighbor->material != seed->material || neighbor->y != seed->y) {
+                neighbor->material != seed->material || neighbor->y != seed->y ||
+                std::memcmp(neighbor->params, seed->params, ARCH_PARAM_COUNT) != 0) {
                 continue;
             }
             visited.emplace(packCell(nx, y, nz), true);
@@ -1095,8 +1107,17 @@ void BuildingCellGrid::appendRoofGeometry(
                 const VoxelTextureData &texture = VoxelTextureMapper::getTextureData(&voxel);
                 const uint8_t wallTile = texture.sideTileIndex;
                 const uint32_t tint = texture.sideColor;
-                // Черепица: колонка roof-атласа по материалу объекта (ряд 0).
+                // Параметры-пресеты области (у всех ячеек области равны — критерий flood).
+                const bool flatRoof = seed->params[0] == 1;
+                const float roofSlope =
+                    seed->params[1] == 1 ? 0.4f : seed->params[1] == 2 ? 1.0f : ROOF_SLOPE;
+                const float roofOverhang =
+                    seed->params[3] == 1 ? 0.f : seed->params[3] == 2 ? 0.5f : ROOF_OVERHANG;
+                // Черепица: явная колонка атласа или авто по материалу объекта (ряд 0).
                 const uint8_t roofTile = [&]() -> uint8_t {
+                    if (seed->params[2] >= 1 && seed->params[2] <= 4) {
+                        return static_cast<uint8_t>(seed->params[2] - 1);
+                    }
                     switch (seed->material) {
                         case VoxelType::BOARDS:
                         case VoxelType::TREE:
@@ -1156,8 +1177,9 @@ void BuildingCellGrid::appendRoofGeometry(
                     }
                 };
 
-                const float slopeAngleCos = 1.f / std::sqrt(1.f + ROOF_SLOPE * ROOF_SLOPE);
-                const float slopeAngleSin = ROOF_SLOPE * slopeAngleCos;
+                const float effectiveSlope = flatRoof ? 0.f : roofSlope;
+                const float slopeAngleCos = 1.f / std::sqrt(1.f + effectiveSlope * effectiveSlope);
+                const float slopeAngleSin = effectiveSlope * slopeAngleCos;
 
                 for (size_t stripIndex = 0; stripIndex < strips.size(); stripIndex++) {
                     const Strip &strip = strips[stripIndex];
@@ -1172,11 +1194,11 @@ void BuildingCellGrid::appendRoofGeometry(
 
                     const float a0 = static_cast<float>(stripA);
                     const float a1 = a0 + 1.f;
-                    const float tEdge0 = static_cast<float>(strip.tMin) - ROOF_OVERHANG;
-                    const float tEdge1 = static_cast<float>(strip.tMax) + 1.f + ROOF_OVERHANG;
+                    const float tEdge0 = static_cast<float>(strip.tMin) - roofOverhang;
+                    const float tEdge1 = static_cast<float>(strip.tMax) + 1.f + roofOverhang;
                     const float tMid = (tEdge0 + tEdge1) * 0.5f;
-                    const float eavesY = baseY - ROOF_OVERHANG * ROOF_SLOPE;
-                    const float ridgeY = eavesY + (tMid - tEdge0) * ROOF_SLOPE;
+                    const float eavesY = baseY - roofOverhang * effectiveSlope;
+                    const float ridgeY = eavesY + (tMid - tEdge0) * effectiveSlope;
                     const float slopeLength = (tMid - tEdge0) / slopeAngleCos;
 
                     // Скат: right=false — подъём в +t (нормаль в −t), true — зеркально.
@@ -1249,7 +1271,7 @@ void BuildingCellGrid::appendRoofGeometry(
                     const float wallT0 = static_cast<float>(strip.tMin);
                     const float wallT1 = static_cast<float>(strip.tMax) + 1.f;
                     const float wallMid = (wallT0 + wallT1) * 0.5f;
-                    const float wallRidgeY = baseY + (wallMid - wallT0) * ROOF_SLOPE;
+                    const float wallRidgeY = baseY + (wallMid - wallT0) * effectiveSlope;
                     const auto emitGable = [&](float atA, float inwardSign) {
                         const float innerA = atA + inwardSign * GABLE_THICKNESS;
                         // Наружная и внутренняя треугольные грани (материал стен).
@@ -1263,11 +1285,12 @@ void BuildingCellGrid::appendRoofGeometry(
                             0.f, 0.f
                         );
                     };
-                    if (gableFront) { emitGable(a0, 1.f); }
-                    if (gableBack) { emitGable(a1, -1.f); }
+                    if (!flatRoof && gableFront) { emitGable(a0, 1.f); }
+                    if (!flatRoof && gableBack) { emitGable(a1, -1.f); }
 
-                    // Коньковый брус «домиком» поверх стыка скатов.
-                    const float ridgeBaseY = ridgeY - RIDGE_HALF_WIDTH * ROOF_SLOPE;
+                    // Коньковый брус «домиком» поверх стыка скатов (у плоской нет конька).
+                    if (flatRoof) { continue; }
+                    const float ridgeBaseY = ridgeY - RIDGE_HALF_WIDTH * effectiveSlope;
                     emitQuad(
                         P(a1, ridgeBaseY, tMid - RIDGE_HALF_WIDTH), P(a0, ridgeBaseY, tMid - RIDGE_HALF_WIDTH),
                         P(a0, ridgeY + RIDGE_HEIGHT, tMid), P(a1, ridgeY + RIDGE_HEIGHT, tMid), 0.f,

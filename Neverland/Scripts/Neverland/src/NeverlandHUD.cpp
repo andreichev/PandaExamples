@@ -196,6 +196,55 @@ private:
     bool m_selected;
 };
 
+// Кнопка пресета в редакторе элемента: компактная, с подсветкой выбранного значения.
+class SettingsPresetButton final : public PandaUI::Button {
+public:
+    explicit SettingsPresetButton(std::string text)
+        : PandaUI::Button(std::move(text)) {
+        setFocusable(false);
+        setFont(PandaUI::Font(12.f));
+        surface().setCornerRadius(8.f);
+        surface().setBorderWidth(1.f);
+        layout().setHeight(PandaUI::Length::points(26.f));
+        layout().setPadding(PandaUI::Edge::Horizontal, 10.f);
+        layout().setPadding(PandaUI::Edge::Vertical, 0.f);
+        updateAppearance();
+    }
+
+    void setSelected(bool selected) {
+        if (m_selected == selected) { return; }
+        m_selected = selected;
+        updateAppearance();
+    }
+
+private:
+    void controlStateChanged(PandaUI::ControlState, PandaUI::ControlState) override {
+        updateAppearance();
+    }
+
+    void themeChanged() override {
+        updateAppearance();
+    }
+
+    void updateAppearance() {
+        if (hasControlState(PandaUI::ControlState::Highlighted) || m_selected) {
+            setBackgroundColor(PandaUI::Color(0xE8EEF8E6));
+            getTitleLabel()->setTextColor(PandaUI::Color(0x111722FF));
+            surface().setBorderColor(PandaUI::Color(0xFFFFFFFF));
+        } else if (hasControlState(PandaUI::ControlState::Hovered)) {
+            setBackgroundColor(PandaUI::Color(0x414A59EE));
+            getTitleLabel()->setTextColor(PandaUI::Color(0xF4F7FFFF));
+            surface().setBorderColor(PandaUI::Color(0xFFFFFFAA));
+        } else {
+            setBackgroundColor(PandaUI::Color(0x2D3440DD));
+            getTitleLabel()->setTextColor(PandaUI::Color(0xF4F7FFFF));
+            surface().setBorderColor(PandaUI::Color(0x5C6676AA));
+        }
+    }
+
+    bool m_selected = false;
+};
+
 namespace {
 
 bool shouldShowCrosshair() {
@@ -500,6 +549,7 @@ void NeverlandHUD::shutdown() {
     m_root.reset();
     m_blocksCreation.reset();
     m_displayedSelection = VoxelType::NOTHING;
+    m_displayedElement = ArchObjectType::COUNT;
 }
 
 void NeverlandHUD::updateMenuInput() {
@@ -784,6 +834,82 @@ std::shared_ptr<PandaUI::Panel> NeverlandHUD::makeTerrainTab() {
     tab->addSubview(note);
 
     return tab;
+}
+
+// Пресеты редакторов: то, что генераторы реально умеют (наброски юзера — ориентир).
+void NeverlandHUD::rebuildElementSettings() {
+    if (!m_elementSettings || !m_blocksCreation) { return; }
+    m_elementSettings->removeAllSubviews();
+
+    auto header = std::make_shared<PandaUI::Label>("Element settings");
+    header->setFont(PandaUI::Font(13.f));
+    header->setTextColor(PandaUI::Color(0x9AA6BAFF));
+    m_elementSettings->addSubview(header);
+
+    struct PresetOption {
+        const char *name;
+        uint8_t value;
+    };
+    struct PresetRow {
+        const char *title;
+        int paramIndex;
+        std::vector<PresetOption> options;
+    };
+    const ArchObjectType element = m_blocksCreation->getSelectedElement();
+    std::vector<PresetRow> rows;
+    if (element == ArchObjectType::Roof) {
+        rows = {
+            {"Form", 0, {{"Gable", 0}, {"Flat", 1}}},
+            {"Slope", 1, {{"22\u00B0", 1}, {"35\u00B0", 0}, {"45\u00B0", 2}}},
+            {"Tiles", 2, {{"Auto", 0}, {"Red", 1}, {"Brown", 2}, {"Grey", 3}, {"Dark", 4}}},
+            {"Overhang", 3, {{"None", 1}, {"0.25", 0}, {"0.5", 2}}},
+        };
+    } else if (element == ArchObjectType::Window) {
+        rows = {
+            {"Opening", 0, {{"Narrow", 1}, {"Standard", 0}, {"Wide", 2}}},
+            {"Sill", 1, {{"0.6", 1}, {"0.9", 0}, {"1.2", 2}}},
+            {"Frame", 2, {{"Cross", 0}, {"None", 1}, {"Bars", 2}}},
+        };
+    }
+    if (rows.empty()) {
+        auto placeholder = std::make_shared<PandaUI::Label>("No settings for this element yet");
+        placeholder->setFont(PandaUI::Font(12.f));
+        placeholder->setTextColor(PandaUI::Color(0x6E7A8EFF));
+        m_elementSettings->addSubview(placeholder);
+        return;
+    }
+
+    for (const PresetRow &row : rows) {
+        auto rowPanel = std::make_shared<PandaUI::Panel>();
+        rowPanel->setBackgroundColor(PandaUI::Color(0x00000000));
+        rowPanel->layout().setFlexDirection(PandaUI::FlexDirection::Row);
+        rowPanel->layout().setAlignItems(PandaUI::Align::Center);
+        rowPanel->layout().setGap(6.f);
+        rowPanel->layout().setWidth(PandaUI::Length::percent(100.f));
+
+        auto title = std::make_shared<PandaUI::Label>(row.title);
+        title->setFont(PandaUI::Font(12.f));
+        title->setTextColor(PandaUI::Color(0xD5DCE8FF));
+        title->layout().setWidth(PandaUI::Length::points(76.f));
+        rowPanel->addSubview(title);
+
+        const uint8_t current = m_blocksCreation->getElementParam(element, row.paramIndex);
+        for (const PresetOption &option : row.options) {
+            auto button = std::make_shared<SettingsPresetButton>(option.name);
+            button->setSelected(option.value == current);
+            button->setOnClick(
+                [this, element, paramIndex = row.paramIndex, value = option.value](PandaUI::Button &) {
+                    if (m_blocksCreation) {
+                        m_blocksCreation->setElementParam(element, paramIndex, value);
+                        m_blocksCreation->setSelectedElement(element); // пресет = выбор формы
+                    }
+                    rebuildElementSettings();
+                }
+            );
+            rowPanel->addSubview(button);
+        }
+        m_elementSettings->addSubview(rowPanel);
+    }
 }
 
 void NeverlandHUD::setBlocksMenuTab(int tab) {
@@ -1073,6 +1199,24 @@ std::shared_ptr<PandaUI::Panel> NeverlandHUD::makeHotbar() {
         m_slots[i] = slot;
         hotbar->addSubview(slot);
     }
+
+    // Правый край хотбара — вход в меню блоков (дублирует M и мобильную кнопку).
+    auto menuSlot = std::make_shared<HotbarSlotButton>();
+    menuSlot->setFocusable(false);
+    menuSlot->layout().setWidth(PandaUI::Length::points(NeverlandHUDLayout::HotbarSlotWidth));
+    menuSlot->layout().setHeight(PandaUI::Length::points(NeverlandHUDLayout::HotbarSlotHeight));
+    menuSlot->layout().setPadding(0.f);
+    menuSlot->layout().setAlignItems(PandaUI::Align::Center);
+    menuSlot->layout().setJustifyContent(PandaUI::Justify::Center);
+    menuSlot->getTitleLabel()->setHidden(true);
+    auto menuIcon = std::make_shared<PandaUI::Label>("+");
+    menuIcon->setFont(PandaUI::Font(22.f));
+    menuIcon->setTextColor(PandaUI::Color(0xD5DCE8FF));
+    menuSlot->addSubview(menuIcon);
+    menuSlot->setOnClick([](PandaUI::Button &) {
+        GameMenu::setState(GameMenuState::BlockPicker);
+    });
+    hotbar->addSubview(menuSlot);
     return hotbar;
 }
 
@@ -1124,8 +1268,9 @@ void NeverlandHUD::updateSelection() {
     if (!m_blocksCreation) { return; }
     const VoxelType selected = m_blocksCreation->getSelectedBlock();
     const bool elementSelected = m_blocksCreation->isElementSelected();
+    const ArchObjectType element = m_blocksCreation->getSelectedElement();
     const std::vector<VoxelType> &recent = m_blocksCreation->getRecentBlocks();
-    if (selected == m_displayedSelection && elementSelected == m_displayedElementSelected &&
+    if (selected == m_displayedSelection && element == m_displayedElement &&
         recent == m_displayedHotbar) {
         return;
     }
@@ -1141,7 +1286,7 @@ void NeverlandHUD::updateSelection() {
     }
     // Форма и материал независимы: подсветка формы не гасится выбором блока.
     for (auto &[type, card] : m_elementCards) {
-        if (card) { card->setCardSelected(type == m_blocksCreation->getSelectedElement()); }
+        if (card) { card->setCardSelected(type == element); }
     }
     if (m_selectionLabel) {
         std::string name;
@@ -1155,8 +1300,9 @@ void NeverlandHUD::updateSelection() {
         }
         m_selectionLabel->setText(name);
     }
+    if (element != m_displayedElement) { rebuildElementSettings(); }
     m_displayedSelection = selected;
-    m_displayedElementSelected = elementSelected;
+    m_displayedElement = element;
 }
 
 void NeverlandHUD::applySlotStyle(size_t index, bool selected) {
