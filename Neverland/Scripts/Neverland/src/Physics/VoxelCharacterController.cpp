@@ -302,6 +302,16 @@ void VoxelCharacterController::pushOutOfField(
             return;
         }
     }
+    // Глубоко в тверди (плохой спавн/сейв, обвал кисти): локальный скан не спас —
+    // телепорт на поверхность столбца, иначе падение в толще не закончится никогда.
+    float surfaceHeight;
+    Vec3 surfaceNormal;
+    if (TerrainAccess::sampleSurface(eyePosition.x, eyePosition.z, surfaceHeight, surfaceNormal)) {
+        eyePosition.y = surfaceHeight + config.eyeHeight + 0.05f;
+        state.grounded = true;
+        if (state.verticalVelocity < 0.0f) { state.verticalVelocity = 0.0f; }
+        VoxelCharacterController::invalidateFieldCache(); // окно после телепорта устарело
+    }
 }
 
 // Вертикаль: кубовый свип + пол/потолок density-поля.

@@ -66,6 +66,7 @@ public:
     Vec3 getRayDirectionForScreenPoint(float screenX, float screenY) const;
 
 private:
+    void placePlayer(); // спавн/сейв-позиция, когда terrain готов (гард поверхности)
     void updateVectors();
     void updateTouchControls();
     void updateLook();
@@ -99,6 +100,7 @@ private:
     glm::vec3 m_physicsEyePosition = glm::vec3(0.0f);
     float m_visualYOffset = 0.0f;
     bool m_hasPhysicsEyePosition = false;
+    bool m_spawnPending = false; // ждём готовности terrain для размещения
     TouchTracker m_moveTouch;
     TouchTracker m_lookTouch;
     glm::vec3 m_touchMoveDirection = glm::vec3(0.0f);

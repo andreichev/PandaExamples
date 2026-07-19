@@ -67,6 +67,13 @@
             }
         },
         {
+            "id": 917000207,
+            "type": 9,
+            "meta": {
+                "terrainPath": "Assets/terrain/Island.terrain"
+            }
+        },
+        {
             "id": 1072302657,
             "type": 1,
             "meta": {
@@ -175,13 +182,6 @@
                         "materialIndex": 0
                     }
                 ]
-            }
-        },
-        {
-            "id": 917000207,
-            "type": 9,
-            "meta": {
-                "terrainPath": "Assets/terrain/Island.terrain"
             }
         }
     ]

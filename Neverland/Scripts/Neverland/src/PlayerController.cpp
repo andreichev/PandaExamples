@@ -47,10 +47,29 @@ void PlayerController::start() {
     if (std::abs(sprintMultiplier - LEGACY_SPRINT_MULTIPLIER) < 0.01f) {
         sprintMultiplier = UPDATED_SPRINT_MULTIPLIER;
     }
+    // Позиция ставится, когда terrain готов: порядок start-ов скриптов не гарантирован
+    // (BaseScript мог ещё не инициализировать TerrainAccess), а спавн/сейв обязаны
+    // сверяться с поверхностью. До размещения update ничего не двигает.
+    m_spawnPending = true;
+    if (TerrainAccess::isReady()) { placePlayer(); }
+}
+
+void PlayerController::placePlayer() {
+    m_spawnPending = false;
     const WorldSave *save = GameContext::s_worldSave;
+    float surfaceHeight = 20.f;
+    Vec3 surfaceNormal;
     if (save != nullptr && save->player.valid) {
         // Продолжение сохранённой игры: позиция и взгляд из сейва.
         m_physicsEyePosition = glm::vec3(save->player.x, save->player.y, save->player.z);
+        // Гард против испорченного сейва (записанного из-под земли): ноги ниже
+        // поверхности столбца → поднять на поверхность.
+        if (TerrainAccess::sampleSurface(save->player.x, save->player.z, surfaceHeight, surfaceNormal)) {
+            const float feetY = m_physicsEyePosition.y - eyeHeight;
+            if (feetY < surfaceHeight - 0.5f) {
+                m_physicsEyePosition.y = surfaceHeight + eyeHeight + 0.1f;
+            }
+        }
         m_visualYOffset = 0.0f;
         m_hasPhysicsEyePosition = true;
         setEyePosition(m_physicsEyePosition);
@@ -59,10 +78,8 @@ void PlayerController::start() {
         syncRotationFromAngles();
         return;
     }
-    float groundHeight = 20.f;
-    Vec3 groundNormal;
-    TerrainAccess::sampleSurface(0.f, 0.f, groundHeight, groundNormal);
-    m_physicsEyePosition = glm::vec3(0.0f, groundHeight + 1.0f + eyeHeight + 1.0f, 0.0f);
+    TerrainAccess::sampleSurface(0.f, 0.f, surfaceHeight, surfaceNormal);
+    m_physicsEyePosition = glm::vec3(0.0f, surfaceHeight + 1.0f + eyeHeight + 1.0f, 0.0f);
     m_visualYOffset = 0.0f;
     m_hasPhysicsEyePosition = true;
     setEyePosition(m_physicsEyePosition);
@@ -73,6 +90,10 @@ void PlayerController::start() {
 }
 
 void PlayerController::update(float deltaTime) {
+    if (m_spawnPending) {
+        if (!TerrainAccess::isReady()) { return; } // мир ещё не связан с terrain
+        placePlayer();
+    }
     if (!GameMenu::isGameplayActive()) { // меню: игрок замирает, тач-трекеры сбрасываются
         NeverlandTouchControls::reset();
         m_moveTouch = {};
