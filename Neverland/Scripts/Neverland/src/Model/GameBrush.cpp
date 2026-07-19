@@ -8,7 +8,7 @@ namespace {
 // Окно рельефа + гейт построек: насыпать можно только в настоящий воздух.
 struct BrushContext {
     TerrainAccess::Window window;
-    const BuildingGrid *buildings = nullptr;
+    const BuildingCellGrid *buildings = nullptr;
 
     bool isNatural(int x, int y, int z) const {
         return window.layerAt(x, y, z) != 0;
@@ -119,7 +119,7 @@ void computeEdits(
     int normalZ,
     float radius,
     VoxelType paint,
-    const BuildingGrid &buildings,
+    const BuildingCellGrid &buildings,
     std::vector<TerrainAccess::Edit> &outEdits
 ) {
     outEdits.clear();

@@ -4,6 +4,7 @@
 
 #include "BlocksCreation.hpp"
 #include "GameMenu.hpp"
+#include "Model/BlockPalette.hpp"
 #include "Model/GameContext.hpp"
 #include "Model/WorldSave.hpp"
 #include "Physics/VoxelCharacterController.hpp"
@@ -157,9 +158,17 @@ void BlocksCreation::shutdown() {
 void BlocksCreation::setSelectedBlock(VoxelType type) {
     if (type == VoxelType::NOTHING || type == VoxelType::COUNT) { return; }
     m_selectedBlock = type;
+    m_selectedElement = ArchObjectType::Block;
     if (WorldSave *save = GameContext::s_worldSave) {
         save->player.selectedBlock = static_cast<uint8_t>(type);
     }
+}
+
+void BlocksCreation::setSelectedElement(ArchObjectType element) {
+    if (element >= ArchObjectType::COUNT) { return; }
+    m_selectedElement = element;
+    // Материал элемента — строительный: терраформ-материал в балку не превращается.
+    if (isNaturalVoxelType(m_selectedBlock)) { m_selectedBlock = VoxelType::STONE_BRICKS; }
 }
 
 float BlocksCreation::currentBrushRadius() const {
@@ -184,13 +193,14 @@ void BlocksCreation::updateBrushSize() {
 }
 
 void BlocksCreation::updateSelectedBlock() {
-    if (Input::isKeyJustPressed(Key::KEY_1)) { setSelectedBlock(VoxelType::GRASS); }
-    if (Input::isKeyJustPressed(Key::KEY_2)) { setSelectedBlock(VoxelType::GROUND); }
-    if (Input::isKeyJustPressed(Key::KEY_3)) { setSelectedBlock(VoxelType::STONE); }
-    if (Input::isKeyJustPressed(Key::KEY_4)) { setSelectedBlock(VoxelType::SAND); }
-    if (Input::isKeyJustPressed(Key::KEY_5)) { setSelectedBlock(VoxelType::BOARDS); }
-    if (Input::isKeyJustPressed(Key::KEY_6)) { setSelectedBlock(VoxelType::STONE_BRICKS); }
-    if (Input::isKeyJustPressed(Key::KEY_7)) { setSelectedBlock(VoxelType::SAND_STONE); }
+    // Клавиши 1-7 — строительный хотбар; терраформ выбирается в панели/меню.
+    constexpr Key HOTKEYS[] = {Key::KEY_1, Key::KEY_2, Key::KEY_3, Key::KEY_4,
+                               Key::KEY_5, Key::KEY_6, Key::KEY_7};
+    for (size_t i = 0; i < BlockPalette::BUILDING_HOTBAR.size(); i++) {
+        if (Input::isKeyJustPressed(HOTKEYS[i])) {
+            setSelectedBlock(BlockPalette::BUILDING_HOTBAR[i].type);
+        }
+    }
 }
 
 BlocksCreation::AimHit BlocksCreation::aim(const Vec3 &origin, const Vec3 &direction) {
@@ -403,8 +413,9 @@ void BlocksCreation::update(float deltaTime) {
                             : m_playerController->getFront();
     const AimHit hit = aim(position, target);
 
-    // Кисть работает только по природным типам; конструкции ставятся/ломаются по одному вокселю.
-    const bool brushActive = isNaturalVoxelType(m_selectedBlock);
+    // Кисть работает только по природным материалам (без элемента в руке);
+    // конструкции — архитектурные объекты, ставятся и ломаются целиком.
+    const bool brushActive = !isElementSelected() && isNaturalVoxelType(m_selectedBlock);
     m_previewEdits.clear();
     if (hit.valid) {
         if (brushActive) {
@@ -415,10 +426,13 @@ void BlocksCreation::update(float deltaTime) {
                 m_previewEdits
             );
         } else {
-            // Конструкция: подсветка одного воксела будущей установки, без учёта кисти.
-            m_previewEdits.push_back(
-                {hit.x + hit.normalX, hit.y + hit.normalY, hit.z + hit.normalZ, m_selectedBlock}
-            );
+            // Объект: подсветка всех ячеек будущей установки.
+            const ArchitectureObject object = pendingObject(hit);
+            std::vector<std::array<int, 3>> cells;
+            BuildingCellGrid::cellsFor(object, cells);
+            for (const auto &cell : cells) {
+                m_previewEdits.push_back({cell[0], cell[1], cell[2], object.material});
+            }
         }
     }
     updateBrushMarker(m_previewEdits);
@@ -429,13 +443,12 @@ void BlocksCreation::update(float deltaTime) {
             TerrainAccess::applyEdits(m_previewEdits);
             VoxelCharacterController::invalidateFieldCache();
         } else {
-            GameContext::s_buildingGrid->setBlock(
-                hit.x + hit.normalX, hit.y + hit.normalY, hit.z + hit.normalZ, m_selectedBlock
-            );
+            GameContext::s_buildingGrid->place(pendingObject(hit));
         }
     } else if (breakPressed) {
         if (hit.isBuilding) {
-            GameContext::s_buildingGrid->setBlock(hit.x, hit.y, hit.z, VoxelType::NOTHING);
+            // Объект исчезает целиком (владение ячейками — у объекта).
+            GameContext::s_buildingGrid->removeObjectAt(hit.x, hit.y, hit.z);
         } else if (brushActive) {
             // Обратное действие кисти: вырезать/опустить.
             GameBrush::computeEdits(
@@ -452,6 +465,25 @@ void BlocksCreation::update(float deltaTime) {
             VoxelCharacterController::invalidateFieldCache();
         }
     }
+}
+
+ArchitectureObject BlocksCreation::pendingObject(const AimHit &hit) const {
+    ArchitectureObject object;
+    object.type = m_selectedElement;
+    object.x = hit.x + hit.normalX;
+    object.y = hit.y + hit.normalY;
+    object.z = hit.z + hit.normalZ;
+    object.material = m_selectedBlock;
+    if (object.type == ArchObjectType::Beam && m_playerController) {
+        // Балка растёт от прицела в направлении взгляда (доминантная ось XZ).
+        const Vec3 front = m_playerController->getFront();
+        if (std::abs(front.x) >= std::abs(front.z)) {
+            object.rotation = front.x >= 0.f ? 0 : 2;
+        } else {
+            object.rotation = front.z >= 0.f ? 1 : 3;
+        }
+    }
+    return object;
 }
 
 Vec3 BlocksCreation::getPosition() {

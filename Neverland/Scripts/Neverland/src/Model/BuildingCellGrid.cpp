@@ -1,4 +1,4 @@
-#include "BuildingGrid.hpp"
+#include "BuildingCellGrid.hpp"
 #include "VoxelTextureMapper.hpp"
 
 #include <Bamboo/Assets/AssetManagerAPI.hpp>
@@ -77,7 +77,7 @@ constexpr float CORNER_UV[4][2] = {{0.f, 1.f}, {1.f, 1.f}, {1.f, 0.f}, {0.f, 0.f
 
 } // namespace
 
-void BuildingGrid::init(
+void BuildingCellGrid::init(
     int minX, int minY, int minZ, int sizeX, int sizeY, int sizeZ, MaterialHandle material
 ) {
     shutdown();
@@ -95,7 +95,7 @@ void BuildingGrid::init(
     m_material = material;
 }
 
-void BuildingGrid::shutdown() {
+void BuildingCellGrid::shutdown() {
     for (ChunkView &view : m_views) {
         if (view.mesh.isValid()) { AssetManagerAPI::deleteMesh(view.mesh); }
         if (view.entity.isValid()) { WorldAPI::destroyEntity(view.entity); }
@@ -103,39 +103,124 @@ void BuildingGrid::shutdown() {
     }
     m_views.clear();
     m_blocks.clear();
+    m_cellOwner.clear();
+    m_objects.clear();
+    m_nextObjectId = 1;
 }
 
-bool BuildingGrid::isInside(int x, int y, int z) const {
+bool BuildingCellGrid::isInside(int x, int y, int z) const {
     return x >= m_minX && y >= m_minY && z >= m_minZ && x < m_minX + m_sizeX &&
            y < m_minY + m_sizeY && z < m_minZ + m_sizeZ;
 }
 
-size_t BuildingGrid::voxelIndex(int x, int y, int z) const {
+size_t BuildingCellGrid::voxelIndex(int x, int y, int z) const {
     return (static_cast<size_t>(y - m_minY) * m_sizeZ + static_cast<size_t>(z - m_minZ)) * m_sizeX +
            static_cast<size_t>(x - m_minX);
 }
 
-size_t BuildingGrid::chunkIndex(int chunkX, int chunkY, int chunkZ) const {
+size_t BuildingCellGrid::chunkIndex(int chunkX, int chunkY, int chunkZ) const {
     return (static_cast<size_t>(chunkY) * m_chunksZ + chunkZ) * m_chunksX + chunkX;
 }
 
-VoxelType BuildingGrid::blockAt(int x, int y, int z) const {
+VoxelType BuildingCellGrid::blockAt(int x, int y, int z) const {
     if (!isInside(x, y, z)) { return VoxelType::NOTHING; }
     return static_cast<VoxelType>(m_blocks[voxelIndex(x, y, z)]);
 }
 
-bool BuildingGrid::setBlock(int x, int y, int z, VoxelType type) {
-    if (!isInside(x, y, z)) { return false; }
-    uint8_t &slot = m_blocks[voxelIndex(x, y, z)];
-    const uint8_t value = static_cast<uint8_t>(type);
-    if (slot == value) { return false; }
-    slot = value;
-    markDirtyAround(x, y, z);
+uint64_t BuildingCellGrid::packCell(int x, int y, int z) {
+    const uint64_t bx = static_cast<uint64_t>(x + (1 << 20)) & 0x1FFFFF;
+    const uint64_t by = static_cast<uint64_t>(y + (1 << 20)) & 0x1FFFFF;
+    const uint64_t bz = static_cast<uint64_t>(z + (1 << 20)) & 0x1FFFFF;
+    return (bx << 42) | (by << 21) | bz;
+}
+
+void BuildingCellGrid::cellsFor(
+    const ArchitectureObject &object, std::vector<std::array<int, 3>> &outCells
+) {
+    outCells.clear();
+    switch (object.type) {
+        case ArchObjectType::Block:
+            outCells.push_back({object.x, object.y, object.z});
+            return;
+        case ArchObjectType::Beam: {
+            // Балка 3×1×1 от origin вдоль оси поворота.
+            const int stepX = object.rotation == 0 ? 1 : object.rotation == 2 ? -1 : 0;
+            const int stepZ = object.rotation == 1 ? 1 : object.rotation == 3 ? -1 : 0;
+            for (int i = 0; i < 3; i++) {
+                outCells.push_back({object.x + stepX * i, object.y, object.z + stepZ * i});
+            }
+            return;
+        }
+        case ArchObjectType::COUNT:
+            return;
+    }
+}
+
+bool BuildingCellGrid::canPlace(const ArchitectureObject &object) const {
+    std::vector<std::array<int, 3>> cells;
+    cellsFor(object, cells);
+    if (cells.empty()) { return false; }
+    for (const auto &cell : cells) {
+        if (!isInside(cell[0], cell[1], cell[2])) { return false; }
+        if (m_blocks[voxelIndex(cell[0], cell[1], cell[2])] != 0) { return false; }
+    }
+    return true;
+}
+
+void BuildingCellGrid::writeObjectCells(const ArchitectureObject &object, bool clear) {
+    std::vector<std::array<int, 3>> cells;
+    cellsFor(object, cells);
+    for (const auto &cell : cells) {
+        if (!isInside(cell[0], cell[1], cell[2])) { continue; }
+        m_blocks[voxelIndex(cell[0], cell[1], cell[2])] =
+            clear ? 0 : static_cast<uint8_t>(object.material);
+        if (clear) {
+            m_cellOwner.erase(packCell(cell[0], cell[1], cell[2]));
+        } else {
+            m_cellOwner[packCell(cell[0], cell[1], cell[2])] = object.id;
+        }
+        markDirtyAround(cell[0], cell[1], cell[2]);
+    }
+}
+
+uint32_t BuildingCellGrid::placeInternal(ArchitectureObject object, bool rebuild) {
+    if (!canPlace(object)) { return 0; }
+    object.id = m_nextObjectId++;
+    writeObjectCells(object, false);
+    m_objects.emplace(object.id, object);
+    if (rebuild) { rebuildDirtyChunks(); }
+    return object.id;
+}
+
+uint32_t BuildingCellGrid::place(ArchitectureObject object) {
+    return placeInternal(object, true);
+}
+
+bool BuildingCellGrid::removeObjectAt(int x, int y, int z) {
+    auto ownerIt = m_cellOwner.find(packCell(x, y, z));
+    if (ownerIt == m_cellOwner.end()) { return false; }
+    auto objectIt = m_objects.find(ownerIt->second);
+    if (objectIt == m_objects.end()) { // осиротевшая ячейка — чистим точечно
+        m_cellOwner.erase(ownerIt);
+        m_blocks[voxelIndex(x, y, z)] = 0;
+        markDirtyAround(x, y, z);
+        rebuildDirtyChunks();
+        return true;
+    }
+    writeObjectCells(objectIt->second, true);
+    m_objects.erase(objectIt);
     rebuildDirtyChunks();
     return true;
 }
 
-void BuildingGrid::markDirtyAround(int x, int y, int z) {
+const ArchitectureObject *BuildingCellGrid::objectAt(int x, int y, int z) const {
+    auto ownerIt = m_cellOwner.find(packCell(x, y, z));
+    if (ownerIt == m_cellOwner.end()) { return nullptr; }
+    auto objectIt = m_objects.find(ownerIt->second);
+    return objectIt != m_objects.end() ? &objectIt->second : nullptr;
+}
+
+void BuildingCellGrid::markDirtyAround(int x, int y, int z) {
     // Блок на границе чанка меняет AO/грани соседа — пометить чанки клетки и соседей.
     for (int dy = -1; dy <= 1; dy++) {
         for (int dx = -1; dx <= 1; dx++) {
@@ -151,7 +236,7 @@ void BuildingGrid::markDirtyAround(int x, int y, int z) {
     }
 }
 
-void BuildingGrid::rebuildDirtyChunks() {
+void BuildingCellGrid::rebuildDirtyChunks() {
     for (int chunkY = 0; chunkY < m_chunksY; chunkY++) {
         for (int chunkZ = 0; chunkZ < m_chunksZ; chunkZ++) {
             for (int chunkX = 0; chunkX < m_chunksX; chunkX++) {
@@ -163,7 +248,7 @@ void BuildingGrid::rebuildDirtyChunks() {
     }
 }
 
-void BuildingGrid::rebuildChunk(int chunkX, int chunkY, int chunkZ) {
+void BuildingCellGrid::rebuildChunk(int chunkX, int chunkY, int chunkZ) {
     ChunkView &view = m_views[chunkIndex(chunkX, chunkY, chunkZ)];
     view.dirty = false;
 
@@ -262,8 +347,8 @@ void BuildingGrid::rebuildChunk(int chunkX, int chunkY, int chunkZ) {
     }
 }
 
-std::optional<BuildingGrid::RaycastHit>
-BuildingGrid::raycast(Vec3 origin, Vec3 direction, float maxDistance) const {
+std::optional<BuildingCellGrid::RaycastHit>
+BuildingCellGrid::raycast(Vec3 origin, Vec3 direction, float maxDistance) const {
     // Воксельный DDA (Amanatides & Woo) по кубам построек.
     const float length = std::sqrt(
         direction.x * direction.x + direction.y * direction.y + direction.z * direction.z
@@ -323,30 +408,30 @@ BuildingGrid::raycast(Vec3 origin, Vec3 direction, float maxDistance) const {
     return std::nullopt;
 }
 
-void BuildingGrid::collectBlocks(std::vector<std::pair<uint64_t, uint8_t>> &outBlocks) const {
-    outBlocks.clear();
-    for (int y = m_minY; y < m_minY + m_sizeY; y++) {
-        for (int z = m_minZ; z < m_minZ + m_sizeZ; z++) {
-            for (int x = m_minX; x < m_minX + m_sizeX; x++) {
-                const uint8_t value = m_blocks[voxelIndex(x, y, z)];
-                if (value == 0) { continue; }
-                const uint64_t bx = static_cast<uint64_t>(x + (1 << 20)) & 0x1FFFFF;
-                const uint64_t by = static_cast<uint64_t>(y + (1 << 20)) & 0x1FFFFF;
-                const uint64_t bz = static_cast<uint64_t>(z + (1 << 20)) & 0x1FFFFF;
-                outBlocks.emplace_back((bx << 42) | (by << 21) | bz, value);
-            }
-        }
+void BuildingCellGrid::collectObjects(std::vector<ArchitectureObject> &outObjects) const {
+    outObjects.clear();
+    outObjects.reserve(m_objects.size());
+    for (const auto &[id, object] : m_objects) {
+        outObjects.push_back(object);
     }
 }
 
-void BuildingGrid::restoreBlocks(const std::vector<std::pair<uint64_t, uint8_t>> &blocks) {
+void BuildingCellGrid::restoreObjects(const std::vector<ArchitectureObject> &objects) {
+    for (const ArchitectureObject &object : objects) {
+        placeInternal(object, false); // id пересоздаются, занятые/вне-границ пропускаются
+    }
+    rebuildDirtyChunks();
+}
+
+void BuildingCellGrid::restoreLegacyBlocks(const std::vector<std::pair<uint64_t, uint8_t>> &blocks) {
     for (const auto &[key, value] : blocks) {
-        const int x = static_cast<int>((key >> 42) & 0x1FFFFF) - (1 << 20);
-        const int y = static_cast<int>((key >> 21) & 0x1FFFFF) - (1 << 20);
-        const int z = static_cast<int>(key & 0x1FFFFF) - (1 << 20);
-        if (!isInside(x, y, z)) { continue; }
-        m_blocks[voxelIndex(x, y, z)] = value;
-        markDirtyAround(x, y, z);
+        ArchitectureObject object;
+        object.type = ArchObjectType::Block;
+        object.x = static_cast<int>((key >> 42) & 0x1FFFFF) - (1 << 20);
+        object.y = static_cast<int>((key >> 21) & 0x1FFFFF) - (1 << 20);
+        object.z = static_cast<int>(key & 0x1FFFFF) - (1 << 20);
+        object.material = static_cast<VoxelType>(value);
+        placeInternal(object, false);
     }
     rebuildDirtyChunks();
 }

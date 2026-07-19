@@ -29,6 +29,11 @@ constexpr float HotbarTouchHeight = HotbarBottomMargin + HotbarHeight + 20.0f;
 
 constexpr float TouchButtonSize = 58.0f;
 
+// Карточки меню выбора блоков (Tab).
+constexpr float MenuCardWidth = 84.0f;
+constexpr float MenuCardHeight = 92.0f;
+constexpr float MenuCardPreview = 44.0f;
+
 constexpr float MenuButtonWidth = 240.0f;
 constexpr float MenuButtonHeight = 52.0f;
 constexpr float MenuButtonGap = 14.0f;
@@ -57,9 +62,11 @@ inline bool isInsideHotbarTouchArea(float x, float y, float width, float height)
 }
 
 inline bool isInsideJumpButtonTouchArea(float x, float y, float width, float height) {
+    // Колонка кнопок действий: BLOCKS над JUMP (высота панели — две кнопки + зазор).
+    const float columnHeight = JumpButtonHeight * 2.0f + 10.0f;
     const float left = width - ActionControlsMargin - JumpButtonWidth;
-    const float top = height - ActionControlsBottom - JumpButtonHeight;
-    return isInsideRect(x, y, left, top, JumpButtonWidth, JumpButtonHeight);
+    const float top = height - ActionControlsBottom - columnHeight;
+    return isInsideRect(x, y, left, top, JumpButtonWidth, columnHeight);
 }
 
 inline bool isInsideMobileControlsTouchArea(float x, float y, float width, float height) {

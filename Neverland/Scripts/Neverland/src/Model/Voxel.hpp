@@ -6,6 +6,7 @@
 
 #include <cstdint>
 
+// Значения персистятся в сейве (u8) — новые типы только В КОНЕЦ, перед COUNT.
 enum class VoxelType {
     NOTHING = 0,
     GRASS = 1,
@@ -19,7 +20,12 @@ enum class VoxelType {
     BIRCH_LOG = 9,
     BIRCH_LEAVES = 10,
     TALL_GRASS = 11,
-    COUNT = 12
+    WHITE_PLASTER = 12,
+    TERRACOTTA = 13,
+    DARK_BRICK = 14,
+    DARK_STONE = 15,
+    SLATE = 16,
+    COUNT = 17
 };
 
 struct Voxel {
@@ -44,7 +50,7 @@ struct Voxel {
     }
 };
 
-// Природные типы — рельеф движкового Terrain3D; остальные твёрдые — постройки (BuildingGrid).
+// Природные типы — рельеф движкового Terrain3D; остальные твёрдые — постройки (BuildingCellGrid).
 inline bool isNaturalVoxelType(VoxelType type) {
     switch (type) {
         case VoxelType::GRASS:

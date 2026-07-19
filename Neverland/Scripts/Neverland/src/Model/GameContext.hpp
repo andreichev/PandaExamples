@@ -1,13 +1,13 @@
 #pragma once
 
-#include "BuildingGrid.hpp"
+#include "BuildingCellGrid.hpp"
 
 class WorldSave;
 
 class GameContext final {
 public:
     // Постройки игрока (кубы поверх движкового terrain). Живёт от init до deinit.
-    static BuildingGrid *s_buildingGrid;
+    static BuildingCellGrid *s_buildingGrid;
     // Сейв мира: правки рельефа (дельта от .terrain-ассета) + блоки + игрок.
     static WorldSave *s_worldSave;
     static MaterialHandle s_terrainMaterial; // рельеф/рука природных (base_ground_1)

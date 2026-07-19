@@ -20,7 +20,15 @@ public:
     VoxelType getSelectedBlock() const {
         return m_selectedBlock;
     }
-    void setSelectedBlock(VoxelType type);
+    void setSelectedBlock(VoxelType type); // сбрасывает выбранный элемент (обычный блок)
+    // Многоклеточный элемент (Beam): материал — текущий строительный блок.
+    void setSelectedElement(ArchObjectType element);
+    ArchObjectType getSelectedElement() const {
+        return m_selectedElement;
+    }
+    bool isElementSelected() const {
+        return m_selectedElement != ArchObjectType::Block;
+    }
     // Кисть рельефа (панель TerrainBrushPanel и клавиши делят один стейт).
     void setBrushMode(GameBrushMode mode) { m_brushMode = mode; }
     GameBrushMode getBrushMode() const { return m_brushMode; }
@@ -59,10 +67,14 @@ private:
         bool moved = false;
     };
 
+    // Объект под установку по прицелу: origin за гранью, поворот от взгляда, материал.
+    ArchitectureObject pendingObject(const AimHit &hit) const;
+
     Shared<PlayerController> m_playerController;
     HeldItemView m_heldItemView;
     TouchActionState m_touchAction;
     VoxelType m_selectedBlock;
+    ArchObjectType m_selectedElement = ArchObjectType::Block;
     int m_brushSize = 2;
     GameBrushMode m_brushMode = GameBrushMode::Sphere;
     std::vector<TerrainAccess::Edit> m_previewEdits; // буфер превью/применения

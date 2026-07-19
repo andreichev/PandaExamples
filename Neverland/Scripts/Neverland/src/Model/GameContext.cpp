@@ -3,7 +3,7 @@
 
 #include <Bamboo/ApplicationAPI.hpp>
 
-BuildingGrid *GameContext::s_buildingGrid = nullptr;
+BuildingCellGrid *GameContext::s_buildingGrid = nullptr;
 WorldSave *GameContext::s_worldSave = nullptr;
 MaterialHandle GameContext::s_terrainMaterial = {};
 MaterialHandle GameContext::s_blocksMaterial = {};
@@ -15,7 +15,7 @@ void GameContext::init() {
     if (!saveDirectory.empty()) {
         s_worldSave->load(saveDirectory + "/neverland_world.sav");
     }
-    s_buildingGrid = new BuildingGrid();
+    s_buildingGrid = new BuildingCellGrid();
 }
 
 void GameContext::deinit() {

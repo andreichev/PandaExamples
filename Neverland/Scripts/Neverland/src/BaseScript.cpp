@@ -23,10 +23,13 @@ void BaseScript::start() {
         TerrainAccess::worldMaxZ() - TerrainAccess::worldMinZ(), material
     );
 
-    // Восстановление сейва: правки рельефа поверх ассета + блоки построек.
+    // Восстановление сейва: правки рельефа поверх ассета + архитектурные объекты
+    // (сейвы v2 несут одиночные кубы — мигрируются в Block-объекты).
     if (WorldSave *save = GameContext::s_worldSave) {
         TerrainAccess::restoreEdits(save->terrainEdits);
-        GameContext::s_buildingGrid->restoreBlocks(save->buildingBlocks);
+        GameContext::s_buildingGrid->restoreObjects(save->objects);
+        GameContext::s_buildingGrid->restoreLegacyBlocks(save->legacyBlocks);
+        save->legacyBlocks.clear(); // после миграции сейв живёт объектами
     }
 }
 
@@ -47,7 +50,7 @@ void BaseScript::saveWorld() {
     WorldSave *save = GameContext::s_worldSave;
     if (save == nullptr || GameContext::s_buildingGrid == nullptr) { return; }
     save->terrainEdits = TerrainAccess::editAccumulator();
-    GameContext::s_buildingGrid->collectBlocks(save->buildingBlocks);
+    GameContext::s_buildingGrid->collectObjects(save->objects);
     save->saveToDisk();
 }
 

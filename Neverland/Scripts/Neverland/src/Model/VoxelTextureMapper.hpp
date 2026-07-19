@@ -64,6 +64,16 @@ private:
             // ЛИСТВА БЕРЕЗЫ (materials 6,0)
             VoxelTextureData(VoxelType::BIRCH_LEAVES, 6),
             // ВЫСОКАЯ ТРАВА (не рендерится)
-            VoxelTextureData(VoxelType::TALL_GRASS, 0)
+            VoxelTextureData(VoxelType::TALL_GRASS, 0),
+            // БЕЛАЯ ШТУКАТУРКА (materials 0,0)
+            VoxelTextureData(VoxelType::WHITE_PLASTER, 0),
+            // ТЕРРАКОТА (materials 0,4)
+            VoxelTextureData(VoxelType::TERRACOTTA, 28),
+            // ТЁМНЫЙ КИРПИЧ (materials 3,4)
+            VoxelTextureData(VoxelType::DARK_BRICK, 31),
+            // ТЁМНЫЙ КАМЕНЬ (materials 2,6)
+            VoxelTextureData(VoxelType::DARK_STONE, 44),
+            // СЛАНЕЦ (materials 5,0)
+            VoxelTextureData(VoxelType::SLATE, 5)
     };
 };

@@ -63,10 +63,72 @@ private:
     bool m_selected = false;
 };
 
+// Кнопка материала рельефа: квадратное превью тайла, рамка при выборе.
+class TerrainMaterialButton final : public PandaUI::Button {
+public:
+    explicit TerrainMaterialButton(PandaUI::TextureHandle preview)
+        : PandaUI::Button("") {
+        setFocusable(false);
+        setClipsToBounds(true);
+        surface().setCornerRadius(6.f);
+        surface().setBorderWidth(1.5f);
+        layout().setWidth(PandaUI::Length::points(20.f));
+        layout().setHeight(PandaUI::Length::points(20.f));
+        layout().setPadding(0.f);
+        layout().setAlignItems(PandaUI::Align::Center);
+        layout().setJustifyContent(PandaUI::Justify::Center);
+        getTitleLabel()->setHidden(true);
+        if (preview) {
+            auto image = std::make_shared<PandaUI::ImageView>(preview);
+            image->setContentMode(PandaUI::ImageContentMode::Fill);
+            image->setUserInteractionEnabled(false);
+            image->layout().setWidth(PandaUI::Length::percent(100.f));
+            image->layout().setHeight(PandaUI::Length::percent(100.f));
+            addSubview(image);
+        }
+        updateAppearance();
+    }
+
+    void setSelected(bool selected) {
+        if (m_selected == selected) { return; }
+        m_selected = selected;
+        updateAppearance();
+    }
+
+private:
+    void controlStateChanged(PandaUI::ControlState, PandaUI::ControlState) override {
+        updateAppearance();
+    }
+
+    void themeChanged() override {
+        updateAppearance();
+    }
+
+    void updateAppearance() {
+        setBackgroundColor(PandaUI::Color(0x2D3440DD));
+        if (m_selected) {
+            surface().setBorderColor(PandaUI::Color(0xFFFFFFFF));
+            setOpacity(1.f);
+        } else if (hasControlState(PandaUI::ControlState::Hovered)) {
+            surface().setBorderColor(PandaUI::Color(0xFFFFFFAA));
+            setOpacity(0.95f);
+        } else {
+            surface().setBorderColor(PandaUI::Color(0x5C667688));
+            setOpacity(0.8f);
+        }
+    }
+
+    bool m_selected = false;
+};
+
 TerrainBrushPanel::TerrainBrushPanel(
-    std::function<void(GameBrushMode)> onModeChanged, std::function<void(int)> onSizeChanged
+    std::function<void(VoxelType)> onMaterialSelected,
+    std::function<void(GameBrushMode)> onModeChanged,
+    std::function<void(int)> onSizeChanged,
+    const std::array<PandaUI::TextureHandle, 4> &materialPreviews
 )
-    : m_onModeChanged(std::move(onModeChanged))
+    : m_onMaterialSelected(std::move(onMaterialSelected))
+    , m_onModeChanged(std::move(onModeChanged))
     , m_onSizeChanged(std::move(onSizeChanged)) {
     setBackgroundColor(PandaUI::Color(0x111319CC)); // подложка как у хотбара
     surface().setCornerRadius(12.f);
@@ -77,10 +139,36 @@ TerrainBrushPanel::TerrainBrushPanel(
     layout().setGap(6.f);
     layout().setWidth(PandaUI::Length::points(PANEL_WIDTH));
 
-    auto title = std::make_shared<PandaUI::Label>("Brush (B)");
+    auto title = std::make_shared<PandaUI::Label>("Terrain");
     title->setFont(PandaUI::Font(12.f));
     title->setTextColor(PandaUI::Color(0x9AA6BAFF));
     addSubview(title);
+
+    // Материалы рельефа: отдельный ряд — терраформ не смешивается со строительными блоками.
+    auto materialsRow = std::make_shared<PandaUI::Panel>();
+    materialsRow->setBackgroundColor(PandaUI::Color(0x00000000));
+    materialsRow->layout().setFlexDirection(PandaUI::FlexDirection::Row);
+    materialsRow->layout().setGap(4.f);
+    materialsRow->layout().setWidth(PandaUI::Length::percent(100.f));
+    materialsRow->layout().setJustifyContent(PandaUI::Justify::SpaceBetween);
+    const VoxelType materials[4] = {
+        VoxelType::GRASS, VoxelType::GROUND, VoxelType::STONE, VoxelType::SAND
+    };
+    for (int index = 0; index < 4; index++) {
+        const VoxelType material = materials[index];
+        auto button = std::make_shared<TerrainMaterialButton>(materialPreviews[index]);
+        button->setOnClick([this, material](PandaUI::Button &) {
+            if (m_onMaterialSelected) { m_onMaterialSelected(material); }
+        });
+        m_materialButtons[index] = button;
+        materialsRow->addSubview(button);
+    }
+    addSubview(materialsRow);
+
+    auto brushTitle = std::make_shared<PandaUI::Label>("Brush (B)");
+    brushTitle->setFont(PandaUI::Font(12.f));
+    brushTitle->setTextColor(PandaUI::Color(0x9AA6BAFF));
+    addSubview(brushTitle);
 
     const GameBrushMode modes[3] = {
         GameBrushMode::Sphere, GameBrushMode::Raise, GameBrushMode::Flatten
@@ -139,15 +227,30 @@ TerrainBrushPanel::TerrainBrushPanel(
     applySelection();
 }
 
-void TerrainBrushPanel::setState(GameBrushMode mode, int size, int sizeCount) {
-    if (m_mode == mode && m_size == size && m_sizeCount == sizeCount) { return; }
+void TerrainBrushPanel::setState(
+    GameBrushMode mode, int size, int sizeCount, VoxelType material, bool terraformActive
+) {
+    if (m_mode == mode && m_size == size && m_sizeCount == sizeCount && m_material == material &&
+        m_terraformActive == terraformActive) {
+        return;
+    }
     m_mode = mode;
     m_size = size;
     m_sizeCount = sizeCount;
+    m_material = material;
+    m_terraformActive = terraformActive;
     applySelection();
 }
 
 void TerrainBrushPanel::applySelection() {
+    const VoxelType materials[4] = {
+        VoxelType::GRASS, VoxelType::GROUND, VoxelType::STONE, VoxelType::SAND
+    };
+    for (int index = 0; index < 4; index++) {
+        if (m_materialButtons[index]) {
+            m_materialButtons[index]->setSelected(m_terraformActive && materials[index] == m_material);
+        }
+    }
     const GameBrushMode modes[3] = {
         GameBrushMode::Sphere, GameBrushMode::Raise, GameBrushMode::Flatten
     };

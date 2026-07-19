@@ -1,6 +1,6 @@
 #pragma once
 
-#include "BuildingGrid.hpp"
+#include "BuildingCellGrid.hpp"
 #include "TerrainAccess.hpp"
 
 #include <vector>
@@ -29,7 +29,7 @@ void computeEdits(
     int normalZ,
     float radius,
     VoxelType paint,
-    const BuildingGrid &buildings,
+    const BuildingCellGrid &buildings,
     std::vector<TerrainAccess::Edit> &outEdits
 );
 
