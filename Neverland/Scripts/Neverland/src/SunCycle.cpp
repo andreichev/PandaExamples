@@ -67,9 +67,6 @@ void SunCycle::syncSky(const glm::vec3 &sunDirection, float dayAmount, float dus
     if (GameContext::s_blocksMaterial.isValid()) {
         MaterialAPI::setFloat(GameContext::s_blocksMaterial, "daylight", dayAmount);
     }
-    if (GameContext::s_roofMaterial.isValid()) {
-        MaterialAPI::setFloat(GameContext::s_roofMaterial, "daylight", dayAmount);
-    }
     // Небо больше не крутит собственный цикл в шейдере — состояние дня пишет скрипт.
     if (!skyMaterial.isValid()) { return; }
     MaterialAPI::setColor(

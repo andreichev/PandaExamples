@@ -51,6 +51,7 @@ void LightmapTexture::update(const LightGrid &lightGrid, float deltaTime) {
 }
 
 void LightmapTexture::upload(const LightGrid &lightGrid) {
+    m_uploadCounter++;
     const int cells = lightGrid.sizeX();
     for (int y = 0; y < lightGrid.sizeY(); y++) {
         const int tileX = (y % m_tilesPerRow) * cells;

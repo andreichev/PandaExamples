@@ -7,9 +7,8 @@
 namespace {
 
 constexpr uint32_t SAVE_MAGIC = 0x4E565356; // 'NVSV'
-constexpr uint32_t SAVE_VERSION = 4;          // объекты с параметрами-пресетами
-constexpr uint32_t OBJECTS_V3_VERSION = 3;    // объекты без params (читаются нулями)
-constexpr uint32_t LEGACY_BLOCKS_VERSION = 2; // одиночные кубы — мигрируются
+// v5: типы объектов пересобраны (Block/Lamp/ModelBlock) — старые версии несовместимы.
+constexpr uint32_t SAVE_VERSION = 5;
 
 template<typename T>
 bool readValue(std::ifstream &file, T &value) {
@@ -28,7 +27,6 @@ void WorldSave::load(const std::string &path) {
     m_path = path;
     terrainEdits.clear();
     objects.clear();
-    legacyBlocks.clear();
     player = {};
 
     std::ifstream file(path, std::ios::binary);
@@ -39,9 +37,7 @@ void WorldSave::load(const std::string &path) {
         LOG_ERROR("WorldSave: bad magic in %s", path.c_str());
         return;
     }
-    if (!readValue(file, version) ||
-        (version != SAVE_VERSION && version != OBJECTS_V3_VERSION &&
-         version != LEGACY_BLOCKS_VERSION)) {
+    if (!readValue(file, version) || version != SAVE_VERSION) {
         LOG_WARN("WorldSave: version %u unsupported (want %u) — starting fresh", version, SAVE_VERSION);
         return;
     }
@@ -69,26 +65,6 @@ void WorldSave::load(const std::string &path) {
         terrainEdits[key] = layer;
     }
 
-    if (version == LEGACY_BLOCKS_VERSION) {
-        uint32_t blockCount = 0;
-        if (!readValue(file, blockCount)) { return; }
-        legacyBlocks.reserve(blockCount);
-        for (uint32_t i = 0; i < blockCount; i++) {
-            uint64_t key = 0;
-            uint8_t type = 0;
-            if (!readValue(file, key) || !readValue(file, type)) {
-                LOG_ERROR("WorldSave: truncated blocks in %s", path.c_str());
-                return;
-            }
-            legacyBlocks.emplace_back(key, type);
-        }
-        LOG_INFO(
-            "WorldSave: loaded v2 — %u terrain edits, %u legacy blocks from %s", editCount,
-            blockCount, path.c_str()
-        );
-        return;
-    }
-
     uint32_t objectCount = 0;
     if (!readValue(file, objectCount)) { return; }
     objects.reserve(objectCount);
@@ -107,12 +83,10 @@ void WorldSave::load(const std::string &path) {
         object.z = z;
         object.rotation = rotation;
         object.material = static_cast<VoxelType>(material);
-        if (version >= SAVE_VERSION) {
-            for (int p = 0; p < ARCH_PARAM_COUNT; p++) {
-                if (!readValue(file, object.params[p])) {
-                    LOG_ERROR("WorldSave: truncated object params in %s", path.c_str());
-                    return;
-                }
+        for (int p = 0; p < ARCH_PARAM_COUNT; p++) {
+            if (!readValue(file, object.params[p])) {
+                LOG_ERROR("WorldSave: truncated object params in %s", path.c_str());
+                return;
             }
         }
         if (object.type >= ArchObjectType::COUNT ||

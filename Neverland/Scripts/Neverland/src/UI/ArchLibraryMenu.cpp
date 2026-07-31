@@ -1,21 +1,8 @@
 #include "ArchLibraryMenu.hpp"
 
-#include "ArchesPanel.hpp"
-#include "BalconiesPanel.hpp"
-#include "ColumnsPanel.hpp"
-#include "CornicesPanel.hpp"
-#include "DecorPanel.hpp"
-#include "DomesPanel.hpp"
-#include "DoorsPanel.hpp"
-#include "FacadesPanel.hpp"
-#include "FoundationsPanel.hpp"
-#include "MaterialsPanel.hpp"
-#include "PilastersPanel.hpp"
-#include "RoofsPanel.hpp"
-#include "StairsPanel.hpp"
+#include "BlocksPanel.hpp"
+#include "ModelsPanel.hpp"
 #include "TerrainPanel.hpp"
-#include "WallsPanel.hpp"
-#include "WindowsPanel.hpp"
 
 #include "../GameMenu.hpp"
 #include "../NeverlandHUDLayout.hpp"
@@ -180,21 +167,22 @@ ArchLibraryMenu::ArchLibraryMenu(
         }
         m_sections.push_back({std::move(panel), std::move(button)});
     };
-    addSection("Walls", std::make_shared<WallsPanel>(context));
-    addSection("Windows", std::make_shared<WindowsPanel>(context));
-    addSection("Doors", std::make_shared<DoorsPanel>(context));
-    addSection("Arches", std::make_shared<ArchesPanel>(context));
-    addSection("Columns", std::make_shared<ColumnsPanel>(context));
-    addSection("Pilasters", std::make_shared<PilastersPanel>(context));
-    addSection("Cornices", std::make_shared<CornicesPanel>(context));
-    addSection("Balconies", std::make_shared<BalconiesPanel>(context));
-    addSection("Roofs", std::make_shared<RoofsPanel>(context));
-    addSection("Domes", std::make_shared<DomesPanel>(context));
-    addSection("Stairs", std::make_shared<StairsPanel>(context));
-    addSection("Foundations", std::make_shared<FoundationsPanel>(context));
-    addSection("Decor", std::make_shared<DecorPanel>(context));
-    addSection("Materials", std::make_shared<MaterialsPanel>(context));
-    addSection("Facades", std::make_shared<FacadesPanel>(context));
+    addSection("Blocks", std::make_shared<BlocksPanel>(context));
+    addSection("Fences", std::make_shared<ModelsPanel>(
+        context, 0, "Fences and parapets connect to neighbours automatically."));
+    addSection("Windows", std::make_shared<ModelsPanel>(
+        context, 1, "Glazed panes connect into window strips; frame follows neighbours."));
+    addSection("Doors", std::make_shared<ModelsPanel>(
+        context, 2, "Doors are two cells tall and face the player when placed."));
+    addSection("Forms", std::make_shared<ModelsPanel>(
+        context, 3, "Stairs face the player when placed; corners follow neighbours."));
+    addSection("Cornices", std::make_shared<ModelsPanel>(
+        context, 5, "Moulding slabs: lay along wall tops; balusters make railings."));
+    addSection("Roofs", std::make_shared<ModelsPanel>(
+        context, 6, "Tiled roofs: slopes from roof stairs (corners are automatic), ridges and "
+        "massifs from Roof cubes in Blocks."));
+    addSection("Decor", std::make_shared<ModelsPanel>(
+        context, 4, "Torches and candles are decorative; the lantern casts real light."));
     addSection("Terrain", std::make_shared<TerrainPanel>(context));
 
     body->addSubview(sidebar);

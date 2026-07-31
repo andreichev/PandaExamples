@@ -8,7 +8,11 @@ WorldSave *GameContext::s_worldSave = nullptr;
 MaterialHandle GameContext::s_terrainMaterial = {};
 MaterialHandle GameContext::s_blocksMaterial = {};
 MaterialHandle GameContext::s_markerMaterial = {};
-MaterialHandle GameContext::s_roofMaterial = {};
+float GameContext::s_camPosDeltaMax = 0.f;
+float GameContext::s_camLookDeltaMax = 0.f;
+double GameContext::s_scriptMsPlayer = 0.0;
+double GameContext::s_scriptMsBlocks = 0.0;
+double GameContext::s_scriptMsHud = 0.0;
 LightGrid *GameContext::s_lightGrid = nullptr;
 LightmapTexture *GameContext::s_lightmap = nullptr;
 
@@ -40,7 +44,6 @@ void GameContext::deinit() {
     s_terrainMaterial = {};
     s_blocksMaterial = {};
     s_markerMaterial = {};
-    s_roofMaterial = {};
 }
 
 bool GameContext::isWorldLoaded() {

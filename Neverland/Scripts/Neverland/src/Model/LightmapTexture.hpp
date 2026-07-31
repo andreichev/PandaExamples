@@ -18,6 +18,13 @@ public:
 
     // Дебаунс-аплоад: если поколение света изменилось и прошло минимум минимальный интервал.
     void update(const LightGrid &lightGrid, float deltaTime);
+    // Диагностика: сколько аплоадов атласа с прошлого опроса (сброс при чтении).
+    uint32_t takeUploadCount() {
+        const uint32_t count = m_uploadCounter;
+        m_uploadCounter = 0;
+        return count;
+    }
+
 
 private:
     void upload(const LightGrid &lightGrid);
@@ -27,5 +34,6 @@ private:
     int m_tilesPerRow = 0;
     int m_atlasSize = 0;
     uint32_t m_uploadedGeneration = 0;
+    uint32_t m_uploadCounter = 0;
     float m_cooldown = 0.f;
 };

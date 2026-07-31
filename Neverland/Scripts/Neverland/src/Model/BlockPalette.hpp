@@ -1,12 +1,11 @@
 #pragma once
 
-#include "BuildingCellGrid.hpp"
 #include "Voxel.hpp"
 
 #include <array>
 
 // Палитра выбора игрока: строительные блоки и материалы терраформинга РАЗДЕЛЕНЫ
-// (диздок): хотбар и меню строительства — только рукотворные, рельеф — своя секция.
+// (диздок): меню строительства — рукотворные, рельеф — своя секция.
 namespace BlockPalette {
 
 struct BlockEntry {
@@ -14,25 +13,8 @@ struct BlockEntry {
     const char *name;
 };
 
-struct ElementEntry {
-    ArchObjectType type;
-    const char *name;
-    const char *hint; // короткое описание для карточки меню
-};
-
-// Хотбар (клавиши 1-7) — быстрый доступ к строительным блокам.
-constexpr std::array<BlockEntry, 7> BUILDING_HOTBAR = {
-    BlockEntry{VoxelType::BOARDS, "Plaster"},
-    BlockEntry{VoxelType::STONE_BRICKS, "Bricks"},
-    BlockEntry{VoxelType::SAND_STONE, "Stone Block"},
-    BlockEntry{VoxelType::WHITE_PLASTER, "White Plaster"},
-    BlockEntry{VoxelType::TERRACOTTA, "Terracotta"},
-    BlockEntry{VoxelType::DARK_BRICK, "Dark Brick"},
-    BlockEntry{VoxelType::DARK_STONE, "Dark Stone"},
-};
-
-// Полный список строительных блоков (меню).
-constexpr std::array<BlockEntry, 8> BUILDING_BLOCKS = {
+// Строительные кубы (раздел Blocks).
+constexpr std::array<BlockEntry, 19> BUILDING_BLOCKS = {
     BlockEntry{VoxelType::BOARDS, "Plaster"},
     BlockEntry{VoxelType::STONE_BRICKS, "Bricks"},
     BlockEntry{VoxelType::SAND_STONE, "Stone Block"},
@@ -41,18 +23,17 @@ constexpr std::array<BlockEntry, 8> BUILDING_BLOCKS = {
     BlockEntry{VoxelType::DARK_BRICK, "Dark Brick"},
     BlockEntry{VoxelType::DARK_STONE, "Dark Stone"},
     BlockEntry{VoxelType::SLATE, "Slate"},
-};
-
-// Многоклеточные элементы (меню, секция Elements). Материал — текущий строительный.
-constexpr std::array<ElementEntry, 8> ELEMENTS = {
-    ElementEntry{ArchObjectType::Block, "Basic", "1 x 1"},
-    ElementEntry{ArchObjectType::Beam, "Beam", "3 x 1"},
-    ElementEntry{ArchObjectType::Wall, "Wall", "1 x 3"},
-    ElementEntry{ArchObjectType::Window, "Window", "1 x 3"},
-    ElementEntry{ArchObjectType::Door, "Door", "1 x 3"},
-    ElementEntry{ArchObjectType::Cornice, "Cornice", "1 x 1"},
-    ElementEntry{ArchObjectType::Roof, "Roof", "area"},
-    ElementEntry{ArchObjectType::Lamp, "Lamp", "light"},
+    BlockEntry{VoxelType::MARBLE, "Marble"},
+    BlockEntry{VoxelType::COLUMN, "Column"},
+    BlockEntry{VoxelType::WOOD_PLANKS, "Wood"},
+    BlockEntry{VoxelType::TIMBER_PLAIN, "Timber Plain"},
+    BlockEntry{VoxelType::TIMBER_FRAME, "Timber Frame"},
+    BlockEntry{VoxelType::TIMBER_CROSS, "Timber Cross"},
+    BlockEntry{VoxelType::TIMBER_DIAG_L, "Timber Diag L"},
+    BlockEntry{VoxelType::TIMBER_DIAG_R, "Timber Diag R"},
+    BlockEntry{VoxelType::ROOF_TILES_RED, "Roof Red"},
+    BlockEntry{VoxelType::ROOF_TILES_BROWN, "Roof Brown"},
+    BlockEntry{VoxelType::ROOF_TILES_DARK, "Roof Dark"},
 };
 
 // Материалы рельефа (терраформинг кистью) — отдельная секция, с блоками не смешиваются.

@@ -109,6 +109,10 @@ private:
     bool m_touchJumpPressed = false;
     float m_doubleJumpTimer = 0.0f;
     bool m_waitingForDoubleJump = false;
+    glm::vec3 m_perfPrevPosition{0.f};
+    float m_perfPrevYaw = 0.0f;
+    float m_perfPrevPitch = 0.0f;
+    bool m_perfPrevValid = false;
     float m_yaw = 0.0f;
     float m_pitch = 0.0f;
     glm::vec3 m_front = glm::vec3(0.0f, 0.0f, -1.0f);

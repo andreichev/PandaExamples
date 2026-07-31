@@ -74,6 +74,22 @@ private:
             // ТЁМНЫЙ КАМЕНЬ (materials 2,6)
             VoxelTextureData(VoxelType::DARK_STONE, 44),
             // СЛАНЕЦ (materials 5,0)
-            VoxelTextureData(VoxelType::SLATE, 5)
+            VoxelTextureData(VoxelType::SLATE, 5),
+            // МРАМОР (materials 2,5 — smooth_quartz)
+            VoxelTextureData(VoxelType::MARBLE, 19),
+            // КОЛОННА (бок 2,6 каннелюры, верх/низ 3,0 меандр)
+            VoxelTextureData(VoxelType::COLUMN, 20),
+            // ДОСКИ (materials 2,2 — spruce_planks, общий слот с рамами)
+            VoxelTextureData(VoxelType::WOOD_PLANKS, 16),
+            // ФАХВЕРК (CTM-тайлы spruce_planks_sides, слоты 52-56)
+            VoxelTextureData(VoxelType::TIMBER_PLAIN, 52),
+            VoxelTextureData(VoxelType::TIMBER_FRAME, 53),
+            VoxelTextureData(VoxelType::TIMBER_CROSS, 54),
+            VoxelTextureData(VoxelType::TIMBER_DIAG_L, 55),
+            VoxelTextureData(VoxelType::TIMBER_DIAG_R, 56),
+            // ЧЕРЕПИЦА кубом (слоты 57-59)
+            VoxelTextureData(VoxelType::ROOF_TILES_RED, 57),
+            VoxelTextureData(VoxelType::ROOF_TILES_BROWN, 58),
+            VoxelTextureData(VoxelType::ROOF_TILES_DARK, 59)
     };
 };

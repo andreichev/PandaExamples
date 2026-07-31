@@ -1,8 +1,11 @@
 #include "NeverlandHUD.hpp"
+#include <chrono>
 #include "Model/Voxel.hpp"
 #include "Model/VoxelTextureMapper.hpp"
 #include "NeverlandTouchControls.hpp"
 #include "UI/ArchLibraryMenu.hpp"
+#include "Model/BlockModel.hpp"
+#include "Model/GameContext.hpp"
 
 #include <Bamboo/ApplicationAPI.hpp>
 #include <Bamboo/EntityAPI.hpp>
@@ -345,6 +348,15 @@ void NeverlandHUD::start() {
 }
 
 void NeverlandHUD::update(float) {
+    struct ScriptTimer {
+        std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
+        ~ScriptTimer() {
+            GameContext::s_scriptMsHud += std::chrono::duration<double, std::milli>(
+                                 std::chrono::steady_clock::now() - start)
+                                 .count();
+        }
+    } scriptTimer;
+
     updateTouchControlSafeArea();
     updateSelection();
     updateMenuInput();
@@ -476,7 +488,7 @@ void NeverlandHUD::loadBlockPreviewTextures() {
     };
     if (hasBlocks) {
         for (const BlockPalette::BlockEntry &entry : BlockPalette::BUILDING_BLOCKS) {
-            store(entry.type, makeTexturePreview(blocksAtlas, 7, entry.type));
+            store(entry.type, makeTexturePreview(blocksAtlas, 10, entry.type));
         }
     }
     if (hasGround) {
@@ -786,13 +798,14 @@ std::shared_ptr<PandaUI::Button> NeverlandHUD::makeSlot(int index) {
 void NeverlandHUD::updateSelection() {
     if (!m_blocksCreation) { return; }
     const VoxelType selected = m_blocksCreation->getSelectedBlock();
-    const bool elementSelected = m_blocksCreation->isElementSelected();
     const ArchObjectType element = m_blocksCreation->getSelectedElement();
+    const uint8_t modelId = m_blocksCreation->getElementParam(ArchObjectType::ModelBlock, 0);
     const std::vector<VoxelType> &recent = m_blocksCreation->getRecentBlocks();
     if (selected == m_displayedSelection && element == m_displayedElement &&
-        recent == m_displayedHotbar) {
+        modelId == m_displayedModelId && recent == m_displayedHotbar) {
         return;
     }
+    m_displayedModelId = modelId;
     refreshHotbar(recent);
 
     // Левый слот — текущий строительный материал; при терраформе хотбар не подсвечен.
@@ -803,11 +816,12 @@ void NeverlandHUD::updateSelection() {
     if (m_blocksMenu) { m_blocksMenu->syncSelection(selected, element); }
     if (m_selectionLabel) {
         std::string name;
-        if (elementSelected && buildingSelected) {
-            for (const BlockPalette::ElementEntry &entry : BlockPalette::ELEMENTS) {
-                if (entry.type == m_blocksCreation->getSelectedElement()) { name = entry.name; }
-            }
-            name += std::string(" — ") + BlockPalette::nameFor(selected);
+        if (m_blocksCreation->getSelectedElement() == ArchObjectType::ModelBlock) {
+            const uint8_t modelId = m_blocksCreation->getElementParam(ArchObjectType::ModelBlock, 0);
+            const BlockModelData *model = BlockModels::byId(modelId);
+            name = model != nullptr ? model->name : "Model";
+        } else if (m_blocksCreation->getSelectedElement() == ArchObjectType::Lamp) {
+            name = "Lantern";
         } else {
             name = BlockPalette::nameFor(selected);
         }

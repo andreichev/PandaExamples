@@ -14,38 +14,17 @@ class LightGrid;
 
 using namespace Bamboo;
 
-// Типы архитектурных объектов. Значения персистятся в сейве (u8) — только в конец.
+// Типы объектов. Персистятся в сейве (u8) — менять только с bump версии WorldSave.
 enum class ArchObjectType : uint8_t {
-    Block = 0,  // одиночный куб 1×1×1
-    Beam = 1,   // балка 3×1×1, поворот задаёт ось (0:+X, 1:+Z, 2:-X, 3:-Z)
-    Wall = 2,   // стена 1×WALL_HEIGHT×1; rotation 0 — плоскость вдоль X, 1 — вдоль Z
-    Window = 3,  // модуль линии стен: подоконная стенка + проём с рамой + перемычка
-    Door = 4,    // модуль линии стен: открытый проём до перемычки
-    Cornice = 5, // непрерывный карниз: ячейка пояса, соседние сливаются в профиль по пути
-    Roof = 6,    // двускатная крыша: область ячеек, конёк вдоль длинной оси, скаты/фронтоны
-    Lamp = 7,    // источник света: фонарик-куб, светит уровнем LAMP_LEVEL (LightGrid)
-    COUNT = 8
+    Block = 0,      // куб 1×1×1 из выбранного материала
+    Lamp = 1,       // источник света: столбик, светит уровнем LAMP_LEVEL (LightGrid)
+    ModelBlock = 2, // модельный блок: геометрия из Minecraft block model (BlockModel.hpp)
+    COUNT = 3
 };
 
-// Высота стенного модуля в ячейках (классический этаж).
-constexpr int WALL_HEIGHT = 3;
-
-// Семейство линии стен: участвуют в ранах WallRun (полотно не рвётся на окнах/дверях).
-inline bool isWallFamilyType(ArchObjectType type) {
-    return type == ArchObjectType::Wall || type == ArchObjectType::Window ||
-           type == ArchObjectType::Door;
-}
-
-// Архитектурный объект: занимает набор ячеек, владеет ими целиком (ставится/ломается
-// как одно целое). Геометрия v1 — кубы занятых ячеек; крупные плоскости — этап WallRun.
-// Число параметров-пресетов объекта (ParameterBlock v1). Семантика по типу:
-// Roof:   [0] форма (0 двускатная, 1 плоская), [1] уклон (0=35°, 1=22°, 2=45°),
-//         [2] черепица (0 авто, 1..4 — колонка атласа 0..3), [3] свес (0=0.25, 1=0, 2=0.5)
-// Window: [0] проём (0 стандарт, 1 узкий, 2 широкий), [1] подоконник (0=0.9, 1=0.6, 2=1.2),
-//         [2] рама (0 крест, 1 без, 2 вертикаль), [3] наличник (0 есть, 1 без, 2 +сандрик)
-// Wall:   [0] толщина (0=0.3, 1=0.2, 2=0.5), [1] цоколь (0 камень, 1 без; на весь ран),
-//         [2] стиль (0 гладкая, 1 фахверк — каркас поверх полотна)
-// Door:   [0] проём (0 стандарт, 1 узкий, 2 портал)
+// Объект занимает одну ячейку и владеет ею целиком (ставится/ломается как одно целое).
+// Параметры-пресеты по типу:
+// ModelBlock: [0] стабильный id модели (BlockModels::byId)
 constexpr int ARCH_PARAM_COUNT = 4;
 
 struct ArchitectureObject {
@@ -71,11 +50,7 @@ public:
     };
 
     // Границы в мировых воксельных координатах: [minX..minX+sizeX) и т.д.
-    // roofMaterial — атлас черепицы: скаты/конёк рисуются вторым мешем чанка.
-    void init(
-        int minX, int minY, int minZ, int sizeX, int sizeY, int sizeZ, MaterialHandle material,
-        MaterialHandle roofMaterial
-    );
+    void init(int minX, int minY, int minZ, int sizeX, int sizeY, int sizeZ, MaterialHandle material);
     // Воксельный свет: мешер запекает каналы в вершины; правки объектов пересчитывают
     // сетку света и ремешат чанки изменившихся ячеек.
     void setLightGrid(LightGrid *lightGrid) {
@@ -111,8 +86,6 @@ public:
     // Восстановление сейва: только раскладка по ячейкам, чанки остаются dirty — единый
     // ремеш зовёт вызывающий (rebuildDirtyChunks) после пересчёта света.
     void restoreObjects(const std::vector<ArchitectureObject> &objects);
-    // Миграция сейвов v2: одиночные кубы (packed воксель + VoxelType) → Block-объекты.
-    void restoreLegacyBlocks(const std::vector<std::pair<uint64_t, uint8_t>> &blocks);
     // Ремеш всех чанков, помеченных dirty (загрузка: один проход после света).
     void rebuildDirtyChunks();
     // Ячейка занята каким-либо объектом — плотный кеш без хеш-таблиц (горячий путь света).
@@ -123,13 +96,17 @@ public:
     const std::unordered_map<uint32_t, ArchitectureObject> &objects() const {
         return m_objects;
     }
+    // Диагностика: сколько чанков перестроено с прошлого опроса (сброс при чтении).
+    uint32_t takeRemeshCount() {
+        const uint32_t count = m_remeshCounter;
+        m_remeshCounter = 0;
+        return count;
+    }
 
 private:
     struct ChunkView {
         EntityHandle entity = 0;
         MeshHandle mesh = 0;
-        EntityHandle roofEntity = 0; // скаты/конёк — материал черепицы
-        MeshHandle roofMesh = 0;
         bool dirty = true;
     };
 
@@ -145,33 +122,15 @@ private:
     void applyLightForObjectChange(const ArchitectureObject &object);
     void rebuildChunk(int chunkX, int chunkY, int chunkZ);
     // Объект семейства линии стен, владеющий ячейкой (nullptr, если ячейка не стенная).
-    const ArchitectureObject *wallAt(int x, int y, int z) const;
     // Ячейка заполнена кубом целиком (прячет грани соседей и участвует в AO).
     bool isFullCellAt(int x, int y, int z) const;
-    // WallRun-проход: раны стен, пересекающие чанк, → крупные тонкие поверхности.
-    void appendWallGeometry(
+    // Модельные блоки чанка: боксы Minecraft block model → квады меша.
+    void appendModelBlockGeometry(
         int startX, int startY, int startZ, int endX, int endY, int endZ,
         std::vector<Vertex> &vertices, std::vector<uint32_t> &indices
     ) const;
     // Фонарик-куб (эмиссив) в основной меш.
     void appendLampCube(int x, int y, int z, std::vector<Vertex> &vertices, std::vector<uint32_t> &indices) const;
-    // Карнизы: цепочки ячеек → профиль по пути (ExtrudedProfile), митра-углы.
-    void appendCorniceGeometry(
-        int startX, int startY, int startZ, int endX, int endY, int endZ,
-        std::vector<Vertex> &vertices, std::vector<uint32_t> &indices
-    ) const;
-    // Крыши: связная область ячеек → скаты/фронтоны/конёк (двускатная). Фронтоны —
-    // в основной меш (материал стен), скаты и конёк — в roof-буферы (черепица).
-    void appendRoofGeometry(
-        int startX, int startY, int startZ, int endX, int endY, int endZ,
-        std::vector<Vertex> &vertices, std::vector<uint32_t> &indices,
-        std::vector<Vertex> &roofVertices, std::vector<uint32_t> &roofIndices
-    ) const;
-    // Область крыши, связная с ячейкой (flood 4-соседство, тот же материал и высота).
-    void collectRoofRegion(int x, int y, int z, std::vector<std::array<int, 3>> &outCells) const;
-    // Полоса крыши зависит от дальних краёв области — правка дирти́т всю область.
-    void markRoofRegionDirty(const ArchitectureObject &object);
-
     int m_minX = 0, m_minY = 0, m_minZ = 0;
     int m_sizeX = 0, m_sizeY = 0, m_sizeZ = 0;
     int m_chunksX = 0, m_chunksY = 0, m_chunksZ = 0;
@@ -181,6 +140,6 @@ private:
     uint32_t m_nextObjectId = 1;
     std::vector<ChunkView> m_views;
     MaterialHandle m_material;
-    MaterialHandle m_roofMaterial;
+    uint32_t m_remeshCounter = 0;
     LightGrid *m_lightGrid = nullptr;
 };

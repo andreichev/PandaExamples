@@ -1,46 +1,6 @@
 #include "ArchUICommon.hpp"
 #include "../NeverlandHUDLayout.hpp"
 
-namespace {
-
-// Контент ячейки сетки материалов: превью + подпись. Пассивный (клики и подсветку
-// выделения обрабатывает сама коллекция).
-class MaterialCellContent final : public PandaUI::Panel {
-public:
-    MaterialCellContent() {
-        setBackgroundColor(PandaUI::Color(0x00000000));
-        layout().setFlexDirection(PandaUI::FlexDirection::Column);
-        layout().setAlignItems(PandaUI::Align::Center);
-        layout().setJustifyContent(PandaUI::Justify::Center);
-        layout().setGap(4.f);
-
-        m_preview = std::make_shared<PandaUI::ImageView>();
-        m_preview->setContentMode(PandaUI::ImageContentMode::Fit);
-        m_preview->setUserInteractionEnabled(false);
-        m_preview->layout().setSize(
-            {NeverlandHUDLayout::MenuCardPreview, NeverlandHUDLayout::MenuCardPreview}
-        );
-        addSubview(m_preview);
-
-        m_label = std::make_shared<PandaUI::Label>("");
-        m_label->setFont(PandaUI::Font(11.f));
-        m_label->setTextColor(PandaUI::Color(0xD5DCE8FF));
-        addSubview(m_label);
-    }
-
-    void bind(const char *name, PandaUI::TextureHandle texture) {
-        m_label->setText(name);
-        m_preview->setTexture(texture);
-        m_preview->setHidden(!texture);
-    }
-
-private:
-    std::shared_ptr<PandaUI::ImageView> m_preview;
-    std::shared_ptr<PandaUI::Label> m_label;
-};
-
-} // namespace
-
 BlockCardButton::BlockCardButton(const char *name, PandaUI::TextureHandle preview, const char *fallbackText)
     : PandaUI::Button("")
     , m_selected(false) {
@@ -201,95 +161,6 @@ ArchPanel::ArchPanel() {
     layout().setWidth(PandaUI::Length::percent(100.f));
 }
 
-PresetRow::PresetRow(
-    const ArchUIContext &context, ArchObjectType element, const char *title, int paramIndex,
-    std::vector<Option> options
-)
-    : m_context(context)
-    , m_element(element)
-    , m_paramIndex(paramIndex) {
-    setBackgroundColor(PandaUI::Color(0x00000000));
-    layout().setFlexDirection(PandaUI::FlexDirection::Row);
-    layout().setAlignItems(PandaUI::Align::Center);
-    layout().setGap(6.f);
-    layout().setWidth(PandaUI::Length::percent(100.f));
-
-    auto titleLabel = std::make_shared<PandaUI::Label>(title);
-    titleLabel->setFont(PandaUI::Font(12.f));
-    titleLabel->setTextColor(PandaUI::Color(0xD5DCE8FF));
-    titleLabel->layout().setWidth(PandaUI::Length::points(88.f));
-    addSubview(titleLabel);
-
-    for (const Option &option : options) {
-        auto button = std::make_shared<SettingsPresetButton>(option.name);
-        button->setOnClick([this, value = option.value](PandaUI::Button &) {
-            if (!m_context.blocks) { return; }
-            m_context.blocks->setElementParam(m_element, m_paramIndex, value);
-            m_context.blocks->setSelectedElement(m_element); // настройка = выбор формы
-            syncFromState();
-        });
-        m_buttons.emplace_back(option.value, button);
-        addSubview(button);
-    }
-    syncFromState();
-}
-
-void PresetRow::syncFromState() {
-    if (!m_context.blocks) { return; }
-    const uint8_t current = m_context.blocks->getElementParam(m_element, m_paramIndex);
-    for (auto &[value, button] : m_buttons) {
-        button->setSelected(value == current);
-    }
-}
-
-MaterialGridView::MaterialGridView(
-    const ArchUIContext &context, std::vector<Entry> entries, ArchObjectType elementOnSelect,
-    bool selectElement
-)
-    : PandaUI::CollectionView(std::make_shared<PandaUI::GridCollectionLayout>(
-          PandaUI::Size(NeverlandHUDLayout::MenuCardWidth, NeverlandHUDLayout::MenuCardHeight),
-          8.f, 4.f
-      ))
-    , m_context(context)
-    , m_entries(std::move(entries))
-    , m_elementOnSelect(elementOnSelect)
-    , m_selectElement(selectElement) {
-    setSelectionMode(PandaUI::CollectionSelectionMode::Single);
-
-    PandaUI::CollectionViewDataSource source;
-    source.numberOfItems = [this] { return static_cast<int>(m_entries.size()); };
-    source.cellForReuse = [] { return std::make_shared<MaterialCellContent>(); };
-    source.configureCell = [this](PandaUI::View &cell, int index) {
-        const Entry &entry = m_entries[static_cast<size_t>(index)];
-        static_cast<MaterialCellContent &>(cell).bind(
-            entry.name,
-            m_context.previewFor ? m_context.previewFor(entry.type) : PandaUI::TextureHandle{}
-        );
-    };
-    setDataSource(source);
-
-    setOnSelectionChanged([this](PandaUI::CollectionView &) {
-        if (!m_context.blocks || selectedIndices().empty()) { return; }
-        const Entry &entry = m_entries[static_cast<size_t>(selectedIndices().front())];
-        m_context.blocks->setSelectedBlock(entry.type);
-        if (m_selectElement) { m_context.blocks->setSelectedElement(m_elementOnSelect); }
-    });
-    reloadData();
-}
-
-void MaterialGridView::syncFromState() {
-    if (!m_context.blocks) { return; }
-    const VoxelType selected = m_context.blocks->getSelectedBlock();
-    for (size_t i = 0; i < m_entries.size(); ++i) {
-        if (m_entries[i].type == selected) {
-            const int index = static_cast<int>(i);
-            if (!isSelected(index)) { setSelectedIndices({index}); }
-            return;
-        }
-    }
-    clearSelection();
-}
-
 namespace ArchUI {
 
 void setViewVisible(PandaUI::View &view, bool visible) {
@@ -328,30 +199,14 @@ std::shared_ptr<PandaUI::Panel> divider() {
     return line;
 }
 
-std::shared_ptr<PandaUI::Label> plannedLabel(const char *text) {
-    auto label = std::make_shared<PandaUI::Label>(text);
-    label->setFont(PandaUI::Font(12.f));
-    label->setTextColor(PandaUI::Color(0x55607255));
-    return label;
-}
-
-void addPlannedSection(PandaUI::Panel &panel, std::initializer_list<const char *> items) {
-    panel.addSubview(divider());
-    panel.addSubview(sectionLabel("Planned parameters"));
-    for (const char *item : items) {
-        panel.addSubview(plannedLabel(item));
-    }
-}
-
 std::shared_ptr<BlockCardButton> makeMaterialCard(
-    const ArchUIContext &context, VoxelType type, const char *name,
-    ArchObjectType elementOnSelect, bool selectElement
+    const ArchUIContext &context, VoxelType type, const char *name
 ) {
     auto card = std::make_shared<BlockCardButton>(name, context.previewFor(type), nullptr);
-    card->setOnClick([context, type, elementOnSelect, selectElement](PandaUI::Button &) {
+    card->setOnClick([context, type](PandaUI::Button &) {
         if (!context.blocks) { return; }
+        context.blocks->setSelectedElement(ArchObjectType::Block);
         context.blocks->setSelectedBlock(type);
-        if (selectElement) { context.blocks->setSelectedElement(elementOnSelect); }
     });
     if (context.blockCards != nullptr) { context.blockCards->emplace_back(type, card); }
     return card;

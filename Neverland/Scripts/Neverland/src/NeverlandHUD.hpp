@@ -70,6 +70,7 @@ private:
     std::array<PandaUI::TextureHandle, static_cast<size_t>(VoxelType::COUNT)> m_previewTextures;
     VoxelType m_displayedSelection = VoxelType::NOTHING;
     ArchObjectType m_displayedElement = ArchObjectType::COUNT; // COUNT = «не применено»
+    uint8_t m_displayedModelId = 255; // параметр модели в dirty-check выбора
 };
 
 REGISTER_SCRIPT(NeverlandHUD)

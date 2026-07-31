@@ -1,10 +1,35 @@
 {
     "assets": [
         {
-            "id": 980854,
-            "type": 9,
+            "id": 92809675,
+            "type": 4,
             "meta": {
-                "terrainPath": "Assets/Terrain3D.terrain"
+                "materialPath": "Assets/tree_1/LOD1/tree_1LOD1_branches_0.mat",
+                "shader": 0
+            }
+        },
+        {
+            "id": 162809327,
+            "type": 1,
+            "meta": {
+                "minFiltering": 5,
+                "magFiltering": 1,
+                "numMips": 16,
+                "srgb": false,
+                "sourcePath": "Assets/tree_1/normal_1.png",
+                "cookedPath": ".Panda/Textures/Assets/tree_1/normal_1.ptex"
+            }
+        },
+        {
+            "id": 197655396,
+            "type": 1,
+            "meta": {
+                "minFiltering": 5,
+                "magFiltering": 0,
+                "numMips": 16,
+                "srgb": true,
+                "sourcePath": "Assets/Grass/Grass_BaseColor.jpg",
+                "cookedPath": ".Panda/Textures/Assets/Grass/Grass_BaseColor.ptex"
             }
         },
         {
@@ -15,10 +40,343 @@
             }
         },
         {
-            "id": 3204202438,
+            "id": 694789305,
+            "type": 1,
+            "meta": {
+                "minFiltering": 5,
+                "magFiltering": 1,
+                "numMips": 16,
+                "srgb": true,
+                "sourcePath": "Assets/Grass/UnderGrass.png",
+                "cookedPath": ".Panda/Textures/Assets/Grass/UnderGrass.ptex"
+            }
+        },
+        {
+            "id": 1090250100,
             "type": 9,
             "meta": {
-                "terrainPath": "Assets/Terrain.terrain"
+                "terrainPath": "Assets/Terrain 3.terrain"
+            }
+        },
+        {
+            "id": 1434611941,
+            "type": 1,
+            "meta": {
+                "minFiltering": 5,
+                "magFiltering": 1,
+                "numMips": 16,
+                "srgb": true,
+                "sourcePath": "Assets/tree_1/baseColor_1.png",
+                "cookedPath": ".Panda/Textures/Assets/tree_1/baseColor_1.ptex"
+            }
+        },
+        {
+            "id": 1490504037,
+            "type": 4,
+            "meta": {
+                "materialPath": "Assets/tree_1/LOD2/tree1_LOD2_branches_0.mat",
+                "shader": 0
+            }
+        },
+        {
+            "id": 1850840993,
+            "type": 4,
+            "meta": {
+                "materialPath": "Assets/TerrainMaterial.mat",
+                "shader": 23
+            }
+        },
+        {
+            "id": 2291387115,
+            "type": 6,
+            "meta": {
+                "gltfPath": "Assets/tree_1/tree_1.gltf",
+                "materials": [
+                    {
+                        "name": "branches",
+                        "baseColorTexturePath": "Assets/tree_1/baseColor_1.png",
+                        "baseColorFactor": {
+                            "x": 0.6172065734863281,
+                            "y": 0.6038273572921753,
+                            "z": 0.5149176716804504,
+                            "w": 1.0
+                        },
+                        "metallicRoughnessTexturePath": "Assets/tree_1/metallicRoughness_1.png",
+                        "metallicFactor": 0.0,
+                        "roughnessFactor": 1.0,
+                        "normalTexturePath": "Assets/tree_1/normal_1.png",
+                        "normalScale": 1.0,
+                        "occlusionTexturePath": "",
+                        "occlusionStrength": 0.0,
+                        "emissiveTexturePath": "",
+                        "emissiveFactor": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0,
+                            "w": 1.0
+                        },
+                        "alphaMode": 0,
+                        "alphaCutoff": 0.5,
+                        "doubleSided": false
+                    },
+                    {
+                        "name": "leaves",
+                        "baseColorTexturePath": "Assets/tree_1/baseColor_2.png",
+                        "baseColorFactor": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0,
+                            "w": 1.0
+                        },
+                        "metallicRoughnessTexturePath": "",
+                        "metallicFactor": 0.0,
+                        "roughnessFactor": 1.0,
+                        "normalTexturePath": "",
+                        "normalScale": 0.0,
+                        "occlusionTexturePath": "",
+                        "occlusionStrength": 0.0,
+                        "emissiveTexturePath": "",
+                        "emissiveFactor": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0,
+                            "w": 1.0
+                        },
+                        "alphaMode": 1,
+                        "alphaCutoff": 0.5,
+                        "doubleSided": true
+                    }
+                ],
+                "primitiveMaterials": [
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 0,
+                        "materialIndex": 0
+                    },
+                    {
+                        "submeshIndex": 1,
+                        "primitiveIndex": 0,
+                        "materialIndex": 1
+                    }
+                ]
+            }
+        },
+        {
+            "id": 2432026123,
+            "type": 1,
+            "meta": {
+                "minFiltering": 5,
+                "magFiltering": 1,
+                "numMips": 16,
+                "srgb": false,
+                "sourcePath": "Assets/tree_1/metallicRoughness_1.png",
+                "cookedPath": ".Panda/Textures/Assets/tree_1/metallicRoughness_1.ptex"
+            }
+        },
+        {
+            "id": 2452315955,
+            "type": 4,
+            "meta": {
+                "materialPath": "Assets/tree_1/tree_1_leaves_1.mat",
+                "shader": 0
+            }
+        },
+        {
+            "id": 2511775207,
+            "type": 4,
+            "meta": {
+                "materialPath": "Assets/tree_1/tree_1_branches_0.mat",
+                "shader": 0
+            }
+        },
+        {
+            "id": 2531777814,
+            "type": 1,
+            "meta": {
+                "minFiltering": 5,
+                "magFiltering": 0,
+                "numMips": 16,
+                "srgb": true,
+                "sourcePath": "Assets/GroundDirtWeeds/GroundDirtWeedsPatchy004_COL_4K.jpg",
+                "cookedPath": ".Panda/Textures/Assets/GroundDirtWeeds/GroundDirtWeedsPatchy004_COL_4K.ptex"
+            }
+        },
+        {
+            "id": 3180243332,
+            "type": 6,
+            "meta": {
+                "gltfPath": "Assets/tree_1/LOD2/tree1_LOD2.gltf",
+                "materials": [
+                    {
+                        "name": "branches",
+                        "baseColorTexturePath": "",
+                        "baseColorFactor": {
+                            "x": 0.6172065734863281,
+                            "y": 0.6038273572921753,
+                            "z": 0.5149176716804504,
+                            "w": 1.0
+                        },
+                        "metallicRoughnessTexturePath": "",
+                        "metallicFactor": 0.0,
+                        "roughnessFactor": 1.0,
+                        "normalTexturePath": "",
+                        "normalScale": 1.0,
+                        "occlusionTexturePath": "",
+                        "occlusionStrength": 0.0,
+                        "emissiveTexturePath": "",
+                        "emissiveFactor": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0,
+                            "w": 1.0
+                        },
+                        "alphaMode": 0,
+                        "alphaCutoff": 0.5,
+                        "doubleSided": false
+                    },
+                    {
+                        "name": "leaves",
+                        "baseColorTexturePath": "",
+                        "baseColorFactor": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0,
+                            "w": 1.0
+                        },
+                        "metallicRoughnessTexturePath": "",
+                        "metallicFactor": 0.0,
+                        "roughnessFactor": 1.0,
+                        "normalTexturePath": "",
+                        "normalScale": 0.0,
+                        "occlusionTexturePath": "",
+                        "occlusionStrength": 0.0,
+                        "emissiveTexturePath": "",
+                        "emissiveFactor": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0,
+                            "w": 1.0
+                        },
+                        "alphaMode": 1,
+                        "alphaCutoff": 0.5,
+                        "doubleSided": true
+                    }
+                ],
+                "primitiveMaterials": [
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 0,
+                        "materialIndex": 0
+                    },
+                    {
+                        "submeshIndex": 1,
+                        "primitiveIndex": 0,
+                        "materialIndex": 1
+                    }
+                ]
+            }
+        },
+        {
+            "id": 3206056570,
+            "type": 1,
+            "meta": {
+                "minFiltering": 5,
+                "magFiltering": 1,
+                "numMips": 16,
+                "srgb": true,
+                "sourcePath": "Assets/tree_1/baseColor_2.png",
+                "cookedPath": ".Panda/Textures/Assets/tree_1/baseColor_2.ptex"
+            }
+        },
+        {
+            "id": 3565002711,
+            "type": 4,
+            "meta": {
+                "materialPath": "Assets/tree_1/LOD1/tree_1LOD1_leaves_1.mat",
+                "shader": 0
+            }
+        },
+        {
+            "id": 4094763503,
+            "type": 6,
+            "meta": {
+                "gltfPath": "Assets/tree_1/LOD1/tree_1LOD1.gltf",
+                "materials": [
+                    {
+                        "name": "branches",
+                        "baseColorTexturePath": "Assets/tree_1/LOD1/baseColor_1.png",
+                        "baseColorFactor": {
+                            "x": 0.6172065734863281,
+                            "y": 0.6038273572921753,
+                            "z": 0.5149176716804504,
+                            "w": 1.0
+                        },
+                        "metallicRoughnessTexturePath": "Assets/tree_1/LOD1/metallicRoughness_1.png",
+                        "metallicFactor": 0.0,
+                        "roughnessFactor": 1.0,
+                        "normalTexturePath": "Assets/tree_1/LOD1/normal_1.png",
+                        "normalScale": 1.0,
+                        "occlusionTexturePath": "",
+                        "occlusionStrength": 0.0,
+                        "emissiveTexturePath": "",
+                        "emissiveFactor": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0,
+                            "w": 1.0
+                        },
+                        "alphaMode": 0,
+                        "alphaCutoff": 0.5,
+                        "doubleSided": false
+                    },
+                    {
+                        "name": "leaves",
+                        "baseColorTexturePath": "Assets/tree_1/LOD1/baseColor_2.png",
+                        "baseColorFactor": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0,
+                            "w": 1.0
+                        },
+                        "metallicRoughnessTexturePath": "",
+                        "metallicFactor": 0.0,
+                        "roughnessFactor": 1.0,
+                        "normalTexturePath": "",
+                        "normalScale": 0.0,
+                        "occlusionTexturePath": "",
+                        "occlusionStrength": 0.0,
+                        "emissiveTexturePath": "",
+                        "emissiveFactor": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0,
+                            "w": 1.0
+                        },
+                        "alphaMode": 1,
+                        "alphaCutoff": 0.5,
+                        "doubleSided": true
+                    }
+                ],
+                "primitiveMaterials": [
+                    {
+                        "submeshIndex": 0,
+                        "primitiveIndex": 0,
+                        "materialIndex": 0
+                    },
+                    {
+                        "submeshIndex": 1,
+                        "primitiveIndex": 0,
+                        "materialIndex": 1
+                    }
+                ]
+            }
+        },
+        {
+            "id": 4240832667,
+            "type": 4,
+            "meta": {
+                "materialPath": "Assets/tree_1/LOD2/tree1_LOD2_leaves_1.mat",
+                "shader": 0
             }
         }
     ]

@@ -3,6 +3,7 @@
 //
 
 #include "BlocksCreation.hpp"
+#include <chrono>
 #include "GameMenu.hpp"
 #include "Model/BlockPalette.hpp"
 #include "Model/GameContext.hpp"
@@ -386,6 +387,15 @@ void BlocksCreation::destroyBrushMarker() {
 }
 
 void BlocksCreation::update(float deltaTime) {
+    struct ScriptTimer {
+        std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
+        ~ScriptTimer() {
+            GameContext::s_scriptMsBlocks += std::chrono::duration<double, std::milli>(
+                                 std::chrono::steady_clock::now() - start)
+                                 .count();
+        }
+    } scriptTimer;
+
     if (!GameMenu::isGameplayActive()) {
         m_previewEdits.clear();
         updateBrushMarker(m_previewEdits); // меню: маркер прячем
@@ -430,15 +440,8 @@ void BlocksCreation::update(float deltaTime) {
                 hit.normalZ, currentBrushRadius(), m_selectedBlock, *GameContext::s_buildingGrid,
                 m_previewEdits
             );
-        } else {
-            // Объект: подсветка всех ячеек будущей установки.
-            const ArchitectureObject object = pendingObject(hit);
-            std::vector<std::array<int, 3>> cells;
-            BuildingCellGrid::cellsFor(object, cells);
-            for (const auto &cell : cells) {
-                m_previewEdits.push_back({cell[0], cell[1], cell[2], object.material});
-            }
         }
+        // Строительный режим — без маркера: подсветка ячеек мешает видеть блок.
     }
     if (brushActive) {
         updateBrushMarker(m_previewEdits);
@@ -482,13 +485,6 @@ void BlocksCreation::update(float deltaTime) {
     if (m_dragActive) {
         if (hit.valid) { rebuildDragLine(pendingObject(hit)); }
         m_previewEdits.clear();
-        std::vector<std::array<int, 3>> cells;
-        for (const ArchitectureObject &object : m_dragLine) {
-            BuildingCellGrid::cellsFor(object, cells);
-            for (const auto &cell : cells) {
-                m_previewEdits.push_back({cell[0], cell[1], cell[2], object.material});
-            }
-        }
         if (breakPressed) { // ПКМ во время протяжки — отмена
             m_dragActive = false;
             m_dragLine.clear();
@@ -523,24 +519,14 @@ void BlocksCreation::rebuildDragLine(const ArchitectureObject &current) {
     const int distance = axisX ? deltaX : deltaZ;
     const int direction = distance >= 0 ? 1 : -1;
 
-    int step = 1;
-    if (m_dragBase.type == ArchObjectType::Beam) { step = 3; } // сегменты встык
-
     ArchitectureObject object = m_dragBase;
-    // Осевые формы ложатся вдоль линии протяжки.
-    if (isWallFamilyType(object.type) || object.type == ArchObjectType::Cornice) {
-        object.rotation = axisX ? 0 : 1;
-    } else if (object.type == ArchObjectType::Beam) {
-        object.rotation = axisX ? (direction > 0 ? 0 : 2) : (direction > 0 ? 1 : 3);
-    }
-
-    const int count = std::abs(distance) / step + 1;
+    const int count = std::abs(distance) + 1;
     for (int i = 0; i < count; i++) {
         ArchitectureObject lineObject = object;
         if (axisX) {
-            lineObject.x = m_dragBase.x + direction * step * i;
+            lineObject.x = m_dragBase.x + direction * i;
         } else {
-            lineObject.z = m_dragBase.z + direction * step * i;
+            lineObject.z = m_dragBase.z + direction * i;
         }
         m_dragLine.push_back(lineObject);
     }
@@ -566,20 +552,14 @@ ArchitectureObject BlocksCreation::pendingObject(const AimHit &hit) const {
     for (int p = 0; p < ARCH_PARAM_COUNT; p++) {
         object.params[p] = getElementParam(object.type, p);
     }
-    if (object.type == ArchObjectType::Beam && m_playerController) {
-        // Балка растёт от прицела в направлении взгляда (доминантная ось XZ).
+    if (object.type == ArchObjectType::ModelBlock && m_playerController) {
+        // Модель разворачивается к игроку (доминантная ось взгляда).
         const Vec3 front = m_playerController->getFront();
         if (std::abs(front.x) >= std::abs(front.z)) {
             object.rotation = front.x >= 0.f ? 0 : 2;
         } else {
             object.rotation = front.z >= 0.f ? 1 : 3;
         }
-    }
-    if ((isWallFamilyType(object.type) || object.type == ArchObjectType::Cornice) &&
-        m_playerController) {
-        // Модуль линии стен/карниз тянется вдоль направления взгляда (как забор от игрока).
-        const Vec3 front = m_playerController->getFront();
-        object.rotation = std::abs(front.x) >= std::abs(front.z) ? 0 : 1;
     }
     return object;
 }

@@ -15,8 +15,15 @@ public:
     static WorldSave *s_worldSave;
     static MaterialHandle s_terrainMaterial; // рельеф/рука природных (base_ground_1)
     static MaterialHandle s_blocksMaterial;  // рукотворные блоки/стены (base_materials_1)
-    static MaterialHandle s_markerMaterial;  // подсветка кисти/блока (полупрозрачный unlit)
-    static MaterialHandle s_roofMaterial;    // черепица крыш (base_roof_1)
+    static MaterialHandle s_markerMaterial;
+    // Диагностика тряски: максимальные покадровые дельты камеры за окно лога
+    // (пишет PlayerController, читает и сбрасывает BaseScript::updatePerfLog).
+    static float s_camPosDeltaMax;
+    static float s_camLookDeltaMax;
+    // Поиск узкого горлышка: суммарное время скриптов за окно лога, мс.
+    static double s_scriptMsPlayer;
+    static double s_scriptMsBlocks;
+    static double s_scriptMsHud;  // подсветка кисти/блока (полупрозрачный unlit)
     // Воксельный свет мира (солнце + лампы); мешер построек читает при ремеше.
     static LightGrid *s_lightGrid;
     // Светокарта рельефа (атлас LightGrid → terrain-шейдер).

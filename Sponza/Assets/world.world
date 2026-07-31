@@ -8,6 +8,14 @@
         },
         "ambientIntensity": 0.11999999731779099
     },
+    "graphicsSettings": {
+        "terrainLod1": 120.0,
+        "terrainLod2": 240.0,
+        "terrainDrawDistance": 0.0,
+        "terrainRing2Width": 8,
+        "terrainRing3Width": 32,
+        "terrainRing4Width": 64
+    },
     "entities": [
         {
             "id": 2913530307,
@@ -271,6 +279,48 @@
                     "w": 1.0
                 },
                 "intensity": 1.0,
+                "isEnabled": true
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 2459582987,
+            "tagComponent": {
+                "tag": "GameObject 1"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 6.88649845123291,
+                    "y": 4.969304084777832,
+                    "z": -0.9104136228561401
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "pointLightComponent": {
+                "color": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0,
+                    "w": 1.0
+                },
+                "intensity": 2.0,
+                "radius": 10.0,
                 "isEnabled": true
             },
             "scriptListComponent": {

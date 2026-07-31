@@ -28,8 +28,6 @@ public:
     std::unordered_map<uint64_t, uint8_t> terrainEdits;
     // Архитектурные объекты построек (v3); id не персистятся (пересоздаются сеткой).
     std::vector<ArchitectureObject> objects;
-    // Кубы из сейва v2 — только для миграции при загрузке (restoreLegacyBlocks).
-    std::vector<std::pair<uint64_t, uint8_t>> legacyBlocks;
 
 private:
     std::string m_path;

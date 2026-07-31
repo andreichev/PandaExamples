@@ -1,0 +1,76 @@
+{
+	"parent": "minecraft:block/block",
+	"textures": {
+		"particle": "block/oak_planks",
+		"0": "block/ladder"
+	},
+	"elements": [
+		{
+			"from": [ 2, 0, 13.5 ],
+			"to": [ 4.5, 16, 16 ],
+			"faces": {
+				"down": { "uv": [ 2, 13.5, 4.5, 16 ], "texture": "#0" },
+				"up": { "uv": [ 2, 0, 4.5, 2.5 ], "texture": "#0" },
+				"north": { "uv": [ 2, 0, 4.5, 16 ], "texture": "#0" },
+				"south": { "uv": [ 2, 0, 4.5, 16 ], "texture": "#0" },
+				"west": { "uv": [ 2, 0, 4.5, 16 ], "texture": "#0" },
+				"east": { "uv": [ 2, 0, 4.5, 16 ], "texture": "#0" }
+			}
+		},
+		{
+			"from": [ 11.5, 0, 13.5 ],
+			"to": [ 14, 16, 16 ],
+			"faces": {
+				"down": { "uv": [ 11.5, 13.5, 14, 16 ], "texture": "#0" },
+				"up": { "uv": [ 11.5, 0, 14, 2.5 ], "texture": "#0" },
+				"north": { "uv": [ 11.5, 0, 14, 16 ], "texture": "#0" },
+				"south": { "uv": [ 11.5, 0, 14, 16 ], "texture": "#0" },
+				"west": { "uv": [ 11.5, 0, 14, 16 ], "texture": "#0" },
+				"east": { "uv": [ 11.5, 0, 14, 16 ], "texture": "#0" }
+			}
+		},
+		{
+			"from": [ 1, 1.5, 14 ],
+			"to": [ 15, 3.5, 15.5 ],
+			"faces": {
+				"down": { "uv": [ 1, 12.5, 15, 14 ], "texture": "#0" },
+				"up": { "uv": [ 1, 12.5, 15, 14 ], "texture": "#0" },
+				"north": { "uv": [ 1, 12.5, 15, 14.5 ], "texture": "#0" },
+				"south": { "uv": [ 1, 12.5, 15, 14.5 ], "texture": "#0" },
+				"west": { "uv": [ 12, 12.5, 13.5, 14.5 ], "texture": "#0" },
+				"east": { "uv": [ 2.5, 12.5, 4, 14.5 ], "texture": "#0" }
+			}
+		},
+		{
+			"from": [ 1, 7, 14 ],
+			"to": [ 15, 9, 15.5 ],
+			"faces": {
+				"down": { "uv": [ 1, 7, 15, 8.5 ], "texture": "#0" },
+				"up": { "uv": [ 1, 7, 15, 8.5 ], "texture": "#0" },
+				"north": { "uv": [ 1, 7, 15, 9 ], "texture": "#0" },
+				"south": { "uv": [ 1, 7, 15, 9 ], "texture": "#0" },
+				"west": { "uv": [ 2.5, 7, 4, 9 ], "texture": "#0" },
+				"east": { "uv": [ 12, 7, 13.5, 9 ], "texture": "#0" }
+			}
+		},
+		{
+			"from": [ 1, 12.5, 14 ],
+			"to": [ 15, 14.5, 15.5 ],
+			"faces": {
+				"down": { "uv": [ 1, 1.5, 15, 3 ], "texture": "#0" },
+				"up": { "uv": [ 1, 1.5, 15, 3 ], "texture": "#0" },
+				"north": { "uv": [ 1, 1.5, 15, 3.5 ], "texture": "#0" },
+				"south": { "uv": [ 1, 1.5, 15, 3.5 ], "texture": "#0" },
+				"west": { "uv": [ 2.5, 1.5, 4, 3.5 ], "texture": "#0" },
+				"east": { "uv": [ 12, 1.5, 13.5, 3.5 ], "texture": "#0" }
+			}
+		}
+	],
+	"display": {
+		"gui": {
+			"rotation": [0, 0, 0],
+			"translation": [0, 0, 0],
+			"scale": [1, 1, 1]
+		}
+	}
+}

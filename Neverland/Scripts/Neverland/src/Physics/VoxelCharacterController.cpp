@@ -264,7 +264,10 @@ void VoxelCharacterController::move(
         state.verticalVelocity -= config.gravity * substepDeltaTime;
         state.verticalVelocity = std::max(state.verticalVelocity, -config.maxFallSpeed);
 
-        moveVertical(eyePosition, state, config, state.verticalVelocity * substepDeltaTime);
+        float verticalTranslation = state.verticalVelocity * substepDeltaTime;
+        // Стоя на земле глубокая проба не нужна; кламп гасит провалы на лаг-спайках dt.
+        if (state.grounded) { verticalTranslation = std::max(verticalTranslation, -0.25f); }
+        moveVertical(eyePosition, state, config, verticalTranslation);
 
         if (!state.grounded && state.verticalVelocity <= 0.0f &&
             snapToGround(eyePosition, config, config.groundSnapDistance)) {
@@ -333,7 +336,11 @@ void VoxelCharacterController::moveVertical(
         float fieldFloor;
         if (fieldFloorUnder(eyePosition, config, feetBefore + 0.5f, feetAfter - 0.05f, fieldFloor) &&
             fieldFloor > feetAfter) {
-            eyePosition.y = fieldFloor + config.eyeHeight;
+            // Мёртвая зона: решение ISO-границы гуляет на миллиметры от кадра к кадру —
+            // стоя на месте позицию не трогаем (иначе весь мир мелко трясётся).
+            const float targetFeet =
+                std::abs(fieldFloor - feetBefore) < 0.004f ? feetBefore : fieldFloor;
+            eyePosition.y = targetFeet + config.eyeHeight;
             hitGround = true;
         }
     } else {

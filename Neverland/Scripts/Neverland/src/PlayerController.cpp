@@ -3,6 +3,7 @@
 //
 
 #include "PlayerController.hpp"
+#include <chrono>
 #include "GameMenu.hpp"
 #include "Model/TerrainAccess.hpp"
 #include "Model/GameContext.hpp"
@@ -90,6 +91,15 @@ void PlayerController::placePlayer() {
 }
 
 void PlayerController::update(float deltaTime) {
+    struct ScriptTimer {
+        std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
+        ~ScriptTimer() {
+            GameContext::s_scriptMsPlayer += std::chrono::duration<double, std::milli>(
+                                 std::chrono::steady_clock::now() - start)
+                                 .count();
+        }
+    } scriptTimer;
+
     if (m_spawnPending) {
         if (!TerrainAccess::isReady()) { return; } // мир ещё не связан с terrain
         placePlayer();
@@ -113,6 +123,24 @@ void PlayerController::update(float deltaTime) {
         save->player.z = m_physicsEyePosition.z;
         save->player.pitch = m_pitch;
         save->player.yaw = m_yaw;
+    }
+
+    // Диагностика тряски: покадровые дельты фактического трансформа камеры.
+    {
+        const Vec3 raw = TransformComponentAPI::getPosition(getEntity());
+        const glm::vec3 camPosition(raw.x, raw.y, raw.z);
+        if (m_perfPrevValid) {
+            GameContext::s_camPosDeltaMax = std::max(
+                GameContext::s_camPosDeltaMax, glm::length(camPosition - m_perfPrevPosition)
+            );
+            const float lookDelta =
+                std::abs(m_yaw - m_perfPrevYaw) + std::abs(m_pitch - m_perfPrevPitch);
+            GameContext::s_camLookDeltaMax = std::max(GameContext::s_camLookDeltaMax, lookDelta);
+        }
+        m_perfPrevPosition = camPosition;
+        m_perfPrevYaw = m_yaw;
+        m_perfPrevPitch = m_pitch;
+        m_perfPrevValid = true;
     }
 }
 

@@ -25,7 +25,18 @@ enum class VoxelType {
     DARK_BRICK = 14,
     DARK_STONE = 15,
     SLATE = 16,
-    COUNT = 17
+    MARBLE = 17,
+    COLUMN = 18,
+    WOOD_PLANKS = 19,
+    TIMBER_PLAIN = 20,  // фахверк: штукатурка в балочном поле
+    TIMBER_FRAME = 21,  // фахверк: панель-рамка
+    TIMBER_CROSS = 22,  // фахверк: крест в рамке
+    TIMBER_DIAG_L = 23, // фахверк: раскос ↗
+    TIMBER_DIAG_R = 24, // фахверк: раскос ↘
+    ROOF_TILES_RED = 25,   // черепица кубом (коньки, массивы крыш)
+    ROOF_TILES_BROWN = 26,
+    ROOF_TILES_DARK = 27,
+    COUNT = 28
 };
 
 struct Voxel {

@@ -68,14 +68,9 @@ bool LightGrid::isOpaque(const BuildingCellGrid &buildings, int x, int y, int z)
     if (object == nullptr) { return false; }
     switch (object->type) {
         case ArchObjectType::Block:
-        case ArchObjectType::Beam:
-        case ArchObjectType::Wall:
-        case ArchObjectType::Roof:
             return true;
-        case ArchObjectType::Window: // проём пропускает свет (стекла нет)
-        case ArchObjectType::Door:
-        case ArchObjectType::Cornice:
         case ArchObjectType::Lamp:
+        case ArchObjectType::ModelBlock: // ажурная геометрия — не тенит
         case ArchObjectType::COUNT:
             return false;
     }
