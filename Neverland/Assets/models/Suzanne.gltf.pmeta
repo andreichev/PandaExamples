@@ -2,7 +2,6 @@
     "id": 3651530327,
     "type": 6,
     "meta": {
-        "gltfPath": "Assets/models/Suzanne.gltf",
         "materials": [
             {
                 "name": "Suzanne",

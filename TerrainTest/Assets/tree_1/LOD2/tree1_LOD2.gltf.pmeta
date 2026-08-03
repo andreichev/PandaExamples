@@ -2,7 +2,6 @@
     "id": 3180243332,
     "type": 6,
     "meta": {
-        "gltfPath": "Assets/tree_1/LOD2/tree1_LOD2.gltf",
         "materials": [
             {
                 "name": "branches",

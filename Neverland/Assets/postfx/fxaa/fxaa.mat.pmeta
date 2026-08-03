@@ -2,7 +2,6 @@
     "id": 917000205,
     "type": 4,
     "meta": {
-        "materialPath": "Assets/postfx/fxaa/fxaa.mat",
         "shader": 917000204
     }
 }

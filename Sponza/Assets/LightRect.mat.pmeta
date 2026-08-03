@@ -2,7 +2,6 @@
     "id": 2986368463,
     "type": 4,
     "meta": {
-        "materialPath": "Assets/LightRect.mat",
         "shader": 11
     }
 }

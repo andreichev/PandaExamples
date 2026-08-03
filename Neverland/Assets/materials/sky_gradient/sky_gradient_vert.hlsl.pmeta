@@ -1,8 +1,4 @@
 {
     "id": 3264501901,
-    "type": 3,
-    "meta": {
-        "vertexSourcePath": "Assets/materials/sky_gradient/sky_gradient_vert.hlsl",
-        "fragmentSourcePath": "Assets/materials/sky_gradient/sky_gradient_frag.hlsl"
-    }
+    "type": 3
 }

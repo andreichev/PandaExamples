@@ -5,8 +5,6 @@
         "minFiltering": 0,
         "magFiltering": 0,
         "numMips": 0,
-        "srgb": true,
-        "sourcePath": "Assets/Fire.png",
-        "cookedPath": ".Panda/Textures/Assets/Fire.ptex"
+        "srgb": true
     }
 }

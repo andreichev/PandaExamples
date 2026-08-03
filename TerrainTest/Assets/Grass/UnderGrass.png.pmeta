@@ -5,8 +5,6 @@
         "minFiltering": 5,
         "magFiltering": 1,
         "numMips": 16,
-        "srgb": true,
-        "sourcePath": "Assets/Grass/UnderGrass.png",
-        "cookedPath": ".Panda/Textures/Assets/Grass/UnderGrass.ptex"
+        "srgb": true
     }
 }

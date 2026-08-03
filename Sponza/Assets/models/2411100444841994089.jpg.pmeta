@@ -5,8 +5,6 @@
         "minFiltering": 0,
         "magFiltering": 0,
         "numMips": 0,
-        "srgb": false,
-        "sourcePath": "Assets/models/2411100444841994089.jpg",
-        "cookedPath": ".Panda/Textures/Assets/models/2411100444841994089.ptex"
+        "srgb": false
     }
 }

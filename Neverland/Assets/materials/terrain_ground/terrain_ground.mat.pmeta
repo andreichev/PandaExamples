@@ -2,7 +2,6 @@
     "id": 917000202,
     "type": 4,
     "meta": {
-        "materialPath": "Assets/materials/terrain_ground/terrain_ground.mat",
         "shader": 917000203
     }
 }

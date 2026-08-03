@@ -2,7 +2,6 @@
     "id": 917000211,
     "type": 4,
     "meta": {
-        "materialPath": "Assets/materials/roof/roof.mat",
         "shader": 917000212
     }
 }

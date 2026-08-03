@@ -1,8 +1,4 @@
 {
     "id": 917000212,
-    "type": 3,
-    "meta": {
-        "vertexSourcePath": "Assets/materials/blocks_lit/blocks_lit_vert.hlsl",
-        "fragmentSourcePath": "Assets/materials/blocks_lit/blocks_lit_frag.hlsl"
-    }
+    "type": 3
 }

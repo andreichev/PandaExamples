@@ -1,7 +1,4 @@
 {
     "id": 917000206,
-    "type": 8,
-    "meta": {
-        "dataPath": "Assets/postfx/Postprocessing.postfx"
-    }
+    "type": 8
 }

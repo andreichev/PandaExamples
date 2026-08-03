@@ -5,8 +5,6 @@
         "minFiltering": 5,
         "magFiltering": 1,
         "numMips": 4,
-        "srgb": true,
-        "sourcePath": "Assets/textures/base_materials_1.png",
-        "cookedPath": ".Panda/Textures/Assets/textures/base_materials_1.ptex"
+        "srgb": true
     }
 }

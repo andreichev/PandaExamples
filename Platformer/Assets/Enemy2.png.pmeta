@@ -5,8 +5,6 @@
         "minFiltering": 0,
         "magFiltering": 0,
         "numMips": 0,
-        "srgb": true,
-        "sourcePath": "Assets/Enemy2.png",
-        "cookedPath": ".Panda/Textures/Assets/Enemy2.ptex"
+        "srgb": true
     }
 }

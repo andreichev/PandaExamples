@@ -2,7 +2,6 @@
     "id": 1795386204,
     "type": 6,
     "meta": {
-        "gltfPath": "Assets/models/Sponza.gltf",
         "materials": [
             {
                 "name": "material_0",

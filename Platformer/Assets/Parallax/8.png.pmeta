@@ -5,8 +5,6 @@
         "minFiltering": 0,
         "magFiltering": 0,
         "numMips": 0,
-        "srgb": true,
-        "sourcePath": "Assets/Parallax/8.png",
-        "cookedPath": ".Panda/Textures/Assets/Parallax/8.ptex"
+        "srgb": true
     }
 }

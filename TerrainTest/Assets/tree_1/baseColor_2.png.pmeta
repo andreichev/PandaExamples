@@ -5,8 +5,6 @@
         "minFiltering": 5,
         "magFiltering": 1,
         "numMips": 16,
-        "srgb": true,
-        "sourcePath": "Assets/tree_1/baseColor_2.png",
-        "cookedPath": ".Panda/Textures/Assets/tree_1/baseColor_2.ptex"
+        "srgb": true
     }
 }

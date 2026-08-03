@@ -2,7 +2,6 @@
     "id": 2386102669,
     "type": 6,
     "meta": {
-        "gltfPath": "Assets/cube model/Cube.gltf",
         "materials": [
             {
                 "name": "Cube",
