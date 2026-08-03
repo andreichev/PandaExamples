@@ -1,0 +1,12 @@
+{
+    "id": 2891251514,
+    "type": 1,
+    "meta": {
+        "minFiltering": 5,
+        "magFiltering": 1,
+        "numMips": 16,
+        "srgb": true,
+        "sourcePath": "Assets/Grass/Grass_Metallic.jpg",
+        "cookedPath": ".Panda/Textures/Assets/Grass/Grass_Metallic.ptex"
+    }
+}

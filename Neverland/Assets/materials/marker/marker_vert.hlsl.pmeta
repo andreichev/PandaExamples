@@ -1,0 +1,8 @@
+{
+    "id": 917000208,
+    "type": 3,
+    "meta": {
+        "vertexSourcePath": "Assets/materials/marker/marker_vert.hlsl",
+        "fragmentSourcePath": "Assets/materials/marker/marker_frag.hlsl"
+    }
+}

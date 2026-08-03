@@ -1,0 +1,43 @@
+{
+    "id": 3651530327,
+    "type": 6,
+    "meta": {
+        "gltfPath": "Assets/models/Suzanne.gltf",
+        "materials": [
+            {
+                "name": "Suzanne",
+                "baseColorTexturePath": "Assets/models/Suzanne_BaseColor.png",
+                "baseColorFactor": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0,
+                    "w": 1.0
+                },
+                "metallicRoughnessTexturePath": "Assets/models/Suzanne_MetallicRoughness.png",
+                "metallicFactor": 1.0,
+                "roughnessFactor": 1.0,
+                "normalTexturePath": "",
+                "normalScale": 0.0,
+                "occlusionTexturePath": "",
+                "occlusionStrength": 0.0,
+                "emissiveTexturePath": "",
+                "emissiveFactor": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "alphaMode": 0,
+                "alphaCutoff": 0.5,
+                "doubleSided": false
+            }
+        ],
+        "primitiveMaterials": [
+            {
+                "submeshIndex": 0,
+                "primitiveIndex": 0,
+                "materialIndex": 0
+            }
+        ]
+    }
+}

@@ -1,0 +1,8 @@
+{
+    "id": 917000204,
+    "type": 3,
+    "meta": {
+        "vertexSourcePath": "Assets/postfx/fxaa/fxaa_vert.hlsl",
+        "fragmentSourcePath": "Assets/postfx/fxaa/fxaa_frag.hlsl"
+    }
+}

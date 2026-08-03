@@ -1,0 +1,12 @@
+{
+    "id": 807550418,
+    "type": 1,
+    "meta": {
+        "minFiltering": 0,
+        "magFiltering": 0,
+        "numMips": 0,
+        "srgb": true,
+        "sourcePath": "Assets/models/2185409758123873465.jpg",
+        "cookedPath": ".Panda/Textures/Assets/models/2185409758123873465.ptex"
+    }
+}

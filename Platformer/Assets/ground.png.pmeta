@@ -1,0 +1,12 @@
+{
+    "id": 940174903,
+    "type": 1,
+    "meta": {
+        "minFiltering": 0,
+        "magFiltering": 0,
+        "numMips": 0,
+        "srgb": true,
+        "sourcePath": "Assets/ground.png",
+        "cookedPath": ".Panda/Textures/Assets/ground.ptex"
+    }
+}

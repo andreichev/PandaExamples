@@ -1,0 +1,12 @@
+{
+    "id": 54488924,
+    "type": 1,
+    "meta": {
+        "minFiltering": 5,
+        "magFiltering": 1,
+        "numMips": 16,
+        "srgb": true,
+        "sourcePath": "Assets/Grass/Grass_Roughness.jpg",
+        "cookedPath": ".Panda/Textures/Assets/Grass/Grass_Roughness.ptex"
+    }
+}

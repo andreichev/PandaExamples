@@ -1,0 +1,12 @@
+{
+    "id": 1100597896,
+    "type": 1,
+    "meta": {
+        "minFiltering": 0,
+        "magFiltering": 0,
+        "numMips": 0,
+        "srgb": true,
+        "sourcePath": "Assets/Enemy1.png",
+        "cookedPath": ".Panda/Textures/Assets/Enemy1.ptex"
+    }
+}

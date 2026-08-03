@@ -1,0 +1,12 @@
+{
+    "id": 2432026123,
+    "type": 1,
+    "meta": {
+        "minFiltering": 5,
+        "magFiltering": 1,
+        "numMips": 16,
+        "srgb": false,
+        "sourcePath": "Assets/tree_1/metallicRoughness_1.png",
+        "cookedPath": ".Panda/Textures/Assets/tree_1/metallicRoughness_1.ptex"
+    }
+}

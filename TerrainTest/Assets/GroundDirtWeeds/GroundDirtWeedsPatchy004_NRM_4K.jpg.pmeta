@@ -1,0 +1,12 @@
+{
+    "id": 679594130,
+    "type": 1,
+    "meta": {
+        "minFiltering": 5,
+        "magFiltering": 1,
+        "numMips": 16,
+        "srgb": true,
+        "sourcePath": "Assets/GroundDirtWeeds/GroundDirtWeedsPatchy004_NRM_4K.jpg",
+        "cookedPath": ".Panda/Textures/Assets/GroundDirtWeeds/GroundDirtWeedsPatchy004_NRM_4K.ptex"
+    }
+}

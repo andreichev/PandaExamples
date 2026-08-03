@@ -1,0 +1,12 @@
+{
+    "id": 694789305,
+    "type": 1,
+    "meta": {
+        "minFiltering": 5,
+        "magFiltering": 1,
+        "numMips": 16,
+        "srgb": true,
+        "sourcePath": "Assets/Grass/UnderGrass.png",
+        "cookedPath": ".Panda/Textures/Assets/Grass/UnderGrass.ptex"
+    }
+}

@@ -6,7 +6,7 @@
             "z": 1.0,
             "w": 1.0
         },
-        "ambientIntensity": 0.0
+        "ambientIntensity": 0.30000001192092896
     },
     "graphicsSettings": {
         "terrainLod1": 120.0,
@@ -17,139 +17,6 @@
         "terrainRing4Width": 64
     },
     "entities": [
-        {
-            "id": 3828814315,
-            "tagComponent": {
-                "tag": "Tree"
-            },
-            "relationshipComponent": {
-                "parent": 3621597898,
-                "children": [
-                    3779878798,
-                    31792042
-                ]
-            },
-            "transformComponent": {
-                "position": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "rotation": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0,
-                    "w": 1.0
-                },
-                "scale": {
-                    "x": 1.0,
-                    "y": 1.0,
-                    "z": 1.0
-                }
-            },
-            "scriptListComponent": {
-                "scripts": []
-            }
-        },
-        {
-            "id": 3779878798,
-            "tagComponent": {
-                "tag": "mesh_0"
-            },
-            "relationshipComponent": {
-                "parent": 3828814315,
-                "children": [
-                    4062882961
-                ]
-            },
-            "transformComponent": {
-                "position": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "rotation": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0,
-                    "w": 1.0
-                },
-                "scale": {
-                    "x": 1.0,
-                    "y": 1.0,
-                    "z": 1.0
-                }
-            },
-            "scriptListComponent": {
-                "scripts": []
-            }
-        },
-        {
-            "id": 31792042,
-            "tagComponent": {
-                "tag": "mesh_1"
-            },
-            "relationshipComponent": {
-                "parent": 3828814315,
-                "children": [
-                    629473012
-                ]
-            },
-            "transformComponent": {
-                "position": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "rotation": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0,
-                    "w": 1.0
-                },
-                "scale": {
-                    "x": 1.0,
-                    "y": 1.0,
-                    "z": 1.0
-                }
-            },
-            "scriptListComponent": {
-                "scripts": []
-            }
-        },
-        {
-            "id": 3621597898,
-            "tagComponent": {
-                "tag": "tree_1.gltf"
-            },
-            "relationshipComponent": {
-                "parent": 0,
-                "children": [
-                    3828814315
-                ]
-            },
-            "transformComponent": {
-                "position": {
-                    "x": 34.2488899230957,
-                    "y": 20.181184768676758,
-                    "z": 35.258888244628906
-                },
-                "rotation": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0,
-                    "w": 1.0
-                },
-                "scale": {
-                    "x": 0.30000001192092896,
-                    "y": 0.30000001192092896,
-                    "z": 0.30000001192092896
-                }
-            },
-            "scriptListComponent": {
-                "scripts": []
-            }
-        },
         {
             "id": 732211536,
             "tagComponent": {
@@ -319,10 +186,10 @@
                     "z": 0.0
                 },
                 "rotation": {
-                    "x": -0.5,
-                    "y": -9.619159690998913e-9,
-                    "z": 1.6660873569662726e-8,
-                    "w": 0.8660253882408142
+                    "x": -0.6427875757217407,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 0.7660444378852844
                 },
                 "scale": {
                     "x": 1.0,
@@ -337,7 +204,7 @@
                     "z": 1.0,
                     "w": 1.0
                 },
-                "intensity": 1.0,
+                "intensity": 0.6000000238418579,
                 "isEnabled": true
             },
             "scriptListComponent": {
@@ -459,215 +326,7 @@
             "terrain2dComponent": {
                 "terrain": 1090250100,
                 "material": 1850840993,
-                "physicsEnabled": true,
-                "floraWindStrength": 0.10000000149011612,
-                "floraWindSpeed": 8.0,
-                "floraWindDirDegrees": 180.0,
-                "floraLayers": [
-                    {
-                        "name": "Grass1",
-                        "enabled": true,
-                        "preset": 0,
-                        "density": 0.30000001192092896,
-                        "soilLayer": 1,
-                        "minHeight": -1000.0,
-                        "maxHeight": 1000.0,
-                        "maxSlopeDeg": 56.599998474121094,
-                        "noiseCoverage": 0.8999999761581421,
-                        "scaleMin": 1.5,
-                        "scaleMax": 2.0,
-                        "floraDistance": 80.0,
-                        "windInfluence": 1.0,
-                        "brownian": 3.0,
-                        "colorRoot": {
-                            "x": 0.1421298086643219,
-                            "y": 0.2698267996311188,
-                            "z": 0.17171698808670044,
-                            "w": 1.0
-                        },
-                        "colorTip": {
-                            "x": 0.6582255363464355,
-                            "y": 0.8002707958221436,
-                            "z": 0.4538370370864868,
-                            "w": 1.0
-                        },
-                        "colorExtra": {
-                            "x": 0.7059465050697327,
-                            "y": 0.8271827101707458,
-                            "z": 0.48147422075271606,
-                            "w": 1.0
-                        },
-                        "placement": 2,
-                        "maskChannel": 0,
-                        "mesh": 669635212,
-                        "meshMaterial": 2185861859,
-                        "lodMesh1": 4077678320,
-                        "lodMesh2": 1764952811,
-                        "meshSpacing": 8.0,
-                        "meshPrimitiveMaterials": []
-                    },
-                    {
-                        "name": "Layer 3",
-                        "enabled": true,
-                        "preset": 0,
-                        "density": 1.0,
-                        "soilLayer": 1,
-                        "minHeight": -1000.0,
-                        "maxHeight": 1000.0,
-                        "maxSlopeDeg": 56.599998474121094,
-                        "noiseCoverage": 1.0,
-                        "scaleMin": 0.5,
-                        "scaleMax": 3.0,
-                        "floraDistance": 80.0,
-                        "windInfluence": 1.0,
-                        "brownian": 2.0,
-                        "colorRoot": {
-                            "x": 0.07000000029802322,
-                            "y": 0.20000000298023224,
-                            "z": 0.05000000074505806,
-                            "w": 1.0
-                        },
-                        "colorTip": {
-                            "x": 0.41999998688697815,
-                            "y": 0.6200000047683716,
-                            "z": 0.2199999988079071,
-                            "w": 1.0
-                        },
-                        "colorExtra": {
-                            "x": 0.550000011920929,
-                            "y": 0.4699999988079071,
-                            "z": 0.25,
-                            "w": 1.0
-                        },
-                        "placement": 0,
-                        "maskChannel": 0,
-                        "mesh": 987490702,
-                        "meshMaterial": 2951154930,
-                        "lodMesh1": 3632788835,
-                        "lodMesh2": 308145850,
-                        "meshSpacing": 8.0,
-                        "meshPrimitiveMaterials": []
-                    },
-                    {
-                        "name": "Layer 3",
-                        "enabled": true,
-                        "preset": 3,
-                        "density": 0.009999999776482582,
-                        "soilLayer": 1,
-                        "minHeight": -1000.0,
-                        "maxHeight": 1000.0,
-                        "maxSlopeDeg": 56.599998474121094,
-                        "noiseCoverage": 1.0,
-                        "scaleMin": 0.20000000298023224,
-                        "scaleMax": 0.30000001192092896,
-                        "floraDistance": 100.0,
-                        "windInfluence": 1.0,
-                        "brownian": 1.0,
-                        "colorRoot": {
-                            "x": 0.07000000029802322,
-                            "y": 0.20000000298023224,
-                            "z": 0.05000000074505806,
-                            "w": 1.0
-                        },
-                        "colorTip": {
-                            "x": 0.41999998688697815,
-                            "y": 0.6200000047683716,
-                            "z": 0.2199999988079071,
-                            "w": 1.0
-                        },
-                        "colorExtra": {
-                            "x": 0.550000011920929,
-                            "y": 0.4699999988079071,
-                            "z": 0.25,
-                            "w": 1.0
-                        },
-                        "placement": 0,
-                        "maskChannel": 0,
-                        "mesh": 2291387115,
-                        "meshMaterial": 0,
-                        "lodMesh1": 4094763503,
-                        "lodMesh2": 3180243332,
-                        "meshSpacing": 40.0,
-                        "meshPrimitiveMaterials": [
-                            2511775207,
-                            2452315955
-                        ]
-                    }
-                ]
-            },
-            "scriptListComponent": {
-                "scripts": []
-            }
-        },
-        {
-            "id": 4062882961,
-            "tagComponent": {
-                "tag": "primitive 0"
-            },
-            "relationshipComponent": {
-                "parent": 3779878798,
-                "children": []
-            },
-            "transformComponent": {
-                "position": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "rotation": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0,
-                    "w": 1.0
-                },
-                "scale": {
-                    "x": 1.0,
-                    "y": 1.0,
-                    "z": 1.0
-                }
-            },
-            "importedSubmeshComponent": {
-                "importedMesh": 2291387115,
-                "material": 2511775207,
-                "submeshIndex": 0,
-                "primitiveIndex": 0
-            },
-            "scriptListComponent": {
-                "scripts": []
-            }
-        },
-        {
-            "id": 629473012,
-            "tagComponent": {
-                "tag": "primitive 0"
-            },
-            "relationshipComponent": {
-                "parent": 31792042,
-                "children": []
-            },
-            "transformComponent": {
-                "position": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "rotation": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0,
-                    "w": 1.0
-                },
-                "scale": {
-                    "x": 1.0,
-                    "y": 1.0,
-                    "z": 1.0
-                }
-            },
-            "importedSubmeshComponent": {
-                "importedMesh": 2291387115,
-                "material": 2452315955,
-                "submeshIndex": 1,
-                "primitiveIndex": 0
+                "physicsEnabled": true
             },
             "scriptListComponent": {
                 "scripts": []

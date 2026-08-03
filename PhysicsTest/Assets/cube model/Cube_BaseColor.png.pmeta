@@ -1,0 +1,12 @@
+{
+    "id": 2680253832,
+    "type": 1,
+    "meta": {
+        "minFiltering": 0,
+        "magFiltering": 0,
+        "numMips": 0,
+        "srgb": true,
+        "sourcePath": "Assets/cube model/Cube_BaseColor.png",
+        "cookedPath": ".Panda/Textures/Assets/cube model/Cube_BaseColor.ptex"
+    }
+}

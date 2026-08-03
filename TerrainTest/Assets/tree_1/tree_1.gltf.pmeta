@@ -1,0 +1,75 @@
+{
+    "id": 2291387115,
+    "type": 6,
+    "meta": {
+        "gltfPath": "Assets/tree_1/tree_1.gltf",
+        "materials": [
+            {
+                "name": "branches",
+                "baseColorTexturePath": "Assets/tree_1/baseColor_1.png",
+                "baseColorFactor": {
+                    "x": 0.6172065734863281,
+                    "y": 0.6038273572921753,
+                    "z": 0.5149176716804504,
+                    "w": 1.0
+                },
+                "metallicRoughnessTexturePath": "Assets/tree_1/metallicRoughness_1.png",
+                "metallicFactor": 0.0,
+                "roughnessFactor": 1.0,
+                "normalTexturePath": "Assets/tree_1/normal_1.png",
+                "normalScale": 1.0,
+                "occlusionTexturePath": "",
+                "occlusionStrength": 0.0,
+                "emissiveTexturePath": "",
+                "emissiveFactor": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "alphaMode": 0,
+                "alphaCutoff": 0.5,
+                "doubleSided": false
+            },
+            {
+                "name": "leaves",
+                "baseColorTexturePath": "Assets/tree_1/baseColor_2.png",
+                "baseColorFactor": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0,
+                    "w": 1.0
+                },
+                "metallicRoughnessTexturePath": "",
+                "metallicFactor": 0.0,
+                "roughnessFactor": 1.0,
+                "normalTexturePath": "",
+                "normalScale": 0.0,
+                "occlusionTexturePath": "",
+                "occlusionStrength": 0.0,
+                "emissiveTexturePath": "",
+                "emissiveFactor": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "alphaMode": 1,
+                "alphaCutoff": 0.5,
+                "doubleSided": true
+            }
+        ],
+        "primitiveMaterials": [
+            {
+                "submeshIndex": 0,
+                "primitiveIndex": 0,
+                "materialIndex": 0
+            },
+            {
+                "submeshIndex": 1,
+                "primitiveIndex": 0,
+                "materialIndex": 1
+            }
+        ]
+    }
+}

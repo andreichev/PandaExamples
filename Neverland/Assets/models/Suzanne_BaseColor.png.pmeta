@@ -1,0 +1,12 @@
+{
+    "id": 1976717612,
+    "type": 1,
+    "meta": {
+        "minFiltering": 0,
+        "magFiltering": 0,
+        "numMips": 0,
+        "srgb": true,
+        "sourcePath": "Assets/models/Suzanne_BaseColor.png",
+        "cookedPath": ".Panda/Textures/Assets/models/Suzanne_BaseColor.ptex"
+    }
+}

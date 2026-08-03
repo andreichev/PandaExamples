@@ -1,0 +1,12 @@
+{
+    "id": 1000000001,
+    "type": 1,
+    "meta": {
+        "minFiltering": 0,
+        "magFiltering": 0,
+        "numMips": 0,
+        "srgb": true,
+        "sourcePath": "Assets/Run.png",
+        "cookedPath": ".Panda/Textures/Assets/Run.ptex"
+    }
+}

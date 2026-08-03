@@ -1,0 +1,12 @@
+{
+    "id": 1105917943,
+    "type": 1,
+    "meta": {
+        "minFiltering": 0,
+        "magFiltering": 0,
+        "numMips": 0,
+        "srgb": true,
+        "sourcePath": "Assets/Parallax/2.png",
+        "cookedPath": ".Panda/Textures/Assets/Parallax/2.ptex"
+    }
+}

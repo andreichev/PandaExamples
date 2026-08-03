@@ -1,0 +1,8 @@
+{
+    "id": 3966274814,
+    "type": 3,
+    "meta": {
+        "vertexSourcePath": "Assets/postfx/PostprocessShader.vert.hlsl",
+        "fragmentSourcePath": "Assets/postfx/PostprocessShader.frag.hlsl"
+    }
+}

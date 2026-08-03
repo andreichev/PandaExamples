@@ -1,0 +1,12 @@
+{
+    "id": 1434611941,
+    "type": 1,
+    "meta": {
+        "minFiltering": 5,
+        "magFiltering": 1,
+        "numMips": 16,
+        "srgb": true,
+        "sourcePath": "Assets/tree_1/baseColor_1.png",
+        "cookedPath": ".Panda/Textures/Assets/tree_1/baseColor_1.ptex"
+    }
+}

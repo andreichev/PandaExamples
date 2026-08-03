@@ -1,0 +1,12 @@
+{
+    "id": 1303820891,
+    "type": 1,
+    "meta": {
+        "minFiltering": 0,
+        "magFiltering": 0,
+        "numMips": 0,
+        "srgb": true,
+        "sourcePath": "Assets/Coin.png",
+        "cookedPath": ".Panda/Textures/Assets/Coin.ptex"
+    }
+}
