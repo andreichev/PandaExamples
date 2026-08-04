@@ -28,7 +28,8 @@
                 },
                 "alphaMode": 0,
                 "alphaCutoff": 0.5,
-                "doubleSided": false
+                "doubleSided": false,
+                "materialAssetId": 2511775207
             },
             {
                 "name": "leaves",
@@ -55,7 +56,8 @@
                 },
                 "alphaMode": 1,
                 "alphaCutoff": 0.5,
-                "doubleSided": true
+                "doubleSided": true,
+                "materialAssetId": 2452315955
             }
         ],
         "primitiveMaterials": [

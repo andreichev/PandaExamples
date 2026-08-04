@@ -28,7 +28,8 @@
                 },
                 "alphaMode": 1,
                 "alphaCutoff": 0.5,
-                "doubleSided": true
+                "doubleSided": true,
+                "materialAssetId": 1010621630
             },
             {
                 "name": "material_1",
@@ -55,7 +56,8 @@
                 },
                 "alphaMode": 0,
                 "alphaCutoff": 0.5,
-                "doubleSided": false
+                "doubleSided": false,
+                "materialAssetId": 3411035640
             },
             {
                 "name": "material_2",
@@ -82,7 +84,8 @@
                 },
                 "alphaMode": 0,
                 "alphaCutoff": 0.5,
-                "doubleSided": false
+                "doubleSided": false,
+                "materialAssetId": 164269971
             },
             {
                 "name": "material_3",
@@ -109,7 +112,8 @@
                 },
                 "alphaMode": 1,
                 "alphaCutoff": 0.5,
-                "doubleSided": true
+                "doubleSided": true,
+                "materialAssetId": 746146398
             },
             {
                 "name": "material_4",
@@ -136,7 +140,8 @@
                 },
                 "alphaMode": 0,
                 "alphaCutoff": 0.5,
-                "doubleSided": false
+                "doubleSided": false,
+                "materialAssetId": 1021637020
             },
             {
                 "name": "material_5",
@@ -163,7 +168,8 @@
                 },
                 "alphaMode": 0,
                 "alphaCutoff": 0.5,
-                "doubleSided": false
+                "doubleSided": false,
+                "materialAssetId": 2279934916
             },
             {
                 "name": "material_6",
@@ -190,7 +196,8 @@
                 },
                 "alphaMode": 0,
                 "alphaCutoff": 0.5,
-                "doubleSided": false
+                "doubleSided": false,
+                "materialAssetId": 1979706725
             },
             {
                 "name": "material_7",
@@ -217,7 +224,8 @@
                 },
                 "alphaMode": 0,
                 "alphaCutoff": 0.5,
-                "doubleSided": false
+                "doubleSided": false,
+                "materialAssetId": 226124506
             },
             {
                 "name": "material_8",
@@ -244,7 +252,8 @@
                 },
                 "alphaMode": 0,
                 "alphaCutoff": 0.5,
-                "doubleSided": false
+                "doubleSided": false,
+                "materialAssetId": 26835769
             },
             {
                 "name": "material_9",
@@ -271,7 +280,8 @@
                 },
                 "alphaMode": 0,
                 "alphaCutoff": 0.5,
-                "doubleSided": false
+                "doubleSided": false,
+                "materialAssetId": 853124471
             },
             {
                 "name": "material_10",
@@ -298,7 +308,8 @@
                 },
                 "alphaMode": 0,
                 "alphaCutoff": 0.5,
-                "doubleSided": false
+                "doubleSided": false,
+                "materialAssetId": 1287422074
             },
             {
                 "name": "material_11",
@@ -325,7 +336,8 @@
                 },
                 "alphaMode": 0,
                 "alphaCutoff": 0.5,
-                "doubleSided": false
+                "doubleSided": false,
+                "materialAssetId": 1052443553
             },
             {
                 "name": "material_12",
@@ -352,7 +364,8 @@
                 },
                 "alphaMode": 0,
                 "alphaCutoff": 0.5,
-                "doubleSided": false
+                "doubleSided": false,
+                "materialAssetId": 4038659422
             },
             {
                 "name": "material_13",
@@ -379,7 +392,8 @@
                 },
                 "alphaMode": 0,
                 "alphaCutoff": 0.5,
-                "doubleSided": false
+                "doubleSided": false,
+                "materialAssetId": 3411909566
             },
             {
                 "name": "material_14",
@@ -406,7 +420,8 @@
                 },
                 "alphaMode": 0,
                 "alphaCutoff": 0.5,
-                "doubleSided": false
+                "doubleSided": false,
+                "materialAssetId": 1216619162
             },
             {
                 "name": "material_15",
@@ -433,7 +448,8 @@
                 },
                 "alphaMode": 0,
                 "alphaCutoff": 0.5,
-                "doubleSided": false
+                "doubleSided": false,
+                "materialAssetId": 2879181014
             },
             {
                 "name": "material_16",
@@ -460,7 +476,8 @@
                 },
                 "alphaMode": 0,
                 "alphaCutoff": 0.5,
-                "doubleSided": false
+                "doubleSided": false,
+                "materialAssetId": 2288448877
             },
             {
                 "name": "material_17",
@@ -487,7 +504,8 @@
                 },
                 "alphaMode": 0,
                 "alphaCutoff": 0.5,
-                "doubleSided": false
+                "doubleSided": false,
+                "materialAssetId": 908568375
             },
             {
                 "name": "material_18",
@@ -514,7 +532,8 @@
                 },
                 "alphaMode": 0,
                 "alphaCutoff": 0.5,
-                "doubleSided": false
+                "doubleSided": false,
+                "materialAssetId": 1926196836
             },
             {
                 "name": "material_19",
@@ -541,7 +560,8 @@
                 },
                 "alphaMode": 0,
                 "alphaCutoff": 0.5,
-                "doubleSided": false
+                "doubleSided": false,
+                "materialAssetId": 2216526477
             },
             {
                 "name": "material_20",
@@ -568,7 +588,8 @@
                 },
                 "alphaMode": 1,
                 "alphaCutoff": 0.5,
-                "doubleSided": true
+                "doubleSided": true,
+                "materialAssetId": 676997770
             },
             {
                 "name": "material_21",
@@ -595,7 +616,8 @@
                 },
                 "alphaMode": 0,
                 "alphaCutoff": 0.5,
-                "doubleSided": false
+                "doubleSided": false,
+                "materialAssetId": 3604039914
             },
             {
                 "name": "material_22",
@@ -622,7 +644,8 @@
                 },
                 "alphaMode": 0,
                 "alphaCutoff": 0.5,
-                "doubleSided": false
+                "doubleSided": false,
+                "materialAssetId": 742077985
             },
             {
                 "name": "material_23",
@@ -649,7 +672,8 @@
                 },
                 "alphaMode": 0,
                 "alphaCutoff": 0.5,
-                "doubleSided": false
+                "doubleSided": false,
+                "materialAssetId": 589739203
             },
             {
                 "name": "material_24",
@@ -676,7 +700,8 @@
                 },
                 "alphaMode": 0,
                 "alphaCutoff": 0.5,
-                "doubleSided": false
+                "doubleSided": false,
+                "materialAssetId": 2931728932
             }
         ],
         "primitiveMaterials": [

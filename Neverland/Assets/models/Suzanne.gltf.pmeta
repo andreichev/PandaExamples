@@ -28,7 +28,8 @@
                 },
                 "alphaMode": 0,
                 "alphaCutoff": 0.5,
-                "doubleSided": false
+                "doubleSided": false,
+                "materialAssetId": 460212091
             }
         ],
         "primitiveMaterials": [
