@@ -1,0 +1,15 @@
+{
+    "passes": [
+        {
+            "material": 3401774202,
+            "enabled": true,
+            "downsample": 1
+        },
+        {
+            "material": 3401774204,
+            "enabled": true,
+            "downsample": 1
+        }
+    ],
+    "handlesTonemap": true
+}

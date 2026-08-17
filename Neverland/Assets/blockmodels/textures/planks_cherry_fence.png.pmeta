@@ -1,0 +1,10 @@
+{
+    "id": 4180942281,
+    "type": 1,
+    "meta": {
+        "minFiltering": 5,
+        "magFiltering": 1,
+        "numMips": 16,
+        "srgb": true
+    }
+}

@@ -1,0 +1,120 @@
+{
+    "name": "birch_tree",
+    "levels": 2,
+    "barkColorMap": "birch_tree_bark.png",
+    "barkNormalMap": "",
+    "barkRoughnessMap": "",
+    "barkRoughness": 1.0,
+    "barkNormalScale": 2.0,
+    "barkTexScale": 1.3920533657073975,
+    "leafColorMap": "birch_tree_leaf.png",
+    "leafRoughness": 0.6949359774589539,
+    "leafAlphaCutoff": 0.5026896595954895,
+    "leafViewFade": 0.14642789959907532,
+    "leafInnerShade": 0.2504235804080963,
+    "leafCanopyNormal": 0.6000000238418579,
+    "lean": {
+        "angleDeg": 0.0,
+        "varianceDeg": 0.0
+    },
+    "barkRamp": {
+        "base": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0,
+            "w": 1.0
+        },
+        "tip": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0,
+            "w": 1.0
+        }
+    },
+    "leafRamp": {
+        "base": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0,
+            "w": 1.0
+        },
+        "tip": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0,
+            "w": 1.0
+        }
+    },
+    "leaves": {
+        "count": 6,
+        "size": 0.40933969616889954,
+        "sizeVariance": 0.04602080211043358,
+        "angleDeg": 11.662980079650879,
+        "start": 0.0,
+        "doubleCard": true
+    },
+    "trunk": {
+        "children": 12,
+        "start": 0.30000001192092896,
+        "end": 1.0,
+        "angleDeg": 50.0,
+        "tipScale": 1.0,
+        "length": 8.195298194885254,
+        "radius": 0.10280967503786087,
+        "sections": 12,
+        "segments": 6,
+        "taper": 0.9577372074127197,
+        "twist": 0.0036568166688084602,
+        "gnarliness": 0.012697665952146053,
+        "forceDirY": -1.0,
+        "forceStrength": 0.0
+    },
+    "branch1": {
+        "children": 6,
+        "start": 0.30571112036705017,
+        "end": 1.0,
+        "angleDeg": 33.605987548828125,
+        "tipScale": 0.6242305040359497,
+        "length": 1.570336103439331,
+        "radius": 0.2990575432777405,
+        "sections": 12,
+        "segments": 6,
+        "taper": 0.0,
+        "twist": -0.30000001192092896,
+        "gnarliness": 0.04556664451956749,
+        "forceDirY": -0.547816276550293,
+        "forceStrength": 0.008513743057847023
+    },
+    "branch2": {
+        "children": 8,
+        "start": 0.0,
+        "end": 1.0,
+        "angleDeg": 35.05670928955078,
+        "tipScale": 0.3448442220687866,
+        "length": 1.7618741989135742,
+        "radius": 0.6024825572967529,
+        "sections": 7,
+        "segments": 6,
+        "taper": 0.9648202061653137,
+        "twist": -0.24326996505260468,
+        "gnarliness": 0.08863893151283264,
+        "forceDirY": -0.3283132314682007,
+        "forceStrength": 0.03085702285170555
+    },
+    "branch3": {
+        "children": 0,
+        "start": 0.15962207317352295,
+        "end": 1.0,
+        "angleDeg": 39.688438415527344,
+        "tipScale": 1.0,
+        "length": 0.8370458483695984,
+        "radius": 1.0,
+        "sections": 1,
+        "segments": 3,
+        "taper": 0.8999999761581421,
+        "twist": -0.30000001192092896,
+        "gnarliness": 0.12447289377450943,
+        "forceDirY": -1.0,
+        "forceStrength": 0.08316076546907425
+    }
+}

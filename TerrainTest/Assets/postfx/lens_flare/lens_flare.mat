@@ -1,0 +1,9 @@
+{
+    "inputs": [
+        {
+            "name": "flareStrength",
+            "type": 0,
+            "value": 1.0
+        }
+    ]
+}

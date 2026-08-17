@@ -1,0 +1,373 @@
+{
+    "asset": {
+        "version": "2.0",
+        "generator": "Panda VegetationLab"
+    },
+    "scene": 0,
+    "scenes": [
+        {
+            "nodes": [
+                0
+            ]
+        }
+    ],
+    "nodes": [
+        {
+            "mesh": 0,
+            "name": "birch_tree_0_lod1"
+        }
+    ],
+    "materials": [
+        {
+            "name": "bark",
+            "doubleSided": false,
+            "pbrMetallicRoughness": {
+                "baseColorTexture": {
+                    "index": 0
+                },
+                "baseColorFactor": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "metallicFactor": 0.0,
+                "roughnessFactor": 1.0
+            }
+        },
+        {
+            "name": "leaves",
+            "doubleSided": true,
+            "alphaMode": "MASK",
+            "alphaCutoff": 0.5026896595954895,
+            "pbrMetallicRoughness": {
+                "baseColorTexture": {
+                    "index": 1
+                },
+                "baseColorFactor": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "metallicFactor": 0.0,
+                "roughnessFactor": 0.6949359774589539
+            }
+        }
+    ],
+    "textures": [
+        {
+            "source": 0
+        },
+        {
+            "source": 1
+        }
+    ],
+    "images": [
+        {
+            "uri": "birch_tree_bark.png"
+        },
+        {
+            "uri": "birch_tree_leaf.png"
+        }
+    ],
+    "meshes": [
+        {
+            "name": "birch_tree_0_lod1",
+            "primitives": [
+                {
+                    "attributes": {
+                        "POSITION": 0,
+                        "NORMAL": 1,
+                        "TEXCOORD_0": 2,
+                        "COLOR_0": 3,
+                        "COLOR_1": 4
+                    },
+                    "indices": 5,
+                    "material": 0
+                },
+                {
+                    "attributes": {
+                        "POSITION": 6,
+                        "NORMAL": 7,
+                        "TEXCOORD_0": 8,
+                        "COLOR_0": 9,
+                        "COLOR_1": 10
+                    },
+                    "indices": 11,
+                    "material": 1
+                }
+            ]
+        }
+    ],
+    "buffers": [
+        {
+            "uri": "birch_tree_0_lod1.bin",
+            "byteLength": 300416
+        }
+    ],
+    "bufferViews": [
+        {
+            "buffer": 0,
+            "byteOffset": 0,
+            "byteLength": 27060,
+            "target": 34962
+        },
+        {
+            "buffer": 0,
+            "byteOffset": 27060,
+            "byteLength": 27060,
+            "target": 34962
+        },
+        {
+            "buffer": 0,
+            "byteOffset": 54120,
+            "byteLength": 18040,
+            "target": 34962
+        },
+        {
+            "buffer": 0,
+            "byteOffset": 72160,
+            "byteLength": 36080,
+            "target": 34962
+        },
+        {
+            "buffer": 0,
+            "byteOffset": 108240,
+            "byteLength": 36080,
+            "target": 34962
+        },
+        {
+            "buffer": 0,
+            "byteOffset": 144320,
+            "byteLength": 35136,
+            "target": 34963
+        },
+        {
+            "buffer": 0,
+            "byteOffset": 179456,
+            "byteLength": 20736,
+            "target": 34962
+        },
+        {
+            "buffer": 0,
+            "byteOffset": 200192,
+            "byteLength": 20736,
+            "target": 34962
+        },
+        {
+            "buffer": 0,
+            "byteOffset": 220928,
+            "byteLength": 13824,
+            "target": 34962
+        },
+        {
+            "buffer": 0,
+            "byteOffset": 234752,
+            "byteLength": 27648,
+            "target": 34962
+        },
+        {
+            "buffer": 0,
+            "byteOffset": 262400,
+            "byteLength": 27648,
+            "target": 34962
+        },
+        {
+            "buffer": 0,
+            "byteOffset": 290048,
+            "byteLength": 10368,
+            "target": 34963
+        }
+    ],
+    "accessors": [
+        {
+            "bufferView": 0,
+            "componentType": 5126,
+            "count": 2255,
+            "type": "VEC3",
+            "min": [
+                -1.0797631740570068,
+                0.0,
+                -1.5039488077163696
+            ],
+            "max": [
+                1.355696439743042,
+                8.352582931518555,
+                1.215006947517395
+            ]
+        },
+        {
+            "bufferView": 1,
+            "componentType": 5126,
+            "count": 2255,
+            "type": "VEC3",
+            "min": [
+                -1.0,
+                -0.9996981620788574,
+                -1.0
+            ],
+            "max": [
+                1.0,
+                0.9996981620788574,
+                1.0
+            ]
+        },
+        {
+            "bufferView": 2,
+            "componentType": 5126,
+            "count": 2255,
+            "type": "VEC2",
+            "min": [
+                0.0,
+                0.0
+            ],
+            "max": [
+                1.0,
+                6.701505184173584
+            ]
+        },
+        {
+            "bufferView": 3,
+            "componentType": 5126,
+            "count": 2255,
+            "type": "VEC4",
+            "min": [
+                1.0,
+                1.0,
+                1.0,
+                0.0
+            ],
+            "max": [
+                1.0,
+                1.0,
+                1.0,
+                0.9966777563095093
+            ]
+        },
+        {
+            "bufferView": 4,
+            "componentType": 5126,
+            "count": 2255,
+            "type": "VEC4",
+            "min": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "max": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "bufferView": 5,
+            "componentType": 5125,
+            "count": 8784,
+            "type": "SCALAR",
+            "min": [
+                0.0
+            ],
+            "max": [
+                2254.0
+            ]
+        },
+        {
+            "bufferView": 6,
+            "componentType": 5126,
+            "count": 1728,
+            "type": "VEC3",
+            "min": [
+                -1.5311318635940552,
+                1.740490198135376,
+                -1.9429274797439575
+            ],
+            "max": [
+                1.8425402641296387,
+                8.69025707244873,
+                1.6785107851028442
+            ]
+        },
+        {
+            "bufferView": 7,
+            "componentType": 5126,
+            "count": 1728,
+            "type": "VEC3",
+            "min": [
+                -0.9999651908874512,
+                -0.9966470003128052,
+                -0.9923499226570129
+            ],
+            "max": [
+                0.9909000396728516,
+                0.984973669052124,
+                0.9943760633468628
+            ]
+        },
+        {
+            "bufferView": 8,
+            "componentType": 5126,
+            "count": 1728,
+            "type": "VEC2",
+            "min": [
+                0.0,
+                0.0
+            ],
+            "max": [
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "bufferView": 9,
+            "componentType": 5126,
+            "count": 1728,
+            "type": "VEC4",
+            "min": [
+                1.0,
+                1.0,
+                1.0,
+                0.3617374002933502
+            ],
+            "max": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "bufferView": 10,
+            "componentType": 5126,
+            "count": 1728,
+            "type": "VEC4",
+            "min": [
+                0.2504235804080963,
+                0.2504235804080963,
+                0.2504235804080963,
+                1.0
+            ],
+            "max": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "bufferView": 11,
+            "componentType": 5125,
+            "count": 2592,
+            "type": "SCALAR",
+            "min": [
+                0.0
+            ],
+            "max": [
+                1727.0
+            ]
+        }
+    ]
+}

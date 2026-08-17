@@ -6,15 +6,30 @@
             "z": 1.0,
             "w": 1.0
         },
-        "ambientIntensity": 0.30000001192092896
+        "ambientGroundColor": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0,
+            "w": 1.0
+        },
+        "ambientIntensity": 0.25,
+        "canopyStrength": 1.0
     },
     "graphicsSettings": {
         "terrainLod1": 120.0,
         "terrainLod2": 240.0,
         "terrainDrawDistance": 0.0,
-        "terrainRing2Width": 8,
-        "terrainRing3Width": 32,
-        "terrainRing4Width": 64
+        "terrainRing2Width": 2,
+        "terrainRing3Width": 4,
+        "terrainRing4Width": 8,
+        "shadowsEnabled": true,
+        "shadowCascades": 3,
+        "shadowMapSize": 2048,
+        "shadowDistance": 100.0,
+        "shadowStrength": 1.0,
+        "shadowSlopeBias": 2.0,
+        "shadowNormalOffset": 1.0,
+        "shadowReceiverBias": 0.5
     },
     "entities": [
         {
@@ -53,11 +68,16 @@
                     "zNear": 0.10000000149011612,
                     "zFar": 1000.0
                 },
-                "postprocessing": 0,
+                "postprocessing": 3401774205,
                 "postprocessingEnabled": true,
-                "bloomEnabled": false,
-                "bloomIntensity": 1.0,
-                "bloomRadius": 1.0
+                "bloomEnabled": true,
+                "bloomIntensity": 3.0,
+                "bloomRadius": 3.0,
+                "autoExposureEnabled": true,
+                "autoExposureKey": 0.18000000715255737,
+                "autoExposureSpeed": 2.0,
+                "autoExposureMin": 0.25,
+                "autoExposureMax": 4.0
             },
             "scriptListComponent": {
                 "scripts": []
@@ -74,9 +94,9 @@
             },
             "transformComponent": {
                 "position": {
-                    "x": 39.66029739379883,
-                    "y": 23.615842819213867,
-                    "z": 44.856590270996094
+                    "x": 66.7885971069336,
+                    "y": 15.964699745178223,
+                    "z": 52.81407928466797
                 },
                 "rotation": {
                     "x": 0.0,
@@ -85,9 +105,9 @@
                     "w": 1.0
                 },
                 "scale": {
-                    "x": 2.0,
-                    "y": 2.0,
-                    "z": 2.0
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
                 }
             },
             "primitiveMeshComponent": {
@@ -186,15 +206,15 @@
                     "z": 0.0
                 },
                 "rotation": {
-                    "x": -0.6427876353263855,
-                    "y": 0.0,
-                    "z": 0.0,
-                    "w": 0.766044557094574
+                    "x": -0.882633626461029,
+                    "y": 0.11306686699390411,
+                    "z": 0.27296754717826843,
+                    "w": 0.3655988276004791
                 },
                 "scale": {
-                    "x": 1.0,
-                    "y": 1.0,
-                    "z": 1.0000001192092896
+                    "x": 0.9999998807907104,
+                    "y": 1.0000011920928955,
+                    "z": 1.0000027418136597
                 }
             },
             "directionalLightComponent": {
@@ -204,8 +224,9 @@
                     "z": 1.0,
                     "w": 1.0
                 },
-                "intensity": 0.6000000238418579,
-                "isEnabled": true
+                "intensity": 2.0,
+                "isEnabled": true,
+                "castShadows": true
             },
             "scriptListComponent": {
                 "scripts": []
@@ -239,7 +260,7 @@
                 }
             },
             "cubeMapComponent": {
-                "material": 0
+                "material": 3401774102
             },
             "scriptListComponent": {
                 "scripts": []
@@ -257,7 +278,7 @@
             "transformComponent": {
                 "position": {
                     "x": 39.996726989746094,
-                    "y": 33.18659210205078,
+                    "y": 23.02625274658203,
                     "z": 37.44083023071289
                 },
                 "rotation": {
@@ -307,7 +328,7 @@
             },
             "transformComponent": {
                 "position": {
-                    "x": 0.0,
+                    "x": 2.9802322387695313e-8,
                     "y": 0.0,
                     "z": 0.0
                 },
@@ -324,7 +345,7 @@
                 }
             },
             "terrain2dComponent": {
-                "terrain": 1090250100,
+                "terrain": 593018140,
                 "material": 1850840993,
                 "physicsEnabled": true
             },
