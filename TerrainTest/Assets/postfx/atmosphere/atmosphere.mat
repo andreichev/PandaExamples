@@ -1,0 +1,29 @@
+{
+    "inputs": [
+        {
+            "name": "atmosphereColor",
+            "type": 4,
+            "value": {
+                "x": 0.22789275646209717,
+                "y": 0.43386876583099365,
+                "z": 0.5755208730697632,
+                "w": 1.0
+            }
+        },
+        {
+            "name": "density",
+            "type": 0,
+            "value": 0.002300000051036477
+        },
+        {
+            "name": "inputTexture",
+            "type": 3,
+            "value": 0
+        },
+        {
+            "name": "depthTexture",
+            "type": 3,
+            "value": 0
+        }
+    ]
+}
