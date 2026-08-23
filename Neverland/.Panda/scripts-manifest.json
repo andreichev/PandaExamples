@@ -1,0 +1,188 @@
+{
+    "scripts": [
+        {
+            "name": "BaseScript",
+            "scriptFields": [
+                {
+                    "fieldId": 1845874024,
+                    "name": "var",
+                    "type": "integer"
+                },
+                {
+                    "fieldId": 2756650074,
+                    "name": "material",
+                    "type": "material"
+                },
+                {
+                    "fieldId": 3276713093,
+                    "name": "terrainMaterial",
+                    "type": "material"
+                },
+                {
+                    "fieldId": 36632844,
+                    "name": "markerMaterial",
+                    "type": "material"
+                }
+            ]
+        },
+        {
+            "name": "PlayerController",
+            "scriptFields": [
+                {
+                    "fieldId": 3770851288,
+                    "name": "mouseSpeed",
+                    "type": "float"
+                },
+                {
+                    "fieldId": 430501054,
+                    "name": "moveSpeed",
+                    "type": "float"
+                },
+                {
+                    "fieldId": 1862896985,
+                    "name": "sprintMultiplier",
+                    "type": "float"
+                },
+                {
+                    "fieldId": 700354338,
+                    "name": "flySpeed",
+                    "type": "float"
+                },
+                {
+                    "fieldId": 3583022444,
+                    "name": "gravity",
+                    "type": "float"
+                },
+                {
+                    "fieldId": 3705032417,
+                    "name": "jumpSpeed",
+                    "type": "float"
+                },
+                {
+                    "fieldId": 3441637612,
+                    "name": "maxFallSpeed",
+                    "type": "float"
+                },
+                {
+                    "fieldId": 1413903965,
+                    "name": "playerRadius",
+                    "type": "float"
+                },
+                {
+                    "fieldId": 2294906112,
+                    "name": "playerHeight",
+                    "type": "float"
+                },
+                {
+                    "fieldId": 2202421840,
+                    "name": "eyeHeight",
+                    "type": "float"
+                },
+                {
+                    "fieldId": 3552244567,
+                    "name": "stepHeight",
+                    "type": "float"
+                },
+                {
+                    "fieldId": 3484132182,
+                    "name": "groundSnapDistance",
+                    "type": "float"
+                },
+                {
+                    "fieldId": 113740022,
+                    "name": "coyoteTime",
+                    "type": "float"
+                },
+                {
+                    "fieldId": 3407012673,
+                    "name": "stepSmoothingSpeed",
+                    "type": "float"
+                },
+                {
+                    "fieldId": 3441882981,
+                    "name": "touchLookSpeed",
+                    "type": "float"
+                },
+                {
+                    "fieldId": 3321364286,
+                    "name": "touchMoveRadius",
+                    "type": "float"
+                },
+                {
+                    "fieldId": 3135818992,
+                    "name": "doubleJumpFlyWindow",
+                    "type": "float"
+                },
+                {
+                    "fieldId": 1763507146,
+                    "name": "enableTouchControls",
+                    "type": "integer"
+                },
+                {
+                    "fieldId": 2571237424,
+                    "name": "flyMode",
+                    "type": "integer"
+                }
+            ]
+        },
+        {
+            "name": "BlocksCreation",
+            "scriptFields": []
+        },
+        {
+            "name": "NeverlandHUD",
+            "scriptFields": [
+                {
+                    "fieldId": 4101554634,
+                    "name": "blocksTileTexture",
+                    "type": "texture"
+                },
+                {
+                    "fieldId": 3893328361,
+                    "name": "groundTileTexture",
+                    "type": "texture"
+                }
+            ]
+        },
+        {
+            "name": "SunCycle",
+            "scriptFields": [
+                {
+                    "fieldId": 185664262,
+                    "name": "enabled",
+                    "type": "integer"
+                },
+                {
+                    "fieldId": 2194355971,
+                    "name": "skyMaterial",
+                    "type": "material"
+                },
+                {
+                    "fieldId": 1069767414,
+                    "name": "cycleSeconds",
+                    "type": "float"
+                },
+                {
+                    "fieldId": 4094324036,
+                    "name": "minSunIntensity",
+                    "type": "float"
+                },
+                {
+                    "fieldId": 1664345754,
+                    "name": "maxSunIntensity",
+                    "type": "float"
+                },
+                {
+                    "fieldId": 2390201246,
+                    "name": "minAmbientIntensity",
+                    "type": "float"
+                },
+                {
+                    "fieldId": 2311388332,
+                    "name": "maxAmbientIntensity",
+                    "type": "float"
+                }
+            ]
+        }
+    ]
+}

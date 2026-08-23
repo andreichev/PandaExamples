@@ -9,9 +9,9 @@
             "name": "baseColorFactor",
             "type": 4,
             "value": {
-                "x": 1.0,
-                "y": 1.0,
-                "z": 1.0,
+                "x": 0.7929427027702332,
+                "y": 0.7929427027702332,
+                "z": 0.7929427027702332,
                 "w": 1.0
             }
         },
@@ -28,7 +28,7 @@
         {
             "name": "roughnessFactor",
             "type": 0,
-            "value": 1.0
+            "value": 0.1322242021560669
         },
         {
             "name": "normalTexture",

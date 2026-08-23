@@ -3,7 +3,7 @@
         {
             "name": "baseColorTexture",
             "type": 3,
-            "value": 2702412766
+            "value": 3831212538
         },
         {
             "name": "baseColorFactor",
@@ -73,7 +73,7 @@
         {
             "name": "alphaCutoff",
             "type": 0,
-            "value": 0.514168381690979
+            "value": 0.4482974708080292
         },
         {
             "name": "doubleSided",
@@ -88,7 +88,22 @@
         {
             "name": "viewFade",
             "type": 0,
-            "value": 0.0
+            "value": 0.5
+        },
+        {
+            "name": "grassWind",
+            "type": 0,
+            "value": 0.5
+        },
+        {
+            "name": "grassWindSpeed",
+            "type": 0,
+            "value": 1.0
+        },
+        {
+            "name": "grassGustiness",
+            "type": 0,
+            "value": 0.6000000238418579
         }
     ]
 }

@@ -1,0 +1,94 @@
+{
+    "scripts": [
+        {
+            "name": "Camera",
+            "scriptFields": [
+                {
+                    "fieldId": 953360933,
+                    "name": "target",
+                    "type": "entity"
+                }
+            ]
+        },
+        {
+            "name": "Enemy",
+            "scriptFields": [
+                {
+                    "fieldId": 3760132070,
+                    "name": "target",
+                    "type": "entity"
+                },
+                {
+                    "fieldId": 587380990,
+                    "name": "speed",
+                    "type": "float"
+                },
+                {
+                    "fieldId": 311170788,
+                    "name": "activationDistance",
+                    "type": "float"
+                }
+            ]
+        },
+        {
+            "name": "Fire",
+            "scriptFields": [
+                {
+                    "fieldId": 2560869837,
+                    "name": "fire",
+                    "type": "texture"
+                }
+            ]
+        },
+        {
+            "name": "ParallaxEffect",
+            "scriptFields": [
+                {
+                    "fieldId": 3847680866,
+                    "name": "target",
+                    "type": "entity"
+                },
+                {
+                    "fieldId": 2491635418,
+                    "name": "speed",
+                    "type": "float"
+                }
+            ]
+        },
+        {
+            "name": "Player",
+            "scriptFields": [
+                {
+                    "fieldId": 2386036755,
+                    "name": "nextLevel",
+                    "type": "world"
+                },
+                {
+                    "fieldId": 2621739197,
+                    "name": "jumpForce",
+                    "type": "float"
+                },
+                {
+                    "fieldId": 813245873,
+                    "name": "speed",
+                    "type": "float"
+                },
+                {
+                    "fieldId": 2564606311,
+                    "name": "run",
+                    "type": "texture"
+                },
+                {
+                    "fieldId": 1707228502,
+                    "name": "jump",
+                    "type": "texture"
+                },
+                {
+                    "fieldId": 2110168076,
+                    "name": "rest",
+                    "type": "texture"
+                }
+            ]
+        }
+    ]
+}

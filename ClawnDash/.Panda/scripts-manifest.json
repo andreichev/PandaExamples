@@ -1,0 +1,39 @@
+{
+    "scripts": [
+        {
+            "name": "ClawnDashLevelController",
+            "scriptFields": [
+                {
+                    "fieldId": 3463685753,
+                    "name": "menuWorld",
+                    "type": "world"
+                },
+                {
+                    "fieldId": 3278015661,
+                    "name": "nextLevel",
+                    "type": "world"
+                },
+                {
+                    "fieldId": 746113615,
+                    "name": "levelNumber",
+                    "type": "integer"
+                }
+            ]
+        },
+        {
+            "name": "ClawnDashMenu",
+            "scriptFields": [
+                {
+                    "fieldId": 2117805770,
+                    "name": "level1",
+                    "type": "world"
+                },
+                {
+                    "fieldId": 2101028151,
+                    "name": "level2",
+                    "type": "world"
+                }
+            ]
+        }
+    ]
+}

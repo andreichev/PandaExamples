@@ -1,12 +1,34 @@
 {
     "lightingSettings": {
         "ambientColor": {
-            "x": 1.0,
-            "y": 1.0,
-            "z": 1.0,
+            "x": 0.7494019269943237,
+            "y": 0.767513632774353,
+            "z": 0.8434056043624878,
             "w": 1.0
         },
-        "ambientIntensity": 0.5
+        "ambientIntensity": 0.34263819456100464
+    },
+    "graphicsSettings": {
+        "terrainLod1": 120.0,
+        "terrainLod2": 240.0,
+        "terrainDrawDistance": 0.0,
+        "terrainRing2Width": 4,
+        "terrainRing3Width": 16,
+        "terrainRing4Width": 32,
+        "shadowsEnabled": true,
+        "shadowCascades": 3,
+        "shadowMapSize": 1024,
+        "shadowDistance": 100.0,
+        "shadowStrength": 1.0,
+        "shadowSlopeBias": 2.0,
+        "shadowNormalOffset": 1.0,
+        "shadowReceiverBias": 0.5
+    },
+    "windSettings": {
+        "windStrength": 0.25,
+        "windSpeed": 1.600000023841858,
+        "windGustiness": 0.6000000238418579,
+        "windDirDegrees": 0.0
     },
     "entities": [
         {
@@ -71,6 +93,316 @@
             }
         },
         {
+            "id": 1238255083,
+            "tagComponent": {
+                "tag": "Buildings 5,0,3"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 2444117508,
+            "tagComponent": {
+                "tag": "Buildings 5,0,4"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 858758253,
+            "tagComponent": {
+                "tag": "Buildings 5,0,5"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 2763976368,
+            "tagComponent": {
+                "tag": "Buildings 6,0,3"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 1397353269,
+            "tagComponent": {
+                "tag": "Buildings 6,0,4"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3631199278,
+            "tagComponent": {
+                "tag": "Buildings 6,0,5"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 721023437,
+            "tagComponent": {
+                "tag": "Buildings 6,0,6"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 2406360089,
+            "tagComponent": {
+                "tag": "Buildings 7,0,3"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 2658476153,
+            "tagComponent": {
+                "tag": "Buildings 7,0,4"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 3682771958,
+            "tagComponent": {
+                "tag": "Buildings 7,0,5"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
             "id": 1294002369,
             "tagComponent": {
                 "tag": "Camera"
@@ -81,15 +413,15 @@
             },
             "transformComponent": {
                 "position": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 4.0
+                    "x": 13.98127555847168,
+                    "y": 14.621000289916992,
+                    "z": -13.86081314086914
                 },
                 "rotation": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0,
-                    "w": 1.0
+                    "x": 0.11669287085533142,
+                    "y": 0.3270827829837799,
+                    "z": 0.04073981195688248,
+                    "w": -0.9368778467178345
                 },
                 "scale": {
                     "x": 1.0,
@@ -110,7 +442,12 @@
                 "postprocessingEnabled": true,
                 "bloomEnabled": false,
                 "bloomIntensity": 1.0,
-                "bloomRadius": 1.0
+                "bloomRadius": 1.0,
+                "autoExposureEnabled": false,
+                "autoExposureKey": 0.18000000715255737,
+                "autoExposureSpeed": 2.0,
+                "autoExposureMin": 0.25,
+                "autoExposureMax": 4.0
             },
             "scriptListComponent": {
                 "scripts": [
@@ -258,6 +595,68 @@
             }
         },
         {
+            "id": 405214083,
+            "tagComponent": {
+                "tag": "Held Block"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 14.603699684143066,
+                    "y": 14.129029273986816,
+                    "z": -14.09729290008545
+                },
+                "rotation": {
+                    "x": 0.30310776829719543,
+                    "y": 0.04458219185471535,
+                    "z": 0.007488006725907326,
+                    "w": -0.9518834352493286
+                },
+                "scale": {
+                    "x": 0.2800000011920929,
+                    "y": 0.2800000011920929,
+                    "z": 0.2800000011920929
+                }
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 91314900,
+            "tagComponent": {
+                "tag": "Held Hand"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 14.471851348876953,
+                    "y": 14.039782524108887,
+                    "z": -13.915410041809082
+                },
+                "rotation": {
+                    "x": 0.3732118308544159,
+                    "y": 0.16323961317539215,
+                    "z": 0.03799080848693848,
+                    "w": -0.9124815464019775
+                },
+                "scale": {
+                    "x": 0.8199999928474426,
+                    "y": 0.8199999928474426,
+                    "z": 0.8199999928474426
+                }
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
             "id": 2867455434,
             "tagComponent": {
                 "tag": "Sky"
@@ -307,10 +706,10 @@
                     "z": 0.0000010887160897254944
                 },
                 "rotation": {
-                    "x": -0.03186526894569397,
-                    "y": 0.2500545382499695,
-                    "z": 0.12232884764671326,
-                    "w": 0.9599443674087524
+                    "x": 0.054325152188539505,
+                    "y": 0.7774829268455505,
+                    "z": 0.06780976057052612,
+                    "w": -0.622873067855835
                 },
                 "scale": {
                     "x": 0.9999980330467224,
@@ -320,13 +719,14 @@
             },
             "directionalLightComponent": {
                 "color": {
-                    "x": 1.0,
-                    "y": 1.0,
-                    "z": 1.0,
+                    "x": 0.940729022026062,
+                    "y": 0.7841450572013855,
+                    "z": 0.6592734456062317,
                     "w": 1.0
                 },
-                "intensity": 0.5,
-                "isEnabled": true
+                "intensity": 0.8270354270935059,
+                "isEnabled": true,
+                "castShadows": true
             },
             "scriptListComponent": {
                 "scripts": [

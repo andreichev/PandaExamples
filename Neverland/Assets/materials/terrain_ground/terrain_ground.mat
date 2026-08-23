@@ -1,39 +1,64 @@
 {
     "inputs": [
         {
-            "name": "baseColorFactor",
-            "type": 2,
+            "name": "layer1Color",
+            "type": 4,
             "value": {
-                "x": 1.0,
-                "y": 1.0,
-                "z": 1.0,
+                "x": 0.36000001430511475,
+                "y": 0.5,
+                "z": 0.25999999046325684,
                 "w": 1.0
             }
         },
         {
-            "name": "alphaCutoff",
-            "type": 0,
-            "value": 0.009999999776482582
-        },
-        {
-            "name": "lightMapParams",
-            "type": 2,
+            "name": "layer2Color",
+            "type": 4,
             "value": {
-                "x": -96.0,
-                "y": -96.0,
-                "z": 192.0,
-                "w": 8.0
+                "x": 0.41999998688697815,
+                "y": 0.3199999928474426,
+                "z": 0.2199999988079071,
+                "w": 1.0
             }
         },
         {
-            "name": "baseColorTexture",
+            "name": "layer3Color",
+            "type": 4,
+            "value": {
+                "x": 0.46000000834465027,
+                "y": 0.46000000834465027,
+                "z": 0.47999998927116394,
+                "w": 1.0
+            }
+        },
+        {
+            "name": "layer4Color",
+            "type": 4,
+            "value": {
+                "x": 0.7799999713897705,
+                "y": 0.699999988079071,
+                "z": 0.5,
+                "w": 1.0
+            }
+        },
+        {
+            "name": "layer1Texture",
             "type": 3,
             "value": 917000201
         },
         {
-            "name": "lightMap",
+            "name": "layer2Texture",
             "type": 3,
-            "value": 0
+            "value": 5
+        },
+        {
+            "name": "layer3Texture",
+            "type": 3,
+            "value": 5
+        },
+        {
+            "name": "layer4Texture",
+            "type": 3,
+            "value": 5
         }
     ]
 }

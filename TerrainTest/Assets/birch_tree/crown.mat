@@ -1,0 +1,129 @@
+{
+    "inputs": [
+        {
+            "name": "baseColorTexture",
+            "type": 3,
+            "value": 2461724923
+        },
+        {
+            "name": "baseColorFactor",
+            "type": 4,
+            "value": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0,
+                "w": 1.0
+            }
+        },
+        {
+            "name": "metallicRoughnessTexture",
+            "type": 3,
+            "value": 0
+        },
+        {
+            "name": "metallicFactor",
+            "type": 0,
+            "value": 0.30000001192092896
+        },
+        {
+            "name": "roughnessFactor",
+            "type": 0,
+            "value": 0.30000001192092896
+        },
+        {
+            "name": "normalTexture",
+            "type": 3,
+            "value": 3143984862
+        },
+        {
+            "name": "normalScale",
+            "type": 0,
+            "value": 1.0
+        },
+        {
+            "name": "occlusionTexture",
+            "type": 3,
+            "value": 0
+        },
+        {
+            "name": "occlusionStrength",
+            "type": 0,
+            "value": 0.0
+        },
+        {
+            "name": "emissiveTexture",
+            "type": 3,
+            "value": 0
+        },
+        {
+            "name": "emissiveFactor",
+            "type": 4,
+            "value": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0,
+                "w": 1.0
+            }
+        },
+        {
+            "name": "alphaMode",
+            "type": 1,
+            "value": 1
+        },
+        {
+            "name": "alphaCutoff",
+            "type": 0,
+            "value": 0.5
+        },
+        {
+            "name": "doubleSided",
+            "type": 1,
+            "value": 1
+        },
+        {
+            "name": "emissiveIntensity",
+            "type": 0,
+            "value": 0.0
+        },
+        {
+            "name": "crownLeafTilt",
+            "type": 0,
+            "value": 1.0
+        },
+        {
+            "name": "viewFade",
+            "type": 0,
+            "value": 0.5
+        },
+        {
+            "name": "windStrength",
+            "type": 0,
+            "value": 0.4000000059604645
+        },
+        {
+            "name": "windGustiness",
+            "type": 0,
+            "value": 0.6000000238418579
+        },
+        {
+            "name": "leafBaseColor",
+            "type": 4,
+            "value": {
+                "x": 0.19456033408641815,
+                "y": 0.2979687452316284,
+                "z": 0.0914100706577301,
+                "w": 1.0
+            }
+        },
+        {
+            "name": "leafTipColor",
+            "type": 4,
+            "value": {
+                "x": 0.411618173122406,
+                "y": 0.5167187452316284,
+                "z": 0.188279390335083,
+                "w": 1.0
+            }
+        }
+    ]
+}

@@ -6,8 +6,7 @@
             "z": 1.0,
             "w": 1.0
         },
-        "ambientIntensity": 0.11999999731779099,
-        "canopyStrength": 0.75
+        "ambientIntensity": 0.11999999731779099
     },
     "graphicsSettings": {
         "terrainLod1": 120.0,
@@ -24,6 +23,12 @@
         "shadowSlopeBias": 2.0,
         "shadowNormalOffset": 1.0,
         "shadowReceiverBias": 0.5
+    },
+    "windSettings": {
+        "windStrength": 0.25,
+        "windSpeed": 1.600000023841858,
+        "windGustiness": 0.6000000238418579,
+        "windDirDegrees": 0.0
     },
     "entities": [
         {
@@ -244,10 +249,15 @@
                     "zFar": 1000.0
                 },
                 "postprocessing": 3148267488,
-                "postprocessingEnabled": false,
+                "postprocessingEnabled": true,
                 "bloomEnabled": true,
                 "bloomIntensity": 5.0,
-                "bloomRadius": 3.0
+                "bloomRadius": 3.0,
+                "autoExposureEnabled": true,
+                "autoExposureKey": 0.18000000715255737,
+                "autoExposureSpeed": 2.0,
+                "autoExposureMin": 0.25,
+                "autoExposureMax": 3.0
             },
             "scriptListComponent": {
                 "scripts": []
@@ -331,7 +341,7 @@
                 },
                 "intensity": 2.0,
                 "radius": 10.0,
-                "isEnabled": true
+                "isEnabled": false
             },
             "scriptListComponent": {
                 "scripts": []
@@ -353,15 +363,15 @@
                     "z": 0.22019386291503906
                 },
                 "rotation": {
-                    "x": -3.4167449685512663e-13,
+                    "x": -3.41674442645018e-13,
                     "y": -0.7071068286895752,
-                    "z": 3.416775055161553e-13,
+                    "z": 3.4167745130604665e-13,
                     "w": 0.7071067094802856
                 },
                 "scale": {
-                    "x": 0.9999530911445618,
+                    "x": 0.9999529719352722,
                     "y": 9.999482154846191,
-                    "z": 0.9999472498893738
+                    "z": 0.9999471306800842
                 }
             },
             "pointLightComponent": {

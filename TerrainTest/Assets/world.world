@@ -6,7 +6,7 @@
             "z": 1.0,
             "w": 1.0
         },
-        "ambientIntensity": 0.25
+        "ambientIntensity": 0.15000000596046448
     },
     "graphicsSettings": {
         "terrainLod1": 120.0,
@@ -18,11 +18,17 @@
         "shadowsEnabled": true,
         "shadowCascades": 3,
         "shadowMapSize": 2048,
-        "shadowDistance": 100.0,
-        "shadowStrength": 1.0,
+        "shadowDistance": 200.0,
+        "shadowStrength": 0.8500000238418579,
         "shadowSlopeBias": 2.0,
         "shadowNormalOffset": 1.0,
         "shadowReceiverBias": 0.5
+    },
+    "windSettings": {
+        "windStrength": 1.0,
+        "windSpeed": 0.5,
+        "windGustiness": 1.0,
+        "windDirDegrees": 180.0
     },
     "entities": [
         {
@@ -271,7 +277,7 @@
             "transformComponent": {
                 "position": {
                     "x": 39.996726989746094,
-                    "y": 23.02625274658203,
+                    "y": 19.106239318847656,
                     "z": 37.44083023071289
                 },
                 "rotation": {

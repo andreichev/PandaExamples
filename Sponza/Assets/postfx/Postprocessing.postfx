@@ -10,5 +10,6 @@
             "enabled": false,
             "downsample": 1
         }
-    ]
+    ],
+    "handlesTonemap": false
 }
