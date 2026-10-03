@@ -1,0 +1,76 @@
+{
+    "id": 1790595954,
+    "type": 6,
+    "meta": {
+        "materials": [
+            {
+                "name": "bark",
+                "baseColorTexturePath": "Assets/spurce/spruce_bark.png",
+                "baseColorFactor": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0,
+                    "w": 1.0
+                },
+                "metallicRoughnessTexturePath": "",
+                "metallicFactor": 0.0,
+                "roughnessFactor": 0.8999999761581421,
+                "normalTexturePath": "",
+                "normalScale": 0.0,
+                "occlusionTexturePath": "",
+                "occlusionStrength": 0.0,
+                "emissiveTexturePath": "",
+                "emissiveFactor": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "alphaMode": 0,
+                "alphaCutoff": 0.5,
+                "doubleSided": false,
+                "materialAssetId": 1687197244
+            },
+            {
+                "name": "crown",
+                "baseColorTexturePath": "Assets/spurce/spruce_crown.png",
+                "baseColorFactor": {
+                    "x": 0.0791914165019989,
+                    "y": 0.15047569572925568,
+                    "z": 0.06147289276123047,
+                    "w": 1.0
+                },
+                "metallicRoughnessTexturePath": "",
+                "metallicFactor": 0.0,
+                "roughnessFactor": 0.25,
+                "normalTexturePath": "Assets/spurce/spruce_crown_normal.png",
+                "normalScale": 1.0,
+                "occlusionTexturePath": "",
+                "occlusionStrength": 0.0,
+                "emissiveTexturePath": "",
+                "emissiveFactor": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "alphaMode": 1,
+                "alphaCutoff": 0.5,
+                "doubleSided": true,
+                "materialAssetId": 1477329491
+            }
+        ],
+        "primitiveMaterials": [
+            {
+                "submeshIndex": 0,
+                "primitiveIndex": 0,
+                "materialIndex": 0
+            },
+            {
+                "submeshIndex": 0,
+                "primitiveIndex": 1,
+                "materialIndex": 1
+            }
+        ]
+    }
+}

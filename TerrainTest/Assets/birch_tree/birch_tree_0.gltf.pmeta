@@ -1,5 +1,5 @@
 {
-    "id": 3926772377,
+    "id": 2567474170,
     "type": 6,
     "meta": {
         "materials": [
@@ -14,7 +14,7 @@
                 },
                 "metallicRoughnessTexturePath": "",
                 "metallicFactor": 0.0,
-                "roughnessFactor": 0.1322242021560669,
+                "roughnessFactor": 0.8999999761581421,
                 "normalTexturePath": "",
                 "normalScale": 0.0,
                 "occlusionTexturePath": "",
@@ -29,12 +29,7 @@
                 "alphaMode": 0,
                 "alphaCutoff": 0.5,
                 "doubleSided": false,
-                "pandaShader": "",
-                "pandaDataTexturePath": "",
-                "pandaLeafTilt": 0.6000000238418579,
-                "pandaGlint": 1.5,
-                "pandaViewFade": 0.25,
-                "materialAssetId": 3142330110
+                "materialAssetId": 2432705394
             },
             {
                 "name": "crown",
@@ -47,9 +42,9 @@
                 },
                 "metallicRoughnessTexturePath": "",
                 "metallicFactor": 0.0,
-                "roughnessFactor": 0.18267719447612762,
-                "normalTexturePath": "",
-                "normalScale": 0.0,
+                "roughnessFactor": 0.25,
+                "normalTexturePath": "Assets/birch_tree/birch_tree_crown_normal.png",
+                "normalScale": 1.0,
                 "occlusionTexturePath": "",
                 "occlusionStrength": 0.0,
                 "emissiveTexturePath": "",
@@ -62,12 +57,7 @@
                 "alphaMode": 1,
                 "alphaCutoff": 0.5,
                 "doubleSided": true,
-                "pandaShader": "veg_crown",
-                "pandaDataTexturePath": "Assets/birch_tree/birch_tree_crown_data.png",
-                "pandaLeafTilt": 1.0,
-                "pandaGlint": 4.0,
-                "pandaViewFade": 0.4991975426673889,
-                "materialAssetId": 470106607
+                "materialAssetId": 1958213694
             }
         ],
         "primitiveMaterials": [

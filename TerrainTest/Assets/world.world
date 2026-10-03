@@ -6,23 +6,28 @@
             "z": 1.0,
             "w": 1.0
         },
-        "ambientIntensity": 0.15000000596046448
+        "ambientIntensity": 0.5,
+        "environmentMap": 2403232024,
+        "environmentIntensity": 1.0
     },
     "graphicsSettings": {
-        "terrainLod1": 120.0,
-        "terrainLod2": 240.0,
-        "terrainDrawDistance": 0.0,
-        "terrainRing2Width": 2,
-        "terrainRing3Width": 4,
-        "terrainRing4Width": 8,
         "shadowsEnabled": true,
         "shadowCascades": 3,
-        "shadowMapSize": 2048,
-        "shadowDistance": 200.0,
-        "shadowStrength": 0.8500000238418579,
+        "shadowMapSize": 1024,
+        "shadowDistance": 100.0,
+        "shadowStrength": 0.800000011920929,
         "shadowSlopeBias": 2.0,
         "shadowNormalOffset": 1.0,
-        "shadowReceiverBias": 0.5
+        "shadowReceiverBias": 0.5,
+        "occlusionEnabled": true,
+        "occlusionAoStrength": 0.699999988079071,
+        "occlusionSunNear": 0.30000001192092896,
+        "occlusionSunFar": 0.800000011920929,
+        "occlusionCellSize": 2.0,
+        "occlusionWindowChunks": 8,
+        "occlusionExtinction": 0.800000011920929,
+        "occlusionSurfaceOffset": 3.0,
+        "occlusionContrast": 2.0
     },
     "windSettings": {
         "windStrength": 1.0,
@@ -30,21 +35,35 @@
         "windGustiness": 1.0,
         "windDirDegrees": 180.0
     },
+    "terrain": {
+        "lod1": 120.0,
+        "lod2": 240.0,
+        "drawDistance": 0.0,
+        "ring2Width": 4,
+        "ring3Width": 16,
+        "ring4Width": 32
+    },
+    "flora": {
+        "grass": 80.0,
+        "grassDissolve": 0.0,
+        "tree": 80.0,
+        "imposter": 4000.0
+    },
     "entities": [
         {
-            "id": 732211536,
-            "tagComponent": {
-                "tag": "Camera"
-            },
+            "id": 2126064648,
             "relationshipComponent": {
                 "parent": 0,
                 "children": []
             },
+            "tagComponent": {
+                "tag": "Terrain"
+            },
             "transformComponent": {
                 "position": {
-                    "x": 0.0,
+                    "x": 2.9802322387695313e-8,
                     "y": 0.0,
-                    "z": 4.0
+                    "z": 0.0
                 },
                 "rotation": {
                     "x": 0.0,
@@ -58,44 +77,29 @@
                     "z": 1.0
                 }
             },
-            "cameraComponent": {
-                "isPrimary": true,
-                "camera": {
-                    "projectionType": 0,
-                    "fieldOfView": 70.0,
-                    "orthoSize": 1.0,
-                    "zNear": 0.10000000149011612,
-                    "zFar": 1000.0
-                },
-                "postprocessing": 3401774205,
-                "postprocessingEnabled": true,
-                "bloomEnabled": true,
-                "bloomIntensity": 3.0,
-                "bloomRadius": 3.0,
-                "autoExposureEnabled": true,
-                "autoExposureKey": 0.18000000715255737,
-                "autoExposureSpeed": 2.0,
-                "autoExposureMin": 0.25,
-                "autoExposureMax": 4.0
-            },
             "scriptListComponent": {
                 "scripts": []
+            },
+            "terrain2dComponent": {
+                "terrain": 593018140,
+                "material": 1850840993,
+                "physicsEnabled": true
             }
         },
         {
-            "id": 3647067924,
-            "tagComponent": {
-                "tag": "Capsule 1"
-            },
+            "id": 2750561521,
             "relationshipComponent": {
                 "parent": 0,
                 "children": []
             },
+            "tagComponent": {
+                "tag": "Sphere 2"
+            },
             "transformComponent": {
                 "position": {
-                    "x": 66.7885971069336,
-                    "y": 15.964699745178223,
-                    "z": 52.81407928466797
+                    "x": 39.996726989746094,
+                    "y": 19.106239318847656,
+                    "z": 37.44083023071289
                 },
                 "rotation": {
                     "x": 0.0,
@@ -110,7 +114,7 @@
                 }
             },
             "primitiveMeshComponent": {
-                "kind": 2,
+                "kind": 1,
                 "material": 0
             },
             "scriptListComponent": {
@@ -120,7 +124,7 @@
                 "type": 1,
                 "fixedRotation": false
             },
-            "capsuleCollider3dComponent": {
+            "sphereCollider3dComponent": {
                 "isSensor": false,
                 "offset": {
                     "x": 0.0,
@@ -128,20 +132,95 @@
                     "z": 0.0
                 },
                 "radius": 0.5,
-                "halfHeight": 0.5,
                 "density": 1.0,
                 "friction": 0.5,
                 "restitution": 0.0
             }
         },
         {
-            "id": 2175270774,
-            "tagComponent": {
-                "tag": "Cube 1"
-            },
+            "id": 1898192272,
             "relationshipComponent": {
                 "parent": 0,
                 "children": []
+            },
+            "tagComponent": {
+                "tag": "Sky"
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            "cubeMapComponent": {
+                "material": 3401774102
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 4165951998,
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "tagComponent": {
+                "tag": "Directional Light"
+            },
+            "transformComponent": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": -0.8194910883903503,
+                    "y": 0.1767035573720932,
+                    "z": 0.3394443690776825,
+                    "w": 0.42660006880760193
+                },
+                "scale": {
+                    "x": 0.9999998807907104,
+                    "y": 1.0000011920928955,
+                    "z": 1.0000027418136597
+                }
+            },
+            "directionalLightComponent": {
+                "color": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0,
+                    "w": 1.0
+                },
+                "intensity": 2.0,
+                "isEnabled": true,
+                "castShadows": true
+            },
+            "scriptListComponent": {
+                "scripts": []
+            }
+        },
+        {
+            "id": 2175270774,
+            "relationshipComponent": {
+                "parent": 0,
+                "children": []
+            },
+            "tagComponent": {
+                "tag": "Cube 1"
             },
             "transformComponent": {
                 "position": {
@@ -190,95 +269,19 @@
             }
         },
         {
-            "id": 4165951998,
-            "tagComponent": {
-                "tag": "Directional Light"
-            },
+            "id": 3647067924,
             "relationshipComponent": {
                 "parent": 0,
                 "children": []
             },
-            "transformComponent": {
-                "position": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "rotation": {
-                    "x": -0.882633626461029,
-                    "y": 0.11306686699390411,
-                    "z": 0.27296754717826843,
-                    "w": 0.3655988276004791
-                },
-                "scale": {
-                    "x": 0.9999998807907104,
-                    "y": 1.0000011920928955,
-                    "z": 1.0000027418136597
-                }
-            },
-            "directionalLightComponent": {
-                "color": {
-                    "x": 1.0,
-                    "y": 1.0,
-                    "z": 1.0,
-                    "w": 1.0
-                },
-                "intensity": 2.0,
-                "isEnabled": true,
-                "castShadows": true
-            },
-            "scriptListComponent": {
-                "scripts": []
-            }
-        },
-        {
-            "id": 1898192272,
             "tagComponent": {
-                "tag": "Sky"
-            },
-            "relationshipComponent": {
-                "parent": 0,
-                "children": []
+                "tag": "Capsule 1"
             },
             "transformComponent": {
                 "position": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "rotation": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0,
-                    "w": 1.0
-                },
-                "scale": {
-                    "x": 1.0,
-                    "y": 1.0,
-                    "z": 1.0
-                }
-            },
-            "cubeMapComponent": {
-                "material": 3401774102
-            },
-            "scriptListComponent": {
-                "scripts": []
-            }
-        },
-        {
-            "id": 2750561521,
-            "tagComponent": {
-                "tag": "Sphere 2"
-            },
-            "relationshipComponent": {
-                "parent": 0,
-                "children": []
-            },
-            "transformComponent": {
-                "position": {
-                    "x": 39.996726989746094,
-                    "y": 19.106239318847656,
-                    "z": 37.44083023071289
+                    "x": 66.41739654541016,
+                    "y": 24.85972785949707,
+                    "z": 40.50198745727539
                 },
                 "rotation": {
                     "x": 0.0,
@@ -293,7 +296,7 @@
                 }
             },
             "primitiveMeshComponent": {
-                "kind": 1,
+                "kind": 2,
                 "material": 0
             },
             "scriptListComponent": {
@@ -303,7 +306,7 @@
                 "type": 1,
                 "fixedRotation": false
             },
-            "sphereCollider3dComponent": {
+            "capsuleCollider3dComponent": {
                 "isSensor": false,
                 "offset": {
                     "x": 0.0,
@@ -311,42 +314,58 @@
                     "z": 0.0
                 },
                 "radius": 0.5,
+                "halfHeight": 0.5,
                 "density": 1.0,
                 "friction": 0.5,
                 "restitution": 0.0
             }
         },
         {
-            "id": 2126064648,
-            "tagComponent": {
-                "tag": "Terrain"
-            },
+            "id": 732211536,
             "relationshipComponent": {
                 "parent": 0,
                 "children": []
             },
+            "tagComponent": {
+                "tag": "Camera"
+            },
             "transformComponent": {
                 "position": {
-                    "x": 2.9802322387695313e-8,
-                    "y": 0.0,
-                    "z": 0.0
+                    "x": 256.6172180175781,
+                    "y": 24.722570419311523,
+                    "z": 141.9975128173828
                 },
                 "rotation": {
                     "x": 0.0,
-                    "y": 0.0,
+                    "y": 0.7071068286895752,
                     "z": 0.0,
-                    "w": 1.0
+                    "w": 0.7071067094802856
                 },
                 "scale": {
-                    "x": 1.0,
+                    "x": 0.99997878074646,
                     "y": 1.0,
-                    "z": 1.0
+                    "z": 0.99997878074646
                 }
             },
-            "terrain2dComponent": {
-                "terrain": 593018140,
-                "material": 1850840993,
-                "physicsEnabled": true
+            "cameraComponent": {
+                "isPrimary": true,
+                "camera": {
+                    "projectionType": 0,
+                    "fieldOfView": 70.0,
+                    "orthoSize": 1.0,
+                    "zNear": 0.10000000149011612,
+                    "zFar": 1000.0
+                },
+                "postprocessing": 3401774205,
+                "postprocessingEnabled": true,
+                "bloomEnabled": true,
+                "bloomIntensity": 3.0,
+                "bloomRadius": 3.0,
+                "autoExposureEnabled": true,
+                "autoExposureKey": 0.18000000715255737,
+                "autoExposureSpeed": 2.0,
+                "autoExposureMin": 0.25,
+                "autoExposureMax": 4.0
             },
             "scriptListComponent": {
                 "scripts": []

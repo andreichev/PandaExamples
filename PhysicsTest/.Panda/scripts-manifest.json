@@ -34,6 +34,250 @@
                     "type": "integer"
                 }
             ]
+        },
+        {
+            "name": "ChaseCamera",
+            "scriptFields": [
+                {
+                    "fieldId": 2438598957,
+                    "name": "target",
+                    "type": "entity"
+                },
+                {
+                    "fieldId": 674695727,
+                    "name": "distance",
+                    "type": "float"
+                },
+                {
+                    "fieldId": 2528222551,
+                    "name": "height",
+                    "type": "float"
+                },
+                {
+                    "fieldId": 1073946752,
+                    "name": "lookHeight",
+                    "type": "float"
+                },
+                {
+                    "fieldId": 1274829924,
+                    "name": "positionSmoothTime",
+                    "type": "float"
+                },
+                {
+                    "fieldId": 561329926,
+                    "name": "turnSpeed",
+                    "type": "float"
+                },
+                {
+                    "fieldId": 170281849,
+                    "name": "avoidObstacles",
+                    "type": "integer"
+                }
+            ]
+        },
+        {
+            "name": "JointCar",
+            "scriptFields": [
+                {
+                    "fieldId": 2816983404,
+                    "name": "wheelFrontLeft",
+                    "type": "entity"
+                },
+                {
+                    "fieldId": 1303640185,
+                    "name": "wheelFrontRight",
+                    "type": "entity"
+                },
+                {
+                    "fieldId": 346741269,
+                    "name": "wheelRearLeft",
+                    "type": "entity"
+                },
+                {
+                    "fieldId": 332859566,
+                    "name": "wheelRearRight",
+                    "type": "entity"
+                },
+                {
+                    "fieldId": 1233702733,
+                    "name": "driveWheels",
+                    "type": "integer"
+                },
+                {
+                    "fieldId": 13764874,
+                    "name": "motorTorque",
+                    "type": "float"
+                },
+                {
+                    "fieldId": 3299910290,
+                    "name": "maxSpeed",
+                    "type": "float"
+                },
+                {
+                    "fieldId": 573899334,
+                    "name": "reverseSpeed",
+                    "type": "float"
+                },
+                {
+                    "fieldId": 2577287400,
+                    "name": "brakeTorque",
+                    "type": "float"
+                },
+                {
+                    "fieldId": 1693173839,
+                    "name": "handbrakeTorque",
+                    "type": "float"
+                },
+                {
+                    "fieldId": 257761941,
+                    "name": "coastTorque",
+                    "type": "float"
+                },
+                {
+                    "fieldId": 3054082247,
+                    "name": "maxSteerAngle",
+                    "type": "float"
+                },
+                {
+                    "fieldId": 3222720760,
+                    "name": "steerGrip",
+                    "type": "float"
+                },
+                {
+                    "fieldId": 4198799366,
+                    "name": "steerRate",
+                    "type": "float"
+                },
+                {
+                    "fieldId": 1274722505,
+                    "name": "rideFrequency",
+                    "type": "float"
+                },
+                {
+                    "fieldId": 3484785869,
+                    "name": "rideDamping",
+                    "type": "float"
+                },
+                {
+                    "fieldId": 3560547396,
+                    "name": "wheelRadius",
+                    "type": "float"
+                }
+            ]
+        },
+        {
+            "name": "RaycastCar",
+            "scriptFields": [
+                {
+                    "fieldId": 1079290639,
+                    "name": "wheelFrontLeft",
+                    "type": "entity"
+                },
+                {
+                    "fieldId": 3524928384,
+                    "name": "wheelFrontRight",
+                    "type": "entity"
+                },
+                {
+                    "fieldId": 1323040828,
+                    "name": "wheelRearLeft",
+                    "type": "entity"
+                },
+                {
+                    "fieldId": 1201767945,
+                    "name": "wheelRearRight",
+                    "type": "entity"
+                },
+                {
+                    "fieldId": 922384968,
+                    "name": "driveWheels",
+                    "type": "integer"
+                },
+                {
+                    "fieldId": 3774226267,
+                    "name": "motorTorque",
+                    "type": "float"
+                },
+                {
+                    "fieldId": 1428186237,
+                    "name": "maxSpeed",
+                    "type": "float"
+                },
+                {
+                    "fieldId": 1353823101,
+                    "name": "reverseSpeed",
+                    "type": "float"
+                },
+                {
+                    "fieldId": 3857604061,
+                    "name": "brakeTorque",
+                    "type": "float"
+                },
+                {
+                    "fieldId": 2679902822,
+                    "name": "handbrakeTorque",
+                    "type": "float"
+                },
+                {
+                    "fieldId": 1394166840,
+                    "name": "coastTorque",
+                    "type": "float"
+                },
+                {
+                    "fieldId": 471481638,
+                    "name": "maxSteerAngle",
+                    "type": "float"
+                },
+                {
+                    "fieldId": 3134771605,
+                    "name": "steerGrip",
+                    "type": "float"
+                },
+                {
+                    "fieldId": 3968698687,
+                    "name": "steerRate",
+                    "type": "float"
+                },
+                {
+                    "fieldId": 1133902280,
+                    "name": "rideFrequency",
+                    "type": "float"
+                },
+                {
+                    "fieldId": 437911056,
+                    "name": "rideDamping",
+                    "type": "float"
+                },
+                {
+                    "fieldId": 4063984481,
+                    "name": "wheelRadius",
+                    "type": "float"
+                },
+                {
+                    "fieldId": 1660426273,
+                    "name": "suspensionTravel",
+                    "type": "float"
+                },
+                {
+                    "fieldId": 2498755005,
+                    "name": "gripForward",
+                    "type": "float"
+                },
+                {
+                    "fieldId": 3004482971,
+                    "name": "gripSide",
+                    "type": "float"
+                },
+                {
+                    "fieldId": 2023245802,
+                    "name": "wheelRays",
+                    "type": "integer"
+                }
+            ]
+        },
+        {
+            "name": "VehicleHud",
+            "scriptFields": []
         }
     ]
 }
