@@ -4,8 +4,9 @@
 
 namespace Vehicle {
 
-// What the driver asks for in this frame. Shared by every vehicle model: the keyboard is read in
-// one place, so the models are compared under the same controls.
+// What the driver asks for. Shared by every vehicle model: the keyboard is read in one place, so
+// the models are compared under the same controls. The vehicles read it in fixedUpdate: inside a
+// physics step a one-shot key (R, T) is seen by exactly one step.
 //   W / Up        throttle (brakes while the car rolls backwards)
 //   S / Down      brake, then reverse
 //   A D / arrows  steering

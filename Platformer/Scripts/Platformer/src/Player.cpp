@@ -8,15 +8,17 @@
 
 void Player::start() {
     defaultPos = TransformComponentAPI::getPosition(getEntity());
+    if (!sprite.isValid()) { LOG_ERROR("Player: the sprite field must refer to the child entity with the sprite"); }
 
-    restAnim.start(getEntity(), rest, 3, 1, 0.7);
-    jumpAnim.start(getEntity(), jump, 3, 1);
-    runAnim.start(getEntity(), run, 10, 1, 0.1);
-    setState(State::REST);
+    restAnim.start(sprite, rest, 3, 1, 0.7);
+    jumpAnim.start(sprite, jump, 3, 1);
+    runAnim.start(sprite, run, 10, 1, 0.1);
+    state = State::REST;
+    direction = Direction::RIGHT;
+    currentAnimation = &restAnim;
     groundContacts = 0;
     mobileJumpWasDown = false;
     resetCooldown = 0.f;
-    currentAnimation = &restAnim;
 }
 
 void Player::beginCollisionTouch(EntityHandle other) {
@@ -43,9 +45,9 @@ void Player::beginSensorOverlap(EntityHandle sensor) {
     }
 }
 
-void Player::update(float dt) {
+void Player::fixedUpdate(float stepTime) {
     if (resetCooldown > 0.f) {
-        resetCooldown -= dt;
+        resetCooldown -= stepTime;
         if (resetCooldown < 0.f) { resetCooldown = 0.f; }
     }
 
@@ -68,9 +70,9 @@ void Player::update(float dt) {
     } else {
         float stopSpeed = 30.;
         if (velocity.x > 0.1) {
-            velocity.x -= stopSpeed * dt;
+            velocity.x -= stopSpeed * stepTime;
         } else if (velocity.x < -0.1) {
-            velocity.x += stopSpeed * dt;
+            velocity.x += stopSpeed * stepTime;
         } else {
             velocity.x = 0;
             setState(State::REST);
@@ -81,9 +83,11 @@ void Player::update(float dt) {
         setState(State::JUMP);
     }
 
-    TransformComponentAPI::setRotationEuler(getEntity(), {0, (direction == Direction::LEFT ? 180.f : 0.f), 0});
-    currentAnimation->update(dt);
     Rigidbody2DComponentAPI::setLinearVelocity(getEntity(), velocity);
+}
+
+void Player::update(float dt) {
+    currentAnimation->update(dt);
 }
 
 Player::MobileInput Player::readMobileInput() {
@@ -120,7 +124,11 @@ void Player::resetToStart() {
 }
 
 void Player::setDirection(Player::Direction newDirection) {
+    if (direction == newDirection) {
+        return;
+    }
     direction = newDirection;
+    TransformComponentAPI::setRotationEuler(sprite, {0, (direction == Direction::LEFT ? 180.f : 0.f), 0});
 }
 
 void Player::setState(State newState) {

@@ -14,11 +14,11 @@ using namespace Bamboo;
 // model — the suspension, the tire grip, the drive and the brakes are what it applies to the
 // chassis where the rays meet the ground. The wheels are only drawn.
 //
-// The script runs once per frame, like the physics step. What depends on a position — the spring
-// and the hold on a slope — is a force over the next step. What depends on a velocity — the damper
-// and the tire grip — is an impulse that changes the velocity at once: the impulses are found one
-// after another with the mass the chassis shows at each wheel, the way a physics solver does it,
-// so the car stays steady at any frame rate.
+// The model runs in fixedUpdate, before every physics step. What depends on a position — the
+// spring and the hold on a slope — is a force over the step. What depends on a velocity — the
+// damper and the tire grip — is an impulse that changes the velocity at once: the impulses are
+// found one after another with the mass the chassis shows at each wheel, the way a physics solver
+// does it, so the car stays steady whatever the step.
 //
 // Entity setup:
 //   chassis — a root entity: Rigidbody3D (DYNAMIC) + Box Collider 3D + this script, looks along
@@ -78,7 +78,7 @@ public:
     PANDA_FIELDS_END
 
     void start() override;
-    void update(float deltaTime) override;
+    void fixedUpdate(float stepTime) override;
     void shutdown() override;
 
 private:
@@ -150,7 +150,7 @@ private:
 
     void findContact(const Body &body, const Wheel &wheel, Contact &contact) const;
     void solveContact(Body &body, Contact &contact, float stepTime) const;
-    void drawWheel(Wheel &wheel, const Contact &contact, float deltaTime);
+    void drawWheel(Wheel &wheel, const Contact &contact, float stepTime);
     void placeAt(const glm::vec3 &position, const glm::quat &rotation);
 
     Wheel m_wheels[4];

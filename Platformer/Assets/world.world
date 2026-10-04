@@ -220,6 +220,105 @@
             }
         },
         {
+            "id": 3538450477,
+            "tagComponent": {
+                "tag": "Player"
+            },
+            "relationshipComponent": {
+                "parent": 0,
+                "children": [
+                    749935133
+                ]
+            },
+            "transformComponent": {
+                "position": {
+                    "x": -20.0,
+                    "y": 2.5999999046325684,
+                    "z": 0.0000601834908593446
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 1.0
+                },
+                "scale": {
+                    "x": 7.0,
+                    "y": 2.5,
+                    "z": 1.0
+                }
+            },
+            "scriptListComponent": {
+                "scripts": [
+                    {
+                        "name": "Player",
+                        "scriptFields": [
+                            {
+                                "name": "nextLevel",
+                                "fieldId": 2386036755,
+                                "type": 5,
+                                "value": 153662021
+                            },
+                            {
+                                "name": "speed",
+                                "fieldId": 813245873,
+                                "type": 1,
+                                "value": 7.0
+                            },
+                            {
+                                "name": "rest",
+                                "fieldId": 2110168076,
+                                "type": 3,
+                                "value": 78489094
+                            },
+                            {
+                                "name": "run",
+                                "fieldId": 2564606311,
+                                "type": 3,
+                                "value": 1000000001
+                            },
+                            {
+                                "name": "jump",
+                                "fieldId": 1707228502,
+                                "type": 3,
+                                "value": 1000000002
+                            },
+                            {
+                                "name": "jumpForce",
+                                "fieldId": 2621739197,
+                                "type": 1,
+                                "value": 10.0
+                            },
+                            {
+                                "name": "sprite",
+                                "fieldId": 2886141935,
+                                "type": 2,
+                                "value": 749935133
+                            }
+                        ]
+                    }
+                ]
+            },
+            "rigidbody2dComponent": {
+                "type": 1,
+                "fixedRotation": true
+            },
+            "boxCollider2dComponent": {
+                "isSensor": false,
+                "offset": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "size": {
+                    "x": 0.05000000074505806,
+                    "y": 0.5
+                },
+                "density": 1.0,
+                "friction": 0.0,
+                "restitution": 0.10000000149011612
+            }
+        },
+        {
             "id": 549530867,
             "tagComponent": {
                 "tag": "Background2"
@@ -2421,19 +2520,19 @@
             }
         },
         {
-            "id": 3538450477,
+            "id": 749935133,
             "tagComponent": {
-                "tag": "Player"
+                "tag": "Sprite"
             },
             "relationshipComponent": {
-                "parent": 0,
+                "parent": 3538450477,
                 "children": []
             },
             "transformComponent": {
                 "position": {
-                    "x": -20.0,
-                    "y": 2.5999999046325684,
-                    "z": 0.0000601834908593446
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
                 },
                 "rotation": {
                     "x": 0.0,
@@ -2442,8 +2541,8 @@
                     "w": 1.0
                 },
                 "scale": {
-                    "x": 7.0,
-                    "y": 2.5,
+                    "x": 1.0,
+                    "y": 1.0,
                     "z": 1.0
                 }
             },
@@ -2461,67 +2560,7 @@
                 "texture": 78489094
             },
             "scriptListComponent": {
-                "scripts": [
-                    {
-                        "name": "Player",
-                        "scriptFields": [
-                            {
-                                "name": "nextLevel",
-                                "fieldId": 2386036755,
-                                "type": 5,
-                                "value": 153662021
-                            },
-                            {
-                                "name": "speed",
-                                "fieldId": 813245873,
-                                "type": 1,
-                                "value": 7.0
-                            },
-                            {
-                                "name": "rest",
-                                "fieldId": 2110168076,
-                                "type": 3,
-                                "value": 78489094
-                            },
-                            {
-                                "name": "run",
-                                "fieldId": 2564606311,
-                                "type": 3,
-                                "value": 1000000001
-                            },
-                            {
-                                "name": "jump",
-                                "fieldId": 1707228502,
-                                "type": 3,
-                                "value": 1000000002
-                            },
-                            {
-                                "name": "jumpForce",
-                                "fieldId": 2621739197,
-                                "type": 1,
-                                "value": 10.0
-                            }
-                        ]
-                    }
-                ]
-            },
-            "rigidbody2dComponent": {
-                "type": 1,
-                "fixedRotation": true
-            },
-            "boxCollider2dComponent": {
-                "isSensor": false,
-                "offset": {
-                    "x": 0.0,
-                    "y": 0.0
-                },
-                "size": {
-                    "x": 0.05000000074505806,
-                    "y": 0.5
-                },
-                "density": 1.0,
-                "friction": 0.0,
-                "restitution": 0.10000000149011612
+                "scripts": []
             }
         }
     ]

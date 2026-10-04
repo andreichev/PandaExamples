@@ -18,9 +18,6 @@ namespace {
 
 constexpr float TWO_PI = 6.28318530718f;
 constexpr float FLIP_LIFT = 1.f; // m: how high the car is lifted to be put back on its wheels
-// The physics never steps further than this in a frame: below 30 frames per second the simulation
-// slows down. What the script counts per step is counted for the step, not for the frame.
-constexpr float MAX_STEP_TIME = 1.f / 30.f;
 // Passes of the solver over the wheels. An impulse at one wheel changes the velocities at the
 // others, so the answer is approached in a few passes.
 constexpr int SOLVER_PASSES = 4;
@@ -86,8 +83,8 @@ void RaycastCar::shutdown() {
     Garage::leave(getEntity());
 }
 
-void RaycastCar::update(float deltaTime) {
-    if (!m_ready || deltaTime <= 0.f) { return; }
+void RaycastCar::fixedUpdate(float stepTime) {
+    if (!m_ready || stepTime <= 0.f) { return; }
     Body body;
     body.entity = getEntity();
     body.position = toGlm(TransformComponentAPI::getPosition(body.entity));
@@ -123,7 +120,7 @@ void RaycastCar::update(float deltaTime) {
 
     const float forwardSpeed = glm::dot(body.linear, forward);
     const SteeringSetup steeringSetup{maxSteerAngle, steerGrip, steerRate, m_wheelbase, m_track};
-    const SteeringAngles steering = m_steering.turn(steeringSetup, input.steer, glm::abs(forwardSpeed), deltaTime);
+    const SteeringAngles steering = m_steering.turn(steeringSetup, input.steer, glm::abs(forwardSpeed), stepTime);
     const DriveSetup driveSetup{
         driveWheels, motorTorque, maxSpeed, reverseSpeed, brakeTorque, handbrakeTorque, coastTorque
     };
@@ -168,7 +165,6 @@ void RaycastCar::update(float deltaTime) {
     }
 
     // The impulses: the dampers and the tires.
-    const float stepTime = glm::min(deltaTime, MAX_STEP_TIME);
     for (int pass = 0; pass < SOLVER_PASSES; pass++) {
         for (Contact &contact : contacts) {
             if (contact.touching) { solveContact(body, contact, stepTime); }
@@ -178,7 +174,7 @@ void RaycastCar::update(float deltaTime) {
     Rigidbody3DComponentAPI::applyAngularImpulse(body.entity, toBamboo(body.angularImpulse));
 
     for (int i = 0; i < 4; i++) {
-        drawWheel(m_wheels[i], contacts[i], deltaTime);
+        drawWheel(m_wheels[i], contacts[i], stepTime);
     }
 }
 
@@ -322,17 +318,17 @@ void RaycastCar::solveContact(Body &body, Contact &contact, float stepTime) cons
     contact.sideImpulse = sideImpulse;
 }
 
-void RaycastCar::drawWheel(Wheel &wheel, const Contact &contact, float deltaTime) {
+void RaycastCar::drawWheel(Wheel &wheel, const Contact &contact, float stepTime) {
     // The wheel follows the ground up at once and drops at a rate when the ground falls away.
     const float compression =
         contact.touching ? glm::min(contact.compression, glm::max(suspensionTravel, 0.f)) : 0.f;
-    wheel.compression = glm::max(compression, wheel.compression - DROOP_SPEED * deltaTime);
+    wheel.compression = glm::max(compression, wheel.compression - DROOP_SPEED * stepTime);
     if (contact.touching) {
         wheel.spin = contact.locked ? 0.f : contact.slide.x * contact.slideSpeed / wheelRadius;
     } else {
-        wheel.spin *= glm::max(1.f - SPIN_DECAY * deltaTime, 0.f);
+        wheel.spin *= glm::max(1.f - SPIN_DECAY * stepTime, 0.f);
     }
-    wheel.spinAngle = std::fmod(wheel.spinAngle + wheel.spin * deltaTime, TWO_PI);
+    wheel.spinAngle = std::fmod(wheel.spinAngle + wheel.spin * stepTime, TWO_PI);
 
     // The axle is the local X of the wheel: rolling forward, to -Z, turns around it backwards.
     const glm::quat steering = glm::angleAxis(contact.steer, glm::vec3(0.f, 1.f, 0.f));

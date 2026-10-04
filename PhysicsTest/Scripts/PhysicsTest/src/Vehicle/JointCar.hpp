@@ -14,11 +14,12 @@ using namespace Bamboo;
 // a Wheel Joint 3D (suspension spring, spin motor, steering). The solver does the physics; this
 // script only turns the pedals and the steering wheel into motor and steering targets.
 //
-// Entity setup (all five bodies are root entities):
+// Entity setup (the car is one hierarchy: the wheels are children of the chassis):
 //   chassis — Rigidbody3D (DYNAMIC) + Box Collider 3D + this script, looks along its local -Z;
 //   wheel   — Rigidbody3D (DYNAMIC) + Sphere Collider 3D + Wheel Joint 3D connected to the chassis,
 //             spin axis to the LEFT of the car (-X: a positive spin rolls forward), suspension
 //             axis up; the front wheels have steering enabled.
+// The targets are set in fixedUpdate, before every physics step.
 // The four wheel fields refer to the wheel entities and are read when Play starts; the other
 // fields can be tuned in the inspector while the car drives. The values below are only a
 // reference set — the engine takes every field from the world file.
@@ -63,19 +64,17 @@ public:
     PANDA_FIELDS_END
 
     void start() override;
-    void update(float deltaTime) override;
+    void fixedUpdate(float stepTime) override;
     void shutdown() override;
 
 private:
     struct Wheel {
         EntityHandle entity;
         bool front = false;
-        glm::vec3 restOffset{0.f};                  // in the chassis space, at start
-        glm::quat restRotation{1.f, 0.f, 0.f, 0.f}; // relative to the chassis, at start
     };
 
     void applySuspension();
-    // Teleports the whole car: the wheels keep their start places relative to the chassis.
+    // Teleports the whole car: the wheels go with the chassis as they stand on it.
     void placeAt(const glm::vec3 &position, const glm::quat &rotation);
 
     Wheel m_wheels[4];

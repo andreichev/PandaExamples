@@ -64,6 +64,11 @@
                     "type": "world"
                 },
                 {
+                    "fieldId": 2886141935,
+                    "name": "sprite",
+                    "type": "entity"
+                },
+                {
                     "fieldId": 2621739197,
                     "name": "jumpForce",
                     "type": "float"

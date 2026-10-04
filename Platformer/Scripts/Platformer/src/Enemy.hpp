@@ -12,7 +12,7 @@ using namespace Bamboo;
 class Enemy : public Bamboo::Script {
 public:
     void start() override;
-    void update(float dt) override;
+    void fixedUpdate(float stepTime) override;
 
     EntityHandle target;
     float speed;

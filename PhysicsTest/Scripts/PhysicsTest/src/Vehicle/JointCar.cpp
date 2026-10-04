@@ -31,15 +31,13 @@ void JointCar::start() {
     const EntityHandle chassis = getEntity();
     m_spawnPosition = toGlm(TransformComponentAPI::getPosition(chassis));
     m_spawnRotation = toGlm(TransformComponentAPI::getRotation(chassis));
-    const glm::quat toChassis = glm::inverse(m_spawnRotation);
-    for (Wheel &wheel : m_wheels) {
-        const glm::vec3 position = toGlm(TransformComponentAPI::getPosition(wheel.entity));
-        wheel.restOffset = toChassis * (position - m_spawnPosition);
-        wheel.restRotation = toChassis * toGlm(TransformComponentAPI::getRotation(wheel.entity));
-    }
-    // The wheelbase and the track are taken from where the wheels stand.
-    m_wheelbase = glm::abs(m_wheels[0].restOffset.z - m_wheels[2].restOffset.z);
-    m_track = glm::abs(m_wheels[0].restOffset.x - m_wheels[1].restOffset.x);
+    // The wheelbase and the track are taken from where the wheels stand: they are children of
+    // the chassis, so their positions are in its space.
+    const glm::vec3 frontLeft = toGlm(TransformComponentAPI::getPosition(m_wheels[0].entity));
+    const glm::vec3 frontRight = toGlm(TransformComponentAPI::getPosition(m_wheels[1].entity));
+    const glm::vec3 rearLeft = toGlm(TransformComponentAPI::getPosition(m_wheels[2].entity));
+    m_wheelbase = glm::abs(frontLeft.z - rearLeft.z);
+    m_track = glm::abs(frontLeft.x - frontRight.x);
     applySuspension();
     Garage::enter(chassis, "Joint car");
     m_ready = true;
@@ -70,7 +68,7 @@ void JointCar::applySuspension() {
     }
 }
 
-void JointCar::update(float deltaTime) {
+void JointCar::fixedUpdate(float stepTime) {
     if (!m_ready) { return; }
     const EntityHandle chassis = getEntity();
     const glm::vec3 position = toGlm(TransformComponentAPI::getPosition(chassis));
@@ -100,7 +98,7 @@ void JointCar::update(float deltaTime) {
 
     const float forwardSpeed = glm::dot(toGlm(Rigidbody3DComponentAPI::getLinearVelocity(chassis)), forward);
     const SteeringSetup steeringSetup{maxSteerAngle, steerGrip, steerRate, m_wheelbase, m_track};
-    const SteeringAngles steering = m_steering.turn(steeringSetup, input.steer, glm::abs(forwardSpeed), deltaTime);
+    const SteeringAngles steering = m_steering.turn(steeringSetup, input.steer, glm::abs(forwardSpeed), stepTime);
     WheelJoint3DComponentAPI::setSteeringAngle(m_wheels[0].entity, glm::degrees(steering.left));
     WheelJoint3DComponentAPI::setSteeringAngle(m_wheels[1].entity, glm::degrees(steering.right));
 
@@ -117,14 +115,11 @@ void JointCar::update(float deltaTime) {
 }
 
 void JointCar::placeAt(const glm::vec3 &position, const glm::quat &rotation) {
-    // Setting a transform teleports the body and stops it; the joints survive because all five
-    // bodies move together.
+    // Setting a transform teleports the body and stops it, and the bodies under the entity with
+    // it: the wheels are children of the chassis, so all five bodies move together and the
+    // joints survive.
     const EntityHandle chassis = getEntity();
     TransformComponentAPI::setPosition(chassis, toBamboo(position));
     TransformComponentAPI::setRotation(chassis, toBamboo(rotation));
-    for (Wheel &wheel : m_wheels) {
-        TransformComponentAPI::setPosition(wheel.entity, toBamboo(position + rotation * wheel.restOffset));
-        TransformComponentAPI::setRotation(wheel.entity, toBamboo(rotation * wheel.restRotation));
-    }
     m_steering.center();
 }

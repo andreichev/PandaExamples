@@ -6,8 +6,9 @@ void Enemy::start() {
     target = resolveTarget();
 }
 
-void Enemy::update(float dt) {
-    (void)dt;
+// The body is driven before every physics step.
+void Enemy::fixedUpdate(float stepTime) {
+    (void)stepTime;
     EntityHandle resolvedTarget = resolveTarget();
     if (!resolvedTarget.isValid()) { return; }
 

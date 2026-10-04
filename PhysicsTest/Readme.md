@@ -46,8 +46,9 @@ Both cars have the same chassis (a box collider, 905 kg), the same drive, brakes
 ride settings, and the same driver: `Driving.hpp` turns the keys into a drive of every wheel (a
 speed target with a torque limit, the way a motor works) and into the angles of the front wheels
 (the steering wheel turns at a rate, the lock shrinks with speed to the lateral acceleration
-`steerGrip`, the inner wheel turns more). The models differ only in how a wheel is held on the
-car and how it grips the ground.
+`steerGrip`, the inner wheel turns more). Both read the keys and drive the car in `fixedUpdate`,
+before every physics step. The models differ only in how a wheel is held on the car and how it
+grips the ground.
 
 ### Joint car — physical wheels (`JointCar`)
 
@@ -59,6 +60,11 @@ only tells the joints what the driver wants: a spin target with a torque limit f
 a steering angle for the front ones. The ride frequency and damping of the body are converted
 into the joint values (the joint spring is tuned over the reduced mass of the wheel and the
 chassis).
+
+In the world the car is one hierarchy: the wheel entities are children of the chassis. The
+simulation moves each of the five bodies on its own, and the engine keeps the transform of a
+wheel relative to the chassis. Putting the car somewhere (R, T) is a teleport of the chassis
+alone: the bodies under an entity are teleported with it.
 
 What follows from the model:
 
@@ -90,9 +96,9 @@ the point where the wheel bottom meets the ground:
   uses for two colliders, so both cars see the ice the same way. A brake stronger than the grip
   locks the wheel, and a locked tire resists its slide in any direction.
 
-The impulses are summed and applied to the chassis once per frame. What the wheel stands on gets
-the opposite forces (a bridge sags), but not the impulses: sized by the chassis alone, they would
-throw a light body away.
+The model runs in `fixedUpdate`, before every physics step; the impulses are summed and applied
+to the chassis once per step. What the wheel stands on gets the opposite forces (a bridge sags),
+but not the impulses: sized by the chassis alone, they would throw a light body away.
 
 What follows from the model:
 
@@ -102,9 +108,7 @@ What follows from the model:
   lower than the chassis clearance does not stop the car, a curb lifts the wheel instead of
   blocking it, and the wheel never pushes anything sideways. The chassis collider is the only
   thing that collides.
-- Cheap: one body, a dozen rays. Steady at any frame rate, but the forces are computed once per
-  frame with the frame's step, so a run is not exactly the same at two frame rates until the
-  physics gets a fixed step.
+- Cheap: one body, a dozen rays per step.
 
 ### How they compare
 

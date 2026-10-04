@@ -3299,7 +3299,11 @@
                 "parent": 0,
                 "children": [
                     930000091,
-                    930000092
+                    930000092,
+                    930000093,
+                    930000095,
+                    930000097,
+                    930000099
                 ]
             },
             "transformComponent": {
@@ -3525,10 +3529,10 @@
         {
             "id": 930000093,
             "tagComponent": {
-                "tag": "Joint Car Wheel FL"
+                "tag": "Wheel FL"
             },
             "relationshipComponent": {
-                "parent": 0,
+                "parent": 930000090,
                 "children": [
                     930000094
                 ]
@@ -3536,8 +3540,8 @@
             "transformComponent": {
                 "position": {
                     "x": -0.85,
-                    "y": 0.35,
-                    "z": 28.7
+                    "y": -0.25,
+                    "z": -1.3
                 },
                 "rotation": {
                     "x": 0.0,
@@ -3643,10 +3647,10 @@
         {
             "id": 930000095,
             "tagComponent": {
-                "tag": "Joint Car Wheel FR"
+                "tag": "Wheel FR"
             },
             "relationshipComponent": {
-                "parent": 0,
+                "parent": 930000090,
                 "children": [
                     930000096
                 ]
@@ -3654,8 +3658,8 @@
             "transformComponent": {
                 "position": {
                     "x": 0.85,
-                    "y": 0.35,
-                    "z": 28.7
+                    "y": -0.25,
+                    "z": -1.3
                 },
                 "rotation": {
                     "x": 0.0,
@@ -3761,10 +3765,10 @@
         {
             "id": 930000097,
             "tagComponent": {
-                "tag": "Joint Car Wheel RL"
+                "tag": "Wheel RL"
             },
             "relationshipComponent": {
-                "parent": 0,
+                "parent": 930000090,
                 "children": [
                     930000098
                 ]
@@ -3772,8 +3776,8 @@
             "transformComponent": {
                 "position": {
                     "x": -0.85,
-                    "y": 0.35,
-                    "z": 31.3
+                    "y": -0.25,
+                    "z": 1.3
                 },
                 "rotation": {
                     "x": 0.0,
@@ -3879,10 +3883,10 @@
         {
             "id": 930000099,
             "tagComponent": {
-                "tag": "Joint Car Wheel RR"
+                "tag": "Wheel RR"
             },
             "relationshipComponent": {
-                "parent": 0,
+                "parent": 930000090,
                 "children": [
                     930000100
                 ]
@@ -3890,8 +3894,8 @@
             "transformComponent": {
                 "position": {
                     "x": 0.85,
-                    "y": 0.35,
-                    "z": 31.3
+                    "y": -0.25,
+                    "z": 1.3
                 },
                 "rotation": {
                     "x": 0.0,

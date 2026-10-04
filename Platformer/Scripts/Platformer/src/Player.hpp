@@ -11,9 +11,15 @@
 
 using namespace Bamboo;
 
+// The player is a body driven by its velocity, with the sprite on a child entity.
+// The body is driven in fixedUpdate, before every physics step. The sprite is animated in update,
+// once a frame, and turned to face the way the player runs: it is a child without a body, so
+// turning it does not touch the physics, while a transform set on the body entity would teleport
+// the body.
 class Player : public Bamboo::Script {
 public:
     void start() override;
+    void fixedUpdate(float stepTime) override;
     void update(float dt) override;
 
     void beginCollisionTouch(EntityHandle other) override;
@@ -21,6 +27,7 @@ public:
     void beginSensorOverlap(EntityHandle sensor) override;
 
     WorldHandle nextLevel;
+    EntityHandle sprite; // the child entity with the sprite renderer
     float jumpForce;
     float speed;
     TextureHandle run;
@@ -29,6 +36,7 @@ public:
 
     PANDA_FIELDS_BEGIN(Player)
     PANDA_FIELD(nextLevel)
+    PANDA_FIELD(sprite)
     PANDA_FIELD(jumpForce)
     PANDA_FIELD(speed)
     PANDA_FIELD(run)
